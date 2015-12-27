@@ -1,0 +1,105 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+using System.Collections;
+
+public class HotkeyButton : MonoBehaviour {
+
+    public KeyCode hotkey; //The keyboard key that interacts with this button
+    Button button; //The button we want a hotkey for
+    Text description; //The text on the button
+    Text hotkeyText;
+
+    bool activated;
+
+    Sprite inactiveButton;
+    Sprite activeButton;
+
+    // Use this for initialization
+    void Start() {
+        //hotkey = KeyCode.None;
+        button = gameObject.GetComponent<Button>();
+        description = gameObject.GetComponentsInChildren<Text>()[0];
+        hotkeyText = gameObject.GetComponentsInChildren<Text>()[1];
+        activated = false;
+
+        description.text = "";
+        hotkeyText.text = "";
+
+        inactiveButton = button.image.sprite;
+        activeButton = button.spriteState.pressedSprite;
+    }
+
+    // Update is called once per frame
+    void Update() {
+        setHotkeyText(button.interactable ? hotkey.ToString() : "");
+        determineButtonAppearance();
+        if (button.interactable) {
+            checkInputs();
+        }
+    }
+
+    public void setHotkey(KeyCode keycode) {
+        hotkey = keycode;
+    }
+
+    public void setDescription(string desc) {
+        description.text = desc;
+    }
+
+    public void clearDescription() {
+        description.text = "";
+    }
+
+    public void setEnabled(bool enabled) {
+        button.interactable = enabled;
+    }
+
+    public void setProcess(IProcess process) {
+        button.onClick.AddListener(() => process.play());
+    }
+
+    public void clearProcess() {
+        button.onClick.RemoveAllListeners();
+    }
+
+    void setHotkeyText(string newKey) {
+        hotkeyText.text = newKey;
+    }
+
+    /**
+     * HotkeyableButtons have these properties:
+     *    1. If its hotkey is input, the Button changes to its pressed-down state
+     *    2. Pressing any other button (includes mouse click) while its hotkey is
+                being held down will cancel the input (don't go to #3 if true)
+     *    3. If the hotkey is released, it counts as a button click
+     */
+    void checkInputs() {
+
+        //1
+        if (Input.GetKeyDown(hotkey)) {
+            activated = true;
+        }
+
+        if (activated) {
+            button.onClick.Invoke();
+
+            //2
+            if (Input.anyKeyDown && !Input.GetKeyDown(hotkey)) {
+                activated = false;
+            }
+
+            //3
+            if (activated && Input.GetKeyUp(hotkey)) {
+                activated = false;
+            }
+        }
+    }
+
+    void determineButtonAppearance() {
+        if (activated && button.interactable) {
+            button.image.sprite = activeButton;
+        } else {
+            button.image.sprite = inactiveButton;
+        }
+    }
+}
