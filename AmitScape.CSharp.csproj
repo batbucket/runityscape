@@ -66,16 +66,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Core\IProcess.cs" />
-    <Compile Include="Assets\Scripts\Interface\ActionGridManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\HeaderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\HotkeyButton.cs" />
-    <Compile Include="Assets\Scripts\Interface\LeftPortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\PortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\ResourceManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\RightPortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBoxHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBoxManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\TimeManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
+    <Compile Include="Assets\Scripts\Interface\Other\HeaderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Other\TimeManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\ResourceManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Misc\Testy.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
