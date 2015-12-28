@@ -24,8 +24,16 @@ public abstract class PortraitManager : MonoBehaviour {
         portraitName.text = name;
     }
 
+    public void setPortraitColor(Color color) {
+        portraitName.color = color;
+    }
+
     public void setIconImage(Sprite image) {
         iconImage.sprite = image;
+    }
+
+    public void setIconColor(Color color) {
+        iconImage.color = color;
     }
 
     /**
