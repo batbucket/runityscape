@@ -82,7 +82,7 @@ public class HotkeyButton : MonoBehaviour {
     void checkInputs() {
 
         //1
-        if (Input.GetKeyDown(hotkey)) {
+        if (Input.GetKeyDown(hotkey) && Input.inputString.Length == 1) {
             activated = true;
         }
 
