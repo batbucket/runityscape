@@ -1,23 +1,28 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
+using UnityEngine.EventSystems;
+using WindowsInput;
 
 public class HotkeyButton : MonoBehaviour {
 
     public KeyCode hotkey; //The keyboard key that interacts with this button
     Button button; //The button we want a hotkey for
+    UIInput input;
     Text description; //The text on the button
     Text hotkeyText;
 
     bool activated;
 
-    Sprite inactiveButton;
-    Sprite activeButton;
+    Color INACTIVE_COLOR = Color.black;
+    Color ACTIVE_COLOR = Color.white;
 
     // Use this for initialization
     void Start() {
         //hotkey = KeyCode.None;
         button = gameObject.GetComponent<Button>();
+        input = gameObject.GetComponent<UIInput>();
         description = gameObject.GetComponentsInChildren<Text>()[0];
         hotkeyText = gameObject.GetComponentsInChildren<Text>()[1];
         activated = false;
@@ -25,8 +30,9 @@ public class HotkeyButton : MonoBehaviour {
         description.text = "";
         hotkeyText.text = "";
 
-        inactiveButton = button.image.sprite;
-        activeButton = button.spriteState.pressedSprite;
+        //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
+        input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.keyCodeToVirtualKeyCode(hotkey))));
+        input.AddOnMouseUpListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyUp(Util.keyCodeToVirtualKeyCode(hotkey))));
     }
 
     // Update is called once per frame
@@ -81,7 +87,6 @@ public class HotkeyButton : MonoBehaviour {
         }
 
         if (activated) {
-            button.onClick.Invoke();
 
             //2
             if (Input.anyKeyDown && !Input.GetKeyDown(hotkey)) {
@@ -89,17 +94,30 @@ public class HotkeyButton : MonoBehaviour {
             }
 
             //3
-            if (activated && Input.GetKeyUp(hotkey)) {
+            if (activated && (Input.GetKeyUp(hotkey))) {
+                button.onClick.Invoke();
                 activated = false;
             }
         }
     }
 
     void determineButtonAppearance() {
-        if (activated && button.interactable) {
-            button.image.sprite = activeButton;
+        if ((activated && button.interactable)) {
+            showActiveAppearance();
         } else {
-            button.image.sprite = inactiveButton;
+            showInactiveAppearance();
         }
+    }
+
+    void showActiveAppearance() {
+        button.image.color = ACTIVE_COLOR;
+        description.color = INACTIVE_COLOR;
+        hotkeyText.color = INACTIVE_COLOR;
+    }
+
+    void showInactiveAppearance() {
+        button.image.color = INACTIVE_COLOR;
+        description.color = ACTIVE_COLOR;
+        hotkeyText.color = ACTIVE_COLOR;
     }
 }
