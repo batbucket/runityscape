@@ -19,7 +19,7 @@ public class ActionGridManager : MonoBehaviour {
     void Start() {
         actionButtons = new HotkeyButton[HOTKEYS.Length];
         for (int i = 0; i < actionButtons.Length; i++) {
-            GameObject actionButton = (GameObject) Instantiate(Resources.Load("ActionButton"));
+            GameObject actionButton = (GameObject)Instantiate(Resources.Load("ActionButton"));
             Util.parent(actionButton, GameObject.Find("ButtonHolder"));
             actionButton.GetComponent<HotkeyButton>().setHotkey(HOTKEYS[i]);
             actionButtons[i] = actionButton.GetComponent<HotkeyButton>();

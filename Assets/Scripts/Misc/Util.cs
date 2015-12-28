@@ -14,6 +14,10 @@ public static class Util {
         child.transform.SetParent(parent.transform);
     }
 
+    public static GameObject findChild(GameObject parent, string childName) {
+        return parent.transform.FindChild(childName).gameObject;
+    }
+
     /**
      * Converts an AudioClip to an AudioSource
      */
@@ -31,11 +35,11 @@ public static class Util {
      * VirtualKeyCode's toString (For the keys we deem important has VK_[KEY]
      * So we search for VK_ + [KEYCODE]
      */
-     public static VirtualKeyCode keyCodeToVirtualKeyCode(KeyCode keyToConvert) {
-        return (VirtualKeyCode) System.Enum.Parse(typeof(VirtualKeyCode), "VK_" + keyToConvert.ToString());
+    public static VirtualKeyCode keyCodeToVirtualKeyCode(KeyCode keyToConvert) {
+        return (VirtualKeyCode)System.Enum.Parse(typeof(VirtualKeyCode), "VK_" + keyToConvert.ToString());
     }
 
     public static Color invertColor(Color color) {
-        return new Color(1.0f-color.r, 1.0f-color.g, 1.0f-color.b);
+        return new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
     }
 }
