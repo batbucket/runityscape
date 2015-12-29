@@ -81,7 +81,7 @@ public class HotkeyButton : MonoBehaviour {
      *    1. If its hotkey is input, the Button changes to its pressed-down state
      *    2. Pressing any other button (includes mouse click) while its hotkey is
                 being held down will cancel the input (don't go to #3 if true)
-     *    3. If the hotkey is released, it counts as a button click
+     *    3. If the hotkey is released, it counts as a button click (do the associated action)
      */
     void checkInputs() {
 

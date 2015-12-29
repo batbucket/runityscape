@@ -83,6 +83,7 @@
     <Compile Include="Assets\Scripts\Misc\Testy.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
+    <Compile Include="Assets\Scripts\Model\Page.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\Misc\InputSimulator.XML" />

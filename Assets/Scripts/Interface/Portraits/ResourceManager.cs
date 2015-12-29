@@ -2,6 +2,9 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/**
+ * This class manages the Resource prefab
+ */
 public class ResourceManager : MonoBehaviour {
 
     Text resourceName; //Name of the Resource. Should be only 2 letters.
@@ -15,11 +18,6 @@ public class ResourceManager : MonoBehaviour {
         underBar = gameObject.GetComponentsInChildren<Image>()[0];
         overBar = gameObject.GetComponentsInChildren<Image>()[1];
         fraction = gameObject.GetComponentsInChildren<Text>()[1];
-    }
-
-    // Update is called once per frame
-    void Update() {
-
     }
 
     public void setResourceName(string name) {
@@ -36,6 +34,7 @@ public class ResourceManager : MonoBehaviour {
 
     /**
      * Scale should be in the range [0, 1]
+     * This sets the OverBar's scale
      */
     public void setBarScale(float scale) {
         Debug.Log("scale: " + scale);
@@ -44,10 +43,17 @@ public class ResourceManager : MonoBehaviour {
         overBar.gameObject.GetComponent<RectTransform>().localScale = v;
     }
 
+    /**
+     * This sets the text on the bar describing
+     * current / total resource
+     */
     public void setFraction(int numerator, int denominator) {
         fraction.text = numerator + "/" + denominator;
     }
 
+    /**
+     * Sets the fraction as a string, for RP segments
+     */
     public void setFractionString(string s) {
         fraction.text = s;
     }

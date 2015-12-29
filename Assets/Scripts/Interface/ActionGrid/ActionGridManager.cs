@@ -10,6 +10,10 @@ using System.Collections;
  */
 public class ActionGridManager : MonoBehaviour {
 
+    /**
+     * Hotkeys that are assigned to the row of buttons
+     * on the bottom of the screen
+     */
     public static readonly KeyCode[] HOTKEYS = new KeyCode[]
         {KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
          KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F,
@@ -62,12 +66,11 @@ public class ActionGridManager : MonoBehaviour {
         return 0 <= r && r < ROWS && 0 <= c && c < COLS;
     }
 
+    /**
+     * This is a fancy way to pretend a
+     * 1d array is actually 2d
+     */
     int calculateOffset(int r, int c) {
         return r * COLS + c;
-    }
-
-    // Update is called once per frame
-    void Update() {
-
     }
 }

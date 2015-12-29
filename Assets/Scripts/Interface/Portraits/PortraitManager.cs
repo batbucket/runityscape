@@ -2,22 +2,20 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/**
+ * This class controls the details one sees on a Portrait prefab
+ */
 public abstract class PortraitManager : MonoBehaviour {
 
-    Text portraitName;
-    Image iconImage;
-    GameObject resources;
+    Text portraitName; //Name of the character
+    Image iconImage; //Image of the character
+    GameObject resources; //Health points, mana points, those things
 
     // Use this for initialization
     void Awake() {
         portraitName = gameObject.GetComponentInChildren<Text>();
         iconImage = gameObject.GetComponentInChildren<Image>();
         resources = Util.findChild(gameObject, "Resources");
-    }
-
-    // Update is called once per frame
-    void Update() {
-
     }
 
     public void setPortraitName(string name) {

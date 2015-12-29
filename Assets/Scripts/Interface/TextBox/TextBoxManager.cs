@@ -2,17 +2,20 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/**
+ * This class manages a TextBox prefab
+ */
 public class TextBoxManager : MonoBehaviour {
 
-    Text text;
+    Text text; //Visible text
     string fullText; //Whole text to be typed
     float timePerLetter; //Speed at which the letters appear
 
-    int index;
-    float timer;
+    int index; //Which letter to make visible
+    float timer; //Needs to be >= timePerLetter for a letter to appear
 
-    public const int BLIP_INTERVAL = 5;
-    public const int CHARS_PER_LINE = 44;
+    public const int BLIP_INTERVAL = 5; //Letters needed for a sound to occur
+    public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
 
 	// Use this for initialization
 	void Awake() {
@@ -22,11 +25,11 @@ public class TextBoxManager : MonoBehaviour {
     // Update is called once per frame
     void Update() {
 
-        if (timePerLetter > 0) {
+        if (fullText != null && text.text.Length < fullText.Length && timePerLetter > 0) {
             timer += Time.deltaTime;
         }
 
-        if (fullText != null && text.text.Length < fullText.Length && timer >= timePerLetter) {
+        if (timer >= timePerLetter) {
             char c = fullText[index++];
             if (c != ' ' && c != '*') {
                 timer = 0;
@@ -38,6 +41,9 @@ public class TextBoxManager : MonoBehaviour {
         }
 	}
 
+    /**
+     * Tells the textBox to type a certain string at a rate, with a certain color
+     */
     public void post(string fullText, float lettersPerSecond, Color color) {
         if (lettersPerSecond <= 0) {
             throw new UnityException("Bad input:" + lettersPerSecond + " is either 0 or less than that.");
@@ -47,9 +53,17 @@ public class TextBoxManager : MonoBehaviour {
         this.text.color = color;
     }
 
+    /**
+     * Tells the textBox to type a certain string at a rate. white colored
+     */
     public void post(string fullText, float lettersPerSecond) {
         post(fullText, lettersPerSecond, Color.white);
     }
 
-
+    /**
+     * True when there is no more text to type
+     */
+    public bool donePosting() {
+        return text.text.Length == fullText.Length;
     }
+}

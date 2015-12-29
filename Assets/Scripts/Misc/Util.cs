@@ -6,6 +6,9 @@ using System.Text;
 using System;
 using System.Collections.Generic;
 
+/**
+ * This class holds various helper methods that don't fit anywhere else
+ */
 public static class Util {
     public static void setTextAlpha(Text target, float alpha) {
         Color c = target.color;

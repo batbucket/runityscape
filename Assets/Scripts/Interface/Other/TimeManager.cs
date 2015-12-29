@@ -2,9 +2,13 @@
 using UnityEngine.UI;
 using System.Collections;
 
+/**
+ * This manages the Time display on the bottom left corner
+ * of the screen
+ */
 public class TimeManager : MonoBehaviour {
-    Text day;
-    Text time;
+    Text day; //Days elapsed
+    Text time; //Current time of day
 
     // Use this for initialization
     void Start() {
@@ -21,8 +25,8 @@ public class TimeManager : MonoBehaviour {
         day.text = string.Format("Day {0}", dayNum);
     }
 
-    public void setTime(int hours) {
-        time.text = string.Format("{0}:00", hours);
+    public void setTime(string newTime) {
+        time.text = newTime;
     }
 
     public void enable(bool enable) {
