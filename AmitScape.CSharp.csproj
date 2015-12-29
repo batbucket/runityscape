@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Core\IProcess.cs" />
+    <Compile Include="Assets\Scripts\Core\Process.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridManager.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\HeaderManager.cs" />
