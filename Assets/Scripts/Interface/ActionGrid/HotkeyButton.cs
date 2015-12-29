@@ -19,7 +19,7 @@ public class HotkeyButton : MonoBehaviour {
     Color ACTIVE_COLOR = Color.white;
 
     // Use this for initialization
-    void Start() {
+    void Awake() {
         //hotkey = KeyCode.None;
         button = gameObject.GetComponent<Button>();
         input = gameObject.GetComponent<UIInput>();

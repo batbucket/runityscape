@@ -16,7 +16,7 @@ public class ActionGridManager : MonoBehaviour {
     public const int COLS = 4;
 
     // Use this for initialization
-    void Start() {
+    void Awake() {
         actionButtons = new HotkeyButton[HOTKEYS.Length];
         for (int i = 0; i < actionButtons.Length; i++) {
             GameObject actionButton = (GameObject)Instantiate(Resources.Load("ActionButton"));
@@ -50,7 +50,7 @@ public class ActionGridManager : MonoBehaviour {
     }
 
     bool coordinatesInBounds(int r, int c) {
-        return 0 < r && r < ROWS && 0 < c && c < COLS;
+        return 0 <= r && r < ROWS && 0 <= c && c < COLS;
     }
 
     int calculateOffset(int r, int c) {
