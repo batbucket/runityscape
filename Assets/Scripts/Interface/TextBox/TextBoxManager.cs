@@ -10,6 +10,7 @@ public class TextBoxManager : MonoBehaviour {
 
     int index;
     float timer;
+    bool start;
 
     public const int BLIP_INTERVAL = 5;
     public const int CHARS_PER_LINE = 51;
@@ -21,27 +22,36 @@ public class TextBoxManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        timer += Time.deltaTime;
+        if (start) {
+            timer += Time.deltaTime;
 
-        if (text.text.Length < fullText.Length && timer >= lettersPerSecond) {
-            char c = fullText[index++];
-            if (c != ' ' && c != '*') {
-                timer = 0;
-                if (index % BLIP_INTERVAL == 0) {
-                    GameObject.Find("Blip_0").GetComponent<AudioSource>().Play();
+            if (fullText != null && text.text.Length < fullText.Length && timer >= lettersPerSecond) {
+                char c = fullText[index++];
+                if (c != ' ' && c != '*') {
+                    timer = 0;
+                    if (index % BLIP_INTERVAL == 0) {
+                        GameObject.Find("Blip_0").GetComponent<AudioSource>().Play();
+                    }
                 }
+                text.text += c;
             }
-            text.text += c;
+            start = index < text.text.Length;
         }
 	}
 
-    public void post(string fullText, float lettersPerSecond) {
+    public void post(string fullText, float lettersPerSecond, Color color) {
         if (lettersPerSecond <= 0) {
             throw new UnityException("Bad input:" + lettersPerSecond + " is either 0 or less than that.");
         }
         this.fullText += Util.wordWrap(fullText, CHARS_PER_LINE);
         this.lettersPerSecond = lettersPerSecond;
+        this.text.color = color;
+        this.start = true;
+    }
+
+    public void post(string fullText, float lettersPerSecond) {
+        post(fullText, lettersPerSecond, Color.white);
     }
 
 
-}
+    }
