@@ -1,14 +1,9 @@
 ﻿using UnityEngine;
 
 public class TextBoxHolderManager : MonoBehaviour {
-
-    // Use this for initialization
-    void Start() {
-
-    }
-
-    // Update is called once per frame
-    void Update() {
-
+    public TextBoxManager addTextBox() {
+        GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
+        Util.parent(g, gameObject);
+        return g.GetComponent<TextBoxManager>();
     }
 }
