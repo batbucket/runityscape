@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Testy : MonoBehaviour {
@@ -25,6 +26,54 @@ public class Testy : MonoBehaviour {
         killText.setPlay(() => Destroy(textBox.gameObject));
         actionButtons.setButtonAttributes(postText, "Amit", 0, 0);
         actionButtons.setButtonAttributes(killText, "KILL", 0, 1);
+        header.setBlurb("KILL");
+        header.setChapter("LA");
+        header.setLocation("DERP");
+        time.setDay(99);
+        time.setTime(12);
+        PortraitManager fuckObama = leftPortraits.addPortrait();
+        //fuckObama.setIconColor(Color.yellow);
+        fuckObama.setIconImage(GameObject.Find("Amit").GetComponent<Image>().sprite);
+        fuckObama.setPortraitName("Fuck Obama");
+        ResourceManager resource = fuckObama.addResource();
+        resource.setOverBarColor(Color.green);
+        resource.setUnderBarColor(Color.red);
+        resource.setFraction(87, 99);
+        resource.setResourceName("HP");
+        resource.setBarScale(87.0f / 99.0f);
+
+        PortraitManager fuckObama3 = leftPortraits.addPortrait();
+        fuckObama3.setIconColor(Color.green);
+        fuckObama3.setIconImage(GameObject.Find("Amit").GetComponent<Image>().sprite);
+        fuckObama3.setPortraitName("Fuck Obama3");
+        ResourceManager resource3 = fuckObama3.addResource();
+        resource3.setOverBarColor(Color.green);
+        resource3.setUnderBarColor(Color.red);
+        resource3.setFraction(87, 99);
+        resource3.setResourceName("HP");
+        resource3.setBarScale(87.0f / 99.0f);
+
+        PortraitManager fuckObama2 = rightPortraits.addPortrait();
+        fuckObama2.setIconColor(Color.blue);
+        fuckObama2.setIconImage(GameObject.Find("Amit").GetComponent<Image>().sprite);
+        fuckObama2.setPortraitName("Fuck Obama2");
+        ResourceManager resource2 = fuckObama2.addResource();
+        resource2.setOverBarColor(Color.green);
+        resource2.setUnderBarColor(Color.red);
+        resource2.setFraction(87, 99);
+        resource2.setResourceName("HP");
+        resource2.setBarScale(87.0f / 99.0f);
+
+        PortraitManager fuckObama4 = rightPortraits.addPortrait();
+        fuckObama4.setIconColor(Color.blue);
+        fuckObama4.setIconImage(GameObject.Find("Amit").GetComponent<Image>().sprite);
+        fuckObama4.setPortraitName("Fuck Obama4");
+        ResourceManager resource4 = fuckObama4.addResource();
+        resource4.setOverBarColor(Color.green);
+        resource4.setUnderBarColor(Color.red);
+        resource4.setFraction(87, 99);
+        resource4.setResourceName("HP");
+        resource4.setBarScale(87.0f / 99.0f);
     }
 
     // Update is called once per frame

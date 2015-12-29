@@ -10,7 +10,7 @@ public class ResourceManager : MonoBehaviour {
     Text fraction; //Text on bar that describes the amount
 
     // Use this for initialization
-    void Start() {
+    void Awake() {
         resourceName = gameObject.GetComponentsInChildren<Text>()[0];
         underBar = gameObject.GetComponentsInChildren<Image>()[0];
         overBar = gameObject.GetComponentsInChildren<Image>()[1];
@@ -38,13 +38,14 @@ public class ResourceManager : MonoBehaviour {
      * Scale should be in the range [0, 1]
      */
     public void setBarScale(float scale) {
+        Debug.Log("scale: " + scale);
         Vector3 v = overBar.gameObject.GetComponent<RectTransform>().localScale;
         v.x = scale;
-        v = overBar.gameObject.GetComponent<RectTransform>().localScale;
+        overBar.gameObject.GetComponent<RectTransform>().localScale = v;
     }
 
     public void setFraction(int numerator, int denominator) {
-        fraction.text = string.Format("{0}/{0}", numerator, denominator);
+        fraction.text = numerator + "/" + denominator;
     }
 
     public void setFractionString(string s) {

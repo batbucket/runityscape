@@ -1,7 +1,6 @@
 ﻿using System;
 
-public class Process : IProcess
-{
+public class Process : IProcess {
 	Action playAction;
 	Action undoAction;
 

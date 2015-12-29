@@ -9,7 +9,7 @@ public abstract class PortraitManager : MonoBehaviour {
     GameObject resources;
 
     // Use this for initialization
-    void Start() {
+    void Awake() {
         portraitName = gameObject.GetComponentInChildren<Text>();
         iconImage = gameObject.GetComponentInChildren<Image>();
         resources = Util.findChild(gameObject, "Resources");
