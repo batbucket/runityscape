@@ -3,6 +3,11 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 
+/**
+ * This class represents the grid of buttons
+ * on the bottom of the game screen
+ * Accessible by keyboard keys and the mouse
+ */
 public class ActionGridManager : MonoBehaviour {
 
     public static readonly KeyCode[] HOTKEYS = new KeyCode[]
@@ -26,6 +31,10 @@ public class ActionGridManager : MonoBehaviour {
         }
     }
 
+    /**
+     * Set what a Button does
+     * and its description (text on the button)
+     */
     public void setButtonAttributes(IProcess process, string desc, int r, int c) {
         if (!coordinatesInBounds(r, c)) {
             throw new UnityException(string.Format("R: 0<{0}<{0}, C: 0<{0}<{0}. At least one of these are not in bounds.", r, ROWS, c, COLS));

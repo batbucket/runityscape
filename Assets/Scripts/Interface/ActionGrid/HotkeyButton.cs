@@ -5,6 +5,10 @@ using System;
 using UnityEngine.EventSystems;
 using WindowsInput;
 
+/**
+ * This class represents a button that can be pressed with
+ * the mouse and/or the keyboard
+ */
 public class HotkeyButton : MonoBehaviour {
 
     public KeyCode hotkey; //The keyboard key that interacts with this button
