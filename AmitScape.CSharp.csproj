@@ -84,6 +84,9 @@
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
     <Compile Include="Assets\Scripts\Model\Page.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attribute.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\PairedInt.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resource.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\Misc\InputSimulator.XML" />
