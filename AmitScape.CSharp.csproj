@@ -90,7 +90,7 @@
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
     <Compile Include="Assets\Scripts\Misc\WeighedRandomizer.cs" />
-    <Compile Include="Assets\Scripts\Model\Characters\BattleProcess.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Ammit.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Battler.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Character.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\CharacterFactory.cs" />
@@ -98,6 +98,7 @@
     <Compile Include="Assets\Scripts\Model\IPage.cs" />
     <Compile Include="Assets\Scripts\Model\Page.cs" />
     <Compile Include="Assets\Scripts\Model\PageFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\PageType.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\Attribute.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeFactory.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeType.cs" />

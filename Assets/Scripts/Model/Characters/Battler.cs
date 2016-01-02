@@ -3,12 +3,13 @@
  * participate in a battle
  */
 public interface Battler {
-    void act(TextBoxHolderManager textBoxHolderManager); //Perform an action, typically consuming CT
-    void react(BattleProcess process);
-    void onStart();
-    bool isDefeated();
-    void onDefeat();
-    bool isKilled();
-    void onKill();
-    int getResource(ResourceType resource);
+    void act(Game game); //Perform an action, typically consuming CT
+    void react(Game game);
+    void onStart(Game game);
+    bool isDefeated(Game game);
+    void onDefeat(Game game);
+    bool isKilled(Game game);
+    void onKill(Game game);
+    Attribute getAttribute(AttributeType attribute);
+    Resource getResource(ResourceType resource);
 }

@@ -17,12 +17,22 @@ public class Page : IPage {
     bool hasEnteredBefore;
     bool hasExitedBefore;
 
+    PageType pageType;
+
     public Page() {
         actions = new Process[ActionGridManager.ROWS, ActionGridManager.COLS];
     }
 
     public void setText(string text) {
         this.text = text;
+    }
+
+    public void setPageType(PageType pageType) {
+        this.pageType = pageType;
+    }
+
+    public PageType getPageType() {
+        return pageType;
     }
 
     public void onEnter() {
