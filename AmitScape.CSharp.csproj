@@ -65,28 +65,54 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Core\Game.cs" />
     <Compile Include="Assets\Scripts\Core\IProcess.cs" />
     <Compile Include="Assets\Scripts\Core\Process.cs" />
+    <Compile Include="Assets\Scripts\Core\ProcessFactory.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridManager.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\HeaderManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\TimeManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\ResourceManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\LeftPortraitHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\LeftPortraitManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\PortraitHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\PortraitManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\ResourceManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitViewFactory.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\ResourceViewFactory.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxFactory.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderManager.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
     <Compile Include="Assets\Scripts\Misc\Testy.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
+    <Compile Include="Assets\Scripts\Misc\WeighedRandomizer.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\BattleProcess.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Battler.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Character.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\CharacterFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Entity.cs" />
+    <Compile Include="Assets\Scripts\Model\IPage.cs" />
     <Compile Include="Assets\Scripts\Model\Page.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Attribute.cs" />
+    <Compile Include="Assets\Scripts\Model\PageFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Attribute.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeType.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Dexterity.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Intelligence.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Strength.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Vitality.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\PairedInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Resource.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Charge.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Health.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Mana.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Resource.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\ResourceFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\ResourceType.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Skill.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\Misc\InputSimulator.XML" />

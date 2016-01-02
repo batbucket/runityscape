@@ -13,10 +13,14 @@ public class Process : IProcess {
 	}
 
 	public void play() {
-		playAction.Invoke();
+        if (playAction != null) {
+            playAction.Invoke();
+        }
 	}
 
 	public void undo() {
-		undoAction.Invoke();
+        if (playAction != null) {
+            undoAction.Invoke();
+        }
 	}
 }

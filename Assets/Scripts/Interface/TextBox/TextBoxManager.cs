@@ -43,12 +43,15 @@ public class TextBoxManager : MonoBehaviour {
 
     /**
      * Tells the textBox to type a certain string at a rate, with a certain color
+     * If this is called before a previous post() finishes, the new text being posted
+     * will be overwritten by the new fullText
      */
     public void post(string fullText, float lettersPerSecond, Color color) {
         if (lettersPerSecond <= 0) {
             throw new UnityException("Bad input:" + lettersPerSecond + " is either 0 or less than that.");
         }
-        this.fullText += Util.wordWrap(fullText, CHARS_PER_LINE);
+        this.fullText = Util.wordWrap(fullText, CHARS_PER_LINE);
+        index = 0;
         this.timePerLetter = lettersPerSecond;
         this.text.color = color;
     }

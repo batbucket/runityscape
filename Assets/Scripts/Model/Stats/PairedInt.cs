@@ -8,6 +8,26 @@ public abstract class PairedInt : MonoBehaviour {
     int trueValue; //Actual value of attribute
     int falseValue; //Changable value, can be affected in combat
 
+    public void setBoth(int both) {
+        setTrue(both);
+        setFalse(both);
+    }
+
+    public void addBoth(int both) {
+        addTrue(both);
+        addFalse(both);
+    }
+
+    public void subtractBoth(int both) {
+        subtractTrue(both);
+        subtractFalse(both);
+    }
+
+    public void setBothPercentage(float percentage) {
+        setTruePercentage(percentage);
+        setFalsePercentage(percentage);
+    }
+
     public virtual void setTrue(int trueValue) {
         this.trueValue = trueValue;
     }
