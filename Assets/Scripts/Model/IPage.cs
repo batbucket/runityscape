@@ -11,9 +11,10 @@ public interface IPage {
     void setOnFirstExit(Process p);
     void setText(string text);
     string getText();
-    void setAction(Process p, int r, int c);
+    void setAction(Process p, int index);
     void setActions(List<Process> processes);
     void setLeft(List<Character> characters);
     void setRight(List<Character> characters);
-    Process[,] getActions();
+    void clearAction(int index);
+    List<Process> getActions();
 }

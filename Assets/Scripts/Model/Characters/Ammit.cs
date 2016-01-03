@@ -1,8 +1,11 @@
-﻿
-using System;
+﻿using System;
 
 public class Ammit : Character {
     public override void act(Game game) {
+        throw new NotImplementedException();
+    }
+
+    public override void charge() {
         throw new NotImplementedException();
     }
 
@@ -34,7 +37,7 @@ public class Ammit : Character {
         throw new NotImplementedException();
     }
 
-    public override void react(Game game) {
+    public override void react(UndoableProcess process, Game game) {
         throw new NotImplementedException();
     }
 }

@@ -2,13 +2,12 @@
 
 /**
  * This class represents an Action
- * That can do something, and undo itself
+ * That can do something,
+ * that is described by a description
  */
 public interface IProcess {
     void setDescription(string description);
     string getDescription();
     void setPlay(Action action);
-    void setUndo(Action action);
     void play();
-    void undo();
 }

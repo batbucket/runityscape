@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 /**
  * This class represents the grid of buttons
@@ -39,12 +40,17 @@ public class ActionGridManager : MonoBehaviour {
      * Set what a Button does
      * and its description (text on the button)
      */
-    public void setButtonAttributes(IProcess process, string desc, int r, int c) {
+    public void setButtonAttribute(IProcess process, int r, int c) {
         if (!coordinatesInBounds(r, c)) {
             throw new UnityException(string.Format("R: 0<{0}<{0}, C: 0<{0}<{0}. At least one of these are not in bounds.", r, ROWS, c, COLS));
         }
         actionButtons[calculateOffset(r, c)].setProcess(process);
-        actionButtons[calculateOffset(r, c)].setDescription(desc);
+    }
+
+    public void setButtonAttributes(List<Process> list) {
+        for (int i = 0; i < actionButtons.Length; i++) {
+            actionButtons[i].setProcess(list[i]);
+        }
     }
 
     public void clearButtonAttributes(int r, int c) {

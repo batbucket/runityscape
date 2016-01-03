@@ -14,7 +14,7 @@ public class TextBoxManager : MonoBehaviour {
     int index; //Which letter to make visible
     float timer; //Needs to be >= timePerLetter for a letter to appear
 
-    public const int BLIP_INTERVAL = 5; //Letters needed for a sound to occur
+    public const int BLIP_INTERVAL = 1; //Letters needed for a sound to occur
     public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
 
 	// Use this for initialization
@@ -24,20 +24,23 @@ public class TextBoxManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-
-        if (fullText != null && text.text.Length < fullText.Length && timePerLetter > 0) {
-            timer += Time.deltaTime;
-        }
-
-        if (timer >= timePerLetter) {
-            char c = fullText[index++];
-            if (c != ' ' && c != '*') {
-                timer = 0;
-                if (index % BLIP_INTERVAL == 0) {
-                    GameObject.Find("Blip_0").GetComponent<AudioSource>().Play();
-                }
+        if (timePerLetter == 0) {
+            text.text = fullText;
+        } else {
+            if (fullText != null && text.text.Length < fullText.Length && timePerLetter > 0) {
+                timer += Time.deltaTime;
             }
-            text.text += c;
+
+            if (timer >= timePerLetter) {
+                char c = fullText[index++];
+                if (c != ' ' && c != '*') {
+                    timer = 0;
+                    if (index % BLIP_INTERVAL == 0 && !GameObject.Find("Blip_0").GetComponent<AudioSource>().isPlaying) {
+                        GameObject.Find("Blip_0").GetComponent<AudioSource>().Play();
+                    }
+                }
+                text.text += c;
+            }
         }
 	}
 
@@ -47,8 +50,8 @@ public class TextBoxManager : MonoBehaviour {
      * will be overwritten by the new fullText
      */
     public void post(string fullText, float lettersPerSecond, Color color) {
-        if (lettersPerSecond <= 0) {
-            throw new UnityException("Bad input:" + lettersPerSecond + " is either 0 or less than that.");
+        if (lettersPerSecond < 0) {
+            throw new UnityException("Bad input:" + lettersPerSecond + " is less than 0.");
         }
         this.fullText = Util.wordWrap(fullText, CHARS_PER_LINE);
         index = 0;

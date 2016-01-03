@@ -7,7 +7,7 @@ public class Page : IPage {
     string text;
     List<Character> leftCharacters;
     List<Character> rightCharacters;
-    Process[ , ] actions;
+    List<Process> actions;
 
     Process onEnterProcess;
     Process onFirstEnterProcess;
@@ -19,8 +19,11 @@ public class Page : IPage {
 
     PageType pageType;
 
+    public static int id = 0;
+
     public Page() {
-        actions = new Process[ActionGridManager.ROWS, ActionGridManager.COLS];
+        actions = new List<Process>();
+        id++;
     }
 
     public void setText(string text) {
@@ -36,10 +39,10 @@ public class Page : IPage {
     }
 
     public void onEnter() {
-        if (!hasEnteredBefore) {
+        if (!hasEnteredBefore && onFirstEnterProcess != null) {
             hasEnteredBefore = true;
             onFirstEnter();
-        } else {
+        } else if (onEnterProcess != null) {
             onEnterProcess.play();
         }
     }
@@ -49,10 +52,10 @@ public class Page : IPage {
     }
 
     public void onExit() {
-        if (!hasExitedBefore) {
+        if (!hasExitedBefore && onFirstExitProcess != null) {
             hasExitedBefore = true;
             onFirstExit();
-        } else {
+        } else if (onExitProcess != null) {
             onExitProcess.play();
         }
     }
@@ -65,7 +68,7 @@ public class Page : IPage {
         return text;
     }
 
-    public Process[,] getActions() {
+    public List<Process> getActions() {
         return actions;
     }
 
@@ -85,11 +88,19 @@ public class Page : IPage {
         onFirstExitProcess = p;
     }
 
-    public void setAction(Process action, int r, int c) {
-        if (0 <= r && r < ActionGridManager.ROWS && 0 <= c && c < ActionGridManager.COLS) {
-            actions[r, c] = action;
+    public void setAction(Process action, int index) {
+        if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
+            actions[index] = action;
         } else {
-            throw new IndexOutOfRangeException("Bad input. Rows: " + r + " Cols: " + c);
+            throw new IndexOutOfRangeException("Bad input. Index: " + index);
+        }
+    }
+
+    public void clearAction(int index) {
+        if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
+            actions[index] = null;
+        } else {
+            throw new IndexOutOfRangeException("Bad input. Index: " + index);
         }
     }
 
@@ -97,15 +108,7 @@ public class Page : IPage {
         if (actions.Count > ActionGridManager.ROWS * ActionGridManager.COLS) {
             throw new ArgumentException("Size of params is: " + actions.Count + ", which is greater than " + ActionGridManager.ROWS * ActionGridManager.COLS);
         }
-        int row = 0;
-        int col = 0;
-        foreach (Process process in actions) {
-            setAction(process, row, col++);
-            if (col % ActionGridManager.COLS == 0) {
-                row++;
-                col = 0;
-            }
-        }
+        this.actions = actions;
     }
 
     public void setLeft(List<Character> characters) {
@@ -114,5 +117,25 @@ public class Page : IPage {
 
     public void setRight(List<Character> characters) {
         rightCharacters = characters;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public override bool Equals(object obj) {
+        // If parameter is null return false.
+        if (obj == null) {
+            return false;
+        }
+
+        // If parameter cannot be cast to Page return false.
+        Page p = obj as Page;
+        if ((object) p == null) {
+            return false;
+        }
+
+        // Return true if the fields match:
+        return p.getId() == this.getId();
     }
 }

@@ -4,7 +4,8 @@
  */
 public interface Battler {
     void act(Game game); //Perform an action, typically consuming CT
-    void react(Game game);
+    void charge();
+    void react(UndoableProcess process, Game game);
     void onStart(Game game);
     bool isDefeated(Game game);
     void onDefeat(Game game);

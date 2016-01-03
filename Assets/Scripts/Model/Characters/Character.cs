@@ -11,10 +11,10 @@ using System;
 public abstract class Character : Entity, Battler {
     protected Dictionary<AttributeType, Attribute> attributes;
     protected Dictionary<ResourceType, Resource> resources;
-    protected Dictionary<string, Process> fightProcesses;
-    protected Dictionary<string, Process> actProcesses;
-    protected Dictionary<string, Process> itemProcesses;
-    protected Dictionary<string, Process> mercyProcesses;
+    protected Dictionary<string, UndoableProcess> fightProcesses;
+    protected Dictionary<string, UndoableProcess> actProcesses;
+    protected Dictionary<string, UndoableProcess> itemProcesses;
+    protected Dictionary<string, UndoableProcess> mercyProcesses;
     protected int level;
 
     public void addAttributes(params Attribute[] attributes) {
@@ -34,7 +34,8 @@ public abstract class Character : Entity, Battler {
     }
 
     public abstract void act(Game game);
-    public abstract void react(Game game);
+    public abstract void charge();
+    public abstract void react(UndoableProcess process, Game game);
     public abstract void onStart(Game game);
     public abstract bool isDefeated(Game game);
     public abstract void onDefeat(Game game);

@@ -6,48 +6,66 @@ using System.Collections.Generic;
 public class Game : MonoBehaviour {
     TimeManager time;
     HeaderManager header;
-    TextBoxHolderManager textBox;
-    LeftPortraitHolderManager leftPortrait;
-    RightPortraitHolderManager rightPortrait;
+    TextBoxHolderManager textBoxes;
+    LeftPortraitHolderManager leftPortraits;
+    RightPortraitHolderManager rightPortraits;
     ActionGridManager actionGrid;
 
-    Page start;
-    bool postedInitialText;
+    Page currentPage;
+    bool initializedPage;
 
+    bool ateApple;
+    bool ateOrange;
+    bool ateBanana;
 
-	// Use this for initialization
-	void Awake () {
+    Page p1;
+
+    // Use this for initialization
+    void Awake() {
         time = gameObject.GetComponentInChildren<TimeManager>();
         header = gameObject.GetComponentInChildren<HeaderManager>();
-        textBox = gameObject.GetComponentInChildren<TextBoxHolderManager>();
-        leftPortrait = gameObject.GetComponentInChildren<LeftPortraitHolderManager>();
-        rightPortrait = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
+        textBoxes = gameObject.GetComponentInChildren<TextBoxHolderManager>();
+        leftPortraits = gameObject.GetComponentInChildren<LeftPortraitHolderManager>();
+        rightPortraits = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
         actionGrid = gameObject.GetComponentInChildren<ActionGridManager>();
 
-        List<Process> derp = new List<Process>();
-        derp.Add(ProcessFactory.createProcess("Human", () => TextBoxFactory.createTextBox(textBox, "Human.", 0.001f, Color.white), null));
-        derp.Add(ProcessFactory.createProcess("Nice to meet", () => TextBoxFactory.createTextBox(textBox, "It was nice to meet you.", 0.001f, Color.white), null));
-        derp.Add(ProcessFactory.createProcess("Byebye", () => TextBoxFactory.createTextBox(textBox, "Goodbye.", 0.001f, Color.white), null));
-        start = PageFactory.createPage("Insert starting text here.", PageType.NORMAL, null, null, null, null, null, null, derp);
+        currentPage = PageFactory.createPage(onEnter: ProcessFactory.createProcess("Check fruit",
+            () => {
+                string message = "In front of you is a table with the following: {0}, {1}, {2}. What will you do?";
+                object a = "An apple" + (ateApple ? " core" : "");
+                object o = "an orange" + (ateOrange ? " peel" : "");
+                object b = "a banana" + (ateBanana ? " peel" : "");
+                currentPage.setText(string.Format(message, a, o, b));
+            }), onExit: ProcessFactory.createProcess("Debug statement", () => Debug.Log("You left the page.")),
+            actions: ActionGridFactory.createProcesses(d0: "Eat apple",
+                                                       a0: () => { ateApple = true; TextBoxFactory.createTextBox(textBoxes,  "* You ate the apple.", 0.01f);  currentPage.clearAction(0); initializedPage = false; },
+                                                       d1: "Eat orange",
+                                                       a1: () => { ateOrange = true; TextBoxFactory.createTextBox(textBoxes, "* You ate the orange.", 0.01f); currentPage.clearAction(1); initializedPage = false; },
+                                                       d2: "Eat banana",
+                                                       a2: () => { ateBanana = true; TextBoxFactory.createTextBox(textBoxes, "* You ate the banana.", 0.01f); currentPage.clearAction(2); initializedPage = false; },
+                                                       d3: "Leave",
+                                                       a3: () => { setPage(p1); }
+                                                       ));
+        p1 = PageFactory.createPage(text: "Hello world!", actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
 	}
 
 	// Update is called once per frame
 	void Update () {
-        if (!postedInitialText) {
-            TextBoxFactory.createTextBox(textBox, start.getText(), 0.001f, Color.white);
-
-            for (int i = 0; i < start.getActions().GetLength(0); i++) {
-                for (int j = 0; j < start.getActions().GetLength(1); j++) {
-                    Debug.Log("I:" + i + " J: " + j);
-                    if (start.getActions()[i, j] != null) {
-                        actionGrid.setButtonAttributes(start.getActions()[i, j], start.getActions()[i, j].getDescription(), i, j);
-                    }
-                }
-            }
-
-            postedInitialText = true;
+        if (!initializedPage) {
+            currentPage.onEnter();
+            TextBoxFactory.createTextBox(textBoxes, currentPage.getText(), 0.001f, Color.white);
+            initializedPage = true;
         }
-	}
+        switch(currentPage.getPageType()) {
+            case PageType.NORMAL:
+                actionGrid.clearAllButtonAttributes();
+                actionGrid.setButtonAttributes(currentPage.getActions());
+                break;
+            case PageType.BATTLE:
+
+                break;
+        }
+    }
 
     public TimeManager getTimeManager() {
         return time;
@@ -58,19 +76,29 @@ public class Game : MonoBehaviour {
     }
 
     public TextBoxHolderManager getTextBoxHolder() {
-        return textBox;
+        return textBoxes;
     }
 
     public PortraitHolderManager returnPortrait(bool left) {
         if (left) {
-            return leftPortrait;
+            return leftPortraits;
         } else {
-            return rightPortrait;
+            return rightPortraits;
         }
     }
 
     public ActionGridManager getActionGrid() {
         return actionGrid;
+    }
+
+    string format(string s, params object[] o) {
+        return string.Format(s, o);
+    }
+
+    public void setPage(Page page) {
+        currentPage.onExit();
+        this.currentPage = page;
+        initializedPage = false;
     }
 
     void createGraph() {
