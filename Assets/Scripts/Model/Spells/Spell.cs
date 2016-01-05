@@ -1,50 +1,102 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public abstract class Spell {
+    readonly string name;
+    readonly SpellType spellType;
+    readonly TargetType targetType;
+    readonly string castText;
+    Dictionary<ResourceType, int> costs;
 
-    protected int resourceCost; //cost of spell
-    protected ResourceType resourceCostType;
-    protected string spellName;  //name of spell
-    protected SpellType spellType; //category of spell
-    protected string textBoxDescription; //textbox will say this when spell is used in battle
-    protected Character user; //person who attacked
-    protected Character target; //person who recieves attack
-    protected int spellDamage; //damage of spell
+    protected Character caster;
+    protected List<Character> targets;
 
-    //protected Effect spellEffect; //additional Effect of spell 
+    public Spell(string name, SpellType spellType, TargetType targetType, string castText, Dictionary<ResourceType, int> costs) {
+        this.name = name;
+        this.spellType = spellType;
+        this.targetType = targetType;
+        this.castText = castText;
+        this.costs = costs;
+    }
 
-    public abstract void stubMethod();
+    public Spell initialize(Character caster, params Character[] targets) {
+        this.caster = caster;
+        this.targets.AddRange(targets);
+        return this;
+    }
 
-    public void setSpellType(SpellType spellType) { this.spellType = spellType; } //add dash and relavant recourses 
-    public SpellType getSpellType() { return spellType; }
+    public string getName() {
+        return name;
+    }
 
-    public void setSpellName(string spellName) { this.spellName = spellName; } //add name to spell
-    public string getSpellName() { return spellName; }
+    public string getCosts() {
+        string s = " - ";
+        List<string> elements = new List<string>();
+        foreach (KeyValuePair<ResourceType, int> entry in costs) {
+            if (entry.Key != ResourceType.CHARGE) {
+                Color c = ResourceFactory.createResource(entry.Key, 0).getOverColor();
+                int cost = entry.Value;
+                elements.Add(Util.color("" + cost, c));
+            }
+        }
+        s += string.Join("/", elements.ToArray());
+        return elements.Count == 0 ? "" : s;
+    }
 
-    public void setResourceCost(int resourceCost) { this.resourceCost = resourceCost; } //quantitatively defines resource cost
-    public int getResourceCost() { return resourceCost; }
+    public string getNameAndCosts() {
+        string s = name + " - ";
+        List<string> elements = new List<string>();
+        foreach (KeyValuePair<ResourceType, int> entry in costs) {
+            if (entry.Key != ResourceType.CHARGE) {
+                Color c = ResourceFactory.createResource(entry.Key, 0).getOverColor();
+                int cost = entry.Value;
+                elements.Add(Util.color("" + cost, c));
+            }
+        }
+        s += string.Join("/", elements.ToArray());
 
-    public void setResourceCostType(ResourceType resourceCostType) { this.resourceCostType = resourceCostType; } //qualitatively defines resource cost
-    public ResourceType getResourceCostType() { return resourceCostType; }
+        return elements.Count == 0 ? name : s;
+    }
 
-    public void setTextBoxDescription(string textBoxDescription) { this.textBoxDescription = textBoxDescription; } //sets a description for the textbox to describe the attack used
-    public string getTextBoxDescription() { return textBoxDescription; }
+    public SpellType getSpellType() {
+        return spellType;
+    }
 
-    
-    public Character getUser() { return user; } //defines user of spell
-    public void setUser(Character user) { this.user = user; }
+    public TargetType getTargetType() {
+        return targetType;
+    }
 
+    public bool canCast(Character character) {
+        foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
+            if (character.getResource(resourceCost.Key) == null || character.getResource(resourceCost.Key).getFalse() < resourceCost.Value) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-    public Character getTarget() { return target; }//defines target of spell 
-    public void setTarget(Character target) { this.target = target; }
+    public void consumeResources(Character character) {
+        if (canCast(character)) {
+            foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
+                character.getResource(resourceCost.Key).subtractFalse(resourceCost.Value);
+            }
+        }
+    }
 
-    public void setSpellDamage(int spellDamage) { this.spellDamage = spellDamage; }
-    public int getSpellDamage() { return spellDamage; }
+    public void reactions(Game game) {
+        foreach(Character character in targets) {
+            character.react(this, game);
+        }
+    }
 
-    //public void setSpellEffect(string spellEffect) { this.spellEffect = spellEffect; }
-    //public Effect getSpellEffect() { return spellEffect; }
-
-
-
+    public void tryCast(Game game) {
+        if (canCast(caster)) {
+            cast(game);
+            consumeResources(caster);
+            reactions(game);
+        }
+    }
+    protected abstract void cast(Game game);
+    public abstract void undo(Game game);
 }

@@ -8,7 +8,7 @@ using System.Collections;
 public abstract class PortraitManager : MonoBehaviour {
 
     Text portraitName; //Name of the character
-    Image iconImage; //Image of the character
+    protected Image iconImage; //Image of the character
     GameObject resources; //Health points, mana points, those things
 
     // Use this for initialization
@@ -26,7 +26,7 @@ public abstract class PortraitManager : MonoBehaviour {
         portraitName.color = color;
     }
 
-    public void setIconImage(Sprite image) {
+    public virtual void setIconImage(Sprite image) {
         iconImage.sprite = image;
     }
 

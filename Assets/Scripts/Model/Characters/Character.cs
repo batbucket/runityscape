@@ -8,14 +8,37 @@ using System;
  * Characters are special Entities with
  * Attributes and Resources
  */
-public abstract class Character : Entity, Battler {
-    protected Dictionary<AttributeType, Attribute> attributes;
-    protected Dictionary<ResourceType, Resource> resources;
-    protected Dictionary<string, UndoableProcess> fightProcesses;
-    protected Dictionary<string, UndoableProcess> actProcesses;
-    protected Dictionary<string, UndoableProcess> itemProcesses;
-    protected Dictionary<string, UndoableProcess> mercyProcesses;
+public abstract class Character : Entity {
+    protected string name;
     protected int level;
+    protected SortedDictionary<AttributeType, Attribute> attributes;
+    protected SortedDictionary<ResourceType, Resource> resources;
+    protected List<string> fightSpells;
+    protected List<string> actSpells;
+    protected List<Item> items;
+    protected List<string> mercySpells;
+
+    public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality) : base(sprite) {
+        this.name = name;
+        this.level = level;
+        this.attributes = new SortedDictionary<AttributeType, Attribute>() {
+            {AttributeType.STRENGTH, AttributeFactory.createAttribute(AttributeType.STRENGTH, strength) },
+            {AttributeType.INTELLIGENCE, AttributeFactory.createAttribute(AttributeType.INTELLIGENCE, intelligence) },
+            {AttributeType.DEXTERITY, AttributeFactory.createAttribute(AttributeType.DEXTERITY, dexterity) },
+            {AttributeType.VITALITY, AttributeFactory.createAttribute(AttributeType.VITALITY, vitality) }
+        };
+
+        this.resources = new SortedDictionary<ResourceType, Resource>() {
+            {ResourceType.HEALTH, ResourceFactory.createResource(ResourceType.HEALTH, vitality * 10) },
+            {ResourceType.CHARGE, ResourceFactory.createResource(ResourceType.CHARGE, 100) }
+        };
+        this.fightSpells = new List<string>();
+        this.actSpells = new List<string>();
+        this.items = new List<Item>();
+        this.mercySpells = new List<string>();
+
+        getResource(ResourceType.CHARGE).clearFalse();
+    }
 
     public void addAttributes(params Attribute[] attributes) {
         foreach(Attribute attribute in attributes) {
@@ -29,18 +52,67 @@ public abstract class Character : Entity, Battler {
         }
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public Attribute getAttribute(AttributeType attributeType) {
+        Attribute attribute = null;
+        attributes.TryGetValue(attributeType, out attribute);
+        Debug.Assert(attribute != null);
+        return attribute;
     }
 
-    public abstract void act(Game game);
-    public abstract void charge();
-    public abstract void react(UndoableProcess process, Game game);
+    public SortedDictionary<AttributeType, Attribute> getAttributes() {
+        return attributes;
+    }
+
+    public SortedDictionary<ResourceType, Resource> getResources() {
+        return resources;
+    }
+
+    public Resource getResource(ResourceType resourceType) {
+        Resource resource = null;
+        resources.TryGetValue(resourceType, out resource);
+        Debug.Assert(resource != null);
+        return resource;
+    }
+
+    public List<string> getFight() {
+        return fightSpells;
+    }
+
+    public List<string> getAct() {
+        return actSpells;
+    }
+
+    public List<Item> getItem() {
+        return items;
+    }
+
+    public List<string> getMercy() {
+        return mercySpells;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public string getName() {
+        return name;
+    }
+
+    public void charge(int amount) {
+        Debug.Assert(getResource(ResourceType.CHARGE) != null);
+        getResource(ResourceType.CHARGE).addFalse(amount);
+    }
+
+    public bool isCharged() {
+        Debug.Assert(getResource(ResourceType.CHARGE) != null);
+        return getResource(ResourceType.CHARGE).isMaxed();
+    }
+
+    public abstract void act(int chargeAmount, Game game);
+    public abstract void react(Spell spell, Game game);
     public abstract void onStart(Game game);
     public abstract bool isDefeated(Game game);
     public abstract void onDefeat(Game game);
     public abstract bool isKilled(Game game);
     public abstract void onKill(Game game);
-    public abstract Attribute getAttribute(AttributeType attribute);
-    public abstract Resource getResource(ResourceType resource);
 }

@@ -5,6 +5,7 @@ using WindowsInput;
 using System.Text;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 /**
  * This class holds various helper methods that don't fit anywhere else
@@ -130,5 +131,53 @@ public static class Util {
             a = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
         }
         return new Color(r, g, b, a);
+    }
+
+    public static string color(string s, Color c) {
+        return string.Format("<color=#{1}>{0}</color>", s, RGBToHex(c));
+    }
+
+    public static string getHex(float f) {
+        string alpha = "0123456789ABCDEF";
+	    return "" + alpha[(int) f];
+    }
+
+    public static string RGBToHex(Color color) {
+        float red = color.r * 255;
+        float green = color.g * 255;
+        float blue = color.b * 255;
+
+        string a = getHex(Mathf.Floor(red / 16.0f));
+        string b = getHex(Mathf.Round(red % 16));
+        string c = getHex(Mathf.Floor(green / 16));
+        string d = getHex(Mathf.Round(green % 16));
+        string e = getHex(Mathf.Floor(blue / 16));
+        string f = getHex(Mathf.Round(blue % 16));
+
+        string z = a + b + c + d + e + f;
+
+        return z;
+    }
+
+    public static T pickRandom<T>(this IEnumerable<T> source) {
+        return source.pickRandom(1).Single();
+    }
+
+    public static IEnumerable<T> pickRandom<T>(this IEnumerable<T> source, int count) {
+        return source.shuffle().Take(count);
+    }
+
+    public static IEnumerable<T> shuffle<T>(this IEnumerable<T> source) {
+        return source.OrderBy(x => Guid.NewGuid());
+    }
+
+    public static void killChildren(GameObject parent) {
+        foreach (Transform child in parent.transform) {
+            GameObject.Destroy(child.gameObject);
+        }
+    }
+
+    public static Sprite getSprite(string name) {
+        return Resources.Load<Sprite>(name);
     }
 }

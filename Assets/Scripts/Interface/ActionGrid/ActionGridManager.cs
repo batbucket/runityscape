@@ -47,6 +47,13 @@ public class ActionGridManager : MonoBehaviour {
         actionButtons[calculateOffset(r, c)].setProcess(process);
     }
 
+    public void setButtonAttribute(IProcess process, int index) {
+        if (!(0 <= index && index < ROWS * COLS)) {
+            throw new UnityException(string.Format("{0} is not within the bounds of [{1}, {2})", index, 0, ROWS * COLS));
+        }
+        actionButtons[index].setProcess(process);
+    }
+
     public void setButtonAttributes(List<Process> list) {
         for (int i = 0; i < actionButtons.Length; i++) {
             actionButtons[i].setProcess(list[i]);

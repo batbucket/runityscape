@@ -1,4 +1,4 @@
 ﻿public enum SpellType
 {
-    OFFENSE, DEFENSE, BOOST 
+    OFFENSE, DEFENSE, BOOST
 }

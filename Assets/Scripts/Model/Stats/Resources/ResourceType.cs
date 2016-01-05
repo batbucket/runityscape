@@ -1,3 +1,3 @@
 ﻿public enum ResourceType {
-    HEALTH, CHARGE, MANA, SKILL
+    HEALTH, MANA, SKILL, CHARGE
 }

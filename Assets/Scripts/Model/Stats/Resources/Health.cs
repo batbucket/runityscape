@@ -6,7 +6,7 @@ public class Health : Resource {
     public const string DESCRIPTION = "Replenished by some spells and items.";
     public const string LONG_NAME = "Health";
     public const string SHORT_NAME = "HP";
-    public static readonly Color OVER_COLOR = Color.grey;
+    public static readonly Color OVER_COLOR = Color.green;
     public static readonly Color UNDER_COLOR = Color.red;
     public const ResourceType RESOURCE_TYPE = ResourceType.HEALTH;
 

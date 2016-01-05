@@ -37,7 +37,6 @@ public class ResourceManager : MonoBehaviour {
      * This sets the OverBar's scale
      */
     public void setBarScale(float scale) {
-        Debug.Log("scale: " + scale);
         Vector3 v = overBar.gameObject.GetComponent<RectTransform>().localScale;
         v.x = scale;
         overBar.gameObject.GetComponent<RectTransform>().localScale = v;

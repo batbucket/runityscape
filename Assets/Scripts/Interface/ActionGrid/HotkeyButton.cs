@@ -79,6 +79,14 @@ public class HotkeyButton : MonoBehaviour {
         hotkeyText.text = newKey;
     }
 
+    void OnMouseExit() {
+        activated = false;
+    }
+
+    void OnMouseOver() {
+
+    }
+
     /**
      * HotkeyableButtons have these properties:
      *    1. If its hotkey is input, the Button changes to its pressed-down state
@@ -109,7 +117,9 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     void determineButtonAppearance() {
-        if ((activated && button.interactable)) {
+        if (description.text.Length == 0) {
+            showDisabledAppearance();
+        } else if (activated && button.interactable) {
             showActiveAppearance();
         } else {
             showInactiveAppearance();
@@ -126,5 +136,10 @@ public class HotkeyButton : MonoBehaviour {
         button.image.color = INACTIVE_COLOR;
         description.color = ACTIVE_COLOR;
         hotkeyText.color = ACTIVE_COLOR;
+    }
+
+    void showDisabledAppearance() {
+        button.image.color = Color.clear;
+        hotkeyText.color = Color.clear;
     }
 }

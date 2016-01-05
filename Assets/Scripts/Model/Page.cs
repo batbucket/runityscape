@@ -9,21 +9,32 @@ public class Page : IPage {
     List<Character> rightCharacters;
     List<Process> actions;
 
-    Process onEnterProcess;
     Process onFirstEnterProcess;
-    Process onExitProcess;
+    Process onEnterProcess;
     Process onFirstExitProcess;
+    Process onExitProcess;
+
+    PageType pageType;
 
     bool hasEnteredBefore;
     bool hasExitedBefore;
 
-    PageType pageType;
+    public static int idCount = 0;
+    int id;
 
-    public static int id = 0;
+    public Page(string text = "", PageType pageType = PageType.NORMAL, List<Character> left = null, List<Character> right = null,
+        Process onFirstEnter = null, Process onEnter = null, Process onFirstExit = null, Process onExit = null,
+        List<Process> actions = null) {
+        this.text = text;
+        this.actions = (actions != null) ? actions : new List<Process>();
+        this.leftCharacters = (left != null) ? left : new List<Character>();
+        this.rightCharacters = (right != null) ? right : new List<Character>();
+        this.onFirstEnterProcess = onFirstEnter;
+        this.onEnterProcess = onEnter;
+        this.onFirstExitProcess = onFirstExit;
+        this.onExitProcess = onExit;
 
-    public Page() {
-        actions = new List<Process>();
-        id++;
+        this.pageType = pageType;
     }
 
     public void setText(string text) {
@@ -88,6 +99,10 @@ public class Page : IPage {
         onFirstExitProcess = p;
     }
 
+    public List<Character> getCharacters(bool isLeftSide) {
+        return isLeftSide ? leftCharacters : rightCharacters;
+    }
+
     public void setAction(Process action, int index) {
         if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
             actions[index] = action;
@@ -120,7 +135,7 @@ public class Page : IPage {
     }
 
     public int getId() {
-        return id;
+        return idCount;
     }
 
     public override bool Equals(object obj) {

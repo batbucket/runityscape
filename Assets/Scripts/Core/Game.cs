@@ -20,6 +20,8 @@ public class Game : MonoBehaviour {
 
     Page p1;
 
+    public const float NORMAL_TEXT_SPEED = 0.001f;
+
     // Use this for initialization
     void Awake() {
         time = gameObject.GetComponentInChildren<TimeManager>();
@@ -29,7 +31,7 @@ public class Game : MonoBehaviour {
         rightPortraits = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
         actionGrid = gameObject.GetComponentInChildren<ActionGridManager>();
 
-        currentPage = PageFactory.createPage(onEnter: ProcessFactory.createProcess("Check fruit",
+        currentPage = new Page(onEnter: ProcessFactory.createProcess("Check fruit",
             () => {
                 string message = "In front of you is a table with the following: {0}, {1}, {2}. What will you do?";
                 object a = "An apple" + (ateApple ? " core" : "");
@@ -46,19 +48,47 @@ public class Game : MonoBehaviour {
                                                        d3: "Leave",
                                                        a3: () => { setPage(p1); }
                                                        ));
-        p1 = PageFactory.createPage(text: "Hello world!", actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
+        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit() }, right: new List<Character>() { new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
 	}
 
 	// Update is called once per frame
 	void Update () {
+        Util.killChildren(leftPortraits.gameObject);
+        Util.killChildren(rightPortraits.gameObject);
+        actionGrid.clearAllButtonAttributes();
+        foreach (Character c in currentPage.getCharacters(true)) {
+            if (!initializedPage) {
+                c.onStart(this);
+            }
+            c.act(1, this);
+            PortraitManager portrait = PortraitViewFactory.createPortrait(leftPortraits, c.getName(), c.getSprite());
+            foreach (KeyValuePair<ResourceType, Resource> r in c.getResources()) {
+                ResourceManager res = ResourceViewFactory.createResource(portrait, r.Value.getShortName(), r.Value.getOverColor(), r.Value.getUnderColor());
+                res.setFraction(r.Value.getFalse(), r.Value.getTrue());
+                res.setBarScale(r.Value.getFalse() / ((float) r.Value.getTrue()));
+            }
+        }
+        foreach (Character c in currentPage.getCharacters(false)) {
+            if (!initializedPage) {
+                c.onStart(this);
+            }
+            //c.act(1, this);
+            PortraitManager portrait = PortraitViewFactory.createPortrait(rightPortraits, c.getName(), c.getSprite());
+            foreach (KeyValuePair<ResourceType, Resource> r in c.getResources()) {
+                ResourceManager res = ResourceViewFactory.createResource(portrait, r.Value.getShortName(), r.Value.getOverColor(), r.Value.getUnderColor());
+                res.setFraction(r.Value.getFalse(), r.Value.getTrue());
+                res.setBarScale(r.Value.getFalse() / ((float) r.Value.getTrue()));
+            }
+        }
+
         if (!initializedPage) {
             currentPage.onEnter();
             TextBoxFactory.createTextBox(textBoxes, currentPage.getText(), 0.001f, Color.white);
             initializedPage = true;
         }
-        switch(currentPage.getPageType()) {
+
+        switch (currentPage.getPageType()) {
             case PageType.NORMAL:
-                actionGrid.clearAllButtonAttributes();
                 actionGrid.setButtonAttributes(currentPage.getActions());
                 break;
             case PageType.BATTLE:
@@ -77,6 +107,14 @@ public class Game : MonoBehaviour {
 
     public TextBoxHolderManager getTextBoxHolder() {
         return textBoxes;
+    }
+
+    public void postText(string s) {
+        postText(s, Color.white);
+    }
+
+    public void postText(string s, Color color) {
+        TextBoxFactory.createTextBox(getTextBoxHolder(), s, NORMAL_TEXT_SPEED, color);
     }
 
     public PortraitHolderManager returnPortrait(bool left) {
@@ -99,6 +137,10 @@ public class Game : MonoBehaviour {
         currentPage.onExit();
         this.currentPage = page;
         initializedPage = false;
+    }
+
+    public Page getPage() {
+        return currentPage;
     }
 
     void createGraph() {

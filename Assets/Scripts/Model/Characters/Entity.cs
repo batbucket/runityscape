@@ -9,7 +9,15 @@ using UnityEngine.UI;
 public abstract class Entity {
     Sprite sprite;
 
+    public Entity(Sprite sprite) {
+        this.sprite = sprite;
+    }
+
     public void setSprite(Sprite sprite) {
         this.sprite = sprite;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
     }
 }

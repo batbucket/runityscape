@@ -10,18 +10,13 @@
 public abstract class Resource : PairedInt {
 
     public const int LESSER_CAP = 0;
-    int greaterCap;
 
     public override void setTrue(int trueValue) {
-        base.setTrue(Mathf.Clamp(trueValue, LESSER_CAP, greaterCap));
+        base.setTrue(Mathf.Clamp(trueValue, LESSER_CAP, trueValue));
     }
 
     public override void setFalse(int falseValue) {
-        base.setTrue(Mathf.Clamp(falseValue, LESSER_CAP, greaterCap));
-    }
-
-    public void setGreaterCap(int greaterCap) {
-        this.greaterCap = Mathf.Max(greaterCap, LESSER_CAP);
+        base.setFalse(Mathf.Clamp(falseValue, LESSER_CAP, getTrue()));
     }
 
     public void clearFalse() {

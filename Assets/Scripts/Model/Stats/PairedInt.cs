@@ -4,9 +4,13 @@ using System.Collections;
 /**
  * This class represents a pair of integer values
  */
-public abstract class PairedInt : MonoBehaviour {
+public abstract class PairedInt {
     int trueValue; //Actual value of attribute
     int falseValue; //Changable value, can be affected in combat
+
+    public bool isMaxed() {
+        return trueValue <= falseValue;
+    }
 
     public void setBoth(int both) {
         setTrue(both);
