@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public abstract class PlayerCharacter : Character {
     SelectionType selectionType;
-    SelectionType lastSelection;
+    Stack<SelectionType> lastSelectionStack;
     Spell selectedSpell;
 
     public const int BACK_INDEX = 11; //Last hotkey is letter 'V'
@@ -13,6 +13,7 @@ public abstract class PlayerCharacter : Character {
 
     public PlayerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality)
         : base(sprite, name, level, strength, intelligence, dexterity, vitality) {
+        lastSelectionStack = new Stack<SelectionType>();
     }
 
     public override void act(int chargeAmount, Game game) {
@@ -33,7 +34,7 @@ public abstract class PlayerCharacter : Character {
                     "Item", () => setSelectionType(SelectionType.ITEM),
                     "Mercy", () => setSelectionType(SelectionType.MERCY)
                     ));
-                game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Switch", () => setSelectionType(SelectionType.FAIM)), BACK_INDEX);
+                game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Switch", () => Debug.Log("This aint a thing yet!")), BACK_INDEX);
                 break;
             case SelectionType.FIGHT:
                 game.getActionGrid().setButtonAttributes(ActionGridFactory.createProcesses(
@@ -61,10 +62,24 @@ public abstract class PlayerCharacter : Character {
                 List<Character> enemies = game.getPage().getCharacters(false);
                 List<Character> allies = game.getPage().getCharacters(true);
                 for (int i = 0; i < enemies.Count; i++) {
-                    game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(enemies[i].getName(), () => { selectedSpell.initialize(this, enemies[i]); selectedSpell.tryCast(game); }), i);
+                    Character enemy = enemies[i];
+                    game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(enemy.getName(), () => {
+                        if (selectedSpell.canCast(this)) {
+                            selectedSpell.initialize(this, enemy);
+                            selectedSpell.tryCast(game);
+                            this.selectionType = SelectionType.FAIM;
+                        }
+                    }), i);
                 }
                 for (int i = 0; i < allies.Count; i++) {
-                    game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(allies[i].getName(), () => { selectedSpell.initialize(this, allies[i]); selectedSpell.tryCast(game); }), i + ALLY_CAST_OFFSET);
+                    Character ally = allies[i];
+                    game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(ally.getName(), () => {
+                        if (selectedSpell.canCast(this)) {
+                            selectedSpell.initialize(this, ally);
+                            selectedSpell.tryCast(game);
+                            this.selectionType = SelectionType.FAIM;
+                        }
+                    }), i + ALLY_CAST_OFFSET);
                 }
                 showBackButton(game);
                 break;
@@ -110,7 +125,8 @@ public abstract class PlayerCharacter : Character {
     }
 
     void showBackButton(Game game) {
-        game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Back", () => setSelectionType(lastSelection)), BACK_INDEX);
+        //this one doesn't use set() to prevent infinite looping of lastSelection
+        game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Back", () => selectionType = lastSelectionStack.Pop()), BACK_INDEX);
     }
 
     public override bool isDefeated(Game game) {
@@ -130,19 +146,20 @@ public abstract class PlayerCharacter : Character {
     }
 
     public override void onStart(Game game) {
+        //this one doesn't use set() to prevent NONE from being the original selection on the bottom of the stack
         selectionType = SelectionType.FAIM;
     }
 
     public void setSelectionType(SelectionType selectionType) {
-        setLastSelection(this.selectionType);
+        pushLastSelection(this.selectionType);
         this.selectionType = selectionType;
     }
 
-    public void setLastSelection(SelectionType lastSelection) {
-        this.lastSelection = lastSelection;
+    public void pushLastSelection(SelectionType lastSelection) {
+        this.lastSelectionStack.Push(lastSelection);
     }
 
     public override void react(Spell spell, Game game) {
-        throw new NotImplementedException();
+        //throw new NotImplementedException();
     }
 }

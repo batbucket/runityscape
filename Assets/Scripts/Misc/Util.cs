@@ -134,7 +134,7 @@ public static class Util {
     }
 
     public static string color(string s, Color c) {
-        return string.Format("<color=#{1}>{0}</color>", s, RGBToHex(c));
+        return string.Format("<color=#{1}>{0}</color>", s, c);
     }
 
     public static string getHex(float f) {

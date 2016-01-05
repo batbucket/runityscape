@@ -18,6 +18,7 @@ public abstract class Spell {
         this.targetType = targetType;
         this.castText = castText;
         this.costs = costs;
+        this.targets = new List<Character>();
     }
 
     public Spell initialize(Character caster, params Character[] targets) {

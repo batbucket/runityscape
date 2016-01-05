@@ -36,7 +36,7 @@ public class HotkeyButton : MonoBehaviour {
 
         //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
         input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.keyCodeToVirtualKeyCode(hotkey))));
-        input.AddOnMouseUpListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyUp(Util.keyCodeToVirtualKeyCode(hotkey))));
+        input.AddOnMouseUpListener(new Action<PointerEventData>(p => { InputSimulator.SimulateKeyUp(Util.keyCodeToVirtualKeyCode(hotkey)); activated = false; } )); //Set activated to false to fix double button click issue
     }
 
     // Update is called once per frame

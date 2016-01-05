@@ -1,0 +1,16 @@
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\Assembly-CSharp.dll
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\Assembly-CSharp.pdb
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\InputSimulator.dll
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEditor.dll
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEngine.dll
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEngine.Networking.dll
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEngine.UI.dll
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEngine.xml
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEngine.UI.xml
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEngine.Networking.xml
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\UnityEditor.xml
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\InputSimulator.pdb
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_bin\Debug\InputSimulator.xml
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_obj\Debug\AmitScape.CSharp.csprojResolveAssemblyReference.cache
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_obj\Debug\Assembly-CSharp.dll
+C:\Users\A\Documents\BitBucket\AmitScape\Temp\UnityVS_obj\Debug\Assembly-CSharp.pdb
