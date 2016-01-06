@@ -5,16 +5,16 @@ using System;
 public class Steve : ComputerCharacter {
     public Steve() : base(Util.getSprite("laughing_shinx"), "Steve", 0, 5, 5, 5, 5) {
         addResources(ResourceFactory.createResource(ResourceType.SKILL, 3));
-        getFight().Add("Attack");
-        getFight().Add("Meditate");
+        getFight().Add(new Attack(this));
+        getFight().Add(new Meditate(this));
     }
 
     public override void act(int chargeAmount, Game game) {
         base.act(chargeAmount, game);
         if (getResource(ResourceType.HEALTH).getRatio() < .5) {
-            SpellFactory.createSpell(this, "Meditate").setTargets(game.getPage().getCharacters(true).ToArray()[0]).tryCast(game);
+            fightSpells[0].setTargets(game.getPage().getCharacters(true).ToArray()[0]).tryCast(game);
         } else {
-            SpellFactory.createSpell(this, "Attack").setTargets(game.getPage().getCharacters(true).ToArray()[0]).tryCast(game);
+            fightSpells[0].setTargets(game.getPage().getCharacters(true).ToArray()[0]).tryCast(game);
         }
     }
 

@@ -13,10 +13,10 @@ public abstract class Character : Entity {
     protected int level;
     protected SortedDictionary<AttributeType, Attribute> attributes;
     protected SortedDictionary<ResourceType, Resource> resources;
-    protected List<string> fightSpells;
-    protected List<string> actSpells;
+    protected List<Spell> fightSpells;
+    protected List<Spell> actSpells;
     protected List<Item> items;
-    protected List<string> mercySpells;
+    protected List<Spell> mercySpells;
 
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality) : base(sprite) {
         this.name = name;
@@ -32,10 +32,10 @@ public abstract class Character : Entity {
             {ResourceType.HEALTH, ResourceFactory.createResource(ResourceType.HEALTH, vitality * 10) },
             {ResourceType.CHARGE, ResourceFactory.createResource(ResourceType.CHARGE, 100) }
         };
-        this.fightSpells = new List<string>();
-        this.actSpells = new List<string>();
+        this.fightSpells = new List<Spell>();
+        this.actSpells = new List<Spell>();
         this.items = new List<Item>();
-        this.mercySpells = new List<string>();
+        this.mercySpells = new List<Spell>();
 
         getResource(ResourceType.CHARGE).clearFalse();
     }
@@ -107,11 +107,11 @@ public abstract class Character : Entity {
         return resource;
     }
 
-    public List<string> getFight() {
+    public List<Spell> getFight() {
         return fightSpells;
     }
 
-    public List<string> getAct() {
+    public List<Spell> getAct() {
         return actSpells;
     }
 
@@ -119,7 +119,7 @@ public abstract class Character : Entity {
         return items;
     }
 
-    public List<string> getMercy() {
+    public List<Spell> getMercy() {
         return mercySpells;
     }
 

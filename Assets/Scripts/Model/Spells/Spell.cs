@@ -39,6 +39,7 @@ public abstract class Spell {
     }
 
     public Spell setTargets(params Character[] targets) {
+        this.targets.Clear();
         this.targets.AddRange(targets);
         return this;
     }
@@ -92,7 +93,7 @@ public abstract class Spell {
     }
 
     public bool tryCast(Game game) {
-        calculateSuccessRate();
+
         if (canCast()) {
             cast(game);
             consumeResources();
@@ -103,6 +104,7 @@ public abstract class Spell {
     }
 
     protected void cast(Game game) {
+        calculateSuccessRate();
         if (hit = (Util.chance(successRate))) {
             onSuccess(game);
         } else {
@@ -114,15 +116,9 @@ public abstract class Spell {
         successRate = 1;
     }
 
-    public virtual void onSuccess(Game game) {
-        throw new NotImplementedException();
-    }
-
+    public abstract void onSuccess(Game game);
     public abstract void onFailure(Game game);
-    public virtual void undo(Game game)
-    {
-        throw new NotImplementedException();
-    }
+    public abstract void undo(Game game);
     public bool isHit() {
         return hit;
     }

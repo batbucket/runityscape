@@ -57,12 +57,6 @@
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
@@ -91,9 +85,9 @@
     <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\PortraitViewFactory.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\ResourceViewFactory.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxFactory.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Tooltip\TextBox\TextBoxFactory.cs" />
+    <Compile Include="Assets\Scripts\Interface\Tooltip\TextBox\TextBoxHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Tooltip\TextBox\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
     <Compile Include="Assets\Scripts\Misc\Testy.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
@@ -107,7 +101,10 @@
     <Compile Include="Assets\Scripts\Model\Characters\SelectionType.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Steve.cs" />
     <Compile Include="Assets\Scripts\Model\IPage.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\ConsumableItem.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\EquippableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\Lobster.cs" />
     <Compile Include="Assets\Scripts\Model\Page.cs" />
     <Compile Include="Assets\Scripts\Model\PageType.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />

@@ -38,8 +38,8 @@ public abstract class PlayerCharacter : Character {
                 break;
             case SelectionType.FIGHT:
                 game.getActionGrid().setButtonAttributes(ActionGridFactory.createProcesses(
-                    SpellFactory.createSpell(this, fightSpells[0]).getNameAndCosts(), () => {
-                        selectedSpell = SpellFactory.createSpell(this, fightSpells[0]);
+                    fightSpells[0].getNameAndCosts(), () => {
+                        selectedSpell = fightSpells[0];
                         List<Character> enemyList = game.getPage().getCharacters(false);
                         if (enemyList.Count == 0) {
                             //Do nothing
@@ -88,10 +88,10 @@ public abstract class PlayerCharacter : Character {
         }
     }
 
-    void showSpellsAsList(List<string> spells, Game game, bool hideFirst) {
+    void showSpellsAsList(List<Spell> spells, Game game, bool hideFirst) {
         int startIndex = hideFirst ? 1 : 0;
         for (int i = startIndex; i < spells.Count; i++) {
-            Spell spell = SpellFactory.createSpell(this, spells[i]);
+            Spell spell = spells[i];
             game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(spell.getNameAndCosts(), () => {
                 selectedSpell = spell;
                 List<Character> enemies = game.getPage().getCharacters(false);
