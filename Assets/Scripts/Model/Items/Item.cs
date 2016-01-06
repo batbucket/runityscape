@@ -1,15 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using System.Collections.Generic;
 
-public class Item : MonoBehaviour {
+public abstract class Item : Spell
+{
+    public const SpellType SPELL_TYPE = SpellType.BOOST;
+    public const TargetType TARGET_TYPE = TargetType.SINGLE_ALLY;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+    public Item(Character caster, string name) : base(caster, name, SPELL_TYPE, TARGET_TYPE) {
+    }   
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 /**
  * Spells always consume 100% of the user's charge bar
@@ -24,6 +25,16 @@ public abstract class Spell {
         this.spellType = spellType;
         this.targetType = targetType;
         this.costs = costs;
+        this.targets = new List<Character>();
+    }
+
+    public Spell(Character caster, string name, SpellType spellType, TargetType targetType)
+    {
+        this.caster = caster;
+        this.name = name;
+        this.spellType = spellType;
+        this.targetType = targetType;
+        this.costs = new Dictionary<ResourceType, int>();
         this.targets = new List<Character>();
     }
 
@@ -103,9 +114,15 @@ public abstract class Spell {
         successRate = 1;
     }
 
-    public abstract void onSuccess(Game game);
+    public virtual void onSuccess(Game game) {
+        throw new NotImplementedException();
+    }
+
     public abstract void onFailure(Game game);
-    public abstract void undo(Game game);
+    public virtual void undo(Game game)
+    {
+        throw new NotImplementedException();
+    }
     public bool isHit() {
         return hit;
     }
