@@ -72,6 +72,10 @@ public abstract class PairedInt {
         setFalse(falseValue - amount);
     }
 
+    public float getRatio() {
+        return ((float)falseValue) / trueValue;
+    }
+
     /**
      * Reset falseValue to be trueValue
      */

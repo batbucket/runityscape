@@ -67,10 +67,43 @@ public abstract class Character : Entity {
         return resources;
     }
 
+    public bool hasAttribute(AttributeType attributeType) {
+        Attribute attribute = null;
+        attributes.TryGetValue(attributeType, out attribute);
+        return attribute != null;
+    }
+
+    public bool hasResource(ResourceType resourceType) {
+        Resource resource = null;
+        resources.TryGetValue(resourceType, out resource);
+        return resource != null;
+    }
+
+    public void addToAttribute(AttributeType attributeType, bool value, int amount) {
+        if (hasAttribute(attributeType)) {
+            Attribute attribute = getAttribute(attributeType);
+            if (value) {
+                attribute.addTrue(amount);
+            } else {
+                attribute.addFalse(amount);
+            }
+        }
+    }
+
+    public void addToResource(ResourceType resourceType, bool value, int amount) {
+        if (hasResource(resourceType)) {
+            Resource resource = getResource(resourceType);
+            if (value) {
+                resource.addTrue(amount);
+            } else {
+                resource.addFalse(amount);
+            }
+        }
+    }
+
     public Resource getResource(ResourceType resourceType) {
         Resource resource = null;
         resources.TryGetValue(resourceType, out resource);
-        Debug.Assert(resource != null);
         return resource;
     }
 
@@ -115,4 +148,6 @@ public abstract class Character : Entity {
     public abstract void onDefeat(Game game);
     public abstract bool isKilled(Game game);
     public abstract void onKill(Game game);
+    public abstract void onVictory(Game game);
+    public abstract void onBattleEnd(Game game);
 }

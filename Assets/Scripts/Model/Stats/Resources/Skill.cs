@@ -5,7 +5,7 @@ public class Skill : Resource {
     public const string DESCRIPTION = "Regenerates on basic attacks. Used for some spells.";
     public const string LONG_NAME = "Skill";
     public const string SHORT_NAME = "SP";
-    public static readonly Color OVER_COLOR = Util.hexToColor("FFA500"); //orange
+    public static readonly Color OVER_COLOR = Color.yellow; //Formerly Util.hexToColor("FFA500")
     public static readonly Color UNDER_COLOR = Color.black;
     public const ResourceType RESOURCE_TYPE = ResourceType.SKILL;
 

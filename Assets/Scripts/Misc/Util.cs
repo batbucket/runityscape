@@ -11,6 +11,14 @@ using System.Linq;
  * This class holds various helper methods that don't fit anywhere else
  */
 public static class Util {
+    public static bool chance(double probability) {
+        return UnityEngine.Random.Range(0f, 1f) < probability;
+    }
+
+    public static int range(double min, double max) {
+        return (int) UnityEngine.Random.Range((float) min, (float) max);
+    }
+
     public static void setTextAlpha(Text target, float alpha) {
         Color c = target.color;
         c.a = alpha;
@@ -56,7 +64,7 @@ public static class Util {
         return new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
     }
 
-    static char[] splitChars = new char[] { ' ', '-', '\t' };
+    static char[] splitChars = new char[] { ' ', '-', '\t', '\n' };
 
     public static string wordWrap(string str, int width) {
         string[] words = explode(str, splitChars);
@@ -134,29 +142,23 @@ public static class Util {
     }
 
     public static string color(string s, Color c) {
-        return string.Format("<color=#{1}>{0}</color>", s, c);
-    }
-
-    public static string getHex(float f) {
-        string alpha = "0123456789ABCDEF";
-	    return "" + alpha[(int) f];
+        Debug.Log(string.Format("<color={1}>{0}</color>", s, RGBToHex(c)));
+        Debug.Log(RGBToHex(c));
+        return string.Format("<color={1}>{0}</color>", s, RGBToHex(c));
     }
 
     public static string RGBToHex(Color color) {
-        float red = color.r * 255;
-        float green = color.g * 255;
-        float blue = color.b * 255;
+        float redValue = color.r;
+        float greenValue = color.g;
+        float blueValue = color.b;
+        float alpha = color.a;
 
-        string a = getHex(Mathf.Floor(red / 16.0f));
-        string b = getHex(Mathf.Round(red % 16));
-        string c = getHex(Mathf.Floor(green / 16));
-        string d = getHex(Mathf.Round(green % 16));
-        string e = getHex(Mathf.Floor(blue / 16));
-        string f = getHex(Mathf.Round(blue % 16));
-
-        string z = a + b + c + d + e + f;
-
-        return z;
+        //1 checking is for strange [0-1] interval formatting of numbers. Otherwise 256 format
+        return (string.Format("#{0}{1}{2}{3}",
+            ((int)(redValue <= 1 ? redValue * 255 : redValue)).ToString("X2"),
+            ((int)(greenValue <= 1 ? greenValue * 255 : greenValue)).ToString("X2"),
+            ((int)(blueValue <= 1 ? blueValue * 255 : greenValue)).ToString("X2"),
+            ((int)(alpha <= 1 ? alpha * 255 : alpha)).ToString("X2")));
     }
 
     public static T pickRandom<T>(this IEnumerable<T> source) {

@@ -38,9 +38,24 @@ public abstract class PlayerCharacter : Character {
                 break;
             case SelectionType.FIGHT:
                 game.getActionGrid().setButtonAttributes(ActionGridFactory.createProcesses(
-                    "Attack", () => { selectedSpell = SpellFactory.createSpell(fightSpells[0]); setSelectionType(SelectionType.CHOOSE_TARGET); },
-                    resources.ContainsKey(ResourceType.SKILL) ? "Skill" : "Spell", () => { setSelectionType(SelectionType.SPELLS); }
-                    ));
+                    SpellFactory.createSpell(this, fightSpells[0]).getNameAndCosts(), () => {
+                        selectedSpell = SpellFactory.createSpell(this, fightSpells[0]);
+                        List<Character> enemyList = game.getPage().getCharacters(false);
+                        if (enemyList.Count == 0) {
+                            //Do nothing
+                        } else if (enemyList.Count == 1) {
+                            selectedSpell.setTargets(enemyList[0]);
+                            if (selectedSpell.tryCast(game)) {
+                                resetSelection();
+                            }
+                        } else {
+                            setSelectionType(SelectionType.CHOOSE_TARGET);
+                        }
+                    },
+
+                    resources.ContainsKey(ResourceType.SKILL) ? "Skill" : "Spell", () => {
+                        setSelectionType(SelectionType.SPELLS);
+                    }));
                 showBackButton(game);
                 break;
             case SelectionType.ITEM:
@@ -58,28 +73,15 @@ public abstract class PlayerCharacter : Character {
                 showBackButton(game);
                 break;
             case SelectionType.CHOOSE_TARGET:
-                Debug.Assert(selectedSpell != null);
                 List<Character> enemies = game.getPage().getCharacters(false);
                 List<Character> allies = game.getPage().getCharacters(true);
-                for (int i = 0; i < enemies.Count; i++) {
-                    Character enemy = enemies[i];
-                    game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(enemy.getName(), () => {
-                        if (selectedSpell.canCast(this)) {
-                            selectedSpell.initialize(this, enemy);
-                            selectedSpell.tryCast(game);
-                            this.selectionType = SelectionType.FAIM;
-                        }
-                    }), i);
-                }
-                for (int i = 0; i < allies.Count; i++) {
-                    Character ally = allies[i];
-                    game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(ally.getName(), () => {
-                        if (selectedSpell.canCast(this)) {
-                            selectedSpell.initialize(this, ally);
-                            selectedSpell.tryCast(game);
-                            this.selectionType = SelectionType.FAIM;
-                        }
-                    }), i + ALLY_CAST_OFFSET);
+                switch (selectedSpell.getTargetType()) {
+                    case TargetType.SINGLE_ALLY:
+                        showTargets(allies, game);
+                        break;
+                    case TargetType.SINGLE_ENEMY:
+                        showTargets(enemies, game);
+                        break;
                 }
                 showBackButton(game);
                 break;
@@ -89,60 +91,58 @@ public abstract class PlayerCharacter : Character {
     void showSpellsAsList(List<string> spells, Game game, bool hideFirst) {
         int startIndex = hideFirst ? 1 : 0;
         for (int i = startIndex; i < spells.Count; i++) {
-            Spell spell = SpellFactory.createSpell(spells[i]);
-            string descAndCost = spell.getNameAndCosts();
-            string descAndCostRed = Util.color(spell.getName(), Color.red) + spell.getCosts();
-            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(spell.canCast(this) ? descAndCost : descAndCostRed, () => {
+            Spell spell = SpellFactory.createSpell(this, spells[i]);
+            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(spell.getNameAndCosts(), () => {
                 selectedSpell = spell;
+                List<Character> enemies = game.getPage().getCharacters(false);
+                List<Character> allies = game.getPage().getCharacters(true);
                 List<Character> allChars = new List<Character>();
-                allChars.AddRange(game.getPage().getCharacters(true));
-                allChars.AddRange(game.getPage().getCharacters(false));
+                allChars.AddRange(enemies);
+                allChars.AddRange(allies);
                 switch (selectedSpell.getTargetType()) {
-                    case TargetType.SELF:
-                        selectedSpell.initialize(this, this);
-                        selectedSpell.tryCast(game);
+                    case TargetType.SINGLE_ALLY:
+                        if (allies.Count == 0) {
+                            //Do nothing
+                        } else if (allies.Count == 1) {
+                            selectedSpell.setTargets(allies[0]);
+                        } else {
+                            setSelectionType(SelectionType.CHOOSE_TARGET);
+                        }
                         break;
-                    case TargetType.SINGLE:
-                        setSelectionType(SelectionType.CHOOSE_TARGET);
+                    case TargetType.SINGLE_ENEMY:
+                        if (enemies.Count == 0) {
+                            //Do nothing
+                        } else if (enemies.Count == 1) {
+                            selectedSpell.setTargets(enemies[0]);
+                        } else {
+                            setSelectionType(SelectionType.CHOOSE_TARGET);
+                        }
+                        break;
+                    case TargetType.SELF:
+                        selectedSpell.setTargets(this);
                         break;
                     case TargetType.ALL_ALLY:
-                        selectedSpell.initialize(this, game.getPage().getCharacters(true).ToArray());
-                        selectedSpell.tryCast(game);
+                        selectedSpell.setTargets(game.getPage().getCharacters(true).ToArray());
                         break;
                     case TargetType.ALL_ENEMY:
-                        selectedSpell.initialize(this, game.getPage().getCharacters(false).ToArray());
-                        selectedSpell.tryCast(game);
+                        selectedSpell.setTargets(game.getPage().getCharacters(false).ToArray());
                         break;
                     case TargetType.ALL:
-                        selectedSpell.initialize(this, allChars.ToArray());
-                        selectedSpell.tryCast(game);
+                        selectedSpell.setTargets(allChars.ToArray());
                         break;
                 }
-            }
+                    if (selectedSpell.tryCast(game)) {
+                        resetSelection();
+                    }
+                }
 
-            ), i);
+            ), hideFirst ? i - 1 : i);
         }
     }
 
     void showBackButton(Game game) {
         //this one doesn't use set() to prevent infinite looping of lastSelection
-        game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Back", () => selectionType = lastSelectionStack.Pop()), BACK_INDEX);
-    }
-
-    public override bool isDefeated(Game game) {
-        throw new NotImplementedException();
-    }
-
-    public override bool isKilled(Game game) {
-        throw new NotImplementedException();
-    }
-
-    public override void onDefeat(Game game) {
-        throw new NotImplementedException();
-    }
-
-    public override void onKill(Game game) {
-        throw new NotImplementedException();
+        game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Back", () => returnToLastSelection() ), BACK_INDEX);
     }
 
     public override void onStart(Game game) {
@@ -159,7 +159,25 @@ public abstract class PlayerCharacter : Character {
         this.lastSelectionStack.Push(lastSelection);
     }
 
-    public override void react(Spell spell, Game game) {
-        //throw new NotImplementedException();
+    public void showTargets(List<Character> targets,Game game) {
+        for (int i = 0; i < targets.Count; i++) {
+            Character target = targets[i];
+            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(selectedSpell.canCast() ? target.getName() : string.Format("{0}{1}{2}", "<color=red>", target.getName(), "</color>"), () => {
+                if (selectedSpell.canCast()) {
+                    selectedSpell.setTargets(target);
+                    selectedSpell.tryCast(game);
+                    resetSelection();
+                }
+            }), i);
+        }
+    }
+
+    public void resetSelection() {
+        this.selectionType = SelectionType.FAIM;
+        lastSelectionStack.Clear();
+    }
+
+    public void returnToLastSelection() {
+        selectionType = lastSelectionStack.Pop();
     }
 }
