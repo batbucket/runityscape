@@ -142,8 +142,6 @@ public static class Util {
     }
 
     public static string color(string s, Color c) {
-        Debug.Log(string.Format("<color={1}>{0}</color>", s, RGBToHex(c)));
-        Debug.Log(RGBToHex(c));
         return string.Format("<color={1}>{0}</color>", s, RGBToHex(c));
     }
 

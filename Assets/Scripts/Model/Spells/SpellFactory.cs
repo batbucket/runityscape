@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public static class SpellFactory {
     public static Spell createSpell(Character caster, string spellName) {
@@ -8,7 +9,7 @@ public static class SpellFactory {
         return spell;
     }
 
-    public static Spell createSpell(Character caster, string spellName, params Character[] targets) {
+    public static Spell createSpell(Character caster, string spellName, List<Character> targets) {
         Spell spell = createSpell(caster, spellName);
         spell.setTargets(targets);
         return spell;

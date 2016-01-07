@@ -111,6 +111,7 @@
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\SpellResult.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellType.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\TargetType.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\Attribute.cs" />

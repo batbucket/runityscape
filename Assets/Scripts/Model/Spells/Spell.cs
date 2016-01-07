@@ -17,7 +17,9 @@ public abstract class Spell {
     protected List<Character> targets;
 
     protected double successRate;
-    protected bool hit;
+    protected SpellResult result;
+
+    protected string castText;
 
     public Spell(Character caster, string name, SpellType spellType, TargetType targetType, Dictionary<ResourceType, int> costs) {
         this.caster = caster;
@@ -38,10 +40,13 @@ public abstract class Spell {
         this.targets = new List<Character>();
     }
 
-    public Spell setTargets(params Character[] targets) {
+    public void setTargets(List<Character> targets) {
+        this.targets = targets;
+    }
+
+    public void setTarget(Character target) {
         this.targets.Clear();
-        this.targets.AddRange(targets);
-        return this;
+        this.targets.Add(target);
     }
 
     public string getName() {
@@ -70,7 +75,7 @@ public abstract class Spell {
         return targetType;
     }
 
-    public bool canCast() {
+    public virtual bool canCast() {
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
             if (caster.getResource(resourceCost.Key) == null || caster.getResource(resourceCost.Key).getFalse() < resourceCost.Value) {
                 return false;
@@ -86,29 +91,23 @@ public abstract class Spell {
         caster.getResource(ResourceType.CHARGE).clearFalse();
     }
 
-    public void reactions(Game game) {
-        foreach(Character character in targets) {
-            character.react(this, game);
-        }
-    }
-
-    public bool tryCast(Game game) {
-
+    public void tryCast() {
         if (canCast()) {
-            cast(game);
+            cast();
             consumeResources();
-            reactions(game);
-            return true;
+        } else {
+            result = SpellResult.CANT_CAST;
         }
-        return false;
     }
 
-    protected void cast(Game game) {
+    protected void cast() {
         calculateSuccessRate();
-        if (hit = (Util.chance(successRate))) {
-            onSuccess(game);
+        if (Util.chance(successRate)) {
+            onSuccess();
+            result = SpellResult.HIT;
         } else {
-            onFailure(game);
+            onFailure();
+            result = SpellResult.MISS;
         }
     }
 
@@ -116,10 +115,18 @@ public abstract class Spell {
         successRate = 1;
     }
 
-    public abstract void onSuccess(Game game);
-    public abstract void onFailure(Game game);
-    public abstract void undo(Game game);
-    public bool isHit() {
-        return hit;
+    public abstract void onSuccess();
+    public abstract void onFailure();
+    public abstract void undo();
+    public SpellResult getResult() {
+        return result;
+    }
+
+    public string getCastText() {
+        return castText;
+    }
+
+    protected void setCastText(string s) {
+        castText = s;
     }
 }

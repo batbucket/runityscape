@@ -4,17 +4,17 @@ using System;
 
 public class Steve : ComputerCharacter {
     public Steve() : base(Util.getSprite("laughing_shinx"), "Steve", 0, 5, 5, 5, 5) {
+        side = true;
         addResources(ResourceFactory.createResource(ResourceType.SKILL, 3));
         getFight().Add(new Attack(this));
-        getFight().Add(new Meditate(this));
     }
 
     public override void act(int chargeAmount, Game game) {
         base.act(chargeAmount, game);
         if (getResource(ResourceType.HEALTH).getRatio() < .5) {
-            fightSpells[0].setTargets(game.getPage().getCharacters(true).ToArray()[0]).tryCast(game);
+            quickCast(new Meditate(this), game);
         } else {
-            fightSpells[0].setTargets(game.getPage().getCharacters(true).ToArray()[0]).tryCast(game);
+            quickCast(new Attack(this), game);
         }
     }
 
@@ -47,7 +47,7 @@ public class Steve : ComputerCharacter {
     }
 
     public override void react(Spell spell, Game game) {
-        if (spell.isHit()) {
+        if (spell.getResult() == SpellResult.HIT) {
             game.postText("* Ouch.", Color.green);
         } else {
             game.postText("* lol u missed", Color.green);

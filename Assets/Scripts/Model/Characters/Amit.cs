@@ -4,6 +4,7 @@ using System;
 
 public class Amit : PlayerCharacter {
     public Amit() : base(Util.getSprite("crying_mudkip"), "Amit", 0, 5, 5, 5, 5) {
+        side = false;
         addResources(ResourceFactory.createResource(ResourceType.SKILL, 3));
         fightSpells.Add(new Attack(this));
         fightSpells.Add(new Meditate(this));

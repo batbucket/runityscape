@@ -48,7 +48,7 @@ public class Game : MonoBehaviour {
                                                        d3: "Leave",
                                                        a3: () => { setPage(p1); }
                                                        ));
-        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit() }, right: new List<Character>() { new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
+        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Steve() }, right: new List<Character>() { new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
 	}
 
 	// Update is called once per frame
@@ -62,8 +62,8 @@ public class Game : MonoBehaviour {
                 actionGrid.setButtonAttributes(currentPage.getActions());
                 break;
             case PageType.BATTLE:
-                battleTick(currentPage.getCharacters(true), leftPortraits);
-                battleTick(currentPage.getCharacters(false), rightPortraits);
+                battleTick(currentPage.getCharacters(false), leftPortraits);
+                battleTick(currentPage.getCharacters(true), rightPortraits);
                 break;
         }
 
@@ -135,6 +135,38 @@ public class Game : MonoBehaviour {
 
     public Page getPage() {
         return currentPage;
+    }
+
+
+    public List<Character> getCharacters(bool isRightSide) {
+        return currentPage.getCharacters(isRightSide);
+    }
+
+    public List<Character> getAllies(bool isRightSide) {
+        return getCharacters(isRightSide);
+    }
+
+    public List<Character> getEnemies(bool isRightSide) {
+        return getCharacters(!isRightSide);
+    }
+
+    public Character getRandomAlly(bool isRightSide) {
+        return getRandomChar(getCharacters(isRightSide));
+    }
+
+    public Character getRandomEnemy(bool isRightSide) {
+        return getRandomChar(getCharacters(!isRightSide));
+    }
+
+    public List<Character> getAll() {
+        List<Character> allChars = new List<Character>();
+        allChars.AddRange(getCharacters(true));
+        allChars.AddRange(getCharacters(false));
+        return allChars;
+    }
+
+    public static Character getRandomChar(List<Character> characters) {
+        return characters[UnityEngine.Random.Range(0, characters.Count - 1)];
     }
 
     void createGraph() {

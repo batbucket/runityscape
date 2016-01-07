@@ -9,19 +9,19 @@ public abstract class ConsumableItem : Item {
         this.consumed = false;
     }
 
-    public override void onFailure(Game game) {
+    public override void onFailure() {
         throw new NotImplementedException();
     }
 
-    public override void onSuccess(Game game) {
+    public override void onSuccess() {
         consumed = true;
     }
 
-    public override void calculateSuccessRate() {
-        successRate = consumed ? 0 : 1;
+    public override bool canCast() {
+        return !consumed;
     }
 
-    public override void undo(Game game) {
+    public override void undo() {
         consumed = false;
     }
 }

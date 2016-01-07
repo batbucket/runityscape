@@ -17,6 +17,7 @@ public abstract class Character : Entity {
     protected List<Spell> actSpells;
     protected List<Item> items;
     protected List<Spell> mercySpells;
+    protected bool side;
 
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality) : base(sprite) {
         this.name = name;
@@ -79,7 +80,7 @@ public abstract class Character : Entity {
         return resource != null;
     }
 
-    public void addToAttribute(AttributeType attributeType, bool value, int amount) {
+    public virtual bool addToAttribute(AttributeType attributeType, bool value, int amount) {
         if (hasAttribute(attributeType)) {
             Attribute attribute = getAttribute(attributeType);
             if (value) {
@@ -87,10 +88,12 @@ public abstract class Character : Entity {
             } else {
                 attribute.addFalse(amount);
             }
+            return true;
         }
+        return false;
     }
 
-    public void addToResource(ResourceType resourceType, bool value, int amount) {
+    public virtual bool addToResource(ResourceType resourceType, bool value, int amount) {
         if (hasResource(resourceType)) {
             Resource resource = getResource(resourceType);
             if (value) {
@@ -98,7 +101,9 @@ public abstract class Character : Entity {
             } else {
                 resource.addFalse(amount);
             }
+            return true;
         }
+        return false;
     }
 
     public Resource getResource(ResourceType resourceType) {
@@ -139,6 +144,10 @@ public abstract class Character : Entity {
     public bool isCharged() {
         Debug.Assert(getResource(ResourceType.CHARGE) != null);
         return getResource(ResourceType.CHARGE).isMaxed();
+    }
+
+    public bool getSide() {
+        return side;
     }
 
     public abstract void act(int chargeAmount, Game game);

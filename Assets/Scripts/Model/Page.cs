@@ -99,8 +99,8 @@ public class Page : IPage {
         onFirstExitProcess = p;
     }
 
-    public List<Character> getCharacters(bool isLeftSide) {
-        return isLeftSide ? leftCharacters : rightCharacters;
+    public List<Character> getCharacters(bool isRightSide) {
+        return isRightSide ? rightCharacters : leftCharacters;
     }
 
     public void setAction(Process action, int index) {
@@ -152,5 +152,9 @@ public class Page : IPage {
 
         // Return true if the fields match:
         return p.getId() == this.getId();
+    }
+
+    public override int GetHashCode() {
+        return id;
     }
 }
