@@ -100,7 +100,7 @@ public abstract class Spell {
         }
     }
 
-    protected void cast() {
+    protected virtual void cast() {
         calculateSuccessRate();
         if (Util.chance(successRate)) {
             onSuccess();
@@ -123,10 +123,16 @@ public abstract class Spell {
     }
 
     public string getCastText() {
-        return castText;
+        string s = castText;
+        castText = null;
+        return s;
     }
 
     protected void setCastText(string s) {
         castText = s;
+    }
+
+    public bool isTarget(Character c) {
+        return targets != null && targets.Contains(c);
     }
 }

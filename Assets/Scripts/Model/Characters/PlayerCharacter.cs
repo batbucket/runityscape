@@ -6,19 +6,21 @@ using System.Collections.Generic;
 public abstract class PlayerCharacter : Character {
     SelectionType selectionType;
     Stack<SelectionType> lastSelectionStack;
-    Spell selectedSpell;
     Spell lastNonAttackSpell;
+
+    Spell targetedSpell;
+    List<Character> targets;
 
     public const int BACK_INDEX = 11; //Last hotkey is letter 'V'
     public const int ALLY_CAST_OFFSET = 4;
 
-    public PlayerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality)
-        : base(sprite, name, level, strength, intelligence, dexterity, vitality) {
+    public PlayerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor)
+        : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor) {
         lastSelectionStack = new Stack<SelectionType>();
     }
 
     public override void act(int chargeAmount, Game game) {
-        charge(chargeAmount);
+        base.act(chargeAmount, game);
         display(game);
     }
 
@@ -31,10 +33,10 @@ public abstract class PlayerCharacter : Character {
             case SelectionType.FAIM:
                 game.getActionGrid().setButtonAttributes(ActionGridFactory.createProcesses(
                     getSpellText(fightSpells[0]), () => {
-                        targetSelection(fightSpells[0], game);
+                        determineTargetSelection(fightSpells[0], game);
                     },
                     getSpellText(lastNonAttackSpell), () => {
-                        targetSelection(lastNonAttackSpell, game);
+                        determineTargetSelection(lastNonAttackSpell, game);
                     },
                     getCorrectSpellListName(), () => {
                         setSelectionType(SelectionType.SPELLS);
@@ -47,6 +49,7 @@ public abstract class PlayerCharacter : Character {
                 showBackButton(game);
                 break;
             case SelectionType.ITEM:
+                showInventory(game);
                 showBackButton(game);
                 break;
             case SelectionType.MERCY:
@@ -61,14 +64,7 @@ public abstract class PlayerCharacter : Character {
                 showBackButton(game);
                 break;
             case SelectionType.CHOOSE_TARGET:
-                switch (selectedSpell.getTargetType()) {
-                    case TargetType.SINGLE_ALLY:
-                        showTargets(game.getAllies(side), game);
-                        break;
-                    case TargetType.SINGLE_ENEMY:
-                        showTargets(game.getEnemies(side), game);
-                        break;
-                }
+                showTargetSelection(game);
                 showBackButton(game);
                 break;
         }
@@ -79,7 +75,7 @@ public abstract class PlayerCharacter : Character {
         for (int i = startIndex; i < spells.Count; i++) {
             Spell spell = spells[i];
             game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(
-                getSpellText(spell), () => targetSelection(spell, game)
+                getSpellText(spell), () => determineTargetSelection(spell, game)
             ), hideFirst ? i - 1 : i);
         }
     }
@@ -103,16 +99,6 @@ public abstract class PlayerCharacter : Character {
         this.lastSelectionStack.Push(lastSelection);
     }
 
-    void showTargets(List<Character> targets,Game game) {
-        for (int i = 0; i < targets.Count; i++) {
-            Character target = targets[i];
-            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(selectedSpell.canCast() ? target.getName() : string.Format("{0}{1}{2}", "<color=red>", target.getName(), "</color>"), () => {
-                selectedSpell.setTarget(target);
-                castAndResetStateIfSuccessful();
-            }), i);
-        }
-    }
-
     void resetSelection() {
         this.selectionType = SelectionType.FAIM;
         lastSelectionStack.Clear();
@@ -122,13 +108,14 @@ public abstract class PlayerCharacter : Character {
         selectionType = lastSelectionStack.Pop();
     }
 
-    void castAndResetStateIfSuccessful() {
-        selectedSpell.tryCast();
-        if (selectedSpell.getResult() != SpellResult.CANT_CAST) {
-
+    void castAndResetStateIfSuccessful(Spell spell, Game game) {
+        spell.tryCast();
+        game.postText(spell.getCastText(), textColor);
+        getReactions(spell, game);
+        if (spell.getResult() != SpellResult.CANT_CAST) {
             resetSelection();
-            if (selectedSpell != fightSpells[0]) {
-                lastNonAttackSpell = selectedSpell;
+            if (spell != fightSpells[0] && !(spell is Item)) {
+                lastNonAttackSpell = spell;
             }
         }
     }
@@ -141,48 +128,87 @@ public abstract class PlayerCharacter : Character {
         }
     }
 
-    void targetSelection(Spell spell, Game game) {
+    void determineTargetSelection(Spell spell, Game game) {
         if (spell == null) {
             return;
         }
-        selectedSpell = spell;
         List<Character> enemies = game.getEnemies(side);
         List<Character> allies = game.getEnemies(side);
         List<Character> allChars = game.getAll();
-        switch (selectedSpell.getTargetType()) {
+        switch (spell.getTargetType()) {
             case TargetType.SINGLE_ALLY:
-                showTargetSelectionIfNeeded(allies);
-                break;
+                determineSingleTargetQuickCast(spell, allies, game);
+                return;
             case TargetType.SINGLE_ENEMY:
-                showTargetSelectionIfNeeded(enemies);
-                break;
+                determineSingleTargetQuickCast(spell, enemies, game);
+                return;
             case TargetType.SELF:
-                selectedSpell.setTarget(this);
+                spell.setTarget(this);
                 break;
             case TargetType.ALL_ALLY:
-                selectedSpell.setTargets(game.getAllies(side));
+                spell.setTargets(game.getAllies(side));
                 break;
             case TargetType.ALL_ENEMY:
-                selectedSpell.setTargets(game.getEnemies(side));
+                spell.setTargets(game.getEnemies(side));
                 break;
             case TargetType.ALL:
-                selectedSpell.setTargets(game.getAll());
+                spell.setTargets(game.getAll());
                 break;
         }
-        castAndResetStateIfSuccessful();
+        castAndResetStateIfSuccessful(spell, game);
+    }
+
+    void determineSingleTargetQuickCast(Spell spell, List<Character> targets, Game game) {
+        if (targets.Count == 0) {
+            // Do nothing
+        } else if (targets.Count == 1) {
+            spell.setTarget(targets[0]);
+            castAndResetStateIfSuccessful(spell, game);
+        } else {
+            setTargetedSpell(spell);
+            setTargets(targets);
+            setSelectionType(SelectionType.CHOOSE_TARGET);
+        }
+    }
+
+    void showTargetSelection(Game game) {
+        for (int i = 0; i < targets.Count; i++) {
+            Character target = targets[i];
+            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(getTargetedSpell().canCast() ? target.getName() : string.Format("{0}{1}{2}", "<color=red>", target.getName(), "</color>"), () => {
+                getTargetedSpell().setTarget(target);
+                castAndResetStateIfSuccessful(getTargetedSpell(), game);
+            }), i);
+        }
+    }
+
+    void showInventory(Game game) {
+        int index = 0;
+        foreach (KeyValuePair<Item, int> pair in inventory.getDictionary()) {
+            string nameAndCount = string.Format("{0} x {1}", pair.Key.getName(), pair.Value);
+            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(pair.Key.canCast() ? nameAndCount : string.Format("{0}{1}{2}", "<color=red>", nameAndCount, "</color>"), () => {
+                inventory.remove(pair.Key);
+                castAndResetStateIfSuccessful(pair.Key, game);
+            }), index++);
+        }
     }
 
     string getCorrectSpellListName() {
         return resources.ContainsKey(ResourceType.SKILL) ? "Skill" : "Spell";
     }
 
-    void showTargetSelectionIfNeeded(List<Character> targets) {
-        if (targets.Count == 0) {
-            //Do nothing
-        } else if (targets.Count == 1) {
-            selectedSpell.setTarget(targets[0]);
-        } else {
-            setSelectionType(SelectionType.CHOOSE_TARGET);
-        }
+    void setTargetedSpell(Spell spell) {
+        targetedSpell = spell;
+    }
+
+    void setTargets(List<Character> targets) {
+        this.targets = targets;
+    }
+
+    List<Character> getTargets() {
+        return targets;
+    }
+
+    Spell getTargetedSpell() {
+        return targetedSpell;
     }
 }

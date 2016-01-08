@@ -15,11 +15,14 @@ public abstract class Character : Entity {
     protected SortedDictionary<ResourceType, Resource> resources;
     protected List<Spell> fightSpells;
     protected List<Spell> actSpells;
-    protected List<Item> items;
+    protected Inventory inventory;
     protected List<Spell> mercySpells;
     protected bool side;
 
-    public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality) : base(sprite) {
+    protected bool reachedFullCharge;
+    protected readonly Color textColor;
+
+    public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor) : base(sprite) {
         this.name = name;
         this.level = level;
         this.attributes = new SortedDictionary<AttributeType, Attribute>() {
@@ -35,20 +38,21 @@ public abstract class Character : Entity {
         };
         this.fightSpells = new List<Spell>();
         this.actSpells = new List<Spell>();
-        this.items = new List<Item>();
+        this.inventory = new Inventory();
         this.mercySpells = new List<Spell>();
+        this.textColor = textColor;
 
         getResource(ResourceType.CHARGE).clearFalse();
     }
 
     public void addAttributes(params Attribute[] attributes) {
-        foreach(Attribute attribute in attributes) {
+        foreach (Attribute attribute in attributes) {
             this.attributes.Add(attribute.getAttributeType(), attribute);
         }
     }
 
     public void addResources(params Resource[] resources) {
-        foreach(Resource resource in resources) {
+        foreach (Resource resource in resources) {
             this.resources.Add(resource.getResourceType(), resource);
         }
     }
@@ -120,8 +124,8 @@ public abstract class Character : Entity {
         return actSpells;
     }
 
-    public List<Item> getItem() {
-        return items;
+    public Inventory getInventory() {
+        return inventory;
     }
 
     public List<Spell> getMercy() {
@@ -134,6 +138,10 @@ public abstract class Character : Entity {
 
     public string getName() {
         return name;
+    }
+
+    public void setName(string s) {
+        name = s;
     }
 
     public void charge(int amount) {
@@ -150,8 +158,26 @@ public abstract class Character : Entity {
         return side;
     }
 
-    public abstract void act(int chargeAmount, Game game);
-    public abstract void react(Spell spell, Game game);
+    protected void getReactions(Spell spell, Game game) {
+        List<Character> characters = game.getAll();
+        foreach (Character c in characters) {
+            c.react(spell, game);
+        }
+    }
+
+    public virtual void act(int chargeAmount, Game game) {
+        charge(chargeAmount);
+        if (isCharged() && !reachedFullCharge) {
+            reachedFullCharge = true;
+            onFullCharge(game);
+        }
+        if (!isCharged()) {
+            reachedFullCharge = false;
+        }
+    }
+
+    protected abstract void onFullCharge(Game game);
+    protected abstract void react(Spell spell, Game game);
     public abstract void onStart(Game game);
     public abstract bool isDefeated(Game game);
     public abstract void onDefeat(Game game);
@@ -159,4 +185,25 @@ public abstract class Character : Entity {
     public abstract void onKill(Game game);
     public abstract void onVictory(Game game);
     public abstract void onBattleEnd(Game game);
+
+
+    public override bool Equals(object obj) {
+        // If parameter is null return false.
+        if (obj == null) {
+            return false;
+        }
+
+        // If parameter cannot be cast to Page return false.
+        Character c = obj as Character;
+        if ((object)c == null) {
+            return false;
+        }
+
+        // Return true if the fields match:
+        return c.getName().Equals(this.getName());
+    }
+
+    public override int GetHashCode() {
+        return name.GetHashCode();
+    }
 }

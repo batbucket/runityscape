@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Page : IPage {
 
@@ -27,8 +28,8 @@ public class Page : IPage {
         List<Process> actions = null) {
         this.text = text;
         this.actions = (actions != null) ? actions : new List<Process>();
-        this.leftCharacters = (left != null) ? left : new List<Character>();
-        this.rightCharacters = (right != null) ? right : new List<Character>();
+        if (left != null) setLeft(left); else this.leftCharacters = new List<Character>();
+        if (right != null) setRight(right); else this.rightCharacters = new List<Character>();
         this.onFirstEnterProcess = onFirstEnter;
         this.onEnterProcess = onEnter;
         this.onFirstExitProcess = onFirstExit;
@@ -127,11 +128,46 @@ public class Page : IPage {
     }
 
     public void setLeft(List<Character> characters) {
-        leftCharacters = characters;
+        setSide(characters, false);
     }
 
     public void setRight(List<Character> characters) {
-        rightCharacters = characters;
+        setSide(characters, true);
+    }
+
+    public void setSide(List<Character> characters, bool side) {
+        repeatedCharacterCheck(characters);
+        if (!side) {
+            leftCharacters = characters;
+        } else {
+            rightCharacters = characters;
+        }
+    }
+
+    /**
+     * Check if repeated characters exist on a side, if so, append A->Z for each repeated character
+     * For example: Steve A, Steve B
+     */
+    public void repeatedCharacterCheck(List<Character> characters) {
+        Dictionary<string, List<Character>> repeatedCharacters = new Dictionary<string, List<Character>>();
+        foreach (Character c in characters) {
+            if (!repeatedCharacters.ContainsKey(c.getName())) {
+                List<Character> characterList = new List<Character>();
+                characterList.Add(c);
+                repeatedCharacters.Add(c.getName(), characterList);
+            } else {
+                repeatedCharacters[c.getName()].Add(c);
+            }
+        }
+
+        foreach (KeyValuePair<string, List<Character>> cPair in repeatedCharacters) {
+            if (cPair.Value.Count > 1) {
+                for (int i = 0; i < cPair.Value.Count; i++) {
+                    Character c = cPair.Value[i];
+                    c.setName(string.Format("{0} {1}", c.getName(), Util.intToLetter(i + 1)));
+                }
+            }
+        }
     }
 
     public int getId() {

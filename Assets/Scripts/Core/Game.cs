@@ -48,7 +48,7 @@ public class Game : MonoBehaviour {
                                                        d3: "Leave",
                                                        a3: () => { setPage(p1); }
                                                        ));
-        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Steve() }, right: new List<Character>() { new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
+        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit() }, right: new List<Character>() { new Steve(), new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
 	}
 
 	// Update is called once per frame
@@ -103,12 +103,15 @@ public class Game : MonoBehaviour {
         return textBoxes;
     }
 
-    public TextBoxManager postText(string s) {
-        return postText(s, Color.white);
+    public void postText(string s) {
+        postText(s, Color.white);
     }
 
-    public TextBoxManager postText(string s, Color color) {
-        return TextBoxFactory.createTextBox(getTextBoxHolder(), s, NORMAL_TEXT_SPEED, color);
+    public void postText(string s, Color color) {
+        if (s == null) {
+            return;
+        }
+        TextBoxFactory.createTextBox(getTextBoxHolder(), s, NORMAL_TEXT_SPEED, color);
     }
 
     public PortraitHolderManager returnPortrait(bool left) {

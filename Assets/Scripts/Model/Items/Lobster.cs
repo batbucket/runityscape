@@ -15,11 +15,12 @@ public class Lobster : ConsumableItem {
     public override void onSuccess() {
         base.onSuccess();
         caster.addToResource(ResourceType.HEALTH, false, HEAL_AMOUNT);
-        setCastText("HURRDURR IM EATING A LOBSTA");
+        setCastText(string.Format("* {0} eats a Lobster for {1} HP!", caster.getName(), HEAL_AMOUNT));
     }
 
     public override void undo() {
         base.undo();
+        caster.getInventory().add(this);
         caster.addToResource(ResourceType.HEALTH, false, -HEAL_AMOUNT);
     }
 }

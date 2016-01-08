@@ -3,12 +3,12 @@ using System.Collections;
 using System;
 
 public class Amit : PlayerCharacter {
-    public Amit() : base(Util.getSprite("crying_mudkip"), "Amit", 0, 5, 5, 5, 5) {
+    public Amit() : base(Util.getSprite("crying_mudkip"), "Amit", 0, 5, 5, 5, 5, Color.white) {
         side = false;
         addResources(ResourceFactory.createResource(ResourceType.SKILL, 3));
         fightSpells.Add(new Attack(this));
         fightSpells.Add(new Meditate(this));
-        fightSpells.Add(new Lobster(this));
+        inventory.add(new Lobster(this));
     }
 
     public override bool isDefeated(Game game) {
@@ -35,7 +35,11 @@ public class Amit : PlayerCharacter {
         throw new NotImplementedException();
     }
 
-    public override void react(Spell spell, Game game) {
+    protected override void onFullCharge(Game game) {
+
+    }
+
+    protected override void react(Spell spell, Game game) {
 
     }
 }

@@ -180,4 +180,19 @@ public static class Util {
     public static Sprite getSprite(string name) {
         return Resources.Load<Sprite>(name);
     }
+
+    /**
+     * Converts 1 to A, 2 to B, and so on
+     */
+    public static string intToLetter(int column) {
+        string columnString = "";
+        decimal columnNumber = column;
+        while (columnNumber > 0) {
+            decimal currentLetterNumber = (columnNumber - 1) % 26;
+            char currentLetter = (char)(currentLetterNumber + 65);
+            columnString = currentLetter + columnString;
+            columnNumber = (columnNumber - (currentLetterNumber + 1)) / 26;
+        }
+        return columnString;
+    }
 }
