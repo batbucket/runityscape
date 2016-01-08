@@ -3,29 +3,30 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Inventory {
-    Dictionary<Item, int> itemList;
+    List<Item> itemList;
     public const int CAPACITY = 11;
     public Inventory() {
-        itemList = new Dictionary<Item, int>();
+        itemList = new List<Item>();
     }
 
     public bool add(Item item) {
         if (isFull()) {
             return false;
-        } else if (!itemList.ContainsKey(item)) {
-            itemList.Add(item, 1);
+        } else if (!itemList.Contains(item)) {
+            itemList.Add(item);
         } else {
-            itemList[item]++;
+            find(item).addCount(item.getCount());
         }
-            return true;
+        return true;
     }
 
     public bool remove(Item item) {
-        if (!itemList.ContainsKey(item)) {
+        if (!itemList.Contains(item)) {
             return false;
-        } else if (itemList[item] > 1) {
-            itemList[item]--;
+        } else if (find(item).getCount() > 1) {
+            find(item).decCount();
         } else {
+            item.decCount();
             itemList.Remove(item);
         }
         return true;
@@ -33,17 +34,21 @@ public class Inventory {
 
     public int getCount() {
         int count = 0;
-        foreach (KeyValuePair<Item, int> k in itemList) {
-            count += k.Value;
+        foreach (Item item in itemList) {
+            count += item.getCount();
         }
         return count;
     }
 
-    public Dictionary<Item, int> getDictionary() {
+    public List<Item> getList() {
         return itemList;
     }
 
     public bool isFull() {
         return getCount() >= CAPACITY;
+    }
+
+    Item find(Item item) {
+        return itemList.Find(x => x.Equals(item));
     }
 }

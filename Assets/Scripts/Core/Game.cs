@@ -145,20 +145,20 @@ public class Game : MonoBehaviour {
         return currentPage.getCharacters(isRightSide);
     }
 
-    public List<Character> getAllies(bool isRightSide) {
-        return getCharacters(isRightSide);
+    public List<Character> getAllies(bool side) {
+        return getCharacters(side);
     }
 
-    public List<Character> getEnemies(bool isRightSide) {
-        return getCharacters(!isRightSide);
+    public List<Character> getEnemies(bool side) {
+        return getCharacters(!side);
     }
 
-    public Character getRandomAlly(bool isRightSide) {
-        return getRandomChar(getCharacters(isRightSide));
+    public Character getRandomAlly(bool side) {
+        return getRandomChar(getCharacters(side));
     }
 
-    public Character getRandomEnemy(bool isRightSide) {
-        return getRandomChar(getCharacters(!isRightSide));
+    public Character getRandomEnemy(bool side) {
+        return getRandomChar(getCharacters(!side));
     }
 
     public List<Character> getAll() {

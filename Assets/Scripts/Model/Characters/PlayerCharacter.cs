@@ -2,11 +2,12 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public abstract class PlayerCharacter : Character {
     SelectionType selectionType;
     Stack<SelectionType> lastSelectionStack;
-    Spell lastNonAttackSpell;
+    Stack<Spell> lastSpellStack;
 
     Spell targetedSpell;
     List<Character> targets;
@@ -17,6 +18,8 @@ public abstract class PlayerCharacter : Character {
     public PlayerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor)
         : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor) {
         lastSelectionStack = new Stack<SelectionType>();
+        lastSpellStack = new Stack<Spell>();
+        lastSpellStack.Push(null); //placeholder
     }
 
     public override void act(int chargeAmount, Game game) {
@@ -35,8 +38,8 @@ public abstract class PlayerCharacter : Character {
                     getSpellText(fightSpells[0]), () => {
                         determineTargetSelection(fightSpells[0], game);
                     },
-                    getSpellText(lastNonAttackSpell), () => {
-                        determineTargetSelection(lastNonAttackSpell, game);
+                    getSpellText(lastSpellStack.Peek()), () => {
+                        determineTargetSelection(lastSpellStack.Peek(), game);
                     },
                     getCorrectSpellListName(), () => {
                         setSelectionType(SelectionType.SPELLS);
@@ -49,7 +52,7 @@ public abstract class PlayerCharacter : Character {
                 showBackButton(game);
                 break;
             case SelectionType.ITEM:
-                showInventory(game);
+                showSpellsAsList(inventory.getList().Cast<Spell>().ToList(), game, false);
                 showBackButton(game);
                 break;
             case SelectionType.MERCY:
@@ -64,7 +67,7 @@ public abstract class PlayerCharacter : Character {
                 showBackButton(game);
                 break;
             case SelectionType.CHOOSE_TARGET:
-                showTargetSelection(game);
+                showTargetsAsList(targets, game);
                 showBackButton(game);
                 break;
         }
@@ -77,6 +80,18 @@ public abstract class PlayerCharacter : Character {
             game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(
                 getSpellText(spell), () => determineTargetSelection(spell, game)
             ), hideFirst ? i - 1 : i);
+        }
+    }
+
+    void showTargetsAsList(List<Character> targets, Game game) {
+        for (int i = 0; i < targets.Count; i++) {
+            Character target = targets[i];
+            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(
+                string.Format("{0}{1}{2}", targetedSpell.canCast() ? "" : "<color=red>", target.getName(), targetedSpell.canCast() ? "" : "</color>"), () => {
+                    targetedSpell.setTarget(target);
+                    castAndResetStateIfSuccessful(targetedSpell, game);
+                }
+                ), i);
         }
     }
 
@@ -110,19 +125,24 @@ public abstract class PlayerCharacter : Character {
 
     void castAndResetStateIfSuccessful(Spell spell, Game game) {
         spell.tryCast();
-        game.postText(spell.getCastText(), textColor);
+        talk(spell.getCastText(), game);
         getReactions(spell, game);
         if (spell.getResult() != SpellResult.CANT_CAST) {
             resetSelection();
-            if (spell != fightSpells[0] && !(spell is Item)) {
-                lastNonAttackSpell = spell;
+            if (spell != fightSpells[0]) {
+                pushLastSpell(spell);
+            }
+            if (spell is Item && ((Item)spell).getCount() <= 0) {
+                while (lastSpellStack.Peek() != null && spell.Equals(lastSpellStack.Peek())) {
+                    lastSpellStack.Pop();
+                }
             }
         }
     }
 
     string getSpellText(Spell spell) {
         if (spell != null) {
-            return spell.getNameAndCosts();
+            return spell.getNameAndInfo();
         } else {
             return "";
         }
@@ -132,15 +152,12 @@ public abstract class PlayerCharacter : Character {
         if (spell == null) {
             return;
         }
-        List<Character> enemies = game.getEnemies(side);
-        List<Character> allies = game.getEnemies(side);
-        List<Character> allChars = game.getAll();
         switch (spell.getTargetType()) {
             case TargetType.SINGLE_ALLY:
-                determineSingleTargetQuickCast(spell, allies, game);
+                determineSingleTargetQuickCast(spell, game.getAllies(side), game);
                 return;
             case TargetType.SINGLE_ENEMY:
-                determineSingleTargetQuickCast(spell, enemies, game);
+                determineSingleTargetQuickCast(spell, game.getEnemies(side), game);
                 return;
             case TargetType.SELF:
                 spell.setTarget(this);
@@ -171,23 +188,12 @@ public abstract class PlayerCharacter : Character {
         }
     }
 
-    void showTargetSelection(Game game) {
-        for (int i = 0; i < targets.Count; i++) {
-            Character target = targets[i];
-            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(getTargetedSpell().canCast() ? target.getName() : string.Format("{0}{1}{2}", "<color=red>", target.getName(), "</color>"), () => {
-                getTargetedSpell().setTarget(target);
-                castAndResetStateIfSuccessful(getTargetedSpell(), game);
-            }), i);
-        }
-    }
-
     void showInventory(Game game) {
         int index = 0;
-        foreach (KeyValuePair<Item, int> pair in inventory.getDictionary()) {
-            string nameAndCount = string.Format("{0} x {1}", pair.Key.getName(), pair.Value);
-            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(pair.Key.canCast() ? nameAndCount : string.Format("{0}{1}{2}", "<color=red>", nameAndCount, "</color>"), () => {
-                inventory.remove(pair.Key);
-                castAndResetStateIfSuccessful(pair.Key, game);
+        foreach (Item item in inventory.getList()) {
+            string nameAndCount = string.Format("{0} x {1}", item.getName(), item.getCount());
+            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(item.canCast() ? nameAndCount : string.Format("{0}{1}{2}", "<color=red>", nameAndCount, "</color>"), () => {
+                castAndResetStateIfSuccessful(item, game);
             }), index++);
         }
     }
@@ -202,6 +208,14 @@ public abstract class PlayerCharacter : Character {
 
     void setTargets(List<Character> targets) {
         this.targets = targets;
+    }
+
+    void pushLastSpell(Spell spell) {
+        lastSpellStack.Push(spell);
+    }
+
+    Spell popLastSpell() {
+        return lastSpellStack.Pop();
     }
 
     List<Character> getTargets() {

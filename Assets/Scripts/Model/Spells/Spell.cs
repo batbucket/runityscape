@@ -53,7 +53,7 @@ public abstract class Spell {
         return name;
     }
 
-    public string getNameAndCosts() {
+    public virtual string getNameAndInfo() {
         string s = (canCast() ? name : "<color=red>" + name + "</color>") + " - ";
         List<string> elements = new List<string>();
         foreach (KeyValuePair<ResourceType, int> entry in costs) {
@@ -84,7 +84,7 @@ public abstract class Spell {
         return caster.getResource(ResourceType.CHARGE).isMaxed();
     }
 
-    public void consumeResources() {
+    public virtual void consumeResources() {
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
             caster.getResource(resourceCost.Key).subtractFalse(resourceCost.Value);
         }
@@ -134,5 +134,25 @@ public abstract class Spell {
 
     public bool isTarget(Character c) {
         return targets != null && targets.Contains(c);
+    }
+
+    public override bool Equals(object obj) {
+        // If parameter is null return false.
+        if (obj == null) {
+            return false;
+        }
+
+        // If parameter cannot be cast to Page return false.
+        Spell s = obj as Spell;
+        if ((object)s == null) {
+            return false;
+        }
+
+        // Return true if the fields match:
+        return s.getName().Equals(this.getName());
+    }
+
+    public override int GetHashCode() {
+        return name.GetHashCode();
     }
 }

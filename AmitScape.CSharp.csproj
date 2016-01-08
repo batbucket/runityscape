@@ -105,7 +105,6 @@
     <Compile Include="Assets\Scripts\Model\Items\EquippableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Inventory.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
-    <Compile Include="Assets\Scripts\Model\Items\ItemStatus.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Lobster.cs" />
     <Compile Include="Assets\Scripts\Model\Page.cs" />
     <Compile Include="Assets\Scripts\Model\PageType.cs" />

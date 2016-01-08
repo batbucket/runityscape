@@ -8,7 +8,7 @@ public class Amit : PlayerCharacter {
         addResources(ResourceFactory.createResource(ResourceType.SKILL, 3));
         fightSpells.Add(new Attack(this));
         fightSpells.Add(new Meditate(this));
-        inventory.add(new Lobster(this));
+        inventory.add(new Lobster(this, 2));
     }
 
     public override bool isDefeated(Game game) {

@@ -48,6 +48,12 @@ public static class Util {
         return source;
     }
 
+    public static void assert(bool statement) {
+        if (!statement) {
+            throw new UnityException("Expected value: true");
+        }
+    }
+
     /**
      * Horrible horrible hack for converting KeyCode (unity) to VirtualKeyCode (windows)
      *

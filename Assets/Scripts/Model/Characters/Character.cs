@@ -165,6 +165,15 @@ public abstract class Character : Entity {
         }
     }
 
+    public bool useItem(Item item, Game game) {
+        if (item.canCast()) {
+            inventory.remove(item);
+            item.tryCast();
+            return true;
+        }
+        return false;
+    }
+
     public virtual void act(int chargeAmount, Game game) {
         charge(chargeAmount);
         if (isCharged() && !reachedFullCharge) {
@@ -174,6 +183,10 @@ public abstract class Character : Entity {
         if (!isCharged()) {
             reachedFullCharge = false;
         }
+    }
+
+    protected void talk(string text, Game game) {
+        game.postText(text, this.textColor);
     }
 
     protected abstract void onFullCharge(Game game);

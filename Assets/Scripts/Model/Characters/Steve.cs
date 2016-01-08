@@ -53,10 +53,10 @@ public class Steve : ComputerCharacter {
         if (spell.isTarget(this)) {
             switch (spell.getResult()) {
                 case SpellResult.HIT:
-                    game.postText("* Ouch.", Color.green);
+                    talk("* ouch.", game);
                     break;
                 case SpellResult.MISS:
-                    game.postText("* lol u missed", Color.green);
+                    talk("* lol u missed", game);
                     break;
                 case SpellResult.CANT_CAST:
                     //game.postText
