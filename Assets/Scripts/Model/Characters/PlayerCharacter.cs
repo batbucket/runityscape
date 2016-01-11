@@ -12,7 +12,7 @@ public abstract class PlayerCharacter : Character {
     Spell targetedSpell;
     List<Character> targets;
 
-    public const int BACK_INDEX = 11; //Last hotkey is letter 'V'
+    public const int BACK_INDEX = 7; //Last hotkey is letter 'F'
     public const int ALLY_CAST_OFFSET = 4;
 
     public PlayerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor)
@@ -35,21 +35,20 @@ public abstract class PlayerCharacter : Character {
                 break;
             case SelectionType.FAIM:
                 game.getActionGrid().setButtonAttributes(ActionGridFactory.createProcesses(
-                    getSpellText(fightSpells[0]), () => {
+                    getSpellNameAndInfo(fightSpells[0]), getSpellDescription(fightSpells[0]), () => {
                         determineTargetSelection(fightSpells[0], game);
                     },
-                    getSpellText(lastSpellStack.Peek()), () => {
+                    getSpellNameAndInfo(lastSpellStack.Peek()), getSpellDescription(lastSpellStack.Peek()), () => {
                         determineTargetSelection(lastSpellStack.Peek(), game);
                     },
-                    getCorrectSpellListName(), () => {
+                    getCorrectSpellListName(), "Abilities cost resources.", () => {
                         setSelectionType(SelectionType.SPELLS);
                     },
-                    "Act", () => setSelectionType(SelectionType.ACT),
-                    "Item", () => setSelectionType(SelectionType.ITEM),
-                    "Mercy", () => setSelectionType(SelectionType.MERCY)
+                    "Act", "Perform a non-combat action.", () => setSelectionType(SelectionType.ACT),
+                    "Item", "Consume or equip items.", () => setSelectionType(SelectionType.ITEM),
+                    "Mercy", "Attempt to end the fight peacefully.", () => setSelectionType(SelectionType.MERCY)
                     ));
-                game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Switch", () => Debug.Log("This aint a thing yet!")), BACK_INDEX);
-                showBackButton(game);
+                game.getActionGrid().setButtonAttribute(new Process("Switch", "Change control to another unit.", () => Debug.Log("This aint a thing yet!")), BACK_INDEX);
                 break;
             case SelectionType.ITEM:
                 showSpellsAsList(inventory.getList().Cast<Spell>().ToList(), game, false);
@@ -77,8 +76,8 @@ public abstract class PlayerCharacter : Character {
         int startIndex = hideFirst ? 1 : 0;
         for (int i = startIndex; i < spells.Count; i++) {
             Spell spell = spells[i];
-            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(
-                getSpellText(spell), () => determineTargetSelection(spell, game)
+            game.getActionGrid().setButtonAttribute(new Process(
+                getSpellNameAndInfo(spell), getSpellDescription(spell), () => determineTargetSelection(spell, game)
             ), hideFirst ? i - 1 : i);
         }
     }
@@ -86,8 +85,8 @@ public abstract class PlayerCharacter : Character {
     void showTargetsAsList(List<Character> targets, Game game) {
         for (int i = 0; i < targets.Count; i++) {
             Character target = targets[i];
-            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(
-                string.Format("{0}{1}{2}", targetedSpell.canCast() ? "" : "<color=red>", target.getName(), targetedSpell.canCast() ? "" : "</color>"), () => {
+            game.getActionGrid().setButtonAttribute(new Process(
+                string.Format("{0}{1}{2}", targetedSpell.canCast() ? "" : "<color=red>", target.getName(), targetedSpell.canCast() ? "" : "</color>"), targetedSpell.getDescription(), () => {
                     targetedSpell.setTarget(target);
                     castAndResetStateIfSuccessful(targetedSpell, game);
                 }
@@ -97,7 +96,7 @@ public abstract class PlayerCharacter : Character {
 
     void showBackButton(Game game) {
         //this one doesn't use set() to prevent infinite looping of lastSelection
-        game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess("Back", () => returnToLastSelection() ), BACK_INDEX);
+        game.getActionGrid().setButtonAttribute(new Process("Back", "Go back to the previous selection.", () => returnToLastSelection() ), BACK_INDEX);
     }
 
     public override void onStart(Game game) {
@@ -126,8 +125,8 @@ public abstract class PlayerCharacter : Character {
     void castAndResetStateIfSuccessful(Spell spell, Game game) {
         spell.tryCast();
         talk(spell.getCastText(), game);
-        getReactions(spell, game);
         if (spell.getResult() != SpellResult.CANT_CAST) {
+            getReactions(spell, game);
             resetSelection();
             if (spell != fightSpells[0]) {
                 pushLastSpell(spell);
@@ -140,9 +139,17 @@ public abstract class PlayerCharacter : Character {
         }
     }
 
-    string getSpellText(Spell spell) {
+    string getSpellNameAndInfo(Spell spell) {
         if (spell != null) {
             return spell.getNameAndInfo();
+        } else {
+            return "";
+        }
+    }
+
+    string getSpellDescription(Spell spell) {
+        if (spell != null) {
+            return spell.getDescription();
         } else {
             return "";
         }
@@ -192,7 +199,7 @@ public abstract class PlayerCharacter : Character {
         int index = 0;
         foreach (Item item in inventory.getList()) {
             string nameAndCount = string.Format("{0} x {1}", item.getName(), item.getCount());
-            game.getActionGrid().setButtonAttribute(ProcessFactory.createProcess(item.canCast() ? nameAndCount : string.Format("{0}{1}{2}", "<color=red>", nameAndCount, "</color>"), () => {
+            game.getActionGrid().setButtonAttribute(new Process(item.canCast() ? nameAndCount : string.Format("{0}{1}{2}", "<color=red>", nameAndCount, "</color>"), item.getDescription(), () => {
                 castAndResetStateIfSuccessful(item, game);
             }), index++);
         }

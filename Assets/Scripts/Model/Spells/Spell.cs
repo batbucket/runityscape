@@ -9,6 +9,7 @@ using System;
  */
 public abstract class Spell {
     readonly string name;
+    readonly string description;
     readonly SpellType spellType;
     readonly TargetType targetType;
     Dictionary<ResourceType, int> costs;
@@ -21,9 +22,10 @@ public abstract class Spell {
 
     protected string castText;
 
-    public Spell(Character caster, string name, SpellType spellType, TargetType targetType, Dictionary<ResourceType, int> costs) {
+    public Spell(Character caster, string name, string description, SpellType spellType, TargetType targetType, Dictionary<ResourceType, int> costs) {
         this.caster = caster;
         this.name = name;
+        this.description = description;
         this.spellType = spellType;
         this.targetType = targetType;
         this.costs = costs;
@@ -154,5 +156,9 @@ public abstract class Spell {
 
     public override int GetHashCode() {
         return name.GetHashCode();
+    }
+
+    public string getDescription() {
+        return description;
     }
 }

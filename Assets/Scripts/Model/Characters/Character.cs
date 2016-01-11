@@ -219,4 +219,12 @@ public abstract class Character : Entity {
     public override int GetHashCode() {
         return name.GetHashCode();
     }
+
+    public void setSide(bool side) {
+        this.side = side;
+    }
+
+    public Color getColor() {
+        return textColor;
+    }
 }

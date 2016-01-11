@@ -10,10 +10,10 @@ public class Page : IPage {
     List<Character> rightCharacters;
     List<Process> actions;
 
-    Process onFirstEnterProcess;
-    Process onEnterProcess;
-    Process onFirstExitProcess;
-    Process onExitProcess;
+    Process onFirstEnterAction;
+    Process onEnterAction;
+    Process onFirstExitAction;
+    Process onExitAction;
 
     PageType pageType;
 
@@ -30,12 +30,13 @@ public class Page : IPage {
         this.actions = (actions != null) ? actions : new List<Process>();
         if (left != null) setLeft(left); else this.leftCharacters = new List<Character>();
         if (right != null) setRight(right); else this.rightCharacters = new List<Character>();
-        this.onFirstEnterProcess = onFirstEnter;
-        this.onEnterProcess = onEnter;
-        this.onFirstExitProcess = onFirstExit;
-        this.onExitProcess = onExit;
+        this.onFirstEnterAction = onFirstEnter;
+        this.onEnterAction = onEnter;
+        this.onFirstExitAction = onFirstExit;
+        this.onExitAction = onExit;
 
         this.pageType = pageType;
+        this.id = idCount++;
     }
 
     public void setText(string text) {
@@ -51,29 +52,29 @@ public class Page : IPage {
     }
 
     public void onEnter() {
-        if (!hasEnteredBefore && onFirstEnterProcess != null) {
+        if (!hasEnteredBefore && onFirstEnterAction != null) {
             hasEnteredBefore = true;
             onFirstEnter();
-        } else if (onEnterProcess != null) {
-            onEnterProcess.play();
+        } else if (onEnterAction != null) {
+            onEnterAction.play();
         }
     }
 
     public void onFirstEnter() {
-        onFirstEnterProcess.play();
+        onFirstEnterAction.play();
     }
 
     public void onExit() {
-        if (!hasExitedBefore && onFirstExitProcess != null) {
+        if (!hasExitedBefore && onFirstExitAction != null) {
             hasExitedBefore = true;
             onFirstExit();
-        } else if (onExitProcess != null) {
-            onExitProcess.play();
+        } else if (onExitAction != null) {
+            onExitAction.play();
         }
     }
 
     public void onFirstExit() {
-        onFirstExitProcess.play();
+        onFirstExitAction.play();
     }
 
     public string getText() {
@@ -85,19 +86,19 @@ public class Page : IPage {
     }
 
     public void setOnEnter(Process p) {
-        onEnterProcess = p;
+        onEnterAction = p;
     }
 
     public void setOnFirstEnter(Process p) {
-        onFirstExitProcess = p;
+        onFirstExitAction = p;
     }
 
     public void setOnExit(Process p) {
-        onExitProcess = p;
+        onExitAction = p;
     }
 
     public void setOnFirstExit(Process p) {
-        onFirstExitProcess = p;
+        onFirstExitAction = p;
     }
 
     public List<Character> getCharacters(bool isRightSide) {
@@ -137,6 +138,7 @@ public class Page : IPage {
 
     public void setSide(List<Character> characters, bool side) {
         repeatedCharacterCheck(characters);
+        setCharacterSides(characters, side);
         if (!side) {
             leftCharacters = characters;
         } else {
@@ -144,11 +146,17 @@ public class Page : IPage {
         }
     }
 
+    void setCharacterSides(List<Character> characters, bool side) {
+        foreach (Character c in characters) {
+            c.setSide(side);
+        }
+    }
+
     /**
      * Check if repeated characters exist on a side, if so, append A->Z for each repeated character
      * For example: Steve A, Steve B
      */
-    public void repeatedCharacterCheck(List<Character> characters) {
+    void repeatedCharacterCheck(List<Character> characters) {
         Dictionary<string, List<Character>> repeatedCharacters = new Dictionary<string, List<Character>>();
         foreach (Character c in characters) {
             if (!repeatedCharacters.ContainsKey(c.getName())) {

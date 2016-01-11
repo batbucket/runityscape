@@ -8,6 +8,8 @@ public class Amit : PlayerCharacter {
         addResources(ResourceFactory.createResource(ResourceType.SKILL, 3));
         fightSpells.Add(new Attack(this));
         fightSpells.Add(new Meditate(this));
+        mercySpells.Add(new Spare(this));
+        mercySpells.Add(new Surrender(this));
         inventory.add(new Lobster(this, 2));
     }
 

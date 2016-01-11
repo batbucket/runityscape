@@ -48,6 +48,10 @@ public class Inventory {
         return getCount() >= CAPACITY;
     }
 
+    public bool hasItem(Item item) {
+        return find(item) != null;
+    }
+
     Item find(Item item) {
         return itemList.Find(x => x.Equals(item));
     }

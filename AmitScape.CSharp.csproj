@@ -69,7 +69,6 @@
     <Compile Include="Assets\Scripts\Core\IProcess.cs" />
     <Compile Include="Assets\Scripts\Core\IUndoableProcess.cs" />
     <Compile Include="Assets\Scripts\Core\Process.cs" />
-    <Compile Include="Assets\Scripts\Core\ProcessFactory.cs" />
     <Compile Include="Assets\Scripts\Core\UndoableProcess.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridFactory.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridManager.cs" />
@@ -85,11 +84,9 @@
     <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\PortraitViewFactory.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\ResourceViewFactory.cs" />
-    <Compile Include="Assets\Scripts\Interface\Tooltip\TextBox\TextBoxFactory.cs" />
-    <Compile Include="Assets\Scripts\Interface\Tooltip\TextBox\TextBoxHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Tooltip\TextBox\TextBoxManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
-    <Compile Include="Assets\Scripts\Misc\Testy.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
     <Compile Include="Assets\Scripts\Misc\WeighedRandomizer.cs" />
@@ -110,6 +107,8 @@
     <Compile Include="Assets\Scripts\Model\PageType.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Spare.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Surrender.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\PerpetualSpell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellFactory.cs" />

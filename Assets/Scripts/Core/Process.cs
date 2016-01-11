@@ -1,8 +1,15 @@
 ﻿using System;
 
 public class Process : IProcess {
+    string name;
     string description;
-	Action playAction;
+    System.Action playAction;
+
+    public Process(string name, string description, System.Action playAction) {
+        this.name = name;
+        this.description = description;
+        this.playAction = playAction;
+    }
 
     public void setDescription(string description) {
         this.description = description;
@@ -12,7 +19,15 @@ public class Process : IProcess {
         return description;
     }
 
-	public void setPlay(Action action) {
+    public void setName(string name) {
+        this.name = name;
+    }
+
+    public string getName() {
+        return name;
+    }
+
+	public void setPlay(System.Action action) {
 		playAction = action;
 	}
 

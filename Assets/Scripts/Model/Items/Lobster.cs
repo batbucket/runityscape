@@ -4,11 +4,11 @@ using System;
 
 public class Lobster : ConsumableItem {
 
-
     public const string NAME = "Lobster";
+    public const string DESCRIPTION = "Eat a Lobster for 12 HP, just like in RuneScape™. Property of Jagex Ltd. The most popular Free-To-Play MMORPG played by millions worldwide.";
     public const int HEAL_AMOUNT = 12;
 
-    public Lobster(Character caster, int count = 1) : base(caster, NAME, count) {
+    public Lobster(Character caster, int count = 1) : base(caster, NAME, DESCRIPTION, count) {
 
     }
 

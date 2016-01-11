@@ -5,7 +5,6 @@ using System;
 public class Steve : ComputerCharacter {
 
     public Steve() : base(Util.getSprite("laughing_shinx"), "Steve", 0, 5, 5, 5, 5, Color.red, 4) {
-        side = true;
         addResources(ResourceFactory.createResource(ResourceType.SKILL, 3));
         getFight().Add(new Attack(this));
     }
@@ -50,18 +49,18 @@ public class Steve : ComputerCharacter {
     }
 
     protected override void react(Spell spell, Game game) {
-        if (spell.isTarget(this)) {
-            switch (spell.getResult()) {
-                case SpellResult.HIT:
-                    talk("* ouch.", game);
+        if (spell.isTarget(this) && spell.getResult() != SpellResult.CANT_CAST) {
+            switch (spell.getName()) {
+                case "Spare":
+                    talk("Don't make me laugh.", game);
                     break;
-                case SpellResult.MISS:
-                    talk("* lol u missed", game);
-                    break;
-                case SpellResult.CANT_CAST:
-                    //game.postText
+                case "Surrender":
+                    talk("Thanks!", game);
                     break;
             }
+        }
+        if (spell.getName().Equals("Surrender")) {
+            talk("Thanks!", game);
         }
     }
 }

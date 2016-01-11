@@ -31,24 +31,27 @@ public class Game : MonoBehaviour {
         rightPortraits = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
         actionGrid = gameObject.GetComponentInChildren<ActionGridManager>();
 
-        currentPage = new Page(onEnter: ProcessFactory.createProcess("Check fruit",
+        currentPage = new Page(onEnter: new Process("Check fruit", "",
             () => {
                 string message = "In front of you is a table with the following: {0}, {1}, {2}. What will you do?";
                 object a = "An apple" + (ateApple ? " core" : "");
                 object o = "an orange" + (ateOrange ? " peel" : "");
                 object b = "a banana" + (ateBanana ? " peel" : "");
                 currentPage.setText(string.Format(message, a, o, b));
-            }), onExit: ProcessFactory.createProcess("Debug statement", () => Debug.Log("You left the page.")),
-            actions: ActionGridFactory.createProcesses(d0: "Eat apple",
-                                                       a0: () => { ateApple = true; TextBoxFactory.createTextBox(textBoxes,  "* You ate the apple.", 0.01f);  currentPage.clearAction(0); initializedPage = false; },
-                                                       d1: "Eat orange",
-                                                       a1: () => { ateOrange = true; TextBoxFactory.createTextBox(textBoxes, "* You ate the orange.", 0.01f); currentPage.clearAction(1); initializedPage = false; },
-                                                       d2: "Eat banana",
-                                                       a2: () => { ateBanana = true; TextBoxFactory.createTextBox(textBoxes, "* You ate the banana.", 0.01f); currentPage.clearAction(2); initializedPage = false; },
-                                                       d3: "Leave",
+            }), onExit: new Process("Debug statement", "", () => Debug.Log("You left the page.")),
+            actions: ActionGridFactory.createProcesses(n0: "Eat apple", d0: "Consume the apple. Warning: seeds contain cyanide.",
+                                                       a0: () => { ateApple = true; textBoxes.addTextBox("* You ate the apple.", 0.01f, Color.white);  currentPage.clearAction(0); initializedPage = false; },
+                                                       n1: "Eat orange",
+                                                       d1: "Consume the orange. Good for keeping away scurvy.",
+                                                       a1: () => { ateOrange = true; textBoxes.addTextBox("* You ate the orange.", 0.01f, Color.white); currentPage.clearAction(1); initializedPage = false; },
+                                                       n2: "Eat banana",
+                                                       d2: "Consume the banana. There's potassium in there!",
+                                                       a2: () => { ateBanana = true; textBoxes.addTextBox("* You ate the banana.", 0.01f, Color.white); currentPage.clearAction(2); initializedPage = false; },
+                                                       n3: "Leave",
+                                                       d3: "Leave this terrible world of fruit.",
                                                        a3: () => { setPage(p1); }
                                                        ));
-        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit() }, right: new List<Character>() { new Steve(), new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
+        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Steve() }, right: new List<Character>() { new Steve(), new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
 	}
 
 	// Update is called once per frame
@@ -69,7 +72,7 @@ public class Game : MonoBehaviour {
 
         if (!initializedPage) {
             currentPage.onEnter();
-            TextBoxFactory.createTextBox(textBoxes, currentPage.getText(), 0.001f, Color.white);
+            textBoxes.addTextBox(currentPage.getText(), 0, Color.white);
             initializedPage = true;
         }
     }
@@ -79,7 +82,7 @@ public class Game : MonoBehaviour {
             if (!initializedPage) {
                 c.onStart(this);
             }
-            int derp = (int) (100 * ((float) (new Amit().getAttribute(AttributeType.DEXTERITY).getFalse())) / c.getAttribute(AttributeType.DEXTERITY).getFalse());
+            int derp = (int) (120 * ((float) (new Amit().getAttribute(AttributeType.DEXTERITY).getFalse())) / c.getAttribute(AttributeType.DEXTERITY).getFalse());
             c.getResource(ResourceType.CHARGE).setTrue(derp);
             c.act(1, this);
             PortraitManager portrait = PortraitViewFactory.createPortrait(portraitHolder, c.getName(), c.getSprite());
@@ -104,14 +107,14 @@ public class Game : MonoBehaviour {
     }
 
     public void postText(string s) {
-        postText(s, Color.white);
+        postText(s, Color.grey);
     }
 
     public void postText(string s, Color color) {
         if (s == null) {
             return;
         }
-        TextBoxFactory.createTextBox(getTextBoxHolder(), s, NORMAL_TEXT_SPEED, color);
+        getTextBoxHolder().addTextBox(s, NORMAL_TEXT_SPEED, color);
     }
 
     public PortraitHolderManager returnPortrait(bool left) {
@@ -132,6 +135,7 @@ public class Game : MonoBehaviour {
 
     public void setPage(Page page) {
         currentPage.onExit();
+        Util.killChildren(textBoxes.gameObject);
         this.currentPage = page;
         initializedPage = false;
     }
@@ -169,7 +173,7 @@ public class Game : MonoBehaviour {
     }
 
     public static Character getRandomChar(List<Character> characters) {
-        return characters[UnityEngine.Random.Range(0, characters.Count - 1)];
+        return characters[UnityEngine.Random.Range(0, characters.Count)];
     }
 
     void createGraph() {

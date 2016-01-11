@@ -14,8 +14,10 @@ public class HotkeyButton : MonoBehaviour {
     public KeyCode hotkey; //The keyboard key that interacts with this button
     Button button; //The button we want a hotkey for
     UIInput input;
-    Text description; //The text on the button
+    Text text; //The text on the button
     Text hotkeyText;
+    IProcess process; //Process this button holds
+    TooltipManager tooltip;
 
     bool activated;
 
@@ -27,11 +29,12 @@ public class HotkeyButton : MonoBehaviour {
         //hotkey = KeyCode.None;
         button = gameObject.GetComponent<Button>();
         input = gameObject.GetComponent<UIInput>();
-        description = gameObject.GetComponentsInChildren<Text>()[0];
+        text = gameObject.GetComponentsInChildren<Text>()[0];
         hotkeyText = gameObject.GetComponentsInChildren<Text>()[1];
+        tooltip = GameObject.Find("Tooltip").GetComponent<TooltipManager>();
         activated = false;
 
-        description.text = "";
+        text.text = "";
         hotkeyText.text = "";
 
         //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
@@ -52,12 +55,12 @@ public class HotkeyButton : MonoBehaviour {
         hotkey = keycode;
     }
 
-    public void setDescription(string desc) {
-        description.text = desc;
+    public void setText(string desc) {
+        text.text = desc;
     }
 
-    public void clearDescription() {
-        description.text = "";
+    public void clearText() {
+        text.text = "";
     }
 
     public void setEnabled(bool enabled) {
@@ -67,12 +70,15 @@ public class HotkeyButton : MonoBehaviour {
     public void setProcess(IProcess process) {
         if (process != null) {
             button.onClick.AddListener(() => process.play());
-            setDescription(process.getDescription());
+            setText(process.getName());
+            this.process = process;
         }
     }
 
     public void clearProcess() {
         button.onClick.RemoveAllListeners();
+        clearText();
+        this.process = null;
     }
 
     void setHotkeyText(string newKey) {
@@ -81,10 +87,13 @@ public class HotkeyButton : MonoBehaviour {
 
     void OnMouseExit() {
         activated = false;
+        tooltip.clear();
     }
 
     void OnMouseOver() {
-
+        if (process != null) {
+            tooltip.set(process.getDescription());
+        }
     }
 
     /**
@@ -117,7 +126,7 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     void determineButtonAppearance() {
-        if (description.text.Length == 0) {
+        if (text.text.Length == 0) {
             showDisabledAppearance();
         } else if (activated && button.interactable) {
             showActiveAppearance();
@@ -128,13 +137,13 @@ public class HotkeyButton : MonoBehaviour {
 
     void showActiveAppearance() {
         button.image.color = ACTIVE_COLOR;
-        description.color = INACTIVE_COLOR;
+        text.color = INACTIVE_COLOR;
         hotkeyText.color = INACTIVE_COLOR;
     }
 
     void showInactiveAppearance() {
         button.image.color = INACTIVE_COLOR;
-        description.color = ACTIVE_COLOR;
+        text.color = ACTIVE_COLOR;
         hotkeyText.color = ACTIVE_COLOR;
     }
 

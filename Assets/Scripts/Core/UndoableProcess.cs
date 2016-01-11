@@ -3,9 +3,13 @@ using System.Collections;
 using System;
 
 public class UndoableProcess : Process, IUndoableProcess {
-    Action undoAction;
+    System.Action undoAction;
 
-    public void setUndo(Action action) {
+    public UndoableProcess(string name, string description, System.Action playAction, System.Action undoAction) : base(name, description, playAction) {
+        this.undoAction = undoAction;
+    }
+
+    public void setUndo(System.Action action) {
         undoAction = action;
     }
 

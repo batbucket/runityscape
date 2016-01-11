@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Meditate : Spell {
     public const string NAME = "Meditate";
+    public const string DESCRIPTION = "Heal yourself.";
     public const SpellType SPELL_TYPE = SpellType.BOOST;
     public const TargetType TARGET_TYPE = TargetType.SELF;
     public static readonly string[] CAST_TEXT = new string[] {"* {0} calms their mind, restoring {1} HP!" };
@@ -14,7 +15,7 @@ public class Meditate : Spell {
 
     int amount;
 
-    public Meditate(Character caster) : base(caster, NAME, SPELL_TYPE, TARGET_TYPE, COSTS) {
+    public Meditate(Character caster) : base(caster, NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
     }
 
     public override void undo() {

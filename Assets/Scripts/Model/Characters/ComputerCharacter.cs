@@ -37,9 +37,6 @@ public abstract class ComputerCharacter : Character {
         if (target != null) {
             spell.setTarget(target);
         } else {
-            List<Character> enemies = game.getEnemies(side);
-            List<Character> allies = game.getAllies(side);
-            List<Character> allChars = game.getAll();
             switch (spell.getTargetType()) {
                 case TargetType.SINGLE_ALLY:
                     spell.setTarget(game.getRandomAlly(side));
@@ -68,7 +65,7 @@ public abstract class ComputerCharacter : Character {
     void castAndPost(Spell spell, Game game) {
         spell.tryCast();
         if (spell.getResult() != SpellResult.CANT_CAST) {
-            game.postText(spell.getCastText(), textColor);
+            game.postText(spell.getCastText());
         }
     }
 }

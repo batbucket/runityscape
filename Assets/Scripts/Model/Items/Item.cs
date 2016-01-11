@@ -7,9 +7,10 @@ public abstract class Item : Spell
 {
     public const SpellType SPELL_TYPE = SpellType.BOOST;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ALLY;
+    public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     protected int count;
 
-    public Item(Character caster, string name, int count) : base(caster, name, SPELL_TYPE, TARGET_TYPE) {
+    public Item(Character caster, string name, string description, int count) : base(caster, name, description, SPELL_TYPE, TARGET_TYPE, COSTS) {
         Util.assert(count > 0);
         this.count = count;
     }

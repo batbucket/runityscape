@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public class Attack : Spell {
     public const string NAME = "Attack";
+    public const string DESCRIPTION = "Attack a single enemy for STR damage.";
     public const SpellType SPELL_TYPE = SpellType.OFFENSE;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
     public const string SUCCESS_CAST = "* {0} attacks {1} for {2} damage!";
@@ -14,7 +15,7 @@ public class Attack : Spell {
     public const int SP_GAIN = 1;
     int amount;
 
-    public Attack(Character caster) : base(caster, NAME, SPELL_TYPE, TARGET_TYPE, COSTS) {
+    public Attack(Character caster) : base(caster, NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
     }
 
     public override void calculateSuccessRate() {

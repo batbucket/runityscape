@@ -17,6 +17,8 @@ public class TextBoxManager : MonoBehaviour {
     public const int BLIP_INTERVAL = 1; //Letters needed for a sound to occur
     public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
 
+    bool start;
+
 	// Use this for initialization
 	void Awake() {
         text = gameObject.GetComponent<Text>();
@@ -24,22 +26,24 @@ public class TextBoxManager : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (timePerLetter == 0) {
-            text.text = fullText;
-        } else {
-            if (fullText != null && text.text.Length < fullText.Length && timePerLetter > 0) {
-                timer += Time.deltaTime;
-            }
-
-            if (timer >= timePerLetter) {
-                char c = fullText[index++];
-                if (c != ' ' && c != '*') {
-                    timer = 0;
-                    if (index % BLIP_INTERVAL == 0 && !GameObject.Find("Blip_0").GetComponent<AudioSource>().isPlaying) {
-                        GameObject.Find("Blip_0").GetComponent<AudioSource>().Play();
-                    }
+        if (this.start) {
+            if (timePerLetter == 0) {
+                text.text = fullText;
+            } else {
+                if (fullText != null && text.text.Length < fullText.Length && timePerLetter > 0) {
+                    timer += Time.deltaTime;
                 }
-                text.text += c;
+
+                if (timer >= timePerLetter) {
+                    char c = fullText[index++];
+                    if (c != ' ' && c != '*') {
+                        timer = 0;
+                        if (index % BLIP_INTERVAL == 0 && !GameObject.Find("Blip_0").GetComponent<AudioSource>().isPlaying) {
+                            GameObject.Find("Blip_0").GetComponent<AudioSource>().Play();
+                        }
+                    }
+                    text.text += c;
+                }
             }
         }
 	}
@@ -57,6 +61,21 @@ public class TextBoxManager : MonoBehaviour {
         index = 0;
         this.timePerLetter = lettersPerSecond;
         this.text.color = color;
+        this.start = true;
+    }
+
+    public void setText(string fullText, float lettersPerSecond, Color color) {
+        if (lettersPerSecond < 0) {
+            throw new UnityException("Bad input:" + lettersPerSecond + " is less than 0.");
+        }
+        this.fullText = Util.wordWrap(fullText, CHARS_PER_LINE);
+        index = 0;
+        this.timePerLetter = lettersPerSecond;
+        this.text.color = color;
+    }
+
+    public void post() {
+        this.start = true;
     }
 
     /**
@@ -69,7 +88,7 @@ public class TextBoxManager : MonoBehaviour {
     /**
      * True when there is no more text to type
      */
-    public bool donePosting() {
+    public bool isDonePosting() {
         return text.text.Length == fullText.Length;
     }
 }

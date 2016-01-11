@@ -17,8 +17,7 @@ public class ActionGridManager : MonoBehaviour {
      */
     public static readonly KeyCode[] HOTKEYS = new KeyCode[]
         {KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
-         KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F,
-         KeyCode.Z, KeyCode.X, KeyCode.C, KeyCode.V};
+         KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F};
 
     HotkeyButton[] actionButtons;
 
@@ -65,13 +64,13 @@ public class ActionGridManager : MonoBehaviour {
             throw new UnityException(string.Format("R: 0<{0}<{0}, C: 0<{0}<{0}. At least one of these are not in bounds.", r, ROWS, c, COLS));
         }
         actionButtons[calculateOffset(r, c)].clearProcess();
-        actionButtons[calculateOffset(r, c)].clearDescription();
+        actionButtons[calculateOffset(r, c)].clearText();
     }
 
     public void clearAllButtonAttributes() {
         for (int i = 0; i < actionButtons.Length; i++) {
             actionButtons[i].clearProcess();
-            actionButtons[i].clearDescription();
+            actionButtons[i].clearText();
         }
     }
 
