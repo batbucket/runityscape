@@ -10,13 +10,13 @@ public class Game : MonoBehaviour {
     LeftPortraitHolderManager leftPortraits;
     RightPortraitHolderManager rightPortraits;
     ActionGridManager actionGrid;
+    TooltipManager tooltip;
 
     Page currentPage;
     bool initializedPage;
 
-    bool ateApple;
-    bool ateOrange;
-    bool ateBanana;
+    Dictionary<string, bool> flags;
+    Queue<PlayerCharacter> playerCharQueue;
 
     Page p1;
 
@@ -30,28 +30,31 @@ public class Game : MonoBehaviour {
         leftPortraits = gameObject.GetComponentInChildren<LeftPortraitHolderManager>();
         rightPortraits = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
         actionGrid = gameObject.GetComponentInChildren<ActionGridManager>();
+        tooltip = gameObject.GetComponentInChildren<TooltipManager>();
+        flags = new Dictionary<string, bool>();
+        playerCharQueue = new Queue<PlayerCharacter>();
 
         currentPage = new Page(onEnter: new Process("Check fruit", "",
             () => {
                 string message = "In front of you is a table with the following: {0}, {1}, {2}. What will you do?";
-                object a = "An apple" + (ateApple ? " core" : "");
-                object o = "an orange" + (ateOrange ? " peel" : "");
-                object b = "a banana" + (ateBanana ? " peel" : "");
+                object a = "An apple" + (getFlag("ateApple") ? " core" : "");
+                object o = "an orange" + (getFlag("ateOrange") ? " peel" : "");
+                object b = "a banana" + (getFlag("ateBanana") ? " peel" : "");
                 currentPage.setText(string.Format(message, a, o, b));
             }), onExit: new Process("Debug statement", "", () => Debug.Log("You left the page.")),
             actions: ActionGridFactory.createProcesses(n0: "Eat apple", d0: "Consume the apple. Warning: seeds contain cyanide.",
-                                                       a0: () => { ateApple = true; textBoxes.addTextBox("* You ate the apple.", 0.01f, Color.white);  currentPage.clearAction(0); initializedPage = false; },
+                                                       a0: () => { setFlag("ateApple", true); textBoxes.addTextBox("* You ate the apple.", 0.01f, Color.white);  currentPage.clearAction(0); initializedPage = false; },
                                                        n1: "Eat orange",
                                                        d1: "Consume the orange. Good for keeping away scurvy.",
-                                                       a1: () => { ateOrange = true; textBoxes.addTextBox("* You ate the orange.", 0.01f, Color.white); currentPage.clearAction(1); initializedPage = false; },
+                                                       a1: () => { setFlag("ateOrange", true); textBoxes.addTextBox("* You ate the orange.", 0.01f, Color.white); currentPage.clearAction(1); initializedPage = false; },
                                                        n2: "Eat banana",
                                                        d2: "Consume the banana. There's potassium in there!",
-                                                       a2: () => { ateBanana = true; textBoxes.addTextBox("* You ate the banana.", 0.01f, Color.white); currentPage.clearAction(2); initializedPage = false; },
+                                                       a2: () => { setFlag("ateBanana", true); textBoxes.addTextBox("* You ate the banana.", 0.01f, Color.white); currentPage.clearAction(2); initializedPage = false; },
                                                        n3: "Leave",
                                                        d3: "Leave this terrible world of fruit.",
                                                        a3: () => { setPage(p1); }
                                                        ));
-        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Steve() }, right: new List<Character>() { new Steve(), new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
+        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Amit() }, right: new List<Character>() { new Amit(), new Steve(), new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
 	}
 
 	// Update is called once per frame
@@ -174,6 +177,20 @@ public class Game : MonoBehaviour {
 
     public static Character getRandomChar(List<Character> characters) {
         return characters[UnityEngine.Random.Range(0, characters.Count)];
+    }
+
+    void setFlag(string key, bool value) {
+        flags.Add(key, value);
+    }
+
+    bool getFlag(string key) {
+        bool res;
+        flags.TryGetValue(key, out res);
+        return res;
+    }
+
+    public void setTooltip(string s) {
+        tooltip.set(s);
     }
 
     void createGraph() {

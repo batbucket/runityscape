@@ -23,7 +23,9 @@ public class TextBoxHolderManager : MonoBehaviour {
     }
 
     void Update() {
-        if ((current == null || current.isDonePosting()) && queue.Count > 0) {
+
+        //(current == null || current.isDonePosting()) &&
+        if (queue.Count > 0) {
             current = queue.Dequeue();
             Util.parent(current.gameObject, gameObject);
             current.post();

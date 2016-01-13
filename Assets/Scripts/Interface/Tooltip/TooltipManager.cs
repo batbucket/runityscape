@@ -10,6 +10,9 @@ public class TooltipManager : MonoBehaviour {
     }
 
     public void set(string s) {
+        if (s == null || s.Length == 0) {
+            return;
+        }
         text.text = s;
     }
 

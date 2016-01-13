@@ -20,6 +20,7 @@ public class HotkeyButton : MonoBehaviour {
     TooltipManager tooltip;
 
     bool activated;
+    bool tooltipActivated;
 
     Color INACTIVE_COLOR = Color.black;
     Color ACTIVE_COLOR = Color.white;
@@ -44,6 +45,7 @@ public class HotkeyButton : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        setEnabled(isActive());
         setHotkeyText(button.interactable ? hotkey.ToString() : "");
         determineButtonAppearance();
         if (button.interactable) {
@@ -90,10 +92,9 @@ public class HotkeyButton : MonoBehaviour {
         tooltip.clear();
     }
 
+    //Display tooltip on mouse hovering
     void OnMouseOver() {
-        if (process != null) {
-            tooltip.set(process.getDescription());
-        }
+        tooltipActivated = true;
     }
 
     /**
@@ -108,19 +109,30 @@ public class HotkeyButton : MonoBehaviour {
         //1
         if (Input.GetKeyDown(hotkey) && Input.inputString.Length == 1) {
             activated = true;
+            tooltipActivated = true; //Also display tooltip on button hold
+        }
+
+        if (tooltipActivated) {
+            tooltip.set(process.getDescription());
+            tooltipActivated = false;
         }
 
         if (activated) {
+            if (process != null) {
+                tooltip.set(process.getDescription());
+            }
 
             //2
             if (Input.anyKeyDown && !Input.GetKeyDown(hotkey)) {
                 activated = false;
+                tooltip.clear();
             }
 
             //3
             if (activated && (Input.GetKeyUp(hotkey))) {
                 button.onClick.Invoke();
                 activated = false;
+                tooltip.clear();
             }
         }
     }
@@ -150,5 +162,9 @@ public class HotkeyButton : MonoBehaviour {
     void showDisabledAppearance() {
         button.image.color = Color.clear;
         hotkeyText.color = Color.clear;
+    }
+
+    bool isActive() {
+        return process != null && text.text != null && text.text.Length > 0;
     }
 }
