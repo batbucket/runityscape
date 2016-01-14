@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Equipment {
-    Dictionary<string, EquippableItem> equipment;
+    Dictionary<EquipmentType, EquippableItem> equipment;
 
 	public Equipment() {
-        equipment = new Dictionary<string, EquippableItem>();
-        equipment.Add("Weapon", null);
-        equipment.Add("Armor", null);
-        equipment.Add("Trinket", null);
-	}
+        equipment = new Dictionary<EquipmentType, EquippableItem>();
+        equipment.Add(EquipmentType.WEAPON, null);
+        equipment.Add(EquipmentType.OFFHAND, null);
+        equipment.Add(EquipmentType.ARMOR, null);
+        equipment.Add(EquipmentType.TRINKET, null);
+    }
 }

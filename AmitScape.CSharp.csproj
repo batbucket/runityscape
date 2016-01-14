@@ -100,6 +100,7 @@
     <Compile Include="Assets\Scripts\Model\IPage.cs" />
     <Compile Include="Assets\Scripts\Model\Items\ConsumableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Equipment.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\EquipmentType.cs" />
     <Compile Include="Assets\Scripts\Model\Items\EquippableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Inventory.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
