@@ -40,22 +40,26 @@ public class ActionGridManager : MonoBehaviour {
      * and its description (text on the button)
      */
     public void setButtonAttribute(IProcess process, int r, int c) {
-        if (!coordinatesInBounds(r, c)) {
-            throw new UnityException(string.Format("R: 0<{0}<{0}, C: 0<{0}<{0}. At least one of these are not in bounds.", r, ROWS, c, COLS));
-        }
+        Util.assert(coordinatesInBounds(r, c));
         actionButtons[calculateOffset(r, c)].setProcess(process);
     }
 
     public void setButtonAttribute(IProcess process, int index) {
-        if (!(0 <= index && index < ROWS * COLS)) {
-            throw new UnityException(string.Format("{0} is not within the bounds of [{1}, {2})", index, 0, ROWS * COLS));
-        }
+        Util.assert(0 <= index && index < ROWS * COLS);
         actionButtons[index].setProcess(process);
     }
 
     public void setButtonAttributes(List<Process> list) {
-        for (int i = 0; i < actionButtons.Length; i++) {
+        Util.assert(list.Count <= actionButtons.Length);
+        for (int i = 0; i < list.Count; i++) {
             actionButtons[i].setProcess(list[i]);
+        }
+    }
+
+    public void setButtonAttributes(params Process[] processes) {
+        Util.assert(processes.Length <= actionButtons.Length);
+        for (int i = 0; i < processes.Length; i++) {
+            actionButtons[i].setProcess(processes[i]);
         }
     }
 

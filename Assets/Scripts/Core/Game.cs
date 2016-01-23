@@ -34,65 +34,29 @@ public class Game : MonoBehaviour {
         flags = new Dictionary<string, bool>();
         playerCharQueue = new Queue<PlayerCharacter>();
 
-        currentPage = new Page(onEnter: new Process("Check fruit", "",
-            () => {
-                string message = "In front of you is a table with the following: {0}, {1}, {2}. What will you do?";
-                object a = "An apple" + (getFlag("ateApple") ? " core" : "");
-                object o = "an orange" + (getFlag("ateOrange") ? " peel" : "");
-                object b = "a banana" + (getFlag("ateBanana") ? " peel" : "");
-                currentPage.setText(string.Format(message, a, o, b));
-            }), onExit: new Process("Debug statement", "", () => Debug.Log("You left the page.")),
-            actions: ActionGridFactory.createProcesses(n0: "Eat apple", d0: "Consume the apple. Warning: seeds contain cyanide.",
-                                                       a0: () => { setFlag("ateApple", true); textBoxes.addTextBox("* You ate the apple.", 0.01f, Color.white);  currentPage.clearAction(0); initializedPage = false; },
-                                                       n1: "Eat orange",
-                                                       d1: "Consume the orange. Good for keeping away scurvy.",
-                                                       a1: () => { setFlag("ateOrange", true); textBoxes.addTextBox("* You ate the orange.", 0.01f, Color.white); currentPage.clearAction(1); initializedPage = false; },
-                                                       n2: "Eat banana",
-                                                       d2: "Consume the banana. There's potassium in there!",
-                                                       a2: () => { setFlag("ateBanana", true); textBoxes.addTextBox("* You ate the banana.", 0.01f, Color.white); currentPage.clearAction(2); initializedPage = false; },
-                                                       n3: "Leave",
-                                                       d3: "Leave this terrible world of fruit.",
-                                                       a3: () => { setPage(p1); }
-                                                       ));
-        p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Amit() }, right: new List<Character>() { new Amit(), new Steve(), new Steve() }, actions: ActionGridFactory.createProcesses(d0: "Kill yourself", a0: () => { Debug.Log("Oh dear you are dead!"); }));
-	}
+        currentPage = new ReadPage(text: "What", tooltip: "Hello world", actionGrid: new List<Process>() { new Process("Hello", "Hello world", () => postText("Hello world")) });
 
-	// Update is called once per frame
-	void Update () {
-        Util.killChildren(leftPortraits.gameObject);
-        Util.killChildren(rightPortraits.gameObject);
-        actionGrid.clearAllButtonAttributes();
 
-        switch (currentPage.getPageType()) {
-            case PageType.NORMAL:
-                actionGrid.setButtonAttributes(currentPage.getActions());
-                break;
-            case PageType.BATTLE:
-                battleTick(currentPage.getCharacters(false), leftPortraits);
-                battleTick(currentPage.getCharacters(true), rightPortraits);
-                break;
-        }
-
-        if (!initializedPage) {
-            currentPage.onEnter();
-            textBoxes.addTextBox(currentPage.getText(), 0, Color.white);
-            initializedPage = true;
-        }
+        //p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Amit() }, right: new List<Character>() { new Amit(), new Steve(), new Steve() },
+        //    processes: new Process("Kill yourself", "", () => { Debug.Log("Oh dear you are dead!"); }));
     }
 
-    public void battleTick(List<Character> characters, PortraitHolderManager portraitHolder) {
+    // Update is called once per frame
+    void Update() {
+        Util.killChildren(leftPortraits.gameObject);
+        Util.killChildren(rightPortraits.gameObject);
+        actionGrid.setButtonAttributes(currentPage.getActions());
+        updatePortraits(currentPage.getCharacters(false), leftPortraits);
+        updatePortraits(currentPage.getCharacters(true), rightPortraits);
+        tooltip.set(currentPage.getTooltip());
+        currentPage.tick();
+    }
+
+    public void updatePortraits(List<Character> characters, PortraitHolderManager portraitHolder) {
         foreach (Character c in characters) {
-            if (!initializedPage) {
-                c.onStart(this);
-            }
-            int derp = (int) (120 * ((float) (new Amit().getAttribute(AttributeType.DEXTERITY).getFalse())) / c.getAttribute(AttributeType.DEXTERITY).getFalse());
-            c.getResource(ResourceType.CHARGE).setTrue(derp);
-            c.act(1, this);
-            PortraitManager portrait = PortraitViewFactory.createPortrait(portraitHolder, c.getName(), c.getSprite());
+            PortraitManager portrait = portraitHolder.addPortrait(c.getName(), c.getSprite());
             foreach (KeyValuePair<ResourceType, Resource> r in c.getResources()) {
-                ResourceManager res = ResourceViewFactory.createResource(portrait, r.Value.getShortName(), r.Value.getOverColor(), r.Value.getUnderColor());
-                res.setFraction(r.Value.getFalse(), r.Value.getTrue());
-                res.setBarScale(r.Value.getFalse() / ((float)r.Value.getTrue()));
+                ResourceManager res = portrait.addResource(r.Value.getShortName(), r.Value.getOverColor(), r.Value.getUnderColor(), r.Value.getFalse(), r.Value.getTrue());
             }
         }
     }
@@ -137,10 +101,11 @@ public class Game : MonoBehaviour {
     }
 
     public void setPage(Page page) {
+        page.onEnter();
         currentPage.onExit();
         Util.killChildren(textBoxes.gameObject);
         this.currentPage = page;
-        initializedPage = false;
+        textBoxes.addTextBox(currentPage.getText(), 0, Color.white);
     }
 
     public Page getPage() {

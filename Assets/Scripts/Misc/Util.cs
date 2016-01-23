@@ -11,6 +11,7 @@ using System.Linq;
  * This class holds various helper methods that don't fit anywhere else
  */
 public static class Util {
+
     public static bool chance(double probability) {
         return UnityEngine.Random.Range(0f, 1f) < probability;
     }

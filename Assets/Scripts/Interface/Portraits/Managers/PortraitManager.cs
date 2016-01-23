@@ -26,7 +26,7 @@ public abstract class PortraitManager : MonoBehaviour {
         portraitName.color = color;
     }
 
-    public virtual void setIconImage(Sprite image) {
+    public virtual void setSprite(Sprite image) {
         iconImage.sprite = image;
     }
 
@@ -34,9 +34,21 @@ public abstract class PortraitManager : MonoBehaviour {
         iconImage.color = color;
     }
 
+    protected ResourceManager addResource(string resourceName, Color overBarColor, Color underBarColor, int numerator, int denominator, string resourceLocation) {
+        GameObject g = (GameObject)GameObject.Instantiate(Resources.Load(resourceLocation));
+        Util.parent(g, Util.findChild(gameObject, "Resources"));
+        ResourceManager rm = g.GetComponent<ResourceManager>();
+        rm.setResourceName(resourceName);
+        rm.setOverBarColor(overBarColor);
+        rm.setUnderBarColor(underBarColor);
+        rm.setFraction(numerator, denominator);
+        rm.setBarScale((numerator + 0.0f / denominator));
+        return rm;
+    }
+
     /**
      * Has to be abstract because the resource prefab is different
      * depending on whether it's left or right on the screen
      */
-    abstract public ResourceManager addResource();
+    abstract public ResourceManager addResource(string resourceName, Color overBarColor, Color underBarColor, int numerator, int denominator);
 }

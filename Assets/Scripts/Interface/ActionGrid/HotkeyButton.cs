@@ -71,6 +71,7 @@ public class HotkeyButton : MonoBehaviour {
 
     public void setProcess(IProcess process) {
         if (process != null) {
+            button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => process.play());
             setText(process.getName());
             this.process = process;

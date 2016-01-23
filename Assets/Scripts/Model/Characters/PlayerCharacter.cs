@@ -35,19 +35,19 @@ public abstract class PlayerCharacter : Character {
                 break;
             case SelectionType.FAIM:
                 game.setTooltip(string.Format("What will {0} do?", name.ToUpper()));
-                game.getActionGrid().setButtonAttributes(ActionGridFactory.createProcesses(
-                    getSpellNameAndInfo(fightSpells[0]), getSpellDescription(fightSpells[0]), () => {
+                game.getActionGrid().setButtonAttributes(
+                    new Process(getSpellNameAndInfo(fightSpells[0]), getSpellDescription(fightSpells[0]), () => {
                         determineTargetSelection(fightSpells[0], game);
-                    },
-                    getSpellNameAndInfo(peekLastSpell()), getSpellDescription(peekLastSpell()), () => {
+                    }),
+                    new Process(getSpellNameAndInfo(peekLastSpell()), getSpellDescription(peekLastSpell()), () => {
                         determineTargetSelection(peekLastSpell(), game);
-                    },
-                    getCorrectSpellListName(), string.Format("Perform a {0}.", getCorrectSpellListName().ToUpper()), () => {
+                    }),
+                    new Process(getCorrectSpellListName(), string.Format("Perform a {0}.", getCorrectSpellListName().ToUpper()), () => {
                         setSelectionType(SelectionType.SPELLS);
-                    },
-                    "Act", "Perform an ACTION.", () => setSelectionType(SelectionType.ACT),
-                    "Item", "USE or EQUIP an ITEM.", () => setSelectionType(SelectionType.ITEM),
-                    "Mercy", "Show an enemy MERCY.", () => setSelectionType(SelectionType.MERCY)
+                    }),
+                    new Process("Act", "Perform an ACTION.", () => setSelectionType(SelectionType.ACT)),
+                    new Process("Item", "USE or EQUIP an ITEM.", () => setSelectionType(SelectionType.ITEM)),
+                    new Process("Mercy", "Show an enemy MERCY.", () => setSelectionType(SelectionType.MERCY)
                     ));
                 game.getActionGrid().setButtonAttribute(new Process("Switch", "Change control to another unit.", () => Debug.Log("This aint a thing yet!")), BACK_INDEX);
                 break;

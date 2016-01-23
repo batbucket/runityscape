@@ -2,20 +2,22 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
-public class Page : IPage {
+public abstract class Page {
 
     string text;
-    List<Character> leftCharacters;
-    List<Character> rightCharacters;
-    List<Process> actions;
+    string tooltip;
+    protected List<Character> leftCharacters;
+    protected List<Character> rightCharacters;
+    protected List<Process> actionGrid;
 
-    Process onFirstEnterAction;
-    Process onEnterAction;
-    Process onFirstExitAction;
-    Process onExitAction;
+    Action onFirstEnterAction;
+    Action onEnterAction;
+    Action onFirstExitAction;
+    Action onExitAction;
 
-    PageType pageType;
+    Action onTick;
 
     bool hasEnteredBefore;
     bool hasExitedBefore;
@@ -23,19 +25,19 @@ public class Page : IPage {
     public static int idCount = 0;
     int id;
 
-    public Page(string text = "", PageType pageType = PageType.NORMAL, List<Character> left = null, List<Character> right = null,
-        Process onFirstEnter = null, Process onEnter = null, Process onFirstExit = null, Process onExit = null,
-        List<Process> actions = null) {
+    public Page(string text = "", string tooltip = "", List<Character> left = null, List<Character> right = null,
+        Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null,
+        List<Process> actionGrid = null, Action onTick = null) {
         this.text = text;
-        this.actions = (actions != null) ? actions : new List<Process>();
-        if (left != null) setLeft(left); else this.leftCharacters = new List<Character>();
-        if (right != null) setRight(right); else this.rightCharacters = new List<Character>();
-        this.onFirstEnterAction = onFirstEnter;
-        this.onEnterAction = onEnter;
-        this.onFirstExitAction = onFirstExit;
-        this.onExitAction = onExit;
-
-        this.pageType = pageType;
+        this.tooltip = tooltip;
+        if (left == null) this.leftCharacters = new List<Character>(); else setLeft(left);
+        if (right == null) this.rightCharacters = new List<Character>(); else setRight(right);
+        this.onFirstEnterAction = (onFirstEnterAction == null) ? () => { } : onFirstEnter;
+        this.onEnterAction = (onEnter == null) ? () => { } : onEnter;
+        this.onFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
+        this.onExitAction = (onExit == null) ? () => { } : onExit;
+        this.actionGrid = (actionGrid == null) ? new List<Process>() : actionGrid;
+        this.onTick = (onTick == null) ? () => { } : onTick;
         this.id = idCount++;
     }
 
@@ -43,25 +45,17 @@ public class Page : IPage {
         this.text = text;
     }
 
-    public void setPageType(PageType pageType) {
-        this.pageType = pageType;
-    }
-
-    public PageType getPageType() {
-        return pageType;
-    }
-
     public void onEnter() {
         if (!hasEnteredBefore && onFirstEnterAction != null) {
             hasEnteredBefore = true;
             onFirstEnter();
         } else if (onEnterAction != null) {
-            onEnterAction.play();
+            onEnterAction.Invoke();
         }
     }
 
     public void onFirstEnter() {
-        onFirstEnterAction.play();
+        onFirstEnterAction.Invoke();
     }
 
     public void onExit() {
@@ -69,12 +63,12 @@ public class Page : IPage {
             hasExitedBefore = true;
             onFirstExit();
         } else if (onExitAction != null) {
-            onExitAction.play();
+            onExitAction.Invoke();
         }
     }
 
     public void onFirstExit() {
-        onFirstExitAction.play();
+        onFirstExitAction.Invoke();
     }
 
     public string getText() {
@@ -82,22 +76,22 @@ public class Page : IPage {
     }
 
     public List<Process> getActions() {
-        return actions;
+        return actionGrid;
     }
 
-    public void setOnEnter(Process p) {
+    public void setOnEnter(Action p) {
         onEnterAction = p;
     }
 
-    public void setOnFirstEnter(Process p) {
+    public void setOnFirstEnter(Action p) {
         onFirstExitAction = p;
     }
 
-    public void setOnExit(Process p) {
+    public void setOnExit(Action p) {
         onExitAction = p;
     }
 
-    public void setOnFirstExit(Process p) {
+    public void setOnFirstExit(Action p) {
         onFirstExitAction = p;
     }
 
@@ -107,7 +101,7 @@ public class Page : IPage {
 
     public void setAction(Process action, int index) {
         if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
-            actions[index] = action;
+            actionGrid[index] = action;
         } else {
             throw new IndexOutOfRangeException("Bad input. Index: " + index);
         }
@@ -115,7 +109,7 @@ public class Page : IPage {
 
     public void clearAction(int index) {
         if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
-            actions[index] = null;
+            actionGrid[index] = null;
         } else {
             throw new IndexOutOfRangeException("Bad input. Index: " + index);
         }
@@ -125,7 +119,7 @@ public class Page : IPage {
         if (actions.Count > ActionGridManager.ROWS * ActionGridManager.COLS) {
             throw new ArgumentException("Size of params is: " + actions.Count + ", which is greater than " + ActionGridManager.ROWS * ActionGridManager.COLS);
         }
-        this.actions = actions;
+        this.actionGrid = actions;
     }
 
     public void setLeft(List<Character> characters) {
@@ -182,6 +176,14 @@ public class Page : IPage {
         return idCount;
     }
 
+    public void setTooltip(string tooltip) {
+        this.tooltip = tooltip;
+    }
+
+    public string getTooltip() {
+        return tooltip;
+    }
+
     public override bool Equals(object obj) {
         // If parameter is null return false.
         if (obj == null) {
@@ -200,5 +202,13 @@ public class Page : IPage {
 
     public override int GetHashCode() {
         return id;
+    }
+
+    public void setOnTick(Action action) {
+        onTick = action;
+    }
+
+    public virtual void tick() {
+        onTick.Invoke();
     }
 }

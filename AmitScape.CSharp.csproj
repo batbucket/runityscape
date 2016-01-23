@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -70,7 +72,6 @@
     <Compile Include="Assets\Scripts\Core\IUndoableProcess.cs" />
     <Compile Include="Assets\Scripts\Core\Process.cs" />
     <Compile Include="Assets\Scripts\Core\UndoableProcess.cs" />
-    <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridFactory.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridManager.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\HeaderManager.cs" />
@@ -82,14 +83,13 @@
     <Compile Include="Assets\Scripts\Interface\Portraits\Managers\ResourceManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitHolderManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitViewFactory.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\ResourceViewFactory.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderManager.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
     <Compile Include="Assets\Scripts\Misc\WeighedRandomizer.cs" />
+    <Compile Include="Assets\Scripts\Model\BattlePage.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Amit.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Character.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\ComputerCharacter.cs" />
@@ -97,7 +97,6 @@
     <Compile Include="Assets\Scripts\Model\Characters\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\SelectionType.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Steve.cs" />
-    <Compile Include="Assets\Scripts\Model\IPage.cs" />
     <Compile Include="Assets\Scripts\Model\Items\ConsumableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Equipment.cs" />
     <Compile Include="Assets\Scripts\Model\Items\EquipmentType.cs" />
@@ -106,7 +105,7 @@
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Lobster.cs" />
     <Compile Include="Assets\Scripts\Model\Page.cs" />
-    <Compile Include="Assets\Scripts\Model\PageType.cs" />
+    <Compile Include="Assets\Scripts\Model\ReadPage.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Spare.cs" />
