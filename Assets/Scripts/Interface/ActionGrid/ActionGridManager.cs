@@ -29,8 +29,8 @@ public class ActionGridManager : MonoBehaviour {
         actionButtons = new HotkeyButton[HOTKEYS.Length];
         for (int i = 0; i < actionButtons.Length; i++) {
             GameObject actionButton = (GameObject)Instantiate(Resources.Load("ActionButton"));
-            Util.parent(actionButton, GameObject.Find("ButtonHolder"));
-            actionButton.GetComponent<HotkeyButton>().setHotkey(HOTKEYS[i]);
+            Util.Parent(actionButton, GameObject.Find("ButtonHolder"));
+            actionButton.GetComponent<HotkeyButton>().Hotkey = HOTKEYS[i];
             actionButtons[i] = actionButton.GetComponent<HotkeyButton>();
         }
     }
@@ -39,46 +39,46 @@ public class ActionGridManager : MonoBehaviour {
      * Set what a Button does
      * and its description (text on the button)
      */
-    public void setButtonAttribute(IProcess process, int r, int c) {
-        Util.assert(coordinatesInBounds(r, c));
-        actionButtons[calculateOffset(r, c)].setProcess(process);
+    public void SetButtonAttribute(IProcess process, int r, int c) {
+        Util.Assert(CoordinatesInBounds(r, c));
+        actionButtons[CalculateOffset(r, c)].Process = process;
     }
 
-    public void setButtonAttribute(IProcess process, int index) {
-        Util.assert(0 <= index && index < ROWS * COLS);
-        actionButtons[index].setProcess(process);
+    public void SetButtonAttribute(IProcess process, int index) {
+        Util.Assert(0 <= index && index < ROWS * COLS);
+        actionButtons[index].Process = process;
     }
 
-    public void setButtonAttributes(List<Process> list) {
-        Util.assert(list.Count <= actionButtons.Length);
+    public void SetButtonAttributes(List<Process> list) {
+        Util.Assert(list.Count <= actionButtons.Length);
         for (int i = 0; i < list.Count; i++) {
-            actionButtons[i].setProcess(list[i]);
+            actionButtons[i].Process = list[i];
         }
     }
 
-    public void setButtonAttributes(params Process[] processes) {
-        Util.assert(processes.Length <= actionButtons.Length);
+    public void SetButtonAttributes(params Process[] processes) {
+        Util.Assert(processes.Length <= actionButtons.Length);
         for (int i = 0; i < processes.Length; i++) {
-            actionButtons[i].setProcess(processes[i]);
+            actionButtons[i].Process = processes[i];
         }
     }
 
-    public void clearButtonAttributes(int r, int c) {
-        if (!coordinatesInBounds(r, c)) {
+    public void Clear(int r, int c) {
+        if (!CoordinatesInBounds(r, c)) {
             throw new UnityException(string.Format("R: 0<{0}<{0}, C: 0<{0}<{0}. At least one of these are not in bounds.", r, ROWS, c, COLS));
         }
-        actionButtons[calculateOffset(r, c)].clearProcess();
-        actionButtons[calculateOffset(r, c)].clearText();
+        actionButtons[CalculateOffset(r, c)].ClearProcess();
+        actionButtons[CalculateOffset(r, c)].ClearText();
     }
 
-    public void clearAllButtonAttributes() {
+    public void ClearAll() {
         for (int i = 0; i < actionButtons.Length; i++) {
-            actionButtons[i].clearProcess();
-            actionButtons[i].clearText();
+            actionButtons[i].ClearProcess();
+            actionButtons[i].ClearText();
         }
     }
 
-    bool coordinatesInBounds(int r, int c) {
+    bool CoordinatesInBounds(int r, int c) {
         return 0 <= r && r < ROWS && 0 <= c && c < COLS;
     }
 
@@ -86,7 +86,7 @@ public class ActionGridManager : MonoBehaviour {
      * This is a fancy way to pretend a
      * 1d array is actually 2d
      */
-    int calculateOffset(int r, int c) {
+    int CalculateOffset(int r, int c) {
         return r * COLS + c;
     }
 }

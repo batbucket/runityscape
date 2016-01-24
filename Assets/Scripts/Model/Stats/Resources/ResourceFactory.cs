@@ -2,7 +2,7 @@
 using System.Collections;
 
 public static class ResourceFactory {
-    public static Resource createResource(ResourceType resourceType, int value) {
+    public static Resource CreateResource(ResourceType resourceType, int value) {
         Resource resource = null;
         switch (resourceType) {
             case ResourceType.HEALTH:
@@ -18,7 +18,7 @@ public static class ResourceFactory {
                 resource = new Skill();
                 break;
         }
-        resource.setBoth(value);
+        resource.Set(value);
         return resource;
     }
 }

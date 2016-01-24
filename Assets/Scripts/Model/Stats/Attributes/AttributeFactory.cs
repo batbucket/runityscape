@@ -18,7 +18,7 @@ public static class AttributeFactory {
                 attribute = new Vitality();
                 break;
         }
-        attribute.setBoth(value);
+        attribute.Set(value);
         return attribute;
     }
 }

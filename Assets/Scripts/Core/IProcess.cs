@@ -6,10 +6,8 @@
  * that is described by a description
  */
 public interface IProcess {
-    void setName(string name);
-    string getName();
-    void setDescription(string description);
-    string getDescription();
-    void setPlay(System.Action action);
-    void play();
+    string Name { get; }
+    string Description { get; }
+    Action Action { get; }
+    void Play();
 }

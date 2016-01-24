@@ -5,7 +5,7 @@ public abstract class PortraitHolderManager : MonoBehaviour {
 
     protected PortraitManager addPortrait(string portraitName, Sprite sprite, string portraitLocation) {
         GameObject g = (GameObject)GameObject.Instantiate(Resources.Load(portraitLocation));
-        Util.parent(g, gameObject);
+        Util.Parent(g, gameObject);
 
         PortraitManager pm = g.GetComponent<PortraitManager>();
         pm.setPortraitName(portraitName);

@@ -2,21 +2,15 @@
 using UnityEngine.UI;
 
 public class TooltipManager : MonoBehaviour {
-    Text text;
+    Text UIText { get; set; }
+    public string Text { get { return Text; } set { UIText.text = value; } }
 
     // Use this for initialization
     void Awake() {
-        this.text = gameObject.GetComponent<Text>();
+        this.UIText = gameObject.GetComponent<Text>();
     }
 
-    public void set(string s) {
-        if (s == null || s.Length == 0) {
-            return;
-        }
-        text.text = s;
-    }
-
-    public void clear() {
-        text.text = "";
+    public void Clear() {
+        UIText.text = "";
     }
 }

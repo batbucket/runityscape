@@ -12,18 +12,23 @@ public class Spare : Spell {
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     int amount;
 
-    public Spare(Character caster) : base(caster, NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
+    public Spare(Character caster) : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
     }
 
-    public override void onFailure() {
-        throw new NotImplementedException();
+    public override double CalculateHitRate(Character caster, Character target) {
+        return 1;
     }
 
-    public override void onSuccess() {
-        Util.assert(targets.Count == 1);
+    public override int CalculateDamage(Character caster, Character target) {
+        return 0;
     }
 
-    public override void undo() {
-        throw new NotImplementedException();
+    protected override void OnSuccess(Character caster, Character target) {
+    }
+
+    protected override void OnFailure(Character caster, Character target) {
+    }
+
+    public override void Undo() {
     }
 }

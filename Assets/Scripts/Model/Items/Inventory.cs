@@ -1,58 +1,74 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
-public class Inventory {
-    List<Item> itemList;
+public class Inventory : ICollection<Item> {
     public const int CAPACITY = 11;
+
+    public List<Item> Items { get; private set; }
+    public int Count { get { return CalculateCount(); } }
+    public bool IsFull { get { return Count >= CAPACITY; } }
+    public bool IsReadOnly { get { return false; } }
+    public bool IsEnabled { get; set; }
+
     public Inventory() {
-        itemList = new List<Item>();
+        Items = new List<Item>();
+        IsEnabled = true;
     }
 
-    public bool add(Item item) {
-        if (isFull()) {
-            return false;
-        } else if (!itemList.Contains(item)) {
-            itemList.Add(item);
+    public void Add(Item item) {
+        if (IsFull) {
+            return;
+        } else if (!Items.Contains(item)) {
+            Items.Add(item);
         } else {
-            find(item).addCount(item.getCount());
+            Find(item).Count += item.Count;
         }
-        return true;
     }
 
-    public bool remove(Item item) {
-        if (!itemList.Contains(item)) {
+    public bool Remove(Item item) {
+        Item res = Find(item);
+        if (res == null) {
             return false;
-        } else if (find(item).getCount() > 1) {
-            find(item).decCount();
         } else {
-            item.decCount();
-            itemList.Remove(item);
+            res.Count--;
+            if (res.Count <= 0) {
+                Items.Remove(res);
+            }
+            return true;
         }
-        return true;
     }
 
-    public int getCount() {
+    public int CalculateCount() {
         int count = 0;
-        foreach (Item item in itemList) {
-            count += item.getCount();
+        foreach (Item item in Items) {
+            count += item.Count;
         }
         return count;
     }
 
-    public List<Item> getList() {
-        return itemList;
+    Item Find(Item item) {
+        return Items.Find(x => x.Equals(item));
     }
 
-    public bool isFull() {
-        return getCount() >= CAPACITY;
+    public void Clear() {
+        Items.Clear();
     }
 
-    public bool hasItem(Item item) {
-        return find(item) != null;
+    public bool Contains(Item item) {
+        return Items.Contains(item);
     }
 
-    Item find(Item item) {
-        return itemList.Find(x => x.Equals(item));
+    public void CopyTo(Item[] array, int arrayIndex) {
+        Items.CopyTo(array, arrayIndex);
+    }
+
+    public IEnumerator<Item> GetEnumerator() {
+        return Items.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() {
+        return Items.GetEnumerator();
     }
 }

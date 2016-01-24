@@ -3,47 +3,40 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public abstract class Item : Spell
-{
+public abstract class Item : Spell {
     public const SpellType SPELL_TYPE = SpellType.BOOST;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ALLY;
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
-    protected int count;
+    public int Count { get; set; }
 
-    public Item(Character caster, string name, string description, int count) : base(caster, name, description, SPELL_TYPE, TARGET_TYPE, COSTS) {
-        Util.assert(count > 0);
-        this.count = count;
+    public Item(string name, string description, int count) : base(name, description, SPELL_TYPE, TARGET_TYPE, COSTS) {
+        Util.Assert(count > 0);
+        this.Count = count;
     }
 
-    public override string getNameAndInfo() {
-        string nameAndCount = string.Format("{0} x {1}", getName(), count);
-        return canCast() ? nameAndCount : "<color=red>" + nameAndCount + "</color>";
+    public override double CalculateHitRate(Character caster, Character target) {
+        return 1;
     }
 
-    public override void consumeResources() {
-        base.consumeResources();
-        caster.getInventory().remove(this);
+    public override int CalculateDamage(Character caster, Character target) {
+        return Damage = 0;
     }
 
-    public override void undo() {
-        caster.getInventory().add(this);
+    protected override void OnFailure(Character caster, Character target) {
+        throw new NotImplementedException();
     }
 
-    public override bool canCast() {
-        return base.canCast() && count > 0;
+    public override string GetNameAndInfo(Character caster) {
+        string nameAndCount = string.Format("{0} x {1}", this.Name, Count);
+        return IsCastable(caster) ? nameAndCount : "<color=red>" + nameAndCount + "</color>";
     }
 
-    public void addCount(int amount) {
-        Util.assert(amount > 0);
-        count += amount;
+    protected override void ConsumeResources(Character caster) {
+        base.ConsumeResources(caster);
+        caster.Items.Remove(this);
     }
 
-    public void decCount() {
-        Util.assert(count > 0);
-        count--;
-    }
-
-    public int getCount() {
-        return count;
+    public override bool IsCastable(Character caster, Character target = null) {
+        return base.IsCastable(caster, target) && Count > 0;
     }
 }

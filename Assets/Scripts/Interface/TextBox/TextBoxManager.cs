@@ -57,7 +57,7 @@ public class TextBoxManager : MonoBehaviour {
         if (lettersPerSecond < 0) {
             throw new UnityException("Bad input:" + lettersPerSecond + " is less than 0.");
         }
-        this.fullText = Util.wordWrap(fullText, CHARS_PER_LINE);
+        this.fullText = Util.WordWrap(fullText, CHARS_PER_LINE);
         index = 0;
         this.timePerLetter = lettersPerSecond;
         this.text.color = color;
@@ -68,7 +68,7 @@ public class TextBoxManager : MonoBehaviour {
         if (lettersPerSecond < 0) {
             throw new UnityException("Bad input:" + lettersPerSecond + " is less than 0.");
         }
-        this.fullText = Util.wordWrap(fullText, CHARS_PER_LINE);
+        this.fullText = Util.WordWrap(fullText, CHARS_PER_LINE);
         index = 0;
         this.timePerLetter = lettersPerSecond;
         this.text.color = color;

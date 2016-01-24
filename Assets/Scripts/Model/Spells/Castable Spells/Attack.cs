@@ -5,38 +5,44 @@ using System.Collections.Generic;
 
 public class Attack : Spell {
     public const string NAME = "Attack";
-    public const string DESCRIPTION = "Attack a single enemy for STR damage.";
+    public static readonly string DESCRIPTION = string.Format("Attack a single enemy for {0} damage.", Util.Color(Strength.SHORT_NAME, Strength.ASSOCIATED_COLOR));
     public const SpellType SPELL_TYPE = SpellType.OFFENSE;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
     public const string SUCCESS_CAST = "* {0} attacks {1} for {2} damage!";
-    public const string WHIFF_CAST = "* {0} attacks {1}! ...But it had no effect!";
+    public const string NO_DAMAGE_CAST = "* {0} attacks {1}! ...But it had no effect!";
     public const string FAIL_CAST = "* {0} attacks {1}! ...But it missed!";
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     public const int SP_GAIN = 1;
-    int amount;
 
-    public Attack(Character caster) : base(caster, NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
+    public Attack() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
     }
 
-    public override void calculateSuccessRate() {
-        successRate = .8;
+    public override double CalculateHitRate(Character caster, Character target) {
+        return .8;
     }
 
-    public override void onSuccess() {
-        amount = caster.getAttribute(AttributeType.STRENGTH).getFalse();
-        targets[0].getResource(ResourceType.HEALTH).subtractFalse(amount);
-        if (caster.addToResource(ResourceType.SKILL, false, SP_GAIN)) {
-            setCastText(string.Format(SUCCESS_CAST, caster.getName(), targets[0].getName(), amount));
+    public override int CalculateDamage(Character caster, Character target) {
+        return Damage = caster.GetAttribute(AttributeType.STRENGTH).False;
+    }
+
+    protected override void OnSuccess(Character caster, Character target) {
+        CalculateDamage(caster, target);
+        target.GetResource(ResourceType.HEALTH).False -= Damage;
+        caster.AddToResource(ResourceType.SKILL, false, SP_GAIN);
+        if (Damage > 0) {
+            CastText = string.Format(SUCCESS_CAST, caster.Name, target.Name, Damage);
         } else {
-            setCastText(string.Format(WHIFF_CAST, caster.getName(), targets[0].getName(), amount));
+            CastText = string.Format(NO_DAMAGE_CAST, caster.Name, target.Name, Damage);
         }
     }
 
-    public override void onFailure() {
-        setCastText(string.Format(FAIL_CAST, caster.getName(), targets[0].getName()));
+    protected override void OnFailure(Character caster, Character target) {
+        CastText = string.Format(FAIL_CAST, caster.Name, target.Name);
     }
 
-    public override void undo() {
-        targets[0].getResource(ResourceType.HEALTH).addFalse(amount);
+    public override void Undo() {
+        if (Result == SpellResult.HIT) {
+            Target.GetResource(ResourceType.HEALTH).False += Damage;
+        }
     }
 }

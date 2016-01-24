@@ -43,20 +43,20 @@ public class Game : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        Util.killChildren(leftPortraits.gameObject);
-        Util.killChildren(rightPortraits.gameObject);
-        actionGrid.setButtonAttributes(currentPage.getActions());
+        Util.KillAllChildren(leftPortraits.gameObject);
+        Util.KillAllChildren(rightPortraits.gameObject);
+        actionGrid.SetButtonAttributes(currentPage.getActions());
         updatePortraits(currentPage.getCharacters(false), leftPortraits);
         updatePortraits(currentPage.getCharacters(true), rightPortraits);
-        tooltip.set(currentPage.getTooltip());
+        setTooltip(currentPage.getTooltip());
         currentPage.tick();
     }
 
     public void updatePortraits(List<Character> characters, PortraitHolderManager portraitHolder) {
         foreach (Character c in characters) {
-            PortraitManager portrait = portraitHolder.addPortrait(c.getName(), c.getSprite());
-            foreach (KeyValuePair<ResourceType, Resource> r in c.getResources()) {
-                ResourceManager res = portrait.addResource(r.Value.getShortName(), r.Value.getOverColor(), r.Value.getUnderColor(), r.Value.getFalse(), r.Value.getTrue());
+            PortraitManager portrait = portraitHolder.addPortrait(c.Name, c.getSprite());
+            foreach (KeyValuePair<ResourceType, Resource> r in c.Resources) {
+                ResourceManager res = portrait.addResource(r.Value.ShortName, r.Value.OverColor, r.Value.UnderColor, r.Value.False, r.Value.True);
             }
         }
     }
@@ -103,7 +103,7 @@ public class Game : MonoBehaviour {
     public void setPage(Page page) {
         page.onEnter();
         currentPage.onExit();
-        Util.killChildren(textBoxes.gameObject);
+        Util.KillAllChildren(textBoxes.gameObject);
         this.currentPage = page;
         textBoxes.addTextBox(currentPage.getText(), 0, Color.white);
     }
@@ -155,7 +155,7 @@ public class Game : MonoBehaviour {
     }
 
     public void setTooltip(string s) {
-        tooltip.set(s);
+        tooltip.Text = s;
     }
 
     void createGraph() {

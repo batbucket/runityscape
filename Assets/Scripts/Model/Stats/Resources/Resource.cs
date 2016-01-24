@@ -11,30 +11,23 @@ public abstract class Resource : PairedInt {
 
     public const int LESSER_CAP = 0;
 
-    public override void setTrue(int trueValue) {
-        base.setTrue(Mathf.Clamp(trueValue, LESSER_CAP, trueValue));
-    }
-
-    public override void setFalse(int falseValue) {
-        base.setFalse(Mathf.Clamp(falseValue, LESSER_CAP, getTrue()));
-    }
+    public override int True { get { return base.True; } set { True = Mathf.Clamp(value, LESSER_CAP, 99999); } }
+    public override int False { get { return base.False; } set { False = Mathf.Clamp(value, LESSER_CAP, True); } }
 
     public void clearFalse() {
-        setFalse(LESSER_CAP);
+        False = LESSER_CAP;
     }
 
-    public abstract Color getOverColor();
-    public abstract Color getUnderColor();
-    public abstract string getLongName();
-    public abstract string getShortName();
-    public abstract string getDescription();
-    public abstract ResourceType getResourceType();
+    public abstract Color OverColor { get; }
+    public abstract Color UnderColor { get; }
+    public abstract string Name { get; }
+    public abstract string ShortName { get; }
+    public abstract string Description { get; }
+    public abstract ResourceType Type { get; }
 
-    public virtual void regenerate() {
-
-    }
+    public virtual void regenerate() { }
 
     public virtual void regenerate(int amount) {
-        addFalse(amount);
+        False += amount;
     }
 }

@@ -11,13 +11,13 @@ using WindowsInput;
  */
 public class HotkeyButton : MonoBehaviour {
 
-    public KeyCode hotkey; //The keyboard key that interacts with this button
+    public KeyCode Hotkey { get; set; } //The keyboard key that interacts with this button
     Button button; //The button we want a hotkey for
     UIInput input;
-    Text text; //The text on the button
-    Text hotkeyText;
-    IProcess process; //Process this button holds
-    TooltipManager tooltip;
+    public Text Text { get; set; } //The text on the button
+    public Text HotkeyText { get; private set; }
+    public IProcess Process { get { return Process; } set { SetProcess(value); } } //Process this button holds
+    public TooltipManager Tooltip { get; set; }
 
     bool activated;
     bool tooltipActivated;
@@ -25,72 +25,59 @@ public class HotkeyButton : MonoBehaviour {
     Color INACTIVE_COLOR = Color.black;
     Color ACTIVE_COLOR = Color.white;
 
+    public bool IsActive { get { return Process != null && Text.text != null && Text.text.Length > 0; } }
+    public bool isEnabled { get { return button.interactable; } set { button.interactable = value; } }
+
     // Use this for initialization
     void Awake() {
         //hotkey = KeyCode.None;
         button = gameObject.GetComponent<Button>();
         input = gameObject.GetComponent<UIInput>();
-        text = gameObject.GetComponentsInChildren<Text>()[0];
-        hotkeyText = gameObject.GetComponentsInChildren<Text>()[1];
-        tooltip = GameObject.Find("Tooltip").GetComponent<TooltipManager>();
+        Text = gameObject.GetComponentsInChildren<Text>()[0];
+        HotkeyText = gameObject.GetComponentsInChildren<Text>()[1];
+        Tooltip = GameObject.Find("Tooltip").GetComponent<TooltipManager>();
         activated = false;
 
-        text.text = "";
-        hotkeyText.text = "";
+        Text.text = "";
+        HotkeyText.text = "";
 
         //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
-        input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.keyCodeToVirtualKeyCode(hotkey))));
-        input.AddOnMouseUpListener(new Action<PointerEventData>(p => { InputSimulator.SimulateKeyUp(Util.keyCodeToVirtualKeyCode(hotkey)); activated = false; } )); //Set activated to false to fix double button click issue
+        input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.KeyCodeToVirtualKeyCode(Hotkey))));
+        input.AddOnMouseUpListener(new Action<PointerEventData>(p => { InputSimulator.SimulateKeyUp(Util.KeyCodeToVirtualKeyCode(Hotkey)); activated = false; })); //Set activated to false to fix double button click issue
     }
 
     // Update is called once per frame
     void Update() {
-        setEnabled(isActive());
-        setHotkeyText(button.interactable ? hotkey.ToString() : "");
-        determineButtonAppearance();
+        isEnabled = IsActive;
+        HotkeyText.text = button.interactable ? Hotkey.ToString() : "";
+        ButtonAppearance();
         if (button.interactable) {
-            checkInputs();
+            CheckInputs();
         }
     }
 
-    public void setHotkey(KeyCode keycode) {
-        hotkey = keycode;
+    public void ClearText() {
+        Text.text = "";
     }
 
-    public void setText(string desc) {
-        text.text = desc;
-    }
-
-    public void clearText() {
-        text.text = "";
-    }
-
-    public void setEnabled(bool enabled) {
-        button.interactable = enabled;
-    }
-
-    public void setProcess(IProcess process) {
+    void SetProcess(IProcess process) {
         if (process != null) {
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => process.play());
-            setText(process.getName());
-            this.process = process;
+            button.onClick.AddListener(() => process.Play());
+            Text.text = process.Name;
+            this.Process = process;
         }
     }
 
-    public void clearProcess() {
+    public void ClearProcess() {
         button.onClick.RemoveAllListeners();
-        clearText();
-        this.process = null;
-    }
-
-    void setHotkeyText(string newKey) {
-        hotkeyText.text = newKey;
+        ClearText();
+        this.Process = null;
     }
 
     void OnMouseExit() {
         activated = false;
-        tooltip.clear();
+        Tooltip.Clear();
     }
 
     //Display tooltip on mouse hovering
@@ -105,67 +92,63 @@ public class HotkeyButton : MonoBehaviour {
                 being held down will cancel the input (don't go to #3 if true)
      *    3. If the hotkey is released, it counts as a button click (do the associated action)
      */
-    void checkInputs() {
+    void CheckInputs() {
 
         //1
-        if (Input.GetKeyDown(hotkey) && Input.inputString.Length == 1) {
+        if (Input.GetKeyDown(Hotkey) && Input.inputString.Length == 1) {
             activated = true;
             tooltipActivated = true; //Also display tooltip on button hold
         }
 
         if (tooltipActivated) {
-            tooltip.set(process.getDescription());
+            Tooltip.Text = Process.Description;
             tooltipActivated = false;
         }
 
         if (activated) {
-            if (process != null) {
-                tooltip.set(process.getDescription());
+            if (Process != null) {
+                Tooltip.Text = Process.Description;
             }
 
             //2
-            if (Input.anyKeyDown && !Input.GetKeyDown(hotkey)) {
+            if (Input.anyKeyDown && !Input.GetKeyDown(Hotkey)) {
                 activated = false;
-                tooltip.clear();
+                Tooltip.Clear();
             }
 
             //3
-            if (activated && (Input.GetKeyUp(hotkey))) {
+            if (activated && (Input.GetKeyUp(Hotkey))) {
                 button.onClick.Invoke();
                 activated = false;
-                tooltip.clear();
+                Tooltip.Clear();
             }
         }
     }
 
-    void determineButtonAppearance() {
-        if (text.text.Length == 0) {
-            showDisabledAppearance();
+    void ButtonAppearance() {
+        if (Text.text.Length == 0) {
+            DisabledAppearance();
         } else if (activated && button.interactable) {
-            showActiveAppearance();
+            ActiveAppearance();
         } else {
-            showInactiveAppearance();
+            InactiveAppearance();
         }
     }
 
-    void showActiveAppearance() {
+    void ActiveAppearance() {
         button.image.color = ACTIVE_COLOR;
-        text.color = INACTIVE_COLOR;
-        hotkeyText.color = INACTIVE_COLOR;
+        Text.color = INACTIVE_COLOR;
+        HotkeyText.color = INACTIVE_COLOR;
     }
 
-    void showInactiveAppearance() {
+    void InactiveAppearance() {
         button.image.color = INACTIVE_COLOR;
-        text.color = ACTIVE_COLOR;
-        hotkeyText.color = ACTIVE_COLOR;
+        Text.color = ACTIVE_COLOR;
+        HotkeyText.color = ACTIVE_COLOR;
     }
 
-    void showDisabledAppearance() {
+    void DisabledAppearance() {
         button.image.color = Color.clear;
-        hotkeyText.color = Color.clear;
-    }
-
-    bool isActive() {
-        return process != null && text.text != null && text.text.Length > 0;
+        HotkeyText.color = Color.clear;
     }
 }

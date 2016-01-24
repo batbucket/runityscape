@@ -4,11 +4,12 @@ using System;
 using System.Collections.Generic;
 
 public abstract class ComputerCharacter : Character {
+    public const bool DISPLAYABLE = false;
     readonly float maxDelay;
     float delay;
 
     public ComputerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, float maxDelay)
-        : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor) {
+        : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor, DISPLAYABLE) {
         this.maxDelay = maxDelay;
     }
 
@@ -21,7 +22,7 @@ public abstract class ComputerCharacter : Character {
 
     protected abstract void decideSpell(Game game);
 
-    protected override void onFullCharge(Game game) {
+    protected override void OnFullCharge(Game game) {
         delay = UnityEngine.Random.Range(0, maxDelay);
     }
 
@@ -59,11 +60,11 @@ public abstract class ComputerCharacter : Character {
             }
         }
         castAndPost(spell, game);
-        getReactions(spell, game);
+        GetReactions(spell, game);
     }
 
     void castAndPost(Spell spell, Game game) {
-        spell.tryCast();
+        spell.TryCast();
         if (spell.getResult() != SpellResult.CANT_CAST) {
             game.postText(spell.getCastText());
         }

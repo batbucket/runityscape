@@ -12,44 +12,44 @@ using System.Linq;
  */
 public static class Util {
 
-    public static bool chance(double probability) {
+    public static bool Chance(double probability) {
         return UnityEngine.Random.Range(0f, 1f) < probability;
     }
 
-    public static int range(double min, double max) {
+    public static int Range(double min, double max) {
         return (int) UnityEngine.Random.Range((float) min, (float) max);
     }
 
-    public static void setTextAlpha(Text target, float alpha) {
+    public static void SetTextAlpha(Text target, float alpha) {
         Color c = target.color;
         c.a = alpha;
         target.color = c;
     }
 
-    public static void setImageAlpha(Image target, float alpha) {
+    public static void SetImageAlpha(Image target, float alpha) {
         Color c = target.color;
         c.a = alpha;
         target.color = c;
     }
 
-    public static void parent(GameObject child, GameObject parent) {
+    public static void Parent(GameObject child, GameObject parent) {
         child.transform.SetParent(parent.transform);
     }
 
-    public static GameObject findChild(GameObject parent, string childName) {
+    public static GameObject FindChild(GameObject parent, string childName) {
         return parent.transform.FindChild(childName).gameObject;
     }
 
     /**
      * Converts an AudioClip to an AudioSource
      */
-    public static AudioSource clipToSource(AudioClip clip) {
+    public static AudioSource ClipToSource(AudioClip clip) {
         AudioSource source = new AudioSource();
         source.clip = clip;
         return source;
     }
 
-    public static void assert(bool statement) {
+    public static void Assert(bool statement) {
         if (!statement) {
             throw new UnityException("Expected value: true");
         }
@@ -63,18 +63,18 @@ public static class Util {
      * VirtualKeyCode's toString (For the keys we deem important has VK_[KEY]
      * So we search for VK_ + [KEYCODE]
      */
-    public static VirtualKeyCode keyCodeToVirtualKeyCode(KeyCode keyToConvert) {
+    public static VirtualKeyCode KeyCodeToVirtualKeyCode(KeyCode keyToConvert) {
         return (VirtualKeyCode)System.Enum.Parse(typeof(VirtualKeyCode), "VK_" + keyToConvert.ToString());
     }
 
-    public static Color invertColor(Color color) {
+    public static Color InvertColor(Color color) {
         return new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
     }
 
     static char[] splitChars = new char[] { ' ', '-', '\t', '\n' };
 
-    public static string wordWrap(string str, int width) {
-        string[] words = explode(str, splitChars);
+    public static string WordWrap(string str, int width) {
+        string[] words = Explode(str, splitChars);
 
         int curLineLength = 0;
         StringBuilder strBuilder = new StringBuilder();
@@ -109,7 +109,7 @@ public static class Util {
         return strBuilder.ToString();
     }
 
-    private static string[] explode(string str, char[] splitChars) {
+    private static string[] Explode(string str, char[] splitChars) {
         List<string> parts = new List<string>();
         int startIndex = 0;
         while (true) {
@@ -134,7 +134,7 @@ public static class Util {
         }
     }
 
-    public static Color hexToColor(string hex) {
+    public static Color HexToColor(string hex) {
         hex = hex.Replace("0x", "");//in case the string is formatted 0xFFFFFF
         hex = hex.Replace("#", "");//in case the string is formatted #FFFFFF
         byte a = 255;//assume fully visible unless specified in hex
@@ -148,7 +148,7 @@ public static class Util {
         return new Color(r, g, b, a);
     }
 
-    public static string color(string s, Color c) {
+    public static string Color(string s, Color c) {
         return string.Format("<color={1}>{0}</color>", s, RGBToHex(c));
     }
 
@@ -166,32 +166,32 @@ public static class Util {
             ((int)(alpha <= 1 ? alpha * 255 : alpha)).ToString("X2")));
     }
 
-    public static T pickRandom<T>(this IEnumerable<T> source) {
-        return source.pickRandom(1).Single();
+    public static T PickRandom<T>(this IEnumerable<T> source) {
+        return source.PickRandom(1).Single();
     }
 
-    public static IEnumerable<T> pickRandom<T>(this IEnumerable<T> source, int count) {
-        return source.shuffle().Take(count);
+    public static IEnumerable<T> PickRandom<T>(this IEnumerable<T> source, int count) {
+        return source.Shuffle().Take(count);
     }
 
-    public static IEnumerable<T> shuffle<T>(this IEnumerable<T> source) {
+    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) {
         return source.OrderBy(x => Guid.NewGuid());
     }
 
-    public static void killChildren(GameObject parent) {
+    public static void KillAllChildren(GameObject parent) {
         foreach (Transform child in parent.transform) {
             GameObject.Destroy(child.gameObject);
         }
     }
 
-    public static Sprite getSprite(string name) {
+    public static Sprite GetSprite(string name) {
         return Resources.Load<Sprite>(name);
     }
 
     /**
      * Converts 1 to A, 2 to B, and so on
      */
-    public static string intToLetter(int column) {
+    public static string IntToLetter(int column) {
         string columnString = "";
         decimal columnNumber = column;
         while (columnNumber > 0) {

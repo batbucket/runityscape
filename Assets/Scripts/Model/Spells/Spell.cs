@@ -1,141 +1,101 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using System;
 
 /**
  * Spells always consume 100% of the user's charge bar
  * which is not considered to be a cost as it varies
  */
-public abstract class Spell {
-    readonly string name;
-    readonly string description;
-    readonly SpellType spellType;
-    readonly TargetType targetType;
+public abstract class Spell : ICloneable, IUndoableProcess {
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public SpellType SpellType { get; private set; }
+    public TargetType TargetType { get; private set; }
+    public bool IsEnabled { get; set; }
+    public string CastText { get; set; }
+    public SpellResult Result { get; private set; }
+    public Character Caster { get; private set; }
+    public Character Target { get; private set; }
+    public int Damage { get; protected set; }
     Dictionary<ResourceType, int> costs;
 
-    protected Character caster;
-    protected List<Character> targets;
+    Action IUndoableProcess.UndoAction { get { return new Action(() => Undo()); } }
+    Action IProcess.Action { get { return new Action(() => OnSuccess(Caster, Target)); } }
 
-    protected double successRate;
-    protected SpellResult result;
-
-    protected string castText;
-
-    public Spell(Character caster, string name, string description, SpellType spellType, TargetType targetType, Dictionary<ResourceType, int> costs) {
-        this.caster = caster;
-        this.name = name;
-        this.description = description;
-        this.spellType = spellType;
-        this.targetType = targetType;
+    public Spell(string name, string description, SpellType spellType, TargetType targetType, Dictionary<ResourceType, int> costs) {
+        this.Name = name;
+        this.Description = description;
+        this.SpellType = spellType;
+        this.TargetType = targetType;
         this.costs = costs;
-        this.targets = new List<Character>();
+        this.IsEnabled = true;
     }
 
-    public Spell(Character caster, string name, SpellType spellType, TargetType targetType)
-    {
-        this.caster = caster;
-        this.name = name;
-        this.spellType = spellType;
-        this.targetType = targetType;
+    public Spell(string name, SpellType spellType, TargetType targetType) {
+        this.Name = name;
+        this.SpellType = spellType;
+        this.TargetType = targetType;
         this.costs = new Dictionary<ResourceType, int>();
-        this.targets = new List<Character>();
     }
 
-    public void setTargets(List<Character> targets) {
-        this.targets = targets;
-    }
-
-    public void setTarget(Character target) {
-        this.targets.Clear();
-        this.targets.Add(target);
-    }
-
-    public string getName() {
-        return name;
-    }
-
-    public virtual string getNameAndInfo() {
-        string s = (canCast() ? name : "<color=red>" + name + "</color>") + " - ";
+    public virtual string GetNameAndInfo(Character caster) {
+        StringBuilder s = new StringBuilder();
+        s.Append(IsCastable(caster) ? Name : Util.Color(Name, Color.red) + (costs.Count == 0 ? "" : " - "));
         List<string> elements = new List<string>();
         foreach (KeyValuePair<ResourceType, int> entry in costs) {
             if (entry.Key != ResourceType.CHARGE) {
-                Color c = ResourceFactory.createResource(entry.Key, 0).getOverColor();
+                Color resourceColor = ResourceFactory.CreateResource(entry.Key, 0).OverColor;
                 int cost = entry.Value;
-                elements.Add(Util.color("" + cost, c));
+                elements.Add(Util.Color("" + cost, resourceColor));
             }
         }
-        s += string.Join("/", elements.ToArray());
-        return elements.Count == 0 ? (canCast() ? name : "<color=red>" + name + "</color>") : s;
+        s.Append(string.Join("/", elements.ToArray()));
+        return s.ToString();
     }
 
-    public SpellType getSpellType() {
-        return spellType;
-    }
-
-    public TargetType getTargetType() {
-        return targetType;
-    }
-
-    public virtual bool canCast() {
+    public virtual bool IsCastable(Character caster, Character target = null) {
+        if (!target.IsTargetable) {
+            return false;
+        }
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
-            if (caster.getResource(resourceCost.Key) == null || caster.getResource(resourceCost.Key).getFalse() < resourceCost.Value) {
+            if (caster.GetResource(resourceCost.Key) == null || caster.GetResource(resourceCost.Key).False < resourceCost.Value) {
                 return false;
             }
         }
-        return caster.getResource(ResourceType.CHARGE).isMaxed();
+        return caster.GetResource(ResourceType.CHARGE).IsMaxed();
     }
 
-    public virtual void consumeResources() {
+    protected virtual void ConsumeResources(Character caster) {
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
-            caster.getResource(resourceCost.Key).subtractFalse(resourceCost.Value);
+            caster.GetResource(resourceCost.Key).False -= resourceCost.Value;
         }
-        caster.getResource(ResourceType.CHARGE).clearFalse();
+        caster.GetResource(ResourceType.CHARGE).clearFalse();
     }
 
-    public void tryCast() {
-        if (canCast()) {
-            cast();
-            consumeResources();
+    public void TryCast(Character caster, Character target) {
+        if (IsCastable(caster, target)) {
+            ConsumeResources(caster);
+            Cast(caster, target);
+            caster.AddToCastSpellHistory((Spell)Clone());
+            target.AddToRecievedSpellHistory((Spell)Clone());
         } else {
-            result = SpellResult.CANT_CAST;
+            Result = SpellResult.CANT_CAST;
         }
     }
 
-    protected virtual void cast() {
-        calculateSuccessRate();
-        if (Util.chance(successRate)) {
-            onSuccess();
-            result = SpellResult.HIT;
+    void Cast(Character caster, Character target) {
+        if (Util.Chance(CalculateHitRate(caster, target))) {
+            this.Caster = caster;
+            this.Target = target;
+            OnSuccess(caster, target);
+
+            Result = SpellResult.HIT;
         } else {
-            onFailure();
-            result = SpellResult.MISS;
+            OnFailure(caster, target);
+            Result = SpellResult.MISS;
         }
-    }
-
-    public virtual void calculateSuccessRate() {
-        successRate = 1;
-    }
-
-    public abstract void onSuccess();
-    public abstract void onFailure();
-    public abstract void undo();
-    public SpellResult getResult() {
-        return result;
-    }
-
-    public string getCastText() {
-        string s = castText;
-        castText = null;
-        return s;
-    }
-
-    protected void setCastText(string s) {
-        castText = s;
-    }
-
-    public bool isTarget(Character c) {
-        return targets != null && targets.Contains(c);
     }
 
     public override bool Equals(object obj) {
@@ -151,14 +111,28 @@ public abstract class Spell {
         }
 
         // Return true if the fields match:
-        return s.getName().Equals(this.getName());
+        return this.Name.Equals(s.Name);
     }
 
     public override int GetHashCode() {
-        return name.GetHashCode();
+        return Name.GetHashCode();
     }
 
-    public string getDescription() {
-        return description;
+    public object Clone() {
+        return this.MemberwiseClone();
     }
+
+    void IProcess.Play() {
+        OnSuccess(Caster, Target);
+    }
+
+    void IUndoableProcess.Undo() {
+        Undo();
+    }
+
+    public abstract double CalculateHitRate(Character caster, Character target);
+    public abstract int CalculateDamage(Character caster, Character target);
+    protected abstract void OnSuccess(Character caster, Character target);
+    protected abstract void OnFailure(Character caster, Character target);
+    public abstract void Undo();
 }

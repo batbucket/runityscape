@@ -15,7 +15,7 @@ public abstract class PortraitManager : MonoBehaviour {
     void Awake() {
         portraitName = gameObject.GetComponentInChildren<Text>();
         iconImage = gameObject.GetComponentInChildren<Image>();
-        resources = Util.findChild(gameObject, "Resources");
+        resources = Util.FindChild(gameObject, "Resources");
     }
 
     public void setPortraitName(string name) {
@@ -36,7 +36,7 @@ public abstract class PortraitManager : MonoBehaviour {
 
     protected ResourceManager addResource(string resourceName, Color overBarColor, Color underBarColor, int numerator, int denominator, string resourceLocation) {
         GameObject g = (GameObject)GameObject.Instantiate(Resources.Load(resourceLocation));
-        Util.parent(g, Util.findChild(gameObject, "Resources"));
+        Util.Parent(g, Util.FindChild(gameObject, "Resources"));
         ResourceManager rm = g.GetComponent<ResourceManager>();
         rm.setResourceName(resourceName);
         rm.setOverBarColor(overBarColor);

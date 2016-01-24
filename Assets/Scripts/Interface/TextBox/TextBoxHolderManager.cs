@@ -11,7 +11,7 @@ public class TextBoxHolderManager : MonoBehaviour {
 
     public TextBoxManager addTextBox() {
         GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
-        Util.parent(g, gameObject);
+        Util.Parent(g, gameObject);
         return g.GetComponent<TextBoxManager>();
     }
 
@@ -27,7 +27,7 @@ public class TextBoxHolderManager : MonoBehaviour {
         //(current == null || current.isDonePosting()) &&
         if (queue.Count > 0) {
             current = queue.Dequeue();
-            Util.parent(current.gameObject, gameObject);
+            Util.Parent(current.gameObject, gameObject);
             current.post();
         }
     }

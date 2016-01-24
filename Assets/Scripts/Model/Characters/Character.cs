@@ -1,204 +1,173 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 /**
  * Characters are special Entities with
  * Attributes and Resources
  */
 public abstract class Character : Entity {
-    protected string name;
-    protected int level;
-    protected SortedDictionary<AttributeType, Attribute> attributes;
-    protected SortedDictionary<ResourceType, Resource> resources;
-    protected List<Spell> fightSpells;
-    protected List<Spell> actSpells;
-    protected Inventory inventory;
-    protected List<Spell> mercySpells;
-    protected bool side;
+    public string Name { get; set; }
+    public int Level { get; set; }
 
-    protected bool reachedFullCharge;
-    protected readonly Color textColor;
+    public SortedDictionary<AttributeType, Attribute> Attributes { get; private set; }
+    public SortedDictionary<ResourceType, Resource> Resources { get; private set; }
+    public Spell Attack { get; set; }
+    public ICollection<Spell> Fights { get; private set; }
+    public ICollection<Spell> Acts { get; private set; }
+    public ICollection<Item> Items { get; private set; }
+    public ICollection<Spell> Mercies { get; private set; }
 
-    public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor) : base(sprite) {
-        this.name = name;
-        this.level = level;
-        this.attributes = new SortedDictionary<AttributeType, Attribute>() {
+    public IList<Spell> RecievedSpells { get; private set; }
+    public IList<Spell> CastSpells { get; private set; }
+
+    public Color TextColor { get; private set; }
+
+    public bool Side { get; set; }
+    public bool IsTargetable { get; set; }
+    public bool Displayable { get; set; }
+    public ChargeStatus ChargeStatus { get; private set; }
+
+    public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
+        this.Name = name;
+        this.Level = level;
+        this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
             {AttributeType.STRENGTH, AttributeFactory.createAttribute(AttributeType.STRENGTH, strength) },
             {AttributeType.INTELLIGENCE, AttributeFactory.createAttribute(AttributeType.INTELLIGENCE, intelligence) },
             {AttributeType.DEXTERITY, AttributeFactory.createAttribute(AttributeType.DEXTERITY, dexterity) },
             {AttributeType.VITALITY, AttributeFactory.createAttribute(AttributeType.VITALITY, vitality) }
         };
 
-        this.resources = new SortedDictionary<ResourceType, Resource>() {
-            {ResourceType.HEALTH, ResourceFactory.createResource(ResourceType.HEALTH, vitality * 10) },
-            {ResourceType.CHARGE, ResourceFactory.createResource(ResourceType.CHARGE, 100) }
+        this.Resources = new SortedDictionary<ResourceType, Resource>() {
+            {ResourceType.HEALTH, ResourceFactory.CreateResource(ResourceType.HEALTH, vitality * 10) },
+            {ResourceType.CHARGE, ResourceFactory.CreateResource(ResourceType.CHARGE, 100) }
         };
-        this.fightSpells = new List<Spell>();
-        this.actSpells = new List<Spell>();
-        this.inventory = new Inventory();
-        this.mercySpells = new List<Spell>();
-        this.textColor = textColor;
 
-        getResource(ResourceType.CHARGE).clearFalse();
+        this.Attack = new Attack();
+        this.Fights = new HashSet<Spell>();
+        this.Acts = new HashSet<Spell>();
+        this.Items = new Inventory();
+        this.Mercies = new HashSet<Spell>();
+        this.TextColor = textColor;
+        this.Displayable = isDisplayable;
+        GetResource(ResourceType.CHARGE).clearFalse();
+
+        RecievedSpells = new List<Spell>();
+        CastSpells = new List<Spell>();
     }
 
-    public void addAttributes(params Attribute[] attributes) {
+    public void AddAttributes(params Attribute[] attributes) {
         foreach (Attribute attribute in attributes) {
-            this.attributes.Add(attribute.getAttributeType(), attribute);
+            this.Attributes.Add(attribute.Type, attribute);
         }
     }
 
-    public void addResources(params Resource[] resources) {
+    public void AddResources(params Resource[] resources) {
         foreach (Resource resource in resources) {
-            this.resources.Add(resource.getResourceType(), resource);
+            this.Resources.Add(resource.Type, resource);
         }
     }
 
-    public Attribute getAttribute(AttributeType attributeType) {
+    public Attribute GetAttribute(AttributeType attributeType) {
         Attribute attribute = null;
-        attributes.TryGetValue(attributeType, out attribute);
+        Attributes.TryGetValue(attributeType, out attribute);
         Debug.Assert(attribute != null);
         return attribute;
     }
 
-    public SortedDictionary<AttributeType, Attribute> getAttributes() {
-        return attributes;
-    }
-
-    public SortedDictionary<ResourceType, Resource> getResources() {
-        return resources;
-    }
-
-    public bool hasAttribute(AttributeType attributeType) {
+    public bool HasAttribute(AttributeType attributeType) {
         Attribute attribute = null;
-        attributes.TryGetValue(attributeType, out attribute);
+        Attributes.TryGetValue(attributeType, out attribute);
         return attribute != null;
     }
 
-    public bool hasResource(ResourceType resourceType) {
+    public bool HasResource(ResourceType resourceType) {
         Resource resource = null;
-        resources.TryGetValue(resourceType, out resource);
+        Resources.TryGetValue(resourceType, out resource);
         return resource != null;
     }
 
-    public virtual bool addToAttribute(AttributeType attributeType, bool value, int amount) {
-        if (hasAttribute(attributeType)) {
-            Attribute attribute = getAttribute(attributeType);
+    public virtual bool AddToAttribute(AttributeType attributeType, bool value, int amount) {
+        if (HasAttribute(attributeType)) {
+            Attribute attribute = GetAttribute(attributeType);
             if (value) {
-                attribute.addTrue(amount);
+                attribute.True += amount;
             } else {
-                attribute.addFalse(amount);
+                attribute.False += amount;
             }
             return true;
         }
         return false;
     }
 
-    public virtual bool addToResource(ResourceType resourceType, bool value, int amount) {
-        if (hasResource(resourceType)) {
-            Resource resource = getResource(resourceType);
+    public virtual bool AddToResource(ResourceType resourceType, bool value, int amount) {
+        if (HasResource(resourceType)) {
+            Resource resource = GetResource(resourceType);
             if (value) {
-                resource.addTrue(amount);
+                resource.True += amount;
             } else {
-                resource.addFalse(amount);
+                resource.False += amount;
             }
             return true;
         }
         return false;
     }
 
-    public Resource getResource(ResourceType resourceType) {
+    public Resource GetResource(ResourceType resourceType) {
         Resource resource = null;
-        resources.TryGetValue(resourceType, out resource);
+        Resources.TryGetValue(resourceType, out resource);
         return resource;
     }
 
-    public List<Spell> getFight() {
-        return fightSpells;
+    public void Charge(int amount) {
+        Debug.Assert(GetResource(ResourceType.CHARGE) != null);
+        GetResource(ResourceType.CHARGE).False += amount;
     }
 
-    public List<Spell> getAct() {
-        return actSpells;
+    public bool IsCharged() {
+        Debug.Assert(GetResource(ResourceType.CHARGE) != null);
+        return GetResource(ResourceType.CHARGE).IsMaxed();
     }
 
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public List<Spell> getMercy() {
-        return mercySpells;
-    }
-
-    public int getLevel() {
-        return level;
-    }
-
-    public string getName() {
-        return name;
-    }
-
-    public void setName(string s) {
-        name = s;
-    }
-
-    public void charge(int amount) {
-        Debug.Assert(getResource(ResourceType.CHARGE) != null);
-        getResource(ResourceType.CHARGE).addFalse(amount);
-    }
-
-    public bool isCharged() {
-        Debug.Assert(getResource(ResourceType.CHARGE) != null);
-        return getResource(ResourceType.CHARGE).isMaxed();
-    }
-
-    public bool getSide() {
-        return side;
-    }
-
-    protected void getReactions(Spell spell, Game game) {
+    protected void GetReactions(Spell spell, Game game) {
         List<Character> characters = game.getAll();
         foreach (Character c in characters) {
-            c.react(spell, game);
+            c.React(spell, game);
         }
     }
 
-    public bool useItem(Item item, Game game) {
-        if (item.canCast()) {
-            inventory.remove(item);
-            item.tryCast();
+    public bool UseItem(Item item, Character target) {
+        if (item.IsCastable(this, target)) {
+            Items.Remove(item);
+            item.TryCast(this, target);
             return true;
         }
         return false;
     }
 
     public virtual void act(int chargeAmount, Game game) {
-        charge(chargeAmount);
-        if (isCharged() && !reachedFullCharge) {
-            reachedFullCharge = true;
-            onFullCharge(game);
-        }
-        if (!isCharged()) {
-            reachedFullCharge = false;
+        Charge(chargeAmount);
+
+        if (!GetResource(ResourceType.CHARGE).IsMaxed()) {
+            ChargeStatus = ChargeStatus.NOT_CHARGED;
+        } else {
+            switch (ChargeStatus) {
+                case ChargeStatus.NOT_CHARGED:
+                    ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;
+                    break;
+                case ChargeStatus.HIT_FULL_CHARGE:
+                    OnFullCharge(game);
+                    ChargeStatus = ChargeStatus.FULL_CHARGE;
+                    break;
+                case ChargeStatus.FULL_CHARGE:
+                    break;
+            }
         }
     }
 
-    protected void talk(string text, Game game) {
-        game.postText(text, this.textColor);
+    protected void Talk(string text, Game game) {
+        game.postText(text, this.TextColor);
     }
-
-    protected abstract void onFullCharge(Game game);
-    protected abstract void react(Spell spell, Game game);
-    public abstract void onStart(Game game);
-    public abstract bool isDefeated(Game game);
-    public abstract void onDefeat(Game game);
-    public abstract bool isKilled(Game game);
-    public abstract void onKill(Game game);
-    public abstract void onVictory(Game game);
-    public abstract void onBattleEnd(Game game);
-
 
     public override bool Equals(object obj) {
         // If parameter is null return false.
@@ -213,18 +182,28 @@ public abstract class Character : Entity {
         }
 
         // Return true if the fields match:
-        return c.getName().Equals(this.getName());
+        return this.Name.Equals(c.Name);
     }
 
     public override int GetHashCode() {
-        return name.GetHashCode();
+        return Name.GetHashCode();
     }
 
-    public void setSide(bool side) {
-        this.side = side;
+    public void AddToRecievedSpellHistory(Spell spell) {
+        RecievedSpells.Add(spell);
     }
 
-    public Color getColor() {
-        return textColor;
+    public void AddToCastSpellHistory(Spell spell) {
+        CastSpells.Add(spell);
     }
+
+    protected abstract void OnFullCharge(Game game);
+    protected abstract void React(Spell spell, Game game);
+    public abstract void OnStart(Game game);
+    public abstract bool IsDefeated(Game game);
+    public abstract void OnDefeat(Game game);
+    public abstract bool IsKilled(Game game);
+    public abstract void OnKill(Game game);
+    public abstract void OnVictory(Game game);
+    public abstract void OnBattleEnd(Game game);
 }

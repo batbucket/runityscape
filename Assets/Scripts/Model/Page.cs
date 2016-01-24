@@ -142,7 +142,7 @@ public abstract class Page {
 
     void setCharacterSides(List<Character> characters, bool side) {
         foreach (Character c in characters) {
-            c.setSide(side);
+            c.Side = side;
         }
     }
 
@@ -153,12 +153,12 @@ public abstract class Page {
     void repeatedCharacterCheck(List<Character> characters) {
         Dictionary<string, List<Character>> repeatedCharacters = new Dictionary<string, List<Character>>();
         foreach (Character c in characters) {
-            if (!repeatedCharacters.ContainsKey(c.getName())) {
+            if (!repeatedCharacters.ContainsKey(c.Name)) {
                 List<Character> characterList = new List<Character>();
                 characterList.Add(c);
-                repeatedCharacters.Add(c.getName(), characterList);
+                repeatedCharacters.Add(c.Name, characterList);
             } else {
-                repeatedCharacters[c.getName()].Add(c);
+                repeatedCharacters[c.Name].Add(c);
             }
         }
 
@@ -166,7 +166,7 @@ public abstract class Page {
             if (cPair.Value.Count > 1) {
                 for (int i = 0; i < cPair.Value.Count; i++) {
                     Character c = cPair.Value[i];
-                    c.setName(string.Format("{0} {1}", c.getName(), Util.intToLetter(i + 1)));
+                    c.Name = string.Format("{0} {1}", c.Name, Util.IntToLetter(i + 1));
                 }
             }
         }
@@ -192,7 +192,7 @@ public abstract class Page {
 
         // If parameter cannot be cast to Page return false.
         Page p = obj as Page;
-        if ((object) p == null) {
+        if ((object)p == null) {
             return false;
         }
 

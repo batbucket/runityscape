@@ -1,39 +1,18 @@
 ﻿using System;
 
 public class Process : IProcess {
-    string name;
-    string description;
-    System.Action playAction;
 
-    public Process(string name, string description, System.Action playAction) {
-        this.name = name;
-        this.description = description;
-        this.playAction = playAction;
+    public string Name { get; private set; }
+    public string Description { get; private set; }
+    public Action Action { get; private set; }
+
+    public Process(string name, string description, Action action) {
+        this.Name = name;
+        this.Description = description;
+        this.Action = action;
     }
 
-    public void setDescription(string description) {
-        this.description = description;
+    public void Play() {
+        Action.Invoke();
     }
-
-    public string getDescription() {
-        return description;
-    }
-
-    public void setName(string name) {
-        this.name = name;
-    }
-
-    public string getName() {
-        return name;
-    }
-
-	public void setPlay(System.Action action) {
-		playAction = action;
-	}
-
-	public void play() {
-        if (playAction != null) {
-            playAction.Invoke();
-        }
-	}
 }

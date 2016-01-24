@@ -13,13 +13,11 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile>
-    </CompilerResponseFile>
+    <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.3.1f1</UnityVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -92,6 +90,7 @@
     <Compile Include="Assets\Scripts\Model\BattlePage.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Amit.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Character.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\ChargeStatus.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\ComputerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Entity.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\PlayerCharacter.cs" />
@@ -109,7 +108,6 @@
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Spare.cs" />
-    <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Surrender.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\PerpetualSpell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellFactory.cs" />
@@ -119,18 +117,18 @@
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\Attribute.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeFactory.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeType.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Dexterity.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Intelligence.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Strength.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Vitality.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Named Attributes\Dexterity.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Named Attributes\Intelligence.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Named Attributes\Strength.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Attributes\Named Attributes\Vitality.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\PairedInt.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Resources\Charge.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Resources\Health.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Resources\Mana.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Named Resources\Charge.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Named Resources\Health.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Named Resources\Mana.cs" />
+    <Compile Include="Assets\Scripts\Model\Stats\Resources\Named Resources\Skill.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Resources\Resource.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Resources\ResourceFactory.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Resources\ResourceType.cs" />
-    <Compile Include="Assets\Scripts\Model\Stats\Resources\Skill.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\Misc\InputSimulator.XML" />
