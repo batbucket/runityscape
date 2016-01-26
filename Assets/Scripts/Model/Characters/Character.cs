@@ -32,10 +32,10 @@ public abstract class Character : Entity {
         this.Name = name;
         this.Level = level;
         this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
-            {AttributeType.STRENGTH, AttributeFactory.createAttribute(AttributeType.STRENGTH, strength) },
-            {AttributeType.INTELLIGENCE, AttributeFactory.createAttribute(AttributeType.INTELLIGENCE, intelligence) },
-            {AttributeType.DEXTERITY, AttributeFactory.createAttribute(AttributeType.DEXTERITY, dexterity) },
-            {AttributeType.VITALITY, AttributeFactory.createAttribute(AttributeType.VITALITY, vitality) }
+            {AttributeType.STRENGTH, AttributeFactory.CreateAttribute(AttributeType.STRENGTH, strength) },
+            {AttributeType.INTELLIGENCE, AttributeFactory.CreateAttribute(AttributeType.INTELLIGENCE, intelligence) },
+            {AttributeType.DEXTERITY, AttributeFactory.CreateAttribute(AttributeType.DEXTERITY, dexterity) },
+            {AttributeType.VITALITY, AttributeFactory.CreateAttribute(AttributeType.VITALITY, vitality) }
         };
 
         this.Resources = new SortedDictionary<ResourceType, Resource>() {
@@ -130,7 +130,7 @@ public abstract class Character : Entity {
     }
 
     protected void GetReactions(Spell spell, Game game) {
-        List<Character> characters = game.getAll();
+        List<Character> characters = game.GetAll();
         foreach (Character c in characters) {
             c.React(spell, game);
         }
@@ -145,7 +145,7 @@ public abstract class Character : Entity {
         return false;
     }
 
-    public virtual void act(int chargeAmount, Game game) {
+    public virtual void Act(int chargeAmount, Game game) {
         Charge(chargeAmount);
 
         if (!GetResource(ResourceType.CHARGE).IsMaxed()) {
@@ -166,7 +166,7 @@ public abstract class Character : Entity {
     }
 
     protected void Talk(string text, Game game) {
-        game.postText(text, this.TextColor);
+        game.PostText(text, this.TextColor);
     }
 
     public override bool Equals(object obj) {

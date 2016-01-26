@@ -13,11 +13,11 @@ public abstract class Entity {
         this.sprite = sprite;
     }
 
-    public void setSprite(Sprite sprite) {
+    public void SetSprite(Sprite sprite) {
         this.sprite = sprite;
     }
 
-    public Sprite getSprite() {
+    public Sprite GetSprite() {
         return sprite;
     }
 }

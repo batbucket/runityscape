@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public class RightPortraitHolderManager : PortraitHolderManager {
-    public override PortraitManager addPortrait(string portraitName, Sprite sprite) {
-        return addPortrait(portraitName, sprite, "Right_Portrait");
+    public override PortraitManager AddPortrait(string portraitName, Sprite sprite) {
+        return AddPortrait(portraitName, sprite, "Right_Portrait");
     }
 }

@@ -11,8 +11,8 @@ public abstract class PlayerCharacter : Character {
         : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor, true) {
     }
 
-    public override void act(int chargeAmount, Game game) {
-        base.act(chargeAmount, game);
+    public override void Act(int chargeAmount, Game game) {
+        base.Act(chargeAmount, game);
     }
 
     public override void OnStart(Game game) {

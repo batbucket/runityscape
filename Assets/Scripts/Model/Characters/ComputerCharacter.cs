@@ -13,25 +13,25 @@ public abstract class ComputerCharacter : Character {
         this.maxDelay = maxDelay;
     }
 
-    public override void act(int chargeAmount, Game game) {
-        base.act(chargeAmount, game);
+    public override void Act(int chargeAmount, Game game) {
+        base.Act(chargeAmount, game);
         if ((delay -= Time.deltaTime) <= 0) {
-            decideSpell(game);
+            DecideSpell(game);
         }
     }
 
-    protected abstract void decideSpell(Game game);
+    protected abstract void DecideSpell(Game game);
 
     protected override void OnFullCharge(Game game) {
         delay = UnityEngine.Random.Range(0, maxDelay);
     }
 
-    protected void quickCast(Spell spell, Character target, Game game) {
+    protected void QuickCast(Spell spell, Character target, Game game) {
         spell.setTarget(target);
-        castAndPost(spell, game);
+        CastAndPost(spell, game);
     }
 
-    protected void quickCast(Spell spell, Game game, Character target = null) {
+    protected void QuickCast(Spell spell, Game game, Character target = null) {
         if (!spell.canCast()) {
             return;
         }
@@ -55,15 +55,15 @@ public abstract class ComputerCharacter : Character {
                     spell.setTargets(game.getEnemies(side));
                     break;
                 case TargetType.ALL:
-                    spell.setTargets(game.getAll());
+                    spell.setTargets(game.GetAll());
                     break;
             }
         }
-        castAndPost(spell, game);
+        CastAndPost(spell, game);
         GetReactions(spell, game);
     }
 
-    void castAndPost(Spell spell, Game game) {
+    void CastAndPost(Spell spell, Game game) {
         spell.TryCast();
         if (spell.getResult() != SpellResult.CANT_CAST) {
             game.postText(spell.getCastText());

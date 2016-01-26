@@ -19,10 +19,10 @@ public class TextBoxManager : MonoBehaviour {
 
     bool start;
 
-	// Use this for initialization
-	void Awake() {
+    // Use this for initialization
+    void Awake() {
         text = gameObject.GetComponent<Text>();
-	}
+    }
 
     // Update is called once per frame
     void Update() {
@@ -46,14 +46,14 @@ public class TextBoxManager : MonoBehaviour {
                 }
             }
         }
-	}
+    }
 
     /**
      * Tells the textBox to type a certain string at a rate, with a certain color
      * If this is called before a previous post() finishes, the new text being posted
      * will be overwritten by the new fullText
      */
-    public void post(string fullText, float lettersPerSecond, Color color) {
+    public void Post(string fullText, float lettersPerSecond, Color color) {
         if (lettersPerSecond < 0) {
             throw new UnityException("Bad input:" + lettersPerSecond + " is less than 0.");
         }
@@ -64,7 +64,7 @@ public class TextBoxManager : MonoBehaviour {
         this.start = true;
     }
 
-    public void setText(string fullText, float lettersPerSecond, Color color) {
+    public void SetText(string fullText, float lettersPerSecond, Color color) {
         if (lettersPerSecond < 0) {
             throw new UnityException("Bad input:" + lettersPerSecond + " is less than 0.");
         }
@@ -74,21 +74,21 @@ public class TextBoxManager : MonoBehaviour {
         this.text.color = color;
     }
 
-    public void post() {
+    public void Post() {
         this.start = true;
     }
 
     /**
      * Tells the textBox to type a certain string at a rate. white colored
      */
-    public void post(string fullText, float lettersPerSecond) {
-        post(fullText, lettersPerSecond, Color.white);
+    public void Post(string fullText, float lettersPerSecond) {
+        Post(fullText, lettersPerSecond, Color.white);
     }
 
     /**
      * True when there is no more text to type
      */
-    public bool isDonePosting() {
+    public bool IsDonePosting() {
         return text.text.Length == fullText.Length;
     }
 }

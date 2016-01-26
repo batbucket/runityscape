@@ -9,16 +9,16 @@ public class TextBoxHolderManager : MonoBehaviour {
         queue = new Queue<TextBoxManager>();
     }
 
-    public TextBoxManager addTextBox() {
+    public TextBoxManager AddTextBox() {
         GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
         Util.Parent(g, gameObject);
         return g.GetComponent<TextBoxManager>();
     }
 
-    public void addTextBox(string fullText, float lettersPerSecond, Color color) {
+    public void AddTextBox(string fullText, float lettersPerSecond, Color color) {
         GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
         TextBoxManager textBox = g.GetComponent<TextBoxManager>();
-        textBox.setText(fullText, lettersPerSecond, color);
+        textBox.SetText(fullText, lettersPerSecond, color);
         queue.Enqueue(textBox);
     }
 
@@ -28,7 +28,7 @@ public class TextBoxHolderManager : MonoBehaviour {
         if (queue.Count > 0) {
             current = queue.Dequeue();
             Util.Parent(current.gameObject, gameObject);
-            current.post();
+            current.Post();
         }
     }
 }

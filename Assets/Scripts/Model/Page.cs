@@ -30,8 +30,8 @@ public abstract class Page {
         List<Process> actionGrid = null, Action onTick = null) {
         this.text = text;
         this.tooltip = tooltip;
-        if (left == null) this.leftCharacters = new List<Character>(); else setLeft(left);
-        if (right == null) this.rightCharacters = new List<Character>(); else setRight(right);
+        if (left == null) this.leftCharacters = new List<Character>(); else SetLeft(left);
+        if (right == null) this.rightCharacters = new List<Character>(); else SetRight(right);
         this.onFirstEnterAction = (onFirstEnterAction == null) ? () => { } : onFirstEnter;
         this.onEnterAction = (onEnter == null) ? () => { } : onEnter;
         this.onFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
@@ -41,65 +41,65 @@ public abstract class Page {
         this.id = idCount++;
     }
 
-    public void setText(string text) {
+    public void SetText(string text) {
         this.text = text;
     }
 
-    public void onEnter() {
+    public void OnEnter() {
         if (!hasEnteredBefore && onFirstEnterAction != null) {
             hasEnteredBefore = true;
-            onFirstEnter();
+            OnFirstEnter();
         } else if (onEnterAction != null) {
             onEnterAction.Invoke();
         }
     }
 
-    public void onFirstEnter() {
+    public void OnFirstEnter() {
         onFirstEnterAction.Invoke();
     }
 
-    public void onExit() {
+    public void OnExit() {
         if (!hasExitedBefore && onFirstExitAction != null) {
             hasExitedBefore = true;
-            onFirstExit();
+            OnFirstExit();
         } else if (onExitAction != null) {
             onExitAction.Invoke();
         }
     }
 
-    public void onFirstExit() {
+    public void OnFirstExit() {
         onFirstExitAction.Invoke();
     }
 
-    public string getText() {
+    public string GetText() {
         return text;
     }
 
-    public List<Process> getActions() {
+    public List<Process> GetActions() {
         return actionGrid;
     }
 
-    public void setOnEnter(Action p) {
+    public void SetOnEnter(Action p) {
         onEnterAction = p;
     }
 
-    public void setOnFirstEnter(Action p) {
+    public void SetOnFirstEnter(Action p) {
         onFirstExitAction = p;
     }
 
-    public void setOnExit(Action p) {
+    public void SetOnExit(Action p) {
         onExitAction = p;
     }
 
-    public void setOnFirstExit(Action p) {
+    public void SetOnFirstExit(Action p) {
         onFirstExitAction = p;
     }
 
-    public List<Character> getCharacters(bool isRightSide) {
+    public List<Character> GetCharacters(bool isRightSide) {
         return isRightSide ? rightCharacters : leftCharacters;
     }
 
-    public void setAction(Process action, int index) {
+    public void SetAction(Process action, int index) {
         if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
             actionGrid[index] = action;
         } else {
@@ -107,7 +107,7 @@ public abstract class Page {
         }
     }
 
-    public void clearAction(int index) {
+    public void ClearAction(int index) {
         if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
             actionGrid[index] = null;
         } else {
@@ -115,24 +115,24 @@ public abstract class Page {
         }
     }
 
-    public void setActions(List<Process> actions) {
+    public void SetActions(List<Process> actions) {
         if (actions.Count > ActionGridManager.ROWS * ActionGridManager.COLS) {
             throw new ArgumentException("Size of params is: " + actions.Count + ", which is greater than " + ActionGridManager.ROWS * ActionGridManager.COLS);
         }
         this.actionGrid = actions;
     }
 
-    public void setLeft(List<Character> characters) {
-        setSide(characters, false);
+    public void SetLeft(List<Character> characters) {
+        SetSide(characters, false);
     }
 
-    public void setRight(List<Character> characters) {
-        setSide(characters, true);
+    public void SetRight(List<Character> characters) {
+        SetSide(characters, true);
     }
 
-    public void setSide(List<Character> characters, bool side) {
-        repeatedCharacterCheck(characters);
-        setCharacterSides(characters, side);
+    public void SetSide(List<Character> characters, bool side) {
+        RepeatedCharacterCheck(characters);
+        SetCharacterSides(characters, side);
         if (!side) {
             leftCharacters = characters;
         } else {
@@ -140,7 +140,7 @@ public abstract class Page {
         }
     }
 
-    void setCharacterSides(List<Character> characters, bool side) {
+    void SetCharacterSides(List<Character> characters, bool side) {
         foreach (Character c in characters) {
             c.Side = side;
         }
@@ -150,7 +150,7 @@ public abstract class Page {
      * Check if repeated characters exist on a side, if so, append A->Z for each repeated character
      * For example: Steve A, Steve B
      */
-    void repeatedCharacterCheck(List<Character> characters) {
+    void RepeatedCharacterCheck(List<Character> characters) {
         Dictionary<string, List<Character>> repeatedCharacters = new Dictionary<string, List<Character>>();
         foreach (Character c in characters) {
             if (!repeatedCharacters.ContainsKey(c.Name)) {
@@ -172,15 +172,15 @@ public abstract class Page {
         }
     }
 
-    public int getId() {
+    public int GetId() {
         return idCount;
     }
 
-    public void setTooltip(string tooltip) {
+    public void SetTooltip(string tooltip) {
         this.tooltip = tooltip;
     }
 
-    public string getTooltip() {
+    public string GetTooltip() {
         return tooltip;
     }
 
@@ -197,18 +197,18 @@ public abstract class Page {
         }
 
         // Return true if the fields match:
-        return p.getId() == this.getId();
+        return p.GetId() == this.GetId();
     }
 
     public override int GetHashCode() {
         return id;
     }
 
-    public void setOnTick(Action action) {
+    public void SetOnTick(Action action) {
         onTick = action;
     }
 
-    public virtual void tick() {
+    public virtual void Tick() {
         onTick.Invoke();
     }
 }

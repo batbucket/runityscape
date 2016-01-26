@@ -21,15 +21,15 @@ public class TimeManager : MonoBehaviour {
 
     }
 
-    public void setDay(int dayNum) {
+    public void SetDay(int dayNum) {
         day.text = string.Format("Day {0}", dayNum);
     }
 
-    public void setTime(string newTime) {
+    public void SetTime(string newTime) {
         time.text = newTime;
     }
 
-    public void enable(bool enable) {
+    public void Enable(bool enable) {
         day.enabled = enable;
         time.enabled = enable;
     }

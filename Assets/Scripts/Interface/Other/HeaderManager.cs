@@ -23,27 +23,27 @@ public class HeaderManager : MonoBehaviour {
 
     }
 
-    public void setLocation(string loc) {
+    public void SetLocation(string loc) {
         location.text = loc;
     }
 
-    public void enableLocation(bool enable) {
+    public void EnableLocation(bool enable) {
         location.enabled = enable;
     }
 
-    public void setChapter(string chapterText) {
+    public void SetChapter(string chapterText) {
         chapter.text = chapterText;
     }
 
-    public void enableChapter(bool enable) {
+    public void EnableChapter(bool enable) {
         chapter.enabled = enable;
     }
 
-    public void setBlurb(string blurb) {
+    public void SetBlurb(string blurb) {
         mainQuestBlurb.text = blurb;
     }
 
-    public void enableBlurb(bool enable) {
+    public void EnableBlurb(bool enable) {
         mainQuestBlurb.enabled = enable;
     }
 }

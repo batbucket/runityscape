@@ -4,14 +4,14 @@ using System;
 using System.Collections.Generic;
 
 public static class SpellFactory {
-    public static Spell createSpell(Character caster, string spellName) {
+    public static Spell CreateSpell(Character caster, string spellName) {
         Spell spell = (Spell)(Activator.CreateInstance(Type.GetType(spellName), caster));
         return spell;
     }
 
     public static Spell createSpell(Character caster, string spellName, List<Character> targets) {
-        Spell spell = createSpell(caster, spellName);
-        spell.setTargets(targets);
+        Spell spell = CreateSpell(caster, spellName);
+        spell.SetTargets(targets);
         return spell;
     }
 }

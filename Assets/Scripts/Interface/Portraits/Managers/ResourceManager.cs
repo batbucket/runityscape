@@ -20,15 +20,15 @@ public class ResourceManager : MonoBehaviour {
         fraction = gameObject.GetComponentsInChildren<Text>()[1];
     }
 
-    public void setResourceName(string name) {
+    public void SetResourceName(string name) {
         resourceName.text = name;
     }
 
-    public void setUnderBarColor(Color color) {
+    public void SetUnderBarColor(Color color) {
         underBar.color = color;
     }
 
-    public void setOverBarColor(Color color) {
+    public void SetOverBarColor(Color color) {
         overBar.color = color;
     }
 
@@ -36,7 +36,7 @@ public class ResourceManager : MonoBehaviour {
      * Scale should be in the range [0, 1]
      * This sets the OverBar's scale
      */
-    public void setBarScale(float scale) {
+    public void SetBarScale(float scale) {
         Vector3 v = overBar.gameObject.GetComponent<RectTransform>().localScale;
         v.x = scale;
         overBar.gameObject.GetComponent<RectTransform>().localScale = v;
@@ -46,14 +46,14 @@ public class ResourceManager : MonoBehaviour {
      * This sets the text on the bar describing
      * current / total resource
      */
-    public void setFraction(int numerator, int denominator) {
+    public void SetFraction(int numerator, int denominator) {
         fraction.text = numerator + "/" + denominator;
     }
 
     /**
      * Sets the fraction as a string, for RP segments
      */
-    public void setFractionString(string s) {
+    public void SetFractionString(string s) {
         fraction.text = s;
     }
 }

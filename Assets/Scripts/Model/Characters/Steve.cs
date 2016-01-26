@@ -9,15 +9,15 @@ public class Steve : ComputerCharacter {
         getFight().Add(new Attack(this));
     }
 
-    public override void act(int chargeAmount, Game game) {
-        base.act(chargeAmount, game);
+    public override void Act(int chargeAmount, Game game) {
+        base.Act(chargeAmount, game);
     }
 
-    protected override void decideSpell(Game game) {
+    protected override void DecideSpell(Game game) {
         if (GetResource(ResourceType.HEALTH).GetRatio() < .5) {
-            quickCast(new Meditate(this), game);
+            QuickCast(new Meditate(this), game);
         } else {
-            quickCast(new Attack(this), game);
+            QuickCast(new Attack(this), game);
         }
     }
 

@@ -2,9 +2,9 @@
 using System.Collections;
 
 public static class AttributeFactory {
-    public static Attribute createAttribute(AttributeType attributeType, int value) {
+    public static Attribute CreateAttribute(AttributeType attributeType, int value = 1) {
         Attribute attribute = null;
-        switch(attributeType) {
+        switch (attributeType) {
             case AttributeType.STRENGTH:
                 attribute = new Strength();
                 break;
