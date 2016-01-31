@@ -12,7 +12,7 @@ public class Game : MonoBehaviour {
     public ActionGridManager ActionGrid { get; private set; }
     public TooltipManager Tooltip { get; private set; }
 
-    public Page CurrentPage { get { return CurrentPage; } private set { SetPage(value); } }
+    public Page CurrentPage { get; private set; }
     bool initializedPage;
 
     Dictionary<string, bool> boolFlags;
@@ -43,17 +43,17 @@ public class Game : MonoBehaviour {
         Util.KillAllChildren(LeftPortraits.gameObject);
         Util.KillAllChildren(RightPortraits.gameObject);
         ActionGrid.SetButtonAttributes(CurrentPage.ActionGrid);
-        UpdatePortraits(CurrentPage.GetCharacters(false), LeftPortraits);
-        UpdatePortraits(CurrentPage.GetCharacters(true), RightPortraits);
+        UpdatePortraits(CurrentPage.LeftCharacters, LeftPortraits);
+        UpdatePortraits(CurrentPage.RightCharacters, RightPortraits);
         Tooltip.Set(CurrentPage.Tooltip);
         CurrentPage.Tick();
     }
 
-    public void UpdatePortraits(List<Character> characters, PortraitHolderManager portraitHolder) {
+    public void UpdatePortraits(IList<Character> characters, PortraitHolderManager portraitHolder) {
         foreach (Character c in characters) {
             PortraitManager portrait = portraitHolder.AddPortrait(c.Name, c.GetSprite());
             foreach (KeyValuePair<ResourceType, Resource> r in c.Resources) {
-                ResourceManager res = portrait.AddResource(r.Value.ShortName, r.Value.OverColor, r.Value.UnderColor, r.Value.False, r.Value.True);
+                portrait.AddResource(r.Value.ShortName, r.Value.OverColor, r.Value.UnderColor, r.Value.False, r.Value.True);
             }
         }
     }
@@ -80,7 +80,6 @@ public class Game : MonoBehaviour {
     void SetPage(Page page) {
         page.OnEnter();
         CurrentPage.OnExit();
-        Util.KillAllChildren(TextBoxHolder.gameObject);
         this.CurrentPage = page;
         TextBoxHolder.AddTextBox(CurrentPage.Text, 0, Color.white);
     }

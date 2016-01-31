@@ -33,7 +33,7 @@ public abstract class Item : Spell {
 
     protected override void ConsumeResources(Character caster) {
         base.ConsumeResources(caster);
-        caster.Items.Remove(this);
+        caster.Selections[Selection.ITEM].Remove(this);
     }
 
     public override bool IsCastable(Character caster, Character target = null) {

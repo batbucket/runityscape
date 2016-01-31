@@ -30,7 +30,7 @@ public class TreeNode<T> {
     }
 
     public TreeNode<T>[] AddChildren(params T[] values) {
-        return values.Select(AddChild).ToArray();
+        return values.Select<T, TreeNode<T>>(AddChild).ToArray();
     }
 
     public bool RemoveChild(TreeNode<T> node) {

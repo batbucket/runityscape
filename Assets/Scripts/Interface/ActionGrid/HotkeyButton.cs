@@ -16,7 +16,7 @@ public class HotkeyButton : MonoBehaviour {
     UIInput input;
     public Text Text { get; set; } //The text on the button
     public Text HotkeyText { get; private set; }
-    public IProcess Process { get { return Process; } set { SetProcess(value); } } //Process this button holds
+    public IProcess Process { get; set; } //Process this button holds
     public TooltipManager Tooltip { get; set; }
 
     bool activated;

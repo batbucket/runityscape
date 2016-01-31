@@ -2,11 +2,11 @@
  * Type-Safe Enum Pattern
  */
 public sealed class Selection {
-    public string Name { get; } //Name of selection: Example: Spell
-    public string Declare { get; } //"X will do Y"
-    public string Question { get; } //"What will X do?"
-    public string Extra { get; } //Extra tooltip
-    public Type SelectionType { get; }
+    public string Name { get; private set; } //Name of selection: Example: Spell
+    public string Declare { get; private set; } //"X will do Y"
+    public string Question { get; private set; } //"What will X do?"
+    public string Extra { get; private set; } //Extra tooltip
+    public Type SelectionType { get; private set; }
 
     private Selection(Type type, string name, string declare, string question, string extra = "") {
         this.SelectionType = type;

@@ -18,6 +18,7 @@ public class BattlePage : Page {
     public BattlePage(string text = "", string tooltip = "", Character mainCharacter = null, List<Character> left = null, List<Character> right = null,
         Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null,
         List<Process> actionGrid = null) : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, actionGrid, null) {
+        lastSpellStack = new Stack<Spell>();
 
         /**
          * Set up the Selection Tree.

@@ -49,7 +49,7 @@ public class ActionGridManager : MonoBehaviour {
         actionButtons[index].Process = process;
     }
 
-    public void SetButtonAttributes(List<Process> list) {
+    public void SetButtonAttributes(IList<Process> list) {
         Util.Assert(list.Count <= actionButtons.Length);
         for (int i = 0; i < list.Count; i++) {
             actionButtons[i].Process = list[i];

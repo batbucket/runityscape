@@ -10,6 +10,6 @@ public abstract class ConsumableItem : Item {
     public override void Undo() {
         Item oneItem = (Item)Clone();
         oneItem.Count = 1;
-        Caster.Items.Add(oneItem);
+        Caster.Selections[Selection.ITEM].Add(oneItem);
     }
 }

@@ -9,9 +9,9 @@ public abstract class Page {
     public string Text { get; protected set; }
     public string Tooltip { get; protected set; }
     public Character MainCharacter { get; protected set; }
-    public IList<Character> LeftCharacters { get { return LeftCharacters; } protected set { SetSide(value, false); } }
-    public IList<Character> RightCharacters { get { return RightCharacters; } protected set { SetSide(value, true); } }
-    public IList<Process> ActionGrid { get { return ActionGrid; } protected set { Util.Assert(value.Count <= ActionGridManager.ROWS * ActionGridManager.COLS); ActionGrid = value; } }
+    public IList<Character> LeftCharacters { get; private set; }
+    public IList<Character> RightCharacters { get; private set; }
+    public IList<Process> ActionGrid { get; private set; }
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
@@ -69,19 +69,19 @@ public abstract class Page {
         OnFirstExitAction.Invoke();
     }
 
-    void SetSide(IList<Character> characters, bool side) {
+    void SetSide(IList<Character> characters, bool isRightSide) {
         RepeatedCharacterCheck(characters);
-        SetCharacterSides(characters, side);
-        if (!side) {
+        SetCharacterSides(characters, isRightSide);
+        if (!isRightSide) {
             LeftCharacters = characters;
         } else {
             RightCharacters = characters;
         }
     }
 
-    void SetCharacterSides(IList<Character> characters, bool side) {
+    void SetCharacterSides(IList<Character> characters, bool isRightSide) {
         foreach (Character c in characters) {
-            c.Side = side;
+            c.Side = isRightSide;
         }
     }
 

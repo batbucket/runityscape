@@ -11,7 +11,6 @@ public static class SpellFactory {
 
     public static Spell createSpell(Character caster, string spellName, List<Character> targets) {
         Spell spell = CreateSpell(caster, spellName);
-        spell.SetTargets(targets);
         return spell;
     }
 }

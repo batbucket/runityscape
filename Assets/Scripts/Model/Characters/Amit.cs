@@ -20,24 +20,24 @@ public class Amit : PlayerCharacter {
         throw new NotImplementedException();
     }
 
-    public override void OnBattleEnd() {
+    public override void OnBattleEnd(Page page) {
         throw new NotImplementedException();
     }
 
-    public override void OnDefeat() {
+    public override void OnDefeat(Page page) {
         throw new NotImplementedException();
     }
 
-    public override void OnKill() {
+    public override void OnKill(Page page) {
         throw new NotImplementedException();
     }
 
-    public override void OnVictory() {
+    public override void OnStart(Page page) {
         throw new NotImplementedException();
     }
 
-    public override void React(Spell spell) {
-
+    public override void OnVictory(Page page) {
+        throw new NotImplementedException();
     }
 
     protected override void OnFullCharge() {
