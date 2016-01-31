@@ -7,7 +7,7 @@ public class Attack : Spell {
     public const string NAME = "Attack";
     public static readonly string DESCRIPTION = string.Format("Attack a single enemy for {0} damage.", Util.Color(Strength.SHORT_NAME, Strength.ASSOCIATED_COLOR));
     public const SpellType SPELL_TYPE = SpellType.OFFENSE;
-    public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
+    public const SpellTarget TARGET_TYPE = SpellTarget.SINGLE_ENEMY;
     public const string SUCCESS_CAST = "* {0} attacks {1} for {2} damage!";
     public const string NO_DAMAGE_CAST = "* {0} attacks {1}! ...But it had no effect!";
     public const string FAIL_CAST = "* {0} attacks {1}! ...But it missed!";

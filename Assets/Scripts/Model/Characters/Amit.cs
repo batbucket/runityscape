@@ -4,44 +4,43 @@ using System;
 
 public class Amit : PlayerCharacter {
     public Amit() : base(Util.GetSprite("crying_mudkip"), "Amit", 0, 5, 5, 5, 5, Color.white) {
-        side = false;
+        Side = false;
         AddResources(ResourceFactory.CreateResource(ResourceType.SKILL, 3));
-        fightSpells.Add(new Attack(this));
-        fightSpells.Add(new Meditate(this));
-        mercySpells.Add(new Spare(this));
-        mercySpells.Add(new Surrender(this));
-        inventory.add(new Lobster(this, 2));
+        this.Selections[Selection.SPELL].Add(new Attack());
+        this.Selections[Selection.SPELL].Add(new Meditate());
+        this.Selections[Selection.SPELL].Add(new Spare());
+        this.Selections[Selection.ITEM].Add(new Lobster(2));
     }
 
-    public override bool IsDefeated(Game game) {
+    public override bool IsDefeated() {
         throw new NotImplementedException();
     }
 
-    public override bool IsKilled(Game game) {
+    public override bool IsKilled() {
         throw new NotImplementedException();
     }
 
-    public override void OnBattleEnd(Game game) {
+    public override void OnBattleEnd() {
         throw new NotImplementedException();
     }
 
-    public override void OnDefeat(Game game) {
+    public override void OnDefeat() {
         throw new NotImplementedException();
     }
 
-    public override void OnKill(Game game) {
+    public override void OnKill() {
         throw new NotImplementedException();
     }
 
-    public override void OnVictory(Game game) {
+    public override void OnVictory() {
         throw new NotImplementedException();
     }
 
-    protected override void OnFullCharge(Game game) {
+    public override void React(Spell spell) {
 
     }
 
-    protected override void React(Spell spell, Game game) {
+    protected override void OnFullCharge() {
 
     }
 }

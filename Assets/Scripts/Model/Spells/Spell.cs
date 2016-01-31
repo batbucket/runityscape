@@ -12,7 +12,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     public string Name { get; private set; }
     public string Description { get; private set; }
     public SpellType SpellType { get; private set; }
-    public TargetType TargetType { get; private set; }
+    public SpellTarget TargetType { get; private set; }
     public bool IsEnabled { get; set; }
     public string CastText { get; set; }
     public SpellResult Result { get; private set; }
@@ -24,7 +24,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     Action IUndoableProcess.UndoAction { get { return new Action(() => Undo()); } }
     Action IProcess.Action { get { return new Action(() => OnSuccess(Caster, Target)); } }
 
-    public Spell(string name, string description, SpellType spellType, TargetType targetType, Dictionary<ResourceType, int> costs) {
+    public Spell(string name, string description, SpellType spellType, SpellTarget targetType, Dictionary<ResourceType, int> costs) {
         this.Name = name;
         this.Description = description;
         this.SpellType = spellType;
@@ -33,7 +33,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
         this.IsEnabled = true;
     }
 
-    public Spell(string name, SpellType spellType, TargetType targetType) {
+    public Spell(string name, SpellType spellType, SpellTarget targetType) {
         this.Name = name;
         this.SpellType = spellType;
         this.TargetType = targetType;
@@ -75,11 +75,15 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     }
 
     public void TryCast(Character caster, Character target) {
-        if (IsCastable(caster, target)) {
+        TryCast(caster, new List<Character>() { target });
+    }
+
+    public void TryCast(Character caster, IList<Character> targets) {
+        if (IsCastable(caster)) {
             ConsumeResources(caster);
-            Cast(caster, target);
-            caster.AddToCastSpellHistory((Spell)Clone());
-            target.AddToRecievedSpellHistory((Spell)Clone());
+            foreach (Character target in targets) {
+                Cast(caster, target);
+            }
         } else {
             Result = SpellResult.CANT_CAST;
         }
@@ -90,12 +94,13 @@ public abstract class Spell : ICloneable, IUndoableProcess {
             this.Caster = caster;
             this.Target = target;
             OnSuccess(caster, target);
-
             Result = SpellResult.HIT;
         } else {
             OnFailure(caster, target);
             Result = SpellResult.MISS;
         }
+        caster.AddToCastSpellHistory((Spell)Clone());
+        target.AddToRecievedSpellHistory((Spell)Clone());
     }
 
     public override bool Equals(object obj) {

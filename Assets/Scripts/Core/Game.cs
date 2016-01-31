@@ -4,37 +4,34 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Game : MonoBehaviour {
-    TimeManager time;
-    HeaderManager header;
-    TextBoxHolderManager textBoxes;
-    LeftPortraitHolderManager leftPortraits;
-    RightPortraitHolderManager rightPortraits;
-    ActionGridManager actionGrid;
-    TooltipManager tooltip;
+    public TimeManager Time { get; private set; }
+    public HeaderManager Header { get; private set; }
+    public TextBoxHolderManager TextBoxHolder { get; private set; }
+    public LeftPortraitHolderManager LeftPortraits { get; private set; }
+    public RightPortraitHolderManager RightPortraits { get; private set; }
+    public ActionGridManager ActionGrid { get; private set; }
+    public TooltipManager Tooltip { get; private set; }
 
-    Page currentPage;
+    public Page CurrentPage { get { return CurrentPage; } private set { SetPage(value); } }
     bool initializedPage;
 
-    Dictionary<string, bool> flags;
-    Queue<PlayerCharacter> playerCharQueue;
-
-    Page p1;
+    Dictionary<string, bool> boolFlags;
+    Dictionary<string, int> intFlags;
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
 
     // Use this for initialization
     void Awake() {
-        time = gameObject.GetComponentInChildren<TimeManager>();
-        header = gameObject.GetComponentInChildren<HeaderManager>();
-        textBoxes = gameObject.GetComponentInChildren<TextBoxHolderManager>();
-        leftPortraits = gameObject.GetComponentInChildren<LeftPortraitHolderManager>();
-        rightPortraits = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
-        actionGrid = gameObject.GetComponentInChildren<ActionGridManager>();
-        tooltip = gameObject.GetComponentInChildren<TooltipManager>();
-        flags = new Dictionary<string, bool>();
-        playerCharQueue = new Queue<PlayerCharacter>();
+        Time = gameObject.GetComponentInChildren<TimeManager>();
+        Header = gameObject.GetComponentInChildren<HeaderManager>();
+        TextBoxHolder = gameObject.GetComponentInChildren<TextBoxHolderManager>();
+        LeftPortraits = gameObject.GetComponentInChildren<LeftPortraitHolderManager>();
+        RightPortraits = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
+        ActionGrid = gameObject.GetComponentInChildren<ActionGridManager>();
+        Tooltip = gameObject.GetComponentInChildren<TooltipManager>();
+        boolFlags = new Dictionary<string, bool>();
 
-        currentPage = new ReadPage(text: "What", tooltip: "Hello world", actionGrid: new List<Process>() { new Process("Hello", "Hello world", () => PostText("Hello world")) });
+        CurrentPage = new ReadPage(text: "What", tooltip: "Hello world", actionGrid: new List<Process>() { new Process("Hello", "Hello world", () => PostText("Hello world")) });
 
 
         //p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Amit() }, right: new List<Character>() { new Amit(), new Steve(), new Steve() },
@@ -43,13 +40,13 @@ public class Game : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        Util.KillAllChildren(leftPortraits.gameObject);
-        Util.KillAllChildren(rightPortraits.gameObject);
-        actionGrid.SetButtonAttributes(currentPage.GetActions());
-        UpdatePortraits(currentPage.GetCharacters(false), leftPortraits);
-        UpdatePortraits(currentPage.GetCharacters(true), rightPortraits);
-        SetTooltip(currentPage.GetTooltip());
-        currentPage.Tick();
+        Util.KillAllChildren(LeftPortraits.gameObject);
+        Util.KillAllChildren(RightPortraits.gameObject);
+        ActionGrid.SetButtonAttributes(CurrentPage.ActionGrid);
+        UpdatePortraits(CurrentPage.GetCharacters(false), LeftPortraits);
+        UpdatePortraits(CurrentPage.GetCharacters(true), RightPortraits);
+        Tooltip.Set(CurrentPage.Tooltip);
+        CurrentPage.Tick();
     }
 
     public void UpdatePortraits(List<Character> characters, PortraitHolderManager portraitHolder) {
@@ -61,18 +58,6 @@ public class Game : MonoBehaviour {
         }
     }
 
-    public TimeManager GetTimeManager() {
-        return time;
-    }
-
-    public HeaderManager GetHeader() {
-        return header;
-    }
-
-    public TextBoxHolderManager GetTextBoxHolder() {
-        return textBoxes;
-    }
-
     public void PostText(string s) {
         PostText(s, Color.grey);
     }
@@ -81,81 +66,33 @@ public class Game : MonoBehaviour {
         if (s == null) {
             return;
         }
-        GetTextBoxHolder().AddTextBox(s, NORMAL_TEXT_SPEED, color);
+        TextBoxHolder.AddTextBox(s, NORMAL_TEXT_SPEED, color);
     }
 
-    public PortraitHolderManager GetPortraits(bool left) {
-        if (left) {
-            return leftPortraits;
+    public PortraitHolderManager GetPortraitHolder(bool isRightSide) {
+        if (!isRightSide) {
+            return LeftPortraits;
         } else {
-            return rightPortraits;
+            return RightPortraits;
         }
     }
 
-    public ActionGridManager GetActionGrid() {
-        return actionGrid;
-    }
-
-    string Format(string s, params object[] o) {
-        return string.Format(s, o);
-    }
-
-    public void SetPage(Page page) {
+    void SetPage(Page page) {
         page.OnEnter();
-        currentPage.OnExit();
-        Util.KillAllChildren(textBoxes.gameObject);
-        this.currentPage = page;
-        textBoxes.AddTextBox(currentPage.GetText(), 0, Color.white);
-    }
-
-    public Page GetPage() {
-        return currentPage;
-    }
-
-
-    public List<Character> GetCharacters(bool isRightSide) {
-        return currentPage.GetCharacters(isRightSide);
-    }
-
-    public List<Character> GetAllies(bool side) {
-        return GetCharacters(side);
-    }
-
-    public List<Character> GetEnemies(bool side) {
-        return GetCharacters(!side);
-    }
-
-    public Character GetRandomAlly(bool side) {
-        return GetRandomCharacter(GetCharacters(side));
-    }
-
-    public Character GetRandomEnemy(bool side) {
-        return GetRandomCharacter(GetCharacters(!side));
-    }
-
-    public List<Character> GetAll() {
-        List<Character> allChars = new List<Character>();
-        allChars.AddRange(GetCharacters(true));
-        allChars.AddRange(GetCharacters(false));
-        return allChars;
-    }
-
-    public static Character GetRandomCharacter(List<Character> characters) {
-        return characters[UnityEngine.Random.Range(0, characters.Count)];
+        CurrentPage.OnExit();
+        Util.KillAllChildren(TextBoxHolder.gameObject);
+        this.CurrentPage = page;
+        TextBoxHolder.AddTextBox(CurrentPage.Text, 0, Color.white);
     }
 
     void SetFlag(string key, bool value) {
-        flags.Add(key, value);
+        boolFlags.Add(key, value);
     }
 
     bool GetFlag(string key) {
         bool res;
-        flags.TryGetValue(key, out res);
+        boolFlags.TryGetValue(key, out res);
         return res;
-    }
-
-    public void SetTooltip(string s) {
-        tooltip.Text = s;
     }
 
     void CreateGraph() {

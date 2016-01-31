@@ -6,141 +6,80 @@ using System.Linq;
 
 public abstract class Page {
 
-    string text;
-    string tooltip;
-    protected List<Character> leftCharacters;
-    protected List<Character> rightCharacters;
-    protected List<Process> actionGrid;
+    public string Text { get; protected set; }
+    public string Tooltip { get; protected set; }
+    public Character MainCharacter { get; protected set; }
+    public IList<Character> LeftCharacters { get { return LeftCharacters; } protected set { SetSide(value, false); } }
+    public IList<Character> RightCharacters { get { return RightCharacters; } protected set { SetSide(value, true); } }
+    public IList<Process> ActionGrid { get { return ActionGrid; } protected set { Util.Assert(value.Count <= ActionGridManager.ROWS * ActionGridManager.COLS); ActionGrid = value; } }
 
-    Action onFirstEnterAction;
-    Action onEnterAction;
-    Action onFirstExitAction;
-    Action onExitAction;
+    public Action OnFirstEnterAction { get; protected set; }
+    public Action OnEnterAction { get; protected set; }
+    public Action OnFirstExitAction { get; protected set; }
+    public Action OnExitAction { get; protected set; }
+    public Action OnTick { get; protected set; }
 
-    Action onTick;
-
-    bool hasEnteredBefore;
-    bool hasExitedBefore;
+    public bool HasEnteredBefore { get; protected set; }
+    public bool HasExitedBefore { get; protected set; }
 
     public static int idCount = 0;
-    int id;
+    public int Id { get; private set; }
 
-    public Page(string text = "", string tooltip = "", List<Character> left = null, List<Character> right = null,
+    public Page(string text = "", string tooltip = "", Character mainCharacter = null, List<Character> left = null, List<Character> right = null,
         Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null,
         List<Process> actionGrid = null, Action onTick = null) {
-        this.text = text;
-        this.tooltip = tooltip;
-        if (left == null) this.leftCharacters = new List<Character>(); else SetLeft(left);
-        if (right == null) this.rightCharacters = new List<Character>(); else SetRight(right);
-        this.onFirstEnterAction = (onFirstEnterAction == null) ? () => { } : onFirstEnter;
-        this.onEnterAction = (onEnter == null) ? () => { } : onEnter;
-        this.onFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
-        this.onExitAction = (onExit == null) ? () => { } : onExit;
-        this.actionGrid = (actionGrid == null) ? new List<Process>() : actionGrid;
-        this.onTick = (onTick == null) ? () => { } : onTick;
-        this.id = idCount++;
+        this.Text = text;
+        this.Tooltip = tooltip;
+        this.MainCharacter = mainCharacter;
+        if (left == null) this.LeftCharacters = new List<Character>(); else LeftCharacters = left;
+        if (right == null) this.RightCharacters = new List<Character>(); else RightCharacters = right;
+        this.OnFirstEnterAction = (OnFirstEnterAction == null) ? () => { } : onFirstEnter;
+        this.OnEnterAction = (onEnter == null) ? () => { } : onEnter;
+        this.OnFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
+        this.OnExitAction = (onExit == null) ? () => { } : onExit;
+        this.ActionGrid = (actionGrid == null) ? new List<Process>() : actionGrid;
+        this.OnTick = (onTick == null) ? () => { } : onTick;
+        this.Id = idCount++;
     }
 
-    public void SetText(string text) {
-        this.text = text;
-    }
 
     public void OnEnter() {
-        if (!hasEnteredBefore && onFirstEnterAction != null) {
-            hasEnteredBefore = true;
+        if (!HasEnteredBefore && OnFirstEnterAction != null) {
+            HasEnteredBefore = true;
             OnFirstEnter();
-        } else if (onEnterAction != null) {
-            onEnterAction.Invoke();
+        } else if (OnEnterAction != null) {
+            OnEnterAction.Invoke();
         }
     }
 
     public void OnFirstEnter() {
-        onFirstEnterAction.Invoke();
+        OnFirstEnterAction.Invoke();
     }
 
     public void OnExit() {
-        if (!hasExitedBefore && onFirstExitAction != null) {
-            hasExitedBefore = true;
+        if (!HasExitedBefore && OnFirstExitAction != null) {
+            HasExitedBefore = true;
             OnFirstExit();
-        } else if (onExitAction != null) {
-            onExitAction.Invoke();
+        } else if (OnExitAction != null) {
+            OnExitAction.Invoke();
         }
     }
 
     public void OnFirstExit() {
-        onFirstExitAction.Invoke();
+        OnFirstExitAction.Invoke();
     }
 
-    public string GetText() {
-        return text;
-    }
-
-    public List<Process> GetActions() {
-        return actionGrid;
-    }
-
-    public void SetOnEnter(Action p) {
-        onEnterAction = p;
-    }
-
-    public void SetOnFirstEnter(Action p) {
-        onFirstExitAction = p;
-    }
-
-    public void SetOnExit(Action p) {
-        onExitAction = p;
-    }
-
-    public void SetOnFirstExit(Action p) {
-        onFirstExitAction = p;
-    }
-
-    public List<Character> GetCharacters(bool isRightSide) {
-        return isRightSide ? rightCharacters : leftCharacters;
-    }
-
-    public void SetAction(Process action, int index) {
-        if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
-            actionGrid[index] = action;
-        } else {
-            throw new IndexOutOfRangeException("Bad input. Index: " + index);
-        }
-    }
-
-    public void ClearAction(int index) {
-        if (0 <= index && index < ActionGridManager.ROWS * ActionGridManager.COLS) {
-            actionGrid[index] = null;
-        } else {
-            throw new IndexOutOfRangeException("Bad input. Index: " + index);
-        }
-    }
-
-    public void SetActions(List<Process> actions) {
-        if (actions.Count > ActionGridManager.ROWS * ActionGridManager.COLS) {
-            throw new ArgumentException("Size of params is: " + actions.Count + ", which is greater than " + ActionGridManager.ROWS * ActionGridManager.COLS);
-        }
-        this.actionGrid = actions;
-    }
-
-    public void SetLeft(List<Character> characters) {
-        SetSide(characters, false);
-    }
-
-    public void SetRight(List<Character> characters) {
-        SetSide(characters, true);
-    }
-
-    public void SetSide(List<Character> characters, bool side) {
+    void SetSide(IList<Character> characters, bool side) {
         RepeatedCharacterCheck(characters);
         SetCharacterSides(characters, side);
         if (!side) {
-            leftCharacters = characters;
+            LeftCharacters = characters;
         } else {
-            rightCharacters = characters;
+            RightCharacters = characters;
         }
     }
 
-    void SetCharacterSides(List<Character> characters, bool side) {
+    void SetCharacterSides(IList<Character> characters, bool side) {
         foreach (Character c in characters) {
             c.Side = side;
         }
@@ -150,8 +89,8 @@ public abstract class Page {
      * Check if repeated characters exist on a side, if so, append A->Z for each repeated character
      * For example: Steve A, Steve B
      */
-    void RepeatedCharacterCheck(List<Character> characters) {
-        Dictionary<string, List<Character>> repeatedCharacters = new Dictionary<string, List<Character>>();
+    void RepeatedCharacterCheck(IList<Character> characters) {
+        Dictionary<string, IList<Character>> repeatedCharacters = new Dictionary<string, IList<Character>>();
         foreach (Character c in characters) {
             if (!repeatedCharacters.ContainsKey(c.Name)) {
                 List<Character> characterList = new List<Character>();
@@ -162,26 +101,14 @@ public abstract class Page {
             }
         }
 
-        foreach (KeyValuePair<string, List<Character>> cPair in repeatedCharacters) {
+        foreach (KeyValuePair<string, IList<Character>> cPair in repeatedCharacters) {
             if (cPair.Value.Count > 1) {
-                for (int i = 0; i < cPair.Value.Count; i++) {
-                    Character c = cPair.Value[i];
-                    c.Name = string.Format("{0} {1}", c.Name, Util.IntToLetter(i + 1));
+                int index = 0;
+                foreach (Character c in cPair.Value) {
+                    c.Name = string.Format("{0} {1}", c.Name, Util.IntToLetter(index++));
                 }
             }
         }
-    }
-
-    public int GetId() {
-        return idCount;
-    }
-
-    public void SetTooltip(string tooltip) {
-        this.tooltip = tooltip;
-    }
-
-    public string GetTooltip() {
-        return tooltip;
     }
 
     public override bool Equals(object obj) {
@@ -197,18 +124,49 @@ public abstract class Page {
         }
 
         // Return true if the fields match:
-        return p.GetId() == this.GetId();
+        return p.Id == this.Id;
     }
 
     public override int GetHashCode() {
-        return id;
+        return Id;
     }
 
-    public void SetOnTick(Action action) {
-        onTick = action;
+    public IList<Character> GetCharacters(bool isRightSide) {
+        return !isRightSide ? LeftCharacters : RightCharacters;
+    }
+
+    public IList<Character> GetAllies(bool side) {
+        return GetCharacters(side);
+    }
+
+    public IList<Character> GetEnemies(bool side) {
+        return GetCharacters(!side);
+    }
+
+    public Character GetRandomAlly(bool side) {
+        return GetRandomCharacter(GetCharacters(side));
+    }
+
+    public Character GetRandomEnemy(bool side) {
+        return GetRandomCharacter(GetCharacters(!side));
+    }
+
+    public Character GetRandomCharacter() {
+        return GetRandomCharacter(GetAll());
+    }
+
+    public List<Character> GetAll() {
+        List<Character> allChars = new List<Character>();
+        allChars.AddRange(GetCharacters(true));
+        allChars.AddRange(GetCharacters(false));
+        return allChars;
+    }
+
+    static Character GetRandomCharacter(IList<Character> characters) {
+        return characters[UnityEngine.Random.Range(0, characters.Count)];
     }
 
     public virtual void Tick() {
-        onTick.Invoke();
+        OnTick.Invoke();
     }
 }

@@ -13,10 +13,7 @@ public abstract class Character : Entity {
     public SortedDictionary<AttributeType, Attribute> Attributes { get; private set; }
     public SortedDictionary<ResourceType, Resource> Resources { get; private set; }
     public Spell Attack { get; set; }
-    public ICollection<Spell> Fights { get; private set; }
-    public ICollection<Spell> Acts { get; private set; }
-    public ICollection<Item> Items { get; private set; }
-    public ICollection<Spell> Mercies { get; private set; }
+    public IDictionary<Selection, ICollection<Spell>> Selections;
 
     public IList<Spell> RecievedSpells { get; private set; }
     public IList<Spell> CastSpells { get; private set; }
@@ -44,10 +41,14 @@ public abstract class Character : Entity {
         };
 
         this.Attack = new Attack();
-        this.Fights = new HashSet<Spell>();
-        this.Acts = new HashSet<Spell>();
-        this.Items = new Inventory();
-        this.Mercies = new HashSet<Spell>();
+        this.Selections = new SortedDictionary<Selection, ICollection<Spell>>()
+        {
+            { Selection.SPELL, new HashSet<Spell>() },
+            { Selection.ACT, new HashSet<Spell>() },
+            { Selection.ITEM, new HashSet<Spell>() },
+            { Selection.MERCY, new HashSet<Spell>() }
+
+        };
         this.TextColor = textColor;
         this.Displayable = isDisplayable;
         GetResource(ResourceType.CHARGE).clearFalse();
@@ -129,25 +130,8 @@ public abstract class Character : Entity {
         return GetResource(ResourceType.CHARGE).IsMaxed();
     }
 
-    protected void GetReactions(Spell spell, Game game) {
-        List<Character> characters = game.GetAll();
-        foreach (Character c in characters) {
-            c.React(spell, game);
-        }
-    }
-
-    public bool UseItem(Item item, Character target) {
-        if (item.IsCastable(this, target)) {
-            Items.Remove(item);
-            item.TryCast(this, target);
-            return true;
-        }
-        return false;
-    }
-
-    public virtual void Act(int chargeAmount, Game game) {
+    public virtual void Tick(int chargeAmount, Page page) {
         Charge(chargeAmount);
-
         if (!GetResource(ResourceType.CHARGE).IsMaxed()) {
             ChargeStatus = ChargeStatus.NOT_CHARGED;
         } else {
@@ -156,13 +140,14 @@ public abstract class Character : Entity {
                     ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;
                     break;
                 case ChargeStatus.HIT_FULL_CHARGE:
-                    OnFullCharge(game);
+                    OnFullCharge();
                     ChargeStatus = ChargeStatus.FULL_CHARGE;
                     break;
                 case ChargeStatus.FULL_CHARGE:
                     break;
             }
         }
+        Act(page);
     }
 
     protected void Talk(string text, Game game) {
@@ -197,13 +182,14 @@ public abstract class Character : Entity {
         CastSpells.Add(spell);
     }
 
-    protected abstract void OnFullCharge(Game game);
-    protected abstract void React(Spell spell, Game game);
-    public abstract void OnStart(Game game);
-    public abstract bool IsDefeated(Game game);
-    public abstract void OnDefeat(Game game);
-    public abstract bool IsKilled(Game game);
-    public abstract void OnKill(Game game);
-    public abstract void OnVictory(Game game);
-    public abstract void OnBattleEnd(Game game);
+    protected abstract void OnFullCharge();
+    public abstract void Act(Page page);
+    public abstract void React(Spell spell, Page page);
+    public abstract void OnStart(Page page);
+    public abstract bool IsDefeated();
+    public abstract void OnDefeat(Page page);
+    public abstract bool IsKilled();
+    public abstract void OnKill(Page page);
+    public abstract void OnVictory(Page page);
+    public abstract void OnBattleEnd(Page page);
 }

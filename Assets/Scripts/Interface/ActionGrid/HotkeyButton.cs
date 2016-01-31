@@ -101,13 +101,13 @@ public class HotkeyButton : MonoBehaviour {
         }
 
         if (tooltipActivated) {
-            Tooltip.Text = Process.Description;
+            Tooltip.Set(Process.Description);
             tooltipActivated = false;
         }
 
         if (activated) {
             if (Process != null) {
-                Tooltip.Text = Process.Description;
+                Tooltip.Set(Process.Description);
             }
 
             //2

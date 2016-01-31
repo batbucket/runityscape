@@ -6,11 +6,11 @@ public class Steve : ComputerCharacter {
 
     public Steve() : base(Util.GetSprite("laughing_shinx"), "Steve", 0, 5, 5, 5, 5, Color.red, 4) {
         AddResources(ResourceFactory.CreateResource(ResourceType.SKILL, 3));
-        getFight().Add(new Attack(this));
+        Spells.Add(new Attack());
     }
 
-    public override void Act(int chargeAmount, Game game) {
-        base.Act(chargeAmount, game);
+    public override void Tick(int chargeAmount, Game game) {
+        base.Tick(chargeAmount, game);
     }
 
     protected override void DecideSpell(Game game) {

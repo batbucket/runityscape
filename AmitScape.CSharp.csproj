@@ -84,6 +84,7 @@
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderManager.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
+    <Compile Include="Assets\Scripts\Misc\TreeNode.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
     <Compile Include="Assets\Scripts\Misc\WeighedRandomizer.cs" />
@@ -94,7 +95,7 @@
     <Compile Include="Assets\Scripts\Model\Characters\ComputerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Entity.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\PlayerCharacter.cs" />
-    <Compile Include="Assets\Scripts\Model\Characters\SelectionType.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Selection.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Steve.cs" />
     <Compile Include="Assets\Scripts\Model\Items\ConsumableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Equipment.cs" />
@@ -112,8 +113,8 @@
     <Compile Include="Assets\Scripts\Model\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellFactory.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellResult.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\SpellTarget.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellType.cs" />
-    <Compile Include="Assets\Scripts\Model\Spells\TargetType.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\Attribute.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeFactory.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeType.cs" />

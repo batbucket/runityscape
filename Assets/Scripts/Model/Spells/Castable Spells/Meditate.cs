@@ -7,7 +7,7 @@ public class Meditate : Spell {
     public const string NAME = "Meditate";
     public const string DESCRIPTION = "Heal yourself.";
     public const SpellType SPELL_TYPE = SpellType.BOOST;
-    public const TargetType TARGET_TYPE = TargetType.SELF;
+    public const SpellTarget TARGET_TYPE = SpellTarget.SELF;
     public static readonly string[] CAST_TEXT = new string[] { "* {0} calms their mind, restoring {1} HP!" };
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>() {
         {ResourceType.SKILL, 3 }

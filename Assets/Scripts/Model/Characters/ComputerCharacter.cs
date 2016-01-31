@@ -13,60 +13,42 @@ public abstract class ComputerCharacter : Character {
         this.maxDelay = maxDelay;
     }
 
-    public override void Act(int chargeAmount, Game game) {
-        base.Act(chargeAmount, game);
-        if ((delay -= Time.deltaTime) <= 0) {
-            DecideSpell(game);
-        }
-    }
+    protected abstract void DecideSpell();
 
-    protected abstract void DecideSpell(Game game);
-
-    protected override void OnFullCharge(Game game) {
+    protected override void OnFullCharge() {
         delay = UnityEngine.Random.Range(0, maxDelay);
     }
 
-    protected void QuickCast(Spell spell, Character target, Game game) {
-        spell.setTarget(target);
-        CastAndPost(spell, game);
-    }
-
-    protected void QuickCast(Spell spell, Game game, Character target = null) {
-        if (!spell.canCast()) {
+    protected void QuickCast(Spell spell, Page page, Character target = null) {
+        if (!spell.IsCastable(this)) {
             return;
         }
         if (target != null) {
-            spell.setTarget(target);
+            spell.TryCast(this, target);
         } else {
-            switch (spell.getTargetType()) {
-                case TargetType.SINGLE_ALLY:
-                    spell.setTarget(game.getRandomAlly(side));
+            switch (spell.TargetType) {
+                case SpellTarget.SINGLE_ALLY:
+                    spell.TryCast(this, page.GetRandomAlly(this.Side));
                     break;
-                case TargetType.SINGLE_ENEMY:
-                    spell.setTarget(game.getRandomEnemy(side));
+                case SpellTarget.SINGLE_ENEMY:
+                    spell.TryCast(this, page.GetRandomEnemy(this.Side));
                     break;
-                case TargetType.SELF:
-                    spell.setTarget(this);
+                case SpellTarget.SELF:
+                    spell.TryCast(this, this);
                     break;
-                case TargetType.ALL_ALLY:
-                    spell.setTargets(game.getAllies(side));
+                case SpellTarget.ALL_ALLY:
+                    spell.TryCast(this, page.GetAllies(this.Side));
                     break;
-                case TargetType.ALL_ENEMY:
-                    spell.setTargets(game.getEnemies(side));
+                case SpellTarget.ALL_ENEMY:
+                    spell.TryCast(this, page.GetEnemies(this.Side));
                     break;
-                case TargetType.ALL:
-                    spell.setTargets(game.GetAll());
+                case SpellTarget.ALL:
+                    spell.TryCast(this, page.GetAll());
                     break;
             }
         }
-        CastAndPost(spell, game);
-        GetReactions(spell, game);
-    }
-
-    void CastAndPost(Spell spell, Game game) {
-        spell.TryCast();
-        if (spell.getResult() != SpellResult.CANT_CAST) {
-            game.postText(spell.getCastText());
+        foreach (Character witness in page.GetAll()) {
+            witness.React(spell, page);
         }
     }
 }

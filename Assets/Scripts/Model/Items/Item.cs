@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public abstract class Item : Spell {
     public const SpellType SPELL_TYPE = SpellType.BOOST;
-    public const TargetType TARGET_TYPE = TargetType.SINGLE_ALLY;
+    public const SpellTarget TARGET_TYPE = SpellTarget.SINGLE_ALLY;
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     public int Count { get; set; }
 

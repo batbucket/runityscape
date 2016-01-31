@@ -12,6 +12,8 @@ public class Process : IProcess {
         this.Action = action;
     }
 
+    public Process() : this("", "", () => { }) { }
+
     public void Play() {
         Action.Invoke();
     }

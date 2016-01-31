@@ -7,13 +7,13 @@ using System.Collections;
  * of the screen
  */
 public class TimeManager : MonoBehaviour {
-    Text day; //Days elapsed
-    Text time; //Current time of day
+    Text dayText; //Days elapsed
+    Text timeText; //Current time of day
 
     // Use this for initialization
     void Start() {
-        day = GameObject.Find("Day").GetComponent<Text>();
-        time = GameObject.Find("Time").GetComponent<Text>();
+        dayText = GameObject.Find("Day").GetComponent<Text>();
+        timeText = GameObject.Find("Time").GetComponent<Text>();
     }
 
     // Update is called once per frame
@@ -21,16 +21,16 @@ public class TimeManager : MonoBehaviour {
 
     }
 
-    public void SetDay(int dayNum) {
-        day.text = string.Format("Day {0}", dayNum);
+    void SetDay(int dayNum) {
+        dayText.text = string.Format("Day {0}", dayNum);
     }
 
-    public void SetTime(string newTime) {
-        time.text = newTime;
+    void SetTime(int newTime) {
+        timeText.text = string.Format("{0}:00", newTime);
     }
 
     public void Enable(bool enable) {
-        day.enabled = enable;
-        time.enabled = enable;
+        dayText.enabled = enable;
+        timeText.enabled = enable;
     }
 }

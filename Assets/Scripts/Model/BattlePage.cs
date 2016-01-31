@@ -5,249 +5,162 @@ using System.Collections.Generic;
 
 public class BattlePage : Page {
     public const int CHARGE_PER_TICK = 1;
-
-    SelectionType selectionType;
-    Stack<SelectionType> lastSelectionStack;
     Stack<Spell> lastSpellStack;
-
     Spell targetedSpell;
-    List<Character> targets;
+    IList<Character> targets;
+    TreeNode<Selection> selectionTree;
+    TreeNode<Selection> currentSelectionNode;
 
     public const int BACK_INDEX = 7; //Last hotkey is letter 'F'
-    public const int ALLY_CAST_OFFSET = 4;
+    public const int ATTACK_INDEX = 0;
+    public const int LAST_SPELL_INDEX = 1;
 
-    public BattlePage(string text = "", string tooltip = "", List<Character> left = null, List<Character> right = null,
+    public BattlePage(string text = "", string tooltip = "", Character mainCharacter = null, List<Character> left = null, List<Character> right = null,
         Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null,
-        List<Process> actionGrid = null) : base(text, tooltip, left, right, onFirstEnter, onEnter, onFirstExit, onExit, actionGrid, null) {
-        selectionType = SelectionType.FAIM;
+        List<Process> actionGrid = null) : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, actionGrid, null) {
+
+        /**
+         * Set up the Selection Tree.
+         * Tree looks like this:
+         *               FAIM
+         * SPELLS    ACTS   ITEMS    MERCIES
+         * TARGET   TARGET  TARGET   TARGET
+         */
+        selectionTree = new TreeNode<Selection>(Selection.FAIM); //Topmost node
+        selectionTree.AddChildren(Selection.SPELL, Selection.ACT, Selection.ITEM, Selection.MERCY);
+        foreach (TreeNode<Selection> st in selectionTree.Children) {
+            st.AddChild(Selection.TARGET);
+        }
+        currentSelectionNode = selectionTree;
     }
 
     public override void Tick() {
         base.Tick();
+        DetermineSpeed();
+        TickCharacters();
     }
 
-    void ChargeCharacters(List<Character> characters) {
-        foreach (Character c in characters) {
-            int chargeNeededToAct = (int)(120 * ((float)(leftCharacters[0].GetAttribute(AttributeType.DEXTERITY).False)) / c.GetAttribute(AttributeType.DEXTERITY).False);
+    void TickCharacters() {
+        foreach (Character c in GetAll()) {
+            c.Tick(CHARGE_PER_TICK, this);
+        }
+    }
+
+    void DetermineSpeed() {
+        foreach (Character c in GetAll()) {
+            int chargeNeededToAct = (int)(120 * ((float)(MainCharacter.GetAttribute(AttributeType.DEXTERITY).False)) / c.GetAttribute(AttributeType.DEXTERITY).False);
             c.GetResource(ResourceType.CHARGE).True = chargeNeededToAct;
-            c.Act(CHARGE_PER_TICK, null);
         }
     }
 
     void Display(Character character) {
-        switch (selectionType) {
-            case SelectionType.ACT:
-                SetTooltip(string.Format("What ACTION will {0} do?", character.Name));
-                showSpellsAsList(character.Acts, false);
-                showBackButton();
-                break;
-            case SelectionType.FAIM:
-                SetTooltip(string.Format("What will {0} do?", character.getName().ToUpper()));
-                getActionGrid().setButtonAttributes(
-                    new Process(getSpellNameAndInfo(character.getFight()[0]), getSpellDescription(fightSpells[0]), () => {
-                        determineTargetSelection(fightSpells[0], game);
-                    }),
-                    new Process(GetSpellNameAndInfo(PeekLastSpell()), GetSpellDescription(PeekLastSpell()), () => {
-                        determineTargetSelection(PeekLastSpell(), game);
-                    }),
-                    new Process(GetCorrectSpellListName(), string.Format("Perform a {0}.", GetCorrectSpellListName().ToUpper()), () => {
-                        SetSelectionType(SelectionType.SPELLS);
-                    }),
-                    new Process("Act", "Perform an ACTION.", () => SetSelectionType(SelectionType.ACT)),
-                    new Process("Item", "USE or EQUIP an ITEM.", () => SetSelectionType(SelectionType.ITEM)),
-                    new Process("Mercy", "Show an enemy MERCY.", () => SetSelectionType(SelectionType.MERCY)
-                    ));
-                game.getActionGrid().setButtonAttribute(new Process("Switch", "Change control to another unit.", () => Debug.Log("This aint a thing yet!")), BACK_INDEX);
-                break;
-            case SelectionType.ITEM:
-                game.setTooltip(string.Format("What ITEM will {0} use?", name.ToUpper()));
-                showSpellsAsList(inventory.getList().Cast<Spell>().ToList(), game, false);
-                showBackButton(game);
-                break;
-            case SelectionType.MERCY:
-                game.setTooltip(string.Format("What MERCY will {0} use?", name));
-                showSpellsAsList(mercySpells, game, false);
-                showBackButton(game);
-                break;
-            case SelectionType.NONE:
-                game.getActionGrid().clearAllButtonAttributes();
-                break;
-            case SelectionType.SPELLS:
-                game.setTooltip(string.Format("What {1} will {0} use?", name.ToUpper(), GetCorrectSpellListName().ToUpper()));
-                showSpellsAsList(fightSpells, game, true);
-                showBackButton(game);
-                break;
-            case SelectionType.CHOOSE_TARGET:
-                game.setTooltip(string.Format("{0} > {1} >", name.ToUpper(), targetedSpell.getName().ToUpper()));
-                showTargetsAsList(targets, game);
-                showBackButton(game);
-                break;
+        Tooltip = string.Format(currentSelectionNode.Value.Question, character.Name, targetedSpell == null ? "" : targetedSpell.Name);
+        if (currentSelectionNode.Value == Selection.FAIM) {
+            AddSwitchButton();
+            ActionGrid[ATTACK_INDEX] = new Process(character.Attack.Name, character.Attack.Description, () => DetermineTargetSelection(character.Attack, character));
+            ActionGrid[LAST_SPELL_INDEX] = lastSpellStack.Count == 0 ? new Process() : new Process(lastSpellStack.Peek().Name, lastSpellStack.Peek().Description, () => DetermineTargetSelection(lastSpellStack.Peek(), character));
+            int index = LAST_SPELL_INDEX + 1;
+            foreach (KeyValuePair<Selection, ICollection<Spell>> pair in character.Selections) {
+                ActionGrid[index++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name), () => currentSelectionNode = currentSelectionNode.FindChild(pair.Key));
+            }
+        } else {
+            AddBackButton();
+            if (currentSelectionNode.Value == Selection.TARGET) {
+                ShowTargetsAsList(targets, character);
+            } else {
+                ShowSpellsAsList(character.Selections[currentSelectionNode.Value], character);
+            }
         }
     }
 
-    void ShowSpellsAsList(List<Spell> spells) {
-        for (int i = 0; i < spells.Count; i++) {
-            Spell spell = spells[i];
-            SetAction(new Process(GetSpellNameAndInfo(spell), GetSpellDescription(spell), () => determineTargetSelection(spell)), i);
+    void ShowSpellsAsList(ICollection<Spell> spells, Character caster) {
+        int index = 0;
+        foreach (Spell spell in spells) {
+            ActionGrid[index++] = new Process(spell.GetNameAndInfo(caster), spell.Description, () => DetermineTargetSelection(spell, caster));
         }
     }
 
-    void ShowTargetsAsList(List<Character> targets, Game game) {
-        for (int i = 0; i < targets.Count; i++) {
-            Character target = targets[i];
-            game.GetActionGrid().SetButtonAttribute(new Process(
-                string.Format("{0}{1}{2}", targetedSpell.canCast() ? "" : "<color=red>", target.getName(), targetedSpell.canCast() ? "" : "</color>"),
-                string.Format("{0} > {1} > {2}", name.ToUpper(), targetedSpell.getName().ToUpper(), target.getName().ToUpper()), () => {
-                    targetedSpell.setTarget(target);
-                    CastAndResetStateIfSuccessful(targetedSpell, game);
-                }
-                ), i);
+    void ShowTargetsAsList(IList<Character> targets, Character caster) {
+        int index = 0;
+        foreach (Character target in targets) {
+            ActionGrid[index++] =
+                new Process(
+                    targetedSpell.IsCastable(caster, target) ? target.Name : Util.Color(target.Name, Color.red),
+                    string.Format(currentSelectionNode.Value.Declare, caster.Name, target.Name, targetedSpell.Name), () => {
+                        targetedSpell.TryCast(caster, target);
+                    }
+                );
         }
     }
 
-    void ShowBackButton(Game game) {
-        //this one doesn't use set() to prevent infinite looping of lastSelection
-        game.GetActionGrid().SetButtonAttribute(new Process("Back", "Go back to the previous selection.", () => ReturnToLastSelection()), BACK_INDEX);
+    void AddBackButton() {
+        this.ActionGrid[BACK_INDEX] = new Process("Back", "Go back to the previous selection.", () => ReturnToLastSelection());
     }
 
-    void SetSelectionType(SelectionType selectionType) {
-        PushLastSelection(this.selectionType);
-        this.selectionType = selectionType;
-    }
-
-    void PushLastSelection(SelectionType lastSelection) {
-        this.lastSelectionStack.Push(lastSelection);
+    void AddSwitchButton() {
+        Debug.Log("this aint a thing yet!");
     }
 
     void ResetSelection() {
-        this.selectionType = SelectionType.FAIM;
-        lastSelectionStack.Clear();
+        this.currentSelectionNode = selectionTree;
     }
 
     void ReturnToLastSelection() {
-        selectionType = lastSelectionStack.Pop();
+        Util.Assert(currentSelectionNode.Parent != null);
+        currentSelectionNode = currentSelectionNode.Parent;
     }
 
-    void CastAndResetStateIfSuccessful(Spell spell, Game game) {
-        spell.TryCast();
-        talk(spell.getCastText(), game);
-        if (spell.getResult() != SpellResult.CANT_CAST) {
-            getReactions(spell, game);
+    void UpdateLastSpellStack(Spell spell, Character caster) {
+        if (spell != caster.Attack) {
+            lastSpellStack.Push(spell);
+        }
+        if (spell is Item && ((Item)spell).Count <= 0) {
+            while (lastSpellStack.Count > 0 && spell.Equals(lastSpellStack.Peek())) {
+                lastSpellStack.Pop();
+            }
+        }
+    }
+
+    void DetermineTargetSelection(Spell spell, Character caster) {
+        Util.Assert(spell != null);
+        switch (spell.TargetType) {
+            case SpellTarget.SINGLE_ALLY:
+                DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster.Side));
+                return;
+            case SpellTarget.SINGLE_ENEMY:
+                DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster.Side));
+                return;
+            case SpellTarget.SELF:
+                spell.TryCast(caster, caster);
+                break;
+            case SpellTarget.ALL_ALLY:
+                spell.TryCast(caster, this.GetAllies(caster.Side));
+                break;
+            case SpellTarget.ALL_ENEMY:
+                spell.TryCast(caster, this.GetEnemies(caster.Side));
+                break;
+            case SpellTarget.ALL:
+                spell.TryCast(caster, this.GetAll());
+                break;
+        }
+        if (spell.Result != SpellResult.CANT_CAST) {
+            foreach (Character witness in this.GetAll()) {
+                witness.React(spell, this);
+            }
+            UpdateLastSpellStack(spell, caster);
             ResetSelection();
-            if (spell != fightSpells[0]) {
-                PushLastSpell(spell);
-            }
-            if (spell is Item && ((Item)spell).getCount() <= 0) {
-                while (lastSpellStack.Count() > 0 && spell.Equals(lastSpellStack.Peek())) {
-                    lastSpellStack.Pop();
-                }
-            }
         }
     }
 
-    string GetSpellNameAndInfo(Spell spell) {
-        if (spell != null) {
-            return spell.getNameAndInfo();
-        } else {
-            return "";
-        }
-    }
-
-    string GetSpellDescription(Spell spell) {
-        if (spell != null) {
-            return spell.getDescription();
-        } else {
-            return "";
-        }
-    }
-
-    string GetSpellName(Spell spell) {
-        if (spell != null) {
-            return spell.getName();
-        } else {
-            return "";
-        }
-    }
-
-    void DetermineTargetSelection(Spell spell, Game game) {
-        if (spell == null) {
-            return;
-        }
-        switch (spell.getTargetType()) {
-            case TargetType.SINGLE_ALLY:
-                DetermineSingleTargetQuickCast(spell, game.getAllies(side), game);
-                return;
-            case TargetType.SINGLE_ENEMY:
-                DetermineSingleTargetQuickCast(spell, game.getEnemies(side), game);
-                return;
-            case TargetType.SELF:
-                spell.setTarget(this);
-                break;
-            case TargetType.ALL_ALLY:
-                spell.setTargets(game.getAllies(side));
-                break;
-            case TargetType.ALL_ENEMY:
-                spell.setTargets(game.getEnemies(side));
-                break;
-            case TargetType.ALL:
-                spell.setTargets(game.GetAll());
-                break;
-        }
-        CastAndResetStateIfSuccessful(spell, game);
-    }
-
-    void DetermineSingleTargetQuickCast(Spell spell, List<Character> targets, Game game) {
+    void DetermineSingleTargetQuickCast(Spell spell, Character caster, IList<Character> targets) {
         if (targets.Count == 0) {
             // Do nothing
         } else if (targets.Count == 1) {
-            spell.setTarget(targets[0]);
-            CastAndResetStateIfSuccessful(spell, game);
+            spell.TryCast(caster, targets[0]);
         } else {
-            SetTargetedSpell(spell);
-            SetTargets(targets);
-            SetSelectionType(SelectionType.CHOOSE_TARGET);
+            targetedSpell = spell;
+            this.targets = targets;
+            currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);
         }
-    }
-
-    void DisplayInventory(Game game) {
-        int index = 0;
-        foreach (Item item in inventory.getList()) {
-            string nameAndCount = string.Format("{0} x {1}", item.getName(), item.getCount());
-            game.GetActionGrid().SetButtonAttribute(new Process(item.canCast() ? nameAndCount : string.Format("{0}{1}{2}", "<color=red>", nameAndCount, "</color>"), item.getDescription(), () => {
-                CastAndResetStateIfSuccessful(item, game);
-            }), index++);
-        }
-    }
-
-    string GetCorrectSpellListName() {
-        return resources.ContainsKey(ResourceType.SKILL) ? "Skill" : "Spell";
-    }
-
-    void SetTargetedSpell(Spell spell) {
-        targetedSpell = spell;
-    }
-
-    void SetTargets(List<Character> targets) {
-        this.targets = targets;
-    }
-
-    void PushLastSpell(Spell spell) {
-        lastSpellStack.Push(spell);
-    }
-
-    Spell PopLastSpell() {
-        return lastSpellStack.Pop();
-    }
-
-    Spell PeekLastSpell() {
-        return lastSpellStack.Count == 0 ? null : lastSpellStack.Peek();
-    }
-
-    List<Character> GetTargets() {
-        return targets;
-    }
-
-    Spell GetTargetedSpell() {
-        return targetedSpell;
     }
 }

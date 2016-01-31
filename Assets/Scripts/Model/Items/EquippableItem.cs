@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 public class EquippableItem : Item {
-    public EquippableItem(Character caster, string name, string description, int count) : base(caster, name, description, count) {
+    public EquippableItem(Character caster, string name, string description, int count) : base(name, description, count) {
     }
 
     public override int CalculateDamage(Character caster, Character target) {

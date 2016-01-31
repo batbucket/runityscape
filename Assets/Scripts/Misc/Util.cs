@@ -6,6 +6,8 @@ using System.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.ComponentModel;
 
 /**
  * This class holds various helper methods that don't fit anywhere else
@@ -17,7 +19,7 @@ public static class Util {
     }
 
     public static int Range(double min, double max) {
-        return (int) UnityEngine.Random.Range((float) min, (float) max);
+        return (int)UnityEngine.Random.Range((float)min, (float)max);
     }
 
     public static void SetTextAlpha(Text target, float alpha) {
@@ -189,9 +191,10 @@ public static class Util {
     }
 
     /**
-     * Converts 1 to A, 2 to B, and so on
+     * Converts 0 to A, 1 to B, and so on
      */
     public static string IntToLetter(int column) {
+        column--;
         string columnString = "";
         decimal columnNumber = column;
         while (columnNumber > 0) {
@@ -201,5 +204,17 @@ public static class Util {
             columnNumber = (columnNumber - (currentLetterNumber + 1)) / 26;
         }
         return columnString;
+    }
+
+    public static string GetEnumDescription(Enum value) {
+        FieldInfo fi = value.GetType().GetField(value.ToString());
+
+        DescriptionAttribute[] attributes =
+            (DescriptionAttribute[])fi.GetCustomAttributes(typeof(DescriptionAttribute), false);
+
+        if (attributes != null && attributes.Length > 0)
+            return attributes[0].Description;
+        else
+            return value.ToString();
     }
 }
