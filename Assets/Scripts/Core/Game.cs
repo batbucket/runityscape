@@ -31,9 +31,9 @@ public class Game : MonoBehaviour {
         Tooltip = gameObject.GetComponentInChildren<TooltipManager>();
         boolFlags = new Dictionary<string, bool>();
 
-        CurrentPage = new ReadPage(text: "What", tooltip: "Hello world", actionGrid: new List<Process>() { new Process("Hello", "Hello world", () => PostText("Hello world")) });
-
-
+        CurrentPage = new ReadPage();
+        Page p1 = new ReadPage(text: "What", tooltip: "Hello world", actionGrid: new List<Process>() { new Process("Hello", "Say Hello world", () => PostText("Hello world")) });
+        SetPage(p1);
         //p1 = new Page(text: "Hello world!", pageType: PageType.BATTLE, left: new List<Character>() { new Amit(), new Amit() }, right: new List<Character>() { new Amit(), new Steve(), new Steve() },
         //    processes: new Process("Kill yourself", "", () => { Debug.Log("Oh dear you are dead!"); }));
     }

@@ -41,25 +41,25 @@ public class ActionGridManager : MonoBehaviour {
      */
     public void SetButtonAttribute(IProcess process, int r, int c) {
         Util.Assert(CoordinatesInBounds(r, c));
-        actionButtons[CalculateOffset(r, c)].Process = process;
+        actionButtons[CalculateOffset(r, c)].SetProcess(process);
     }
 
     public void SetButtonAttribute(IProcess process, int index) {
         Util.Assert(0 <= index && index < ROWS * COLS);
-        actionButtons[index].Process = process;
+        actionButtons[index].SetProcess(process);
     }
 
     public void SetButtonAttributes(IList<Process> list) {
         Util.Assert(list.Count <= actionButtons.Length);
         for (int i = 0; i < list.Count; i++) {
-            actionButtons[i].Process = list[i];
+            actionButtons[i].SetProcess(list[i]);
         }
     }
 
     public void SetButtonAttributes(params Process[] processes) {
         Util.Assert(processes.Length <= actionButtons.Length);
         for (int i = 0; i < processes.Length; i++) {
-            actionButtons[i].Process = processes[i];
+            actionButtons[i].SetProcess(processes[i]);
         }
     }
 

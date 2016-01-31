@@ -16,11 +16,11 @@ public class HotkeyButton : MonoBehaviour {
     UIInput input;
     public Text Text { get; set; } //The text on the button
     public Text HotkeyText { get; private set; }
-    public IProcess Process { get; set; } //Process this button holds
+    public IProcess Process { get; private set; } //Process this button holds
     public TooltipManager Tooltip { get; set; }
 
     bool activated;
-    bool tooltipActivated;
+    bool mouseInBounds;
 
     Color INACTIVE_COLOR = Color.black;
     Color ACTIVE_COLOR = Color.white;
@@ -60,7 +60,7 @@ public class HotkeyButton : MonoBehaviour {
         Text.text = "";
     }
 
-    void SetProcess(IProcess process) {
+    public void SetProcess(IProcess process) {
         if (process != null) {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(() => process.Play());
@@ -77,12 +77,12 @@ public class HotkeyButton : MonoBehaviour {
 
     void OnMouseExit() {
         activated = false;
-        Tooltip.Clear();
+        mouseInBounds = false;
     }
 
     //Display tooltip on mouse hovering
     void OnMouseOver() {
-        tooltipActivated = true;
+        mouseInBounds = true;
     }
 
     /**
@@ -97,12 +97,10 @@ public class HotkeyButton : MonoBehaviour {
         //1
         if (Input.GetKeyDown(Hotkey) && Input.inputString.Length == 1) {
             activated = true;
-            tooltipActivated = true; //Also display tooltip on button hold
         }
 
-        if (tooltipActivated) {
+        if (mouseInBounds) {
             Tooltip.Set(Process.Description);
-            tooltipActivated = false;
         }
 
         if (activated) {
@@ -113,14 +111,12 @@ public class HotkeyButton : MonoBehaviour {
             //2
             if (Input.anyKeyDown && !Input.GetKeyDown(Hotkey)) {
                 activated = false;
-                Tooltip.Clear();
             }
 
             //3
             if (activated && (Input.GetKeyUp(Hotkey))) {
                 button.onClick.Invoke();
                 activated = false;
-                Tooltip.Clear();
             }
         }
     }
@@ -128,7 +124,7 @@ public class HotkeyButton : MonoBehaviour {
     void ButtonAppearance() {
         if (Text.text.Length == 0) {
             DisabledAppearance();
-        } else if (activated && button.interactable) {
+        } else if (activated || mouseInBounds && button.interactable) {
             ActiveAppearance();
         } else {
             InactiveAppearance();
