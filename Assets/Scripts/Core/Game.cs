@@ -4,15 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Game : MonoBehaviour {
+    public static Game Instance { get; private set; }
+
     public TimeManager Time { get; private set; }
     public HeaderManager Header { get; private set; }
     public TextBoxHolderManager TextBoxHolder { get; private set; }
-    public LeftPortraitHolderManager LeftPortraits { get; private set; }
-    public RightPortraitHolderManager RightPortraits { get; private set; }
+    public PortraitHolderManager LeftPortraits { get; private set; }
+    public PortraitHolderManager RightPortraits { get; private set; }
     public ActionGridManager ActionGrid { get; private set; }
     public TooltipManager Tooltip { get; private set; }
 
     public Page CurrentPage { get; private set; }
+    public Character MainCharacter { get; private set; }
     bool initializedPage;
 
     Dictionary<string, bool> boolFlags;
@@ -21,14 +24,15 @@ public class Game : MonoBehaviour {
     public const float NORMAL_TEXT_SPEED = 0.001f;
 
     // Use this for initialization
-    void Awake() {
-        Time = gameObject.GetComponentInChildren<TimeManager>();
-        Header = gameObject.GetComponentInChildren<HeaderManager>();
-        TextBoxHolder = gameObject.GetComponentInChildren<TextBoxHolderManager>();
-        LeftPortraits = gameObject.GetComponentInChildren<LeftPortraitHolderManager>();
-        RightPortraits = gameObject.GetComponentInChildren<RightPortraitHolderManager>();
-        ActionGrid = gameObject.GetComponentInChildren<ActionGridManager>();
-        Tooltip = gameObject.GetComponentInChildren<TooltipManager>();
+    void Start() {
+        Instance = this;
+        Time = TimeManager.Instance;
+        Header = HeaderManager.Instance;
+        TextBoxHolder = TextBoxHolderManager.Instance;
+        LeftPortraits = LeftPortraitHolderManager.Instance;
+        RightPortraits = RightPortraitHolderManager.Instance;
+        ActionGrid = ActionGridManager.Instance;
+        Tooltip = TooltipManager.Instance;
         boolFlags = new Dictionary<string, bool>();
 
         CurrentPage = new ReadPage();

@@ -2,8 +2,9 @@
 using UnityEngine;
 
 public class TextBoxHolderManager : MonoBehaviour {
+    public static TextBoxHolderManager Instance { get; private set; }
 
-    void Awake() { }
+    void Awake() { Instance = this; }
 
     public TextBoxManager AddTextBox() {
         GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));

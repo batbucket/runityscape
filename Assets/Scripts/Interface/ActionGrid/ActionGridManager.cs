@@ -10,6 +10,7 @@ using System.Collections.Generic;
  * Accessible by keyboard keys and the mouse
  */
 public class ActionGridManager : MonoBehaviour {
+    public static ActionGridManager Instance { get; private set; }
 
     /**
      * Hotkeys that are assigned to the row of buttons
@@ -26,7 +27,8 @@ public class ActionGridManager : MonoBehaviour {
 
     // Use this for initialization
     void Awake() {
-        actionButtons = new HotkeyButton[HOTKEYS.Length];
+        Instance = this;
+        this.actionButtons = new HotkeyButton[HOTKEYS.Length];
         for (int i = 0; i < actionButtons.Length; i++) {
             GameObject actionButton = (GameObject)Instantiate(Resources.Load("ActionButton"));
             Util.Parent(actionButton, GameObject.Find("ButtonHolder"));

@@ -7,11 +7,14 @@ using System.Collections;
  * of the screen
  */
 public class TimeManager : MonoBehaviour {
+    public static TimeManager Instance { get; private set; }
+
     Text dayText; //Days elapsed
     Text timeText; //Current time of day
 
     // Use this for initialization
     void Start() {
+        Instance = this;
         dayText = GameObject.Find("Day").GetComponent<Text>();
         timeText = GameObject.Find("Time").GetComponent<Text>();
     }

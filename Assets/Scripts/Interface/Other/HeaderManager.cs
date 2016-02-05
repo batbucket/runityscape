@@ -7,12 +7,15 @@ using System.Collections;
  * You can set/show/hide the location, chapter, and main quest blurb here
  */
 public class HeaderManager : MonoBehaviour {
+    public static HeaderManager Instance { get; private set; }
+
     Text location;
     Text chapter;
     Text mainQuestBlurb;
 
     // Use this for initialization
     void Start() {
+        Instance = this;
         location = GameObject.Find("Location").GetComponent<Text>();
         chapter = GameObject.Find("Chapter").GetComponent<Text>();
         mainQuestBlurb = GameObject.Find("MainQuestBlurb").GetComponent<Text>();
