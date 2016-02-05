@@ -35,7 +35,7 @@ public class HotkeyButton : MonoBehaviour {
         input = gameObject.GetComponent<UIInput>();
         Text = gameObject.GetComponentsInChildren<Text>()[0];
         HotkeyText = gameObject.GetComponentsInChildren<Text>()[1];
-        Tooltip = GameObject.Find("Tooltip").GetComponent<TooltipManager>();
+        Tooltip = TooltipManager.Instance;
         activated = false;
 
         Text.text = "";

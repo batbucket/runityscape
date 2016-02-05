@@ -11,8 +11,8 @@ public abstract class Resource : PairedInt {
 
     public const int LESSER_CAP = 0;
 
-    public override int True { get { return base.True; } set { True = Mathf.Clamp(value, LESSER_CAP, 99999); } }
-    public override int False { get { return base.False; } set { False = Mathf.Clamp(value, LESSER_CAP, True); } }
+    public override int True { get { return base.True; } set { base.True = Mathf.Clamp(value, LESSER_CAP, 99999); } }
+    public override int False { get { return base.False; } set { base.False = Mathf.Clamp(value, LESSER_CAP, True); } }
 
     public void clearFalse() {
         False = LESSER_CAP;

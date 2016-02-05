@@ -10,10 +10,10 @@ public abstract class Character : Entity {
     public string Name { get; set; }
     public int Level { get; set; }
 
-    public SortedDictionary<AttributeType, Attribute> Attributes { get; private set; }
-    public SortedDictionary<ResourceType, Resource> Resources { get; private set; }
+    public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
+    public IDictionary<ResourceType, Resource> Resources { get; private set; }
     public Spell Attack { get; set; }
-    public IDictionary<Selection, ICollection<Spell>> Selections;
+    public IDictionary<Selection, ICollection<Spell>> Selections { get; private set; }
 
     public IList<Spell> RecievedSpells { get; private set; }
     public IList<Spell> CastSpells { get; private set; }
@@ -41,13 +41,11 @@ public abstract class Character : Entity {
         };
 
         this.Attack = new Attack();
-        this.Selections = new SortedDictionary<Selection, ICollection<Spell>>()
-        {
+        this.Selections = new SortedDictionary<Selection, ICollection<Spell>>() {
             { Selection.SPELL, new HashSet<Spell>() },
             { Selection.ACT, new HashSet<Spell>() },
             { Selection.ITEM, new HashSet<Spell>() },
             { Selection.MERCY, new HashSet<Spell>() }
-
         };
         this.TextColor = textColor;
         this.Displayable = isDisplayable;

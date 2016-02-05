@@ -5,8 +5,11 @@ using System.Collections;
  * This class represents a pair of integer values
  */
 public abstract class PairedInt {
-    public virtual int False { get; set; }
-    public virtual int True { get; set; }
+    int _false;
+    int _true;
+
+    public virtual int False { get { return _false; } set { _false = value; } }
+    public virtual int True { get { return _true; } set { _true = value; } }
 
     public bool IsMaxed() {
         return False <= True;

@@ -1,7 +1,9 @@
-﻿/**
- * Type-Safe Enum Pattern
- */
-public sealed class Selection {
+﻿
+using System;
+/**
+* Type-Safe Enum Pattern
+*/
+public sealed class Selection : IComparable {
     public string Name { get; private set; } //Name of selection: Example: Spell
     public string Declare { get; private set; } //"X will do Y"
     public string Question { get; private set; } //"What will X do?"
@@ -25,5 +27,9 @@ public sealed class Selection {
 
     public enum Type {
         FAIM, SPELL, ACT, ITEM, MERCY, TARGET
+    }
+
+    public int CompareTo(object obj) {
+        return this.SelectionType.CompareTo(((Selection)obj).SelectionType);
     }
 }

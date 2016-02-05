@@ -58,12 +58,6 @@
     <Reference Include="UnityEngine.Networking">
       <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Networking">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Networking.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEditor">
       <HintPath>Library\UnityAssemblies\UnityEditor.dll</HintPath>
     </Reference>
@@ -77,19 +71,21 @@
     <Compile Include="Assets\Scripts\Core\IUndoableProcess.cs" />
     <Compile Include="Assets\Scripts\Core\Process.cs" />
     <Compile Include="Assets\Scripts\Core\UndoableProcess.cs" />
-    <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridView.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
-    <Compile Include="Assets\Scripts\Interface\Other\HeaderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Other\TimeManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\LeftPortraitHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\LeftPortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\PortraitHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\PortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\ResourceManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\Portraits\Managers\RightPortraitManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderManager.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Hitsplat\HitsplatView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Other\HeaderView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Other\TimeView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitHolderView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitHolderView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\PortraitView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\ResourceView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitHolderView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Sound\SoundView.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderView.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
     <Compile Include="Assets\Scripts\Misc\TreeNode.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
@@ -137,6 +133,8 @@
     <Compile Include="Assets\Scripts\Model\Stats\Resources\Resource.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Resources\ResourceFactory.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Resources\ResourceType.cs" />
+    <Compile Include="Assets\Scripts\Model\TextBox\TextBox.cs" />
+    <Compile Include="Assets\Scripts\Model\TextBox\TextEffect.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Scripts\Misc\InputSimulator.XML" />
