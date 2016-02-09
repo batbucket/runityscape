@@ -6,21 +6,7 @@ public class TextBoxHolderView : MonoBehaviour {
 
     void Awake() { Instance = this; }
 
-    public TextBoxView AddTextBox() {
-        GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
-        Util.Parent(g, gameObject);
-        return g.GetComponent<TextBoxView>();
-    }
-
-    public void AddTextBox(string fullText, float lettersPerSecond, Color color) {
-        GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
-        TextBoxView textBox = g.GetComponent<TextBoxView>();
-        Util.Parent(g, gameObject);
-        textBox.SetText(fullText, lettersPerSecond, color);
-        textBox.Post();
-    }
-
-    public void AddTextBox(TextBox textBox) {
+    public void AddTextBoxView(TextBox textBox) {
         GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
         TextBoxView textBoxView = g.GetComponent<TextBoxView>();
         Util.Parent(g, gameObject);

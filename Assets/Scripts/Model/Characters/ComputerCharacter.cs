@@ -19,7 +19,8 @@ public abstract class ComputerCharacter : Character {
         delay = UnityEngine.Random.Range(0, maxDelay);
     }
 
-    protected void QuickCast(Spell spell, Page page, Character target = null) {
+    protected void QuickCast(Spell spell, Character target = null) {
+        Page page = Game.Instance.PagePresenter.Page;
         if (!spell.IsCastable(this)) {
             return;
         }
@@ -48,7 +49,7 @@ public abstract class ComputerCharacter : Character {
             }
         }
         foreach (Character witness in page.GetAll()) {
-            witness.React(spell, page);
+            witness.React(spell);
         }
     }
 }

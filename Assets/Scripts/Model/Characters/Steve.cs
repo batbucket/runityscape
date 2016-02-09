@@ -9,8 +9,8 @@ public class Steve : ComputerCharacter {
         Selections[Selection.SPELL].Add(new Attack());
     }
 
-    public override void Act(Page page) {
-        throw new NotImplementedException();
+    public override void Act() {
+
     }
 
     public override bool IsDefeated() {
@@ -21,27 +21,27 @@ public class Steve : ComputerCharacter {
         throw new NotImplementedException();
     }
 
-    public override void OnBattleEnd(Page page) {
+    public override void OnBattleEnd() {
         throw new NotImplementedException();
     }
 
-    public override void OnDefeat(Page page) {
+    public override void OnDefeat() {
         throw new NotImplementedException();
     }
 
-    public override void OnKill(Page page) {
+    public override void OnKill() {
         throw new NotImplementedException();
     }
 
-    public override void OnStart(Page page) {
+    public override void OnStart() {
         throw new NotImplementedException();
     }
 
-    public override void OnVictory(Page page) {
+    public override void OnVictory() {
         throw new NotImplementedException();
     }
 
-    public override void React(Spell spell, Page page) {
+    public override void React(Spell spell) {
         throw new NotImplementedException();
     }
 

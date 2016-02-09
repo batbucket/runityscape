@@ -7,6 +7,9 @@ using System.Collections.Generic;
  * Attributes and Resources
  */
 public abstract class Character : Entity {
+    public const int CHARGE_PER_TICK = 1;
+    public const int CHARGE_CAP_RATIO = 120;
+
     public string Name { get; set; }
     public int Level { get; set; }
 
@@ -22,8 +25,10 @@ public abstract class Character : Entity {
 
     public bool Side { get; set; }
     public bool IsTargetable { get; set; }
-    public bool Displayable { get; set; }
+    public bool IsDisplayable { get; set; }
     public ChargeStatus ChargeStatus { get; private set; }
+
+    public PortraitView Portrait { get; set; }
 
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
         this.Name = name;
@@ -48,7 +53,7 @@ public abstract class Character : Entity {
             { Selection.MERCY, new HashSet<Spell>() }
         };
         this.TextColor = textColor;
-        this.Displayable = isDisplayable;
+        this.IsDisplayable = isDisplayable;
         GetResource(ResourceType.CHARGE).clearFalse();
 
         RecievedSpells = new List<Spell>();
@@ -91,7 +96,8 @@ public abstract class Character : Entity {
             Attribute attribute = GetAttribute(attributeType);
             if (value) {
                 attribute.True += amount;
-            } else {
+            }
+            else {
                 attribute.False += amount;
             }
             return true;
@@ -104,7 +110,8 @@ public abstract class Character : Entity {
             Resource resource = GetResource(resourceType);
             if (value) {
                 resource.True += amount;
-            } else {
+            }
+            else {
                 resource.False += amount;
             }
             return true;
@@ -118,9 +125,9 @@ public abstract class Character : Entity {
         return resource;
     }
 
-    public void Charge(int amount) {
+    public void Charge() {
         Debug.Assert(GetResource(ResourceType.CHARGE) != null);
-        GetResource(ResourceType.CHARGE).False += amount;
+        GetResource(ResourceType.CHARGE).False += CHARGE_PER_TICK;
     }
 
     public bool IsCharged() {
@@ -128,11 +135,12 @@ public abstract class Character : Entity {
         return GetResource(ResourceType.CHARGE).IsMaxed();
     }
 
-    public virtual void Tick(int chargeAmount, Page page) {
-        Charge(chargeAmount);
+    public virtual void Tick() {
+        Charge();
         if (!GetResource(ResourceType.CHARGE).IsMaxed()) {
             ChargeStatus = ChargeStatus.NOT_CHARGED;
-        } else {
+        }
+        else {
             switch (ChargeStatus) {
                 case ChargeStatus.NOT_CHARGED:
                     ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;
@@ -145,11 +153,7 @@ public abstract class Character : Entity {
                     break;
             }
         }
-        Act(page);
-    }
-
-    protected void Talk(string text, Game game) {
-        game.PostText(text, this.TextColor);
+        Act();
     }
 
     public override bool Equals(object obj) {
@@ -180,14 +184,27 @@ public abstract class Character : Entity {
         CastSpells.Add(spell);
     }
 
+    public void CalculateSpeed(Character mainCharacter) {
+        CalculateSpeed(this, mainCharacter);
+    }
+
+    static void CalculateSpeed(Character current, Character main) {
+        int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttribute(AttributeType.DEXTERITY).False)) / current.GetAttribute(AttributeType.DEXTERITY).False);
+        current.GetResource(ResourceType.CHARGE).True = chargeNeededToAct;
+    }
+
+    public bool IsControllable() {
+        return this.IsDisplayable && this.IsCharged();
+    }
+
     protected abstract void OnFullCharge();
-    public abstract void Act(Page page);
-    public abstract void React(Spell spell, Page page);
-    public abstract void OnStart(Page page);
+    public abstract void Act();
+    public abstract void React(Spell spell);
+    public abstract void OnStart();
     public abstract bool IsDefeated();
-    public abstract void OnDefeat(Page page);
+    public abstract void OnDefeat();
     public abstract bool IsKilled();
-    public abstract void OnKill(Page page);
-    public abstract void OnVictory(Page page);
-    public abstract void OnBattleEnd(Page page);
+    public abstract void OnKill();
+    public abstract void OnVictory();
+    public abstract void OnBattleEnd();
 }

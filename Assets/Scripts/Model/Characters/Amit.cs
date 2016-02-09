@@ -20,23 +20,23 @@ public class Amit : PlayerCharacter {
         throw new NotImplementedException();
     }
 
-    public override void OnBattleEnd(Page page) {
+    public override void OnBattleEnd() {
         throw new NotImplementedException();
     }
 
-    public override void OnDefeat(Page page) {
+    public override void OnDefeat() {
         throw new NotImplementedException();
     }
 
-    public override void OnKill(Page page) {
+    public override void OnKill() {
         throw new NotImplementedException();
     }
 
-    public override void OnStart(Page page) {
+    public override void OnStart() {
         throw new NotImplementedException();
     }
 
-    public override void OnVictory(Page page) {
+    public override void OnVictory() {
         throw new NotImplementedException();
     }
 

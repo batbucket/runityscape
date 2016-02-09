@@ -108,6 +108,7 @@
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Lobster.cs" />
     <Compile Include="Assets\Scripts\Model\Page.cs" />
+    <Compile Include="Assets\Scripts\Model\PagePresenter.cs" />
     <Compile Include="Assets\Scripts\Model\ReadPage.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />

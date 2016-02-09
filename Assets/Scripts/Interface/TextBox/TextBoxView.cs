@@ -54,7 +54,7 @@ public class TextBoxView : MonoBehaviour {
         StartCoroutine(WriteText(text, textBox));
     }
 
-    static IEnumerator WriteText(Text text, TextBox textBox) {
+    IEnumerator WriteText(Text text, TextBox textBox) {
         text.color = textBox.Color;
         switch (textBox.Effect) {
             case TextEffect.NONE:
@@ -62,7 +62,17 @@ public class TextBoxView : MonoBehaviour {
                 SoundView.Instance.Play(textBox.SoundLocation);
                 yield break;
             case TextEffect.FADE_IN:
-                throw new UnityException("This aint a thing yet!");
+                text.text = textBox.RawText;
+                CanvasRenderer cr = gameObject.GetComponent<CanvasRenderer>();
+                Color c = cr.GetColor();
+                c.a = 0;
+                cr.SetColor(c);
+                while (cr.GetColor().a < 1) {
+                    c = cr.GetColor();
+                    c.a += Time.deltaTime * 3;
+                    cr.SetColor(c);
+                    yield return null;
+                }
                 yield break;
             case TextEffect.TYPE:
                 string[] currentTextArray = new string[textBox.TextArray.Length];
@@ -70,7 +80,7 @@ public class TextBoxView : MonoBehaviour {
 
                 //Prescreen and enable all html tags
                 for (int i = 0; i < currentTextArray.Length; i++) {
-                    if (Regex.IsMatch(textBox.TextArray[i], "<.*?>")) {
+                    if (Regex.IsMatch(textBox.TextArray[i], "(<.*?>)")) {
                         currentTextArray[i] = textBox.TextArray[i];
                         taggedText[i] = true;
                     }

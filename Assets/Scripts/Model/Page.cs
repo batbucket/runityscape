@@ -11,7 +11,7 @@ public abstract class Page {
     public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
-    public IList<Process> ActionGrid { get; private set; }
+    public Process[] ActionGrid { get; private set; }
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
@@ -26,8 +26,7 @@ public abstract class Page {
     public int Id { get; private set; }
 
     public Page(string text = "", string tooltip = "", Character mainCharacter = null, List<Character> left = null, List<Character> right = null,
-        Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null,
-        List<Process> actionGrid = null, Action onTick = null) {
+        Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null, params Process[] processes) {
         this.Text = text;
         this.Tooltip = tooltip;
         this.MainCharacter = mainCharacter;
@@ -37,7 +36,16 @@ public abstract class Page {
         this.OnEnterAction = (onEnter == null) ? () => { } : onEnter;
         this.OnFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
         this.OnExitAction = (onExit == null) ? () => { } : onExit;
-        this.ActionGrid = (actionGrid == null) ? new List<Process>() : actionGrid;
+
+        //ActionGrid initialization
+        this.ActionGrid = new Process[ActionGridView.ROWS * ActionGridView.COLS];
+        if (processes != null) {
+            int index = 0;
+            foreach (Process p in processes) {
+                ActionGrid[index++] = p;
+            }
+        }
+
         this.OnTick = (onTick == null) ? () => { } : onTick;
         this.Id = idCount++;
     }
@@ -47,7 +55,8 @@ public abstract class Page {
         if (!HasEnteredBefore && OnFirstEnterAction != null) {
             HasEnteredBefore = true;
             OnFirstEnter();
-        } else if (OnEnterAction != null) {
+        }
+        else if (OnEnterAction != null) {
             OnEnterAction.Invoke();
         }
     }
@@ -60,7 +69,8 @@ public abstract class Page {
         if (!HasExitedBefore && OnFirstExitAction != null) {
             HasExitedBefore = true;
             OnFirstExit();
-        } else if (OnExitAction != null) {
+        }
+        else if (OnExitAction != null) {
             OnExitAction.Invoke();
         }
     }
@@ -74,7 +84,8 @@ public abstract class Page {
         SetCharacterSides(characters, isRightSide);
         if (!isRightSide) {
             LeftCharacters = characters;
-        } else {
+        }
+        else {
             RightCharacters = characters;
         }
     }
@@ -96,7 +107,8 @@ public abstract class Page {
                 List<Character> characterList = new List<Character>();
                 characterList.Add(c);
                 repeatedCharacters.Add(c.Name, characterList);
-            } else {
+            }
+            else {
                 repeatedCharacters[c.Name].Add(c);
             }
         }

@@ -11,7 +11,7 @@ public abstract class PlayerCharacter : Character {
         : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor, true) {
     }
 
-    public override void Act(Page page) { }
+    public override void Act() { }
 
-    public override void React(Spell spell, Page page) { }
+    public override void React(Spell spell) { }
 }

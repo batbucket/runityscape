@@ -25,9 +25,6 @@ public class HotkeyButton : MonoBehaviour {
     Color INACTIVE_COLOR = Color.black;
     Color ACTIVE_COLOR = Color.white;
 
-    public bool IsActive { get { return Process != null && Text.text != null && Text.text.Length > 0; } }
-    public bool isEnabled { get { return button.interactable; } set { button.interactable = value; } }
-
     // Use this for initialization
     void Awake() {
         //hotkey = KeyCode.None;
@@ -44,16 +41,13 @@ public class HotkeyButton : MonoBehaviour {
         //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
         input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.KeyCodeToVirtualKeyCode(Hotkey))));
         input.AddOnMouseUpListener(new Action<PointerEventData>(p => { InputSimulator.SimulateKeyUp(Util.KeyCodeToVirtualKeyCode(Hotkey)); activated = false; })); //Set activated to false to fix double button click issue
+        ClearProcess();
     }
 
     // Update is called once per frame
     void Update() {
-        isEnabled = IsActive;
-        HotkeyText.text = button.interactable ? Hotkey.ToString() : "";
         ButtonAppearance();
-        if (button.interactable) {
-            CheckInputs();
-        }
+        CheckInputs();
     }
 
     public void ClearText() {
@@ -61,18 +55,25 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     public void SetProcess(IProcess process) {
-        if (process != null) {
+        if (process == null) {
+            ClearProcess();
+        } else {
             button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => process.Play());
+            button.onClick.AddListener(process.Play);
             Text.text = process.Name;
             this.Process = process;
+            HotkeyText.text = Hotkey.ToString();
+            button.interactable = true;
         }
     }
 
     public void ClearProcess() {
         button.onClick.RemoveAllListeners();
-        ClearText();
-        this.Process = null;
+        button.onClick.AddListener(() => { });
+        Text.text = "";
+        this.Process = new Process();
+        button.interactable = false;
+        HotkeyText.text = "";
     }
 
     void OnMouseExit() {
@@ -99,12 +100,12 @@ public class HotkeyButton : MonoBehaviour {
             activated = true;
         }
 
-        if (mouseInBounds) {
+        if (mouseInBounds && button.IsInteractable()) {
             Tooltip.Set(Process.Description);
         }
 
         if (activated) {
-            if (Process != null) {
+            if (button.IsInteractable()) {
                 Tooltip.Set(Process.Description);
             }
 

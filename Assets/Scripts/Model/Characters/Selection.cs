@@ -24,9 +24,10 @@ public sealed class Selection : IComparable {
     public static readonly Selection ITEM = new Selection(Type.ITEM, "Item", "{0} will use an ITEM.", "What ITEM will {0} use?");
     public static readonly Selection MERCY = new Selection(Type.MERCY, "Mercy", "{0} will show MERCY.", "How will {0} show MERCY?");
     public static readonly Selection TARGET = new Selection(Type.TARGET, "Target", "{0} will TARGET {1} with {2}.", "Who will {0} TARGET with {1}?");
+    public static readonly Selection SWITCH = new Selection(Type.SWITCH, "Switch", "{0} will SWITCH to another character.", "Who will {0} SWITCH with?");
 
     public enum Type {
-        FAIM, SPELL, ACT, ITEM, MERCY, TARGET
+        FAIM, SPELL, ACT, ITEM, MERCY, TARGET, SWITCH
     }
 
     public int CompareTo(object obj) {

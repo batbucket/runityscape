@@ -18,12 +18,13 @@ public class ActionGridView : MonoBehaviour {
      */
     public static readonly KeyCode[] HOTKEYS = new KeyCode[]
         {KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
-         KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F};
-
-    HotkeyButton[] actionButtons;
-
+         KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F,
+         KeyCode.Z, KeyCode.X, KeyCode.C, KeyCode.V
+        };
     public const int ROWS = 3;
     public const int COLS = 4;
+
+    HotkeyButton[] actionButtons;
 
     // Use this for initialization
     void Awake() {
@@ -31,7 +32,7 @@ public class ActionGridView : MonoBehaviour {
         this.actionButtons = new HotkeyButton[HOTKEYS.Length];
         for (int i = 0; i < actionButtons.Length; i++) {
             GameObject actionButton = (GameObject)Instantiate(Resources.Load("ActionButton"));
-            Util.Parent(actionButton, GameObject.Find("ButtonHolder"));
+            Util.Parent(actionButton, gameObject);
             actionButton.GetComponent<HotkeyButton>().Hotkey = HOTKEYS[i];
             actionButtons[i] = actionButton.GetComponent<HotkeyButton>();
         }
@@ -78,6 +79,10 @@ public class ActionGridView : MonoBehaviour {
             actionButtons[i].ClearProcess();
             actionButtons[i].ClearText();
         }
+    }
+
+    public static int GetCount() {
+        return HOTKEYS.Length;
     }
 
     bool CoordinatesInBounds(int r, int c) {
