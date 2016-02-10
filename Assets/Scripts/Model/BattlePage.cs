@@ -12,9 +12,10 @@ public class BattlePage : Page {
     TreeNode<Selection> selectionTree;
     TreeNode<Selection> currentSelectionNode;
 
-    public const int BACK_INDEX = 7; //Last hotkey is letter 'F'
+    public const int BACK_INDEX = ActionGridView.ROWS * ActionGridView.COLS - 1;
     public const int ATTACK_INDEX = 0;
     public const int LAST_SPELL_INDEX = 1;
+    public const int FAIM_OFFSET = 4;
 
     public BattlePage(string text = "", string tooltip = "", Character mainCharacter = null, List<Character> left = null, List<Character> right = null,
         Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null)
@@ -25,12 +26,12 @@ public class BattlePage : Page {
         /**
          * Set up the Selection Tree.
          * Tree looks like this:
-         *               FAIM
+         *               FAIM   -> TARGET (quickcast)
          * SPELLS    ACTS   ITEMS    MERCIES    SWITCH
          * TARGET   TARGET  TARGET   TARGET     TARGET
          */
         selectionTree = new TreeNode<Selection>(Selection.FAIM); //Topmost node
-        selectionTree.AddChildren(Selection.SPELL, Selection.ACT, Selection.ITEM, Selection.MERCY, Selection.SWITCH);
+        selectionTree.AddChildren(Selection.SPELL, Selection.ACT, Selection.ITEM, Selection.MERCY, Selection.SWITCH, Selection.TARGET);
         foreach (TreeNode<Selection> st in selectionTree.Children) {
             st.AddChild(Selection.TARGET);
         }
@@ -75,46 +76,61 @@ public class BattlePage : Page {
     void Display(Character character) { //Zzzzz null reference here
         Tooltip = string.Format(currentSelectionNode.Value.Question, character.Name, targetedSpell == null ? "" : targetedSpell.Name);
         if (currentSelectionNode.Value == Selection.FAIM) {
-            AddSwitchButton(character);
-            ActionGrid[ATTACK_INDEX] = new Process(character.Attack.Name, character.Attack.Description, () => DetermineTargetSelection(character.Attack, character));
-            ActionGrid[LAST_SPELL_INDEX] = lastSpellStack.Count == 0 ? new Process() : new Process(lastSpellStack.Peek().Name, lastSpellStack.Peek().Description, () => DetermineTargetSelection(lastSpellStack.Peek(), character));
-            int index = LAST_SPELL_INDEX + 1;
-            foreach (KeyValuePair<Selection, ICollection<Spell>> pair in character.Selections) {
-                ActionGrid[index++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name), () => currentSelectionNode = currentSelectionNode.FindChild(pair.Key));
+            Process[] temp = new Process[ActionGrid.Length];
+            temp[ATTACK_INDEX] = new Process(character.Attack.Name, character.Attack.Description,
+                () => {
+                    DetermineTargetSelection(character.Attack, character);
+                });
+            temp[LAST_SPELL_INDEX] = lastSpellStack.Count == 0 ? new Process() : new Process(lastSpellStack.Peek().Name, lastSpellStack.Peek().Description,
+                () => {
+                    DetermineTargetSelection(lastSpellStack.Peek(), character);
+                });
+            int index = FAIM_OFFSET;
+            foreach (KeyValuePair<Selection, ICollection<Spell>> myPair in character.Selections) {
+                KeyValuePair<Selection, ICollection<Spell>> pair = myPair;
+                temp[index++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name), () => currentSelectionNode = currentSelectionNode.FindChild(pair.Key));
             }
-        }
-        else {
-            AddBackButton(character);
+            ActionGrid = temp;
+            AddSwitchButton(character);
+        } else {
             if (currentSelectionNode.Value == Selection.TARGET) {
                 ShowTargetsAsList(targets, character);
-            }
-            else if (currentSelectionNode.Value == Selection.SWITCH) {
-
-            }
-            else {
+            } else if (currentSelectionNode.Value == Selection.SWITCH) {
+                ActionGrid = new Process[ActionGrid.Length];
+            } else {
                 ShowSpellsAsList(character.Selections[currentSelectionNode.Value], character);
             }
+            AddBackButton(character);
         }
     }
 
     void ShowSpellsAsList(ICollection<Spell> spells, Character caster) {
+        Process[] temp = new Process[ActionGrid.Length];
         int index = 0;
-        foreach (Spell spell in spells) {
-            ActionGrid[index++] = new Process(spell.GetNameAndInfo(caster), spell.Description, () => DetermineTargetSelection(spell, caster));
+        foreach (Spell mySpell in spells) {
+            Spell spell = mySpell;
+            temp[index++] = new Process(spell.GetNameAndInfo(caster), spell.Description, () => DetermineTargetSelection(spell, caster));
         }
+        ActionGrid = temp;
     }
 
     void ShowTargetsAsList(IList<Character> targets, Character caster) {
+        Process[] temp = new Process[ActionGrid.Length];
         int index = 0;
-        foreach (Character target in targets) {
-            ActionGrid[index++] =
+        foreach (Character myTarget in targets) {
+            Character target = myTarget;
+            temp[index++] =
                 new Process(
                     targetedSpell.IsCastable(caster, target) ? target.Name : Util.Color(target.Name, Color.red),
                     string.Format(currentSelectionNode.Value.Declare, caster.Name, target.Name, targetedSpell.Name), () => {
                         targetedSpell.TryCast(caster, target);
+                        if (targetedSpell.Result != SpellResult.CANT_CAST) {
+                            currentSelectionNode = selectionTree;
+                        }
                     }
                 );
         }
+        ActionGrid = temp;
     }
 
     void AddBackButton(Character current) {
@@ -122,14 +138,15 @@ public class BattlePage : Page {
     }
 
     void AddSwitchButton(Character current) {
-        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, "SWITCH to another character.", () => currentSelectionNode = currentSelectionNode.FindChild(Selection.SWITCH));
+        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current), () => currentSelectionNode = currentSelectionNode.FindChild(Selection.SWITCH));
     }
 
     void SwitchCharacterDisplay(Character current) {
         int index = 0;
-        foreach (Character c in GetAll()) {
-            if (c.IsDisplayable && c.IsCharged()) {
-                ActionGrid[index++] = new Process(c.Name, string.Format("{0} will SWITCH with {1}.", current, c.Name), () => { }); //Make an instance field called currentdisplaying char and set it here
+        foreach (Character myTarget in GetAll()) {
+            Character target = myTarget;
+            if (target.IsDisplayable && target.IsCharged()) {
+                ActionGrid[index++] = new Process(target.Name, string.Format("{0} will SWITCH with {1}.", current, target.Name), () => { }); //Make an instance field called currentdisplaying char and set it here
             }
         }
     }
@@ -159,10 +176,10 @@ public class BattlePage : Page {
         switch (spell.TargetType) {
             case SpellTarget.SINGLE_ALLY:
                 DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster.Side));
-                return;
+                break;
             case SpellTarget.SINGLE_ENEMY:
                 DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster.Side));
-                return;
+                break;
             case SpellTarget.SELF:
                 spell.TryCast(caster, caster);
                 break;
@@ -188,14 +205,12 @@ public class BattlePage : Page {
     void DetermineSingleTargetQuickCast(Spell spell, Character caster, IList<Character> targets) {
         if (targets.Count == 0) {
             // Do nothing
-        }
-        else if (targets.Count == 1) {
+        } else if (targets.Count == 1) {
             spell.TryCast(caster, targets[0]);
-        }
-        else {
+        } else {
             targetedSpell = spell;
             this.targets = targets;
-            currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);
+            currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET); //No linkage from FAIM -> Target
         }
     }
 }

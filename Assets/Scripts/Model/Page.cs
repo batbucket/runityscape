@@ -11,7 +11,7 @@ public abstract class Page {
     public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
-    public Process[] ActionGrid { get; private set; }
+    public Process[] ActionGrid { get; protected set; }
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
@@ -55,8 +55,7 @@ public abstract class Page {
         if (!HasEnteredBefore && OnFirstEnterAction != null) {
             HasEnteredBefore = true;
             OnFirstEnter();
-        }
-        else if (OnEnterAction != null) {
+        } else if (OnEnterAction != null) {
             OnEnterAction.Invoke();
         }
     }
@@ -69,8 +68,7 @@ public abstract class Page {
         if (!HasExitedBefore && OnFirstExitAction != null) {
             HasExitedBefore = true;
             OnFirstExit();
-        }
-        else if (OnExitAction != null) {
+        } else if (OnExitAction != null) {
             OnExitAction.Invoke();
         }
     }
@@ -84,8 +82,7 @@ public abstract class Page {
         SetCharacterSides(characters, isRightSide);
         if (!isRightSide) {
             LeftCharacters = characters;
-        }
-        else {
+        } else {
             RightCharacters = characters;
         }
     }
@@ -107,8 +104,7 @@ public abstract class Page {
                 List<Character> characterList = new List<Character>();
                 characterList.Add(c);
                 repeatedCharacters.Add(c.Name, characterList);
-            }
-            else {
+            } else {
                 repeatedCharacters[c.Name].Add(c);
             }
         }

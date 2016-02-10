@@ -6,10 +6,10 @@ public class Amit : PlayerCharacter {
     public Amit() : base(Util.GetSprite("crying_mudkip"), "Amit", 0, 5, 5, 5, 5, Color.white) {
         Side = false;
         AddResources(ResourceFactory.CreateResource(ResourceType.SKILL, 3));
-        this.Selections[Selection.SPELL].Add(new Attack());
+        this.Attack = new Attack();
         this.Selections[Selection.SPELL].Add(new Meditate());
-        this.Selections[Selection.SPELL].Add(new Spare());
         this.Selections[Selection.ITEM].Add(new Lobster(2));
+        this.Selections[Selection.MERCY].Add(new Spare());
     }
 
     public override bool IsDefeated() {

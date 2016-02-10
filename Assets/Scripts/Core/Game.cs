@@ -37,7 +37,7 @@ public class Game : MonoBehaviour {
         PagePresenter = new PagePresenter();
         MainCharacter = new Amit();
 
-        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new List<Character>() { new Amit(), new Amit() }, right: new List<Character>() { new Amit(), new Steve(), new Steve() });
+        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new List<Character>() { new Amit() }, right: new List<Character>() { new Steve() });
         Page p1 = new ReadPage("What", "Hello world", MainCharacter, new List<Character>() { new Amit() }, null, null, null, null, null, null,
                 new Process("Hello", "Say Hello world",
                     () => TextBoxHolderView.Instance.AddTextBoxView(
@@ -63,8 +63,7 @@ public class Game : MonoBehaviour {
     public PortraitHolderView GetPortraitHolder(bool isRightSide) {
         if (!isRightSide) {
             return LeftPortraits;
-        }
-        else {
+        } else {
             return RightPortraits;
         }
     }

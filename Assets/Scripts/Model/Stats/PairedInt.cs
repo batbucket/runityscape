@@ -12,7 +12,7 @@ public abstract class PairedInt {
     public virtual int True { get { return _true; } set { _true = value; } }
 
     public bool IsMaxed() {
-        return False <= True;
+        return False >= True;
     }
 
     public void Set(int both) {

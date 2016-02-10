@@ -24,7 +24,7 @@ public sealed class Selection : IComparable {
     public static readonly Selection ITEM = new Selection(Type.ITEM, "Item", "{0} will use an ITEM.", "What ITEM will {0} use?");
     public static readonly Selection MERCY = new Selection(Type.MERCY, "Mercy", "{0} will show MERCY.", "How will {0} show MERCY?");
     public static readonly Selection TARGET = new Selection(Type.TARGET, "Target", "{0} will TARGET {1} with {2}.", "Who will {0} TARGET with {1}?");
-    public static readonly Selection SWITCH = new Selection(Type.SWITCH, "Switch", "{0} will SWITCH to another character.", "Who will {0} SWITCH with?");
+    public static readonly Selection SWITCH = new Selection(Type.SWITCH, "Switch", "{0} will GIVE control to another character.", "Who will {0} SWITCH with?");
 
     public enum Type {
         FAIM, SPELL, ACT, ITEM, MERCY, TARGET, SWITCH
@@ -32,5 +32,21 @@ public sealed class Selection : IComparable {
 
     public int CompareTo(object obj) {
         return this.SelectionType.CompareTo(((Selection)obj).SelectionType);
+    }
+
+    public override bool Equals(object obj) {
+        // If parameter is null return false.
+        if (obj == null) {
+            return false;
+        }
+
+        // If parameter cannot be cast to Selection return false.
+        Selection p = obj as Selection;
+        if ((object)p == null) {
+            return false;
+        }
+
+        // Return true if the fields match:
+        return p.SelectionType == this.SelectionType;
     }
 }

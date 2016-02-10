@@ -125,7 +125,7 @@ public class HotkeyButton : MonoBehaviour {
     void ButtonAppearance() {
         if (Text.text.Length == 0) {
             DisabledAppearance();
-        } else if (activated || mouseInBounds && button.interactable) {
+        } else if ((activated || mouseInBounds) && button.interactable) {
             ActiveAppearance();
         } else {
             InactiveAppearance();

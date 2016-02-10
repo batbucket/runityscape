@@ -42,7 +42,7 @@ public class Steve : ComputerCharacter {
     }
 
     public override void React(Spell spell) {
-        throw new NotImplementedException();
+
     }
 
     protected override void DecideSpell() {

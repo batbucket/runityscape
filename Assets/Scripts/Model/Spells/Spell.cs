@@ -56,7 +56,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     }
 
     public virtual bool IsCastable(Character caster, Character target = null) {
-        if (!target.IsTargetable) {
+        if (target != null && !target.IsTargetable) {
             return false;
         }
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {

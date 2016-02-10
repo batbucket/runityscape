@@ -29,6 +29,7 @@ public class PagePresenter {
     public void Tick() {
         Util.KillAllChildren(Game.Instance.LeftPortraits.gameObject);
         Util.KillAllChildren(Game.Instance.RightPortraits.gameObject);
+        Game.Instance.ActionGrid.ClearAll();
         Game.Instance.ActionGrid.SetButtonAttributes(Page.ActionGrid);
         SetPortraits(Page.LeftCharacters, Game.Instance.LeftPortraits);
         SetPortraits(Page.RightCharacters, Game.Instance.RightPortraits);
