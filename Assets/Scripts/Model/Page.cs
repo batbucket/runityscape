@@ -25,8 +25,20 @@ public abstract class Page {
     public static int idCount = 0;
     public int Id { get; private set; }
 
-    public Page(string text = "", string tooltip = "", Character mainCharacter = null, Character[] left = null, Character[] right = null,
-        Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null, Process[] processes = null) {
+    public Page(
+        string text = "",
+        string tooltip = "",
+        Character mainCharacter = null,
+        Character[] left = null,
+        Character[] right = null,
+        Action onFirstEnter = null,
+        Action onEnter = null,
+        Action onFirstExit = null,
+        Action onExit = null,
+        Action onTick = null,
+        Process[] processes = null
+        ) {
+
         this.Text = text;
         this.Tooltip = tooltip;
         this.MainCharacter = mainCharacter;

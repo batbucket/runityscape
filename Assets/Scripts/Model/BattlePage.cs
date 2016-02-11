@@ -16,9 +16,20 @@ public class BattlePage : Page {
     public const int LAST_SPELL_INDEX = 1;
     public const int FAIM_OFFSET = 4;
 
-    public BattlePage(string text = "", string tooltip = "", Character mainCharacter = null, Character[] left = null, Character[] right = null,
-        Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null)
-            : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
+    public BattlePage(
+        string text = "",
+        string tooltip = "",
+        Character mainCharacter = null,
+        Character[] left = null,
+        Character[] right = null,
+        Action onFirstEnter = null,
+        Action onEnter = null,
+        Action onFirstExit = null,
+        Action onExit = null,
+        Action onTick = null
+        )
+        : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
+
         characterQueue = new Queue<Character>();
 
         /**
