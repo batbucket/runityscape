@@ -12,7 +12,7 @@ public class Process : IProcess {
         this.Action = action;
     }
 
-    public Process() : this("", "", () => { }) { }
+    public Process() : this("", "", null) { }
 
     public void Play() {
         Action.Invoke();

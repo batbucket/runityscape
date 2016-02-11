@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 
 public class BattlePage : Page {
-    Stack<Spell> lastSpellStack;
+    Stack<Spell> lastSpellStack; //TODO: make this a dictionary so each guy's spell history is unique
     Queue<Character> characterQueue;
     Character activeCharacter;
     Spell targetedSpell;
@@ -17,9 +17,9 @@ public class BattlePage : Page {
     public const int LAST_SPELL_INDEX = 1;
     public const int FAIM_OFFSET = 4;
 
-    public BattlePage(string text = "", string tooltip = "", Character mainCharacter = null, List<Character> left = null, List<Character> right = null,
+    public BattlePage(string text = "", string tooltip = "", Character mainCharacter = null, Character[] left = null, Character[] right = null,
         Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null)
-            : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, null) {
+            : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
         lastSpellStack = new Stack<Spell>();
         characterQueue = new Queue<Character>();
 
@@ -54,7 +54,11 @@ public class BattlePage : Page {
             activeCharacter = PopAbledCharacter();
         }
 
-        if (activeCharacter != null) {
+        //No one can move so clear the board
+        if (activeCharacter == null) {
+            Tooltip = "";
+            ClearActionGrid();
+        } else {
             Display(activeCharacter);
         }
     }
@@ -73,56 +77,64 @@ public class BattlePage : Page {
         return characterQueue.Count == 0 ? null : characterQueue.Dequeue();
     }
 
-    void Display(Character character) { //Zzzzz null reference here
+    void Display(Character character) {
+        ClearActionGrid();
         Tooltip = string.Format(currentSelectionNode.Value.Question, character.Name, targetedSpell == null ? "" : targetedSpell.Name);
         if (currentSelectionNode.Value == Selection.FAIM) {
-            Process[] temp = new Process[ActionGrid.Length];
-            temp[ATTACK_INDEX] = new Process(character.Attack.Name, character.Attack.Description,
+            ShowSwitchButton(character);
+            ActionGrid[ATTACK_INDEX] = new Process(character.Attack.Name, character.Attack.Description,
                 () => {
+                    Tooltip = "";
                     DetermineTargetSelection(character.Attack, character);
                 });
-            temp[LAST_SPELL_INDEX] = lastSpellStack.Count == 0 ? new Process() : new Process(lastSpellStack.Peek().Name, lastSpellStack.Peek().Description,
+            ActionGrid[LAST_SPELL_INDEX] = lastSpellStack.Count == 0 ? new Process() : new Process(lastSpellStack.Peek().GetNameAndInfo(character), lastSpellStack.Peek().Description,
                 () => {
+                    Tooltip = "";
                     DetermineTargetSelection(lastSpellStack.Peek(), character);
                 });
             int index = FAIM_OFFSET;
             foreach (KeyValuePair<Selection, ICollection<Spell>> myPair in character.Selections) {
                 KeyValuePair<Selection, ICollection<Spell>> pair = myPair;
-                temp[index++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name), () => currentSelectionNode = currentSelectionNode.FindChild(pair.Key));
+                ActionGrid[index++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name),
+                    () => {
+                        Tooltip = "";
+                        currentSelectionNode = currentSelectionNode.FindChild(pair.Key);
+                    });
             }
-            ActionGrid = temp;
-            AddSwitchButton(character);
         } else {
+            ShowBackButton(character);
             if (currentSelectionNode.Value == Selection.TARGET) {
                 ShowTargetsAsList(targets, character);
             } else if (currentSelectionNode.Value == Selection.SWITCH) {
-                ActionGrid = new Process[ActionGrid.Length];
+                ShowSwitchMenu(character);
             } else {
                 ShowSpellsAsList(character.Selections[currentSelectionNode.Value], character);
             }
-            AddBackButton(character);
         }
     }
 
     void ShowSpellsAsList(ICollection<Spell> spells, Character caster) {
-        Process[] temp = new Process[ActionGrid.Length];
         int index = 0;
         foreach (Spell mySpell in spells) {
             Spell spell = mySpell;
-            temp[index++] = new Process(spell.GetNameAndInfo(caster), spell.Description, () => DetermineTargetSelection(spell, caster));
+            ActionGrid[index++] = new Process(spell.GetNameAndInfo(caster), spell.Description,
+                () => {
+                    Tooltip = "";
+                    DetermineTargetSelection(spell, caster);
+                });
         }
-        ActionGrid = temp;
     }
 
     void ShowTargetsAsList(IList<Character> targets, Character caster) {
-        Process[] temp = new Process[ActionGrid.Length];
         int index = 0;
         foreach (Character myTarget in targets) {
             Character target = myTarget;
-            temp[index++] =
+            ActionGrid[index++] =
                 new Process(
                     targetedSpell.IsCastable(caster, target) ? target.Name : Util.Color(target.Name, Color.red),
-                    string.Format(currentSelectionNode.Value.Declare, caster.Name, target.Name, targetedSpell.Name), () => {
+                    string.Format(currentSelectionNode.Value.Declare, caster.Name, target.Name, targetedSpell.Name),
+                    () => {
+                        Tooltip = "";
                         targetedSpell.TryCast(caster, target);
                         if (targetedSpell.Result != SpellResult.CANT_CAST) {
                             currentSelectionNode = selectionTree;
@@ -130,23 +142,37 @@ public class BattlePage : Page {
                     }
                 );
         }
-        ActionGrid = temp;
     }
 
-    void AddBackButton(Character current) {
-        this.ActionGrid[BACK_INDEX] = new Process("Back", "Go BACK to the previous selection.", () => ReturnToLastSelection());
+    void ShowBackButton(Character current) {
+        this.ActionGrid[BACK_INDEX] = new Process("Back", "Go BACK to the previous selection.",
+            () => {
+                Tooltip = "";
+                ReturnToLastSelection();
+            });
     }
 
-    void AddSwitchButton(Character current) {
-        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current), () => currentSelectionNode = currentSelectionNode.FindChild(Selection.SWITCH));
+    void ShowSwitchButton(Character current) {
+        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current),
+            () => {
+                Tooltip = "";
+                currentSelectionNode = currentSelectionNode.FindChild(Selection.SWITCH);
+            });
     }
 
-    void SwitchCharacterDisplay(Character current) {
+    void ShowSwitchMenu(Character current) {
         int index = 0;
         foreach (Character myTarget in GetAll()) {
             Character target = myTarget;
-            if (target.IsDisplayable && target.IsCharged()) {
-                ActionGrid[index++] = new Process(target.Name, string.Format("{0} will SWITCH with {1}.", current, target.Name), () => { }); //Make an instance field called currentdisplaying char and set it here
+
+            //You are not allowed to switch with yourself.
+            if (!current.Equals(target) && target.IsDisplayable && target.IsCharged()) {
+                ActionGrid[index++] = new Process(target.Name, string.Format("{0} will SWITCH with {1}.", current.Name, target.Name),
+                    () => {
+                        Tooltip = "";
+                        activeCharacter = target;
+                        ReturnToLastSelection();
+                    });
             }
         }
     }

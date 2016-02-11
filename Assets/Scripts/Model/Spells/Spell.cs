@@ -19,6 +19,27 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     public Character Caster { get; private set; }
     public Character Target { get; private set; }
     public int Damage { get; protected set; }
+
+    /**
+     * Inventory needs to be in the Character's Selections
+     * Selections is an ICollection<Selection, ICollection<Spell>>
+     * So we need to implement ICollection<Spell> in Inventory
+     * The only field that differentiates a Spell from an Item
+     * Is the Count field.
+     * If we keep this here, we can implement ICollection<Spell>
+     * In inventory, and force the caller to only add Items to the collection.
+     * This is way better than the alternative.
+     */
+    private int _count;
+    public int Count {
+        get {
+            return _count;
+        }
+        set {
+            Util.Assert(value > 0);
+            _count = value;
+        }
+    }
     Dictionary<ResourceType, int> costs;
 
     Action IUndoableProcess.UndoAction { get { return new Action(() => Undo()); } }
@@ -42,7 +63,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
 
     public virtual string GetNameAndInfo(Character caster) {
         StringBuilder s = new StringBuilder();
-        s.Append(IsCastable(caster) ? Name : Util.Color(Name, Color.red) + (costs.Count == 0 ? "" : " - "));
+        s.Append((IsCastable(caster) ? Name : Util.Color(Name, Color.red)) + (costs.Count == 0 ? "" : " - "));
         List<string> elements = new List<string>();
         foreach (KeyValuePair<ResourceType, int> entry in costs) {
             if (entry.Key != ResourceType.CHARGE) {

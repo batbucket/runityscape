@@ -37,8 +37,9 @@ public class Game : MonoBehaviour {
         PagePresenter = new PagePresenter();
         MainCharacter = new Amit();
 
-        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new List<Character>() { new Amit() }, right: new List<Character>() { new Steve() });
-        Page p1 = new ReadPage("What", "Hello world", MainCharacter, new List<Character>() { new Amit() }, null, null, null, null, null, null,
+        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve() });
+        Page p1 = new ReadPage("What", "Hello world", MainCharacter, new Character[] { new Amit() },
+            processes: new Process[] {
                 new Process("Hello", "Say Hello world",
                     () => TextBoxHolderView.Instance.AddTextBoxView(
                         new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
@@ -50,8 +51,7 @@ public class Game : MonoBehaviour {
                     }
                 ),
                 new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(p2))
-
-            );
+        });
         PagePresenter.SetPage(p1);
     }
 

@@ -49,4 +49,8 @@ public sealed class Selection : IComparable {
         // Return true if the fields match:
         return p.SelectionType == this.SelectionType;
     }
+
+    public override int GetHashCode() {
+        return SelectionType.GetHashCode();
+    }
 }

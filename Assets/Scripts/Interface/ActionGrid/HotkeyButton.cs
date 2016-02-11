@@ -55,7 +55,7 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     public void SetProcess(IProcess process) {
-        if (process == null) {
+        if (process == null || process.Action == null) {
             ClearProcess();
         } else {
             button.onClick.RemoveAllListeners();

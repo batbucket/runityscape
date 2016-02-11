@@ -49,10 +49,11 @@ public abstract class Character : Entity {
         this.Selections = new SortedDictionary<Selection, ICollection<Spell>>() {
             { Selection.SPELL, new HashSet<Spell>() },
             { Selection.ACT, new HashSet<Spell>() },
-            { Selection.ITEM, new HashSet<Spell>() },
+            { Selection.ITEM, new Inventory() },
             { Selection.MERCY, new HashSet<Spell>() }
         };
         this.TextColor = textColor;
+        this.IsTargetable = true;
         this.IsDisplayable = isDisplayable;
         GetResource(ResourceType.CHARGE).clearFalse();
 
@@ -96,8 +97,7 @@ public abstract class Character : Entity {
             Attribute attribute = GetAttribute(attributeType);
             if (value) {
                 attribute.True += amount;
-            }
-            else {
+            } else {
                 attribute.False += amount;
             }
             return true;
@@ -110,8 +110,7 @@ public abstract class Character : Entity {
             Resource resource = GetResource(resourceType);
             if (value) {
                 resource.True += amount;
-            }
-            else {
+            } else {
                 resource.False += amount;
             }
             return true;
@@ -139,8 +138,7 @@ public abstract class Character : Entity {
         Charge();
         if (!GetResource(ResourceType.CHARGE).IsMaxed()) {
             ChargeStatus = ChargeStatus.NOT_CHARGED;
-        }
-        else {
+        } else {
             switch (ChargeStatus) {
                 case ChargeStatus.NOT_CHARGED:
                     ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;

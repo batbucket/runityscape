@@ -191,10 +191,10 @@ public static class Util {
     }
 
     /**
-     * Converts 0 to A, 1 to B, and so on
+     * Converts 1 to A, 2 to B, and so on
      */
     public static string IntToLetter(int column) {
-        column--;
+        column++;
         string columnString = "";
         decimal columnNumber = column;
         while (columnNumber > 0) {

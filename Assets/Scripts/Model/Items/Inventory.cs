@@ -3,17 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public class Inventory : ICollection<Item> {
+/**
+ * Is actually an ICollection<Item>, but we can't
+ * Set it as that since Character's Selections
+ * is an IDictionary<Selection, ICollection<Spell>>
+ */
+public class Inventory : ICollection<Spell> {
     public const int CAPACITY = 11;
 
-    public List<Item> Items { get; private set; }
+    public List<Spell> Items { get; private set; }
     public int Count { get { return CalculateCount(); } }
     public bool IsFull { get { return Count >= CAPACITY; } }
     public bool IsReadOnly { get { return false; } }
     public bool IsEnabled { get; set; }
 
     public Inventory() {
-        Items = new List<Item>();
+        Items = new List<Spell>();
         IsEnabled = true;
     }
 
@@ -28,7 +33,7 @@ public class Inventory : ICollection<Item> {
     }
 
     public bool Remove(Item item) {
-        Item res = Find(item);
+        Spell res = Find(item);
         if (res == null) {
             return false;
         } else {
@@ -48,7 +53,7 @@ public class Inventory : ICollection<Item> {
         return count;
     }
 
-    Item Find(Item item) {
+    Spell Find(Spell item) {
         return Items.Find(x => x.Equals(item));
     }
 
@@ -64,11 +69,40 @@ public class Inventory : ICollection<Item> {
         Items.CopyTo(array, arrayIndex);
     }
 
-    public IEnumerator<Item> GetEnumerator() {
+    IEnumerator IEnumerable.GetEnumerator() {
         return Items.GetEnumerator();
     }
 
-    IEnumerator IEnumerable.GetEnumerator() {
+    /**
+     * Inventory needs to be in the Character's Selections
+     * Selections is an ICollection<Selection, ICollection<Spell>>
+     * So we need to implement ICollection<Spell> in Inventory
+     * If we keep this here, we can implement ICollection<Spell>
+     * In inventory, and force the caller to only add Items to the collection.
+     * This is way better than the alternative.
+     */
+
+    public void Add(Spell spell) {
+        Util.Assert(spell is Item);
+        Add((Item)spell);
+    }
+
+    public bool Contains(Spell spell) {
+        Util.Assert(spell is Item);
+        return Contains((Item)spell);
+    }
+
+    public void CopyTo(Spell[] array, int arrayIndex) {
+        Util.Assert(array is Item[]);
+        CopyTo((Spell[])array, arrayIndex);
+    }
+
+    public bool Remove(Spell spell) {
+        Util.Assert(spell is Item);
+        return Remove((Item)spell);
+    }
+
+    public IEnumerator<Spell> GetEnumerator() {
         return Items.GetEnumerator();
     }
 }

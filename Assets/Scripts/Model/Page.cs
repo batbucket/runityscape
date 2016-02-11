@@ -25,25 +25,35 @@ public abstract class Page {
     public static int idCount = 0;
     public int Id { get; private set; }
 
-    public Page(string text = "", string tooltip = "", Character mainCharacter = null, List<Character> left = null, List<Character> right = null,
-        Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null, params Process[] processes) {
+    public Page(string text = "", string tooltip = "", Character mainCharacter = null, Character[] left = null, Character[] right = null,
+        Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null, Process[] processes = null) {
         this.Text = text;
         this.Tooltip = tooltip;
         this.MainCharacter = mainCharacter;
-        if (left == null) this.LeftCharacters = new List<Character>(); else LeftCharacters = left;
-        if (right == null) this.RightCharacters = new List<Character>(); else RightCharacters = right;
+
+        //Left Characters initialization
+        if (left == null || left.Length == 0) {
+            this.LeftCharacters = new List<Character>();
+        } else {
+            SetSide(left, false);
+        }
+
+        //Right Characters initialization
+        if (right == null || right.Length == 0) {
+            this.RightCharacters = new List<Character>();
+        } else {
+            SetSide(right, true);
+        }
         this.OnFirstEnterAction = (OnFirstEnterAction == null) ? () => { } : onFirstEnter;
         this.OnEnterAction = (onEnter == null) ? () => { } : onEnter;
         this.OnFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
         this.OnExitAction = (onExit == null) ? () => { } : onExit;
 
         //ActionGrid initialization
-        this.ActionGrid = new Process[ActionGridView.ROWS * ActionGridView.COLS];
-        if (processes != null) {
-            int index = 0;
-            foreach (Process p in processes) {
-                ActionGrid[index++] = p;
-            }
+        if (processes == null) {
+            this.ActionGrid = new Process[ActionGridView.ROWS * ActionGridView.COLS];
+        } else {
+            ActionGrid = processes;
         }
 
         this.OnTick = (onTick == null) ? () => { } : onTick;
@@ -172,6 +182,10 @@ public abstract class Page {
 
     static Character GetRandomCharacter(IList<Character> characters) {
         return characters[UnityEngine.Random.Range(0, characters.Count)];
+    }
+
+    protected void ClearActionGrid() {
+        ActionGrid = new Process[ActionGridView.ROWS * ActionGridView.COLS];
     }
 
     public virtual void Tick() {
