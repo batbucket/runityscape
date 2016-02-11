@@ -38,4 +38,20 @@ public abstract class Item : Spell {
         base.ConsumeResources(caster);
         caster.Selections[Selection.ITEM].Remove(this);
     }
+
+    public override bool Equals(object obj) {
+        // If parameter is null return false.
+        if (obj == null) {
+            return false;
+        }
+
+        // If parameter cannot be cast to Page return false.
+        Item i = obj as Item;
+        if ((object)i == null) {
+            return false;
+        }
+
+        // Return true if the fields match:
+        return this.Name.Equals(i.Name);
+    }
 }

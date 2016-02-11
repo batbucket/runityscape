@@ -36,7 +36,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
             return _count;
         }
         set {
-            Util.Assert(value > 0);
+            Util.Assert(value >= 0);
             _count = value;
         }
     }

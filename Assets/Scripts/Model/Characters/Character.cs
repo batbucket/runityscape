@@ -18,8 +18,9 @@ public abstract class Character : Entity {
     public Spell Attack { get; set; }
     public IDictionary<Selection, ICollection<Spell>> Selections { get; private set; }
 
-    public IList<Spell> RecievedSpells { get; private set; }
-    public IList<Spell> CastSpells { get; private set; }
+    public Stack<Spell> SpellStack { get; private set; } //Spells casted are pushed here by reference.
+    public IList<Spell> RecievedSpells { get; private set; } //Spells recieved are added by value.
+    public IList<Spell> CastSpells { get; private set; } //Spells cast are added by value.
 
     public Color TextColor { get; private set; }
 
@@ -57,6 +58,7 @@ public abstract class Character : Entity {
         this.IsDisplayable = isDisplayable;
         GetResource(ResourceType.CHARGE).clearFalse();
 
+        SpellStack = new Stack<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
     }

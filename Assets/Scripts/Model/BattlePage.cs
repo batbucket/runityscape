@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 
 public class BattlePage : Page {
-    Stack<Spell> lastSpellStack; //TODO: make this a dictionary so each guy's spell history is unique
     Queue<Character> characterQueue;
     Character activeCharacter;
     Spell targetedSpell;
@@ -20,7 +19,6 @@ public class BattlePage : Page {
     public BattlePage(string text = "", string tooltip = "", Character mainCharacter = null, Character[] left = null, Character[] right = null,
         Action onFirstEnter = null, Action onEnter = null, Action onFirstExit = null, Action onExit = null, Action onTick = null)
             : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
-        lastSpellStack = new Stack<Spell>();
         characterQueue = new Queue<Character>();
 
         /**
@@ -87,10 +85,10 @@ public class BattlePage : Page {
                     Tooltip = "";
                     DetermineTargetSelection(character.Attack, character);
                 });
-            ActionGrid[LAST_SPELL_INDEX] = lastSpellStack.Count == 0 ? new Process() : new Process(lastSpellStack.Peek().GetNameAndInfo(character), lastSpellStack.Peek().Description,
+            ActionGrid[LAST_SPELL_INDEX] = character.SpellStack.Count == 0 ? new Process() : new Process(character.SpellStack.Peek().GetNameAndInfo(character), character.SpellStack.Peek().Description,
                 () => {
                     Tooltip = "";
-                    DetermineTargetSelection(lastSpellStack.Peek(), character);
+                    DetermineTargetSelection(character.SpellStack.Peek(), character);
                 });
             int index = FAIM_OFFSET;
             foreach (KeyValuePair<Selection, ICollection<Spell>> myPair in character.Selections) {
@@ -136,9 +134,7 @@ public class BattlePage : Page {
                     () => {
                         Tooltip = "";
                         targetedSpell.TryCast(caster, target);
-                        if (targetedSpell.Result != SpellResult.CANT_CAST) {
-                            currentSelectionNode = selectionTree;
-                        }
+                        SpellCastEnd(targetedSpell, caster);
                     }
                 );
         }
@@ -188,43 +184,44 @@ public class BattlePage : Page {
 
     void UpdateLastSpellStack(Spell spell, Character caster) {
         if (spell != caster.Attack) {
-            lastSpellStack.Push(spell);
+            caster.SpellStack.Push(spell);
         }
         if (spell is Item && ((Item)spell).Count <= 0) {
-            while (lastSpellStack.Count > 0 && spell.Equals(lastSpellStack.Peek())) {
-                lastSpellStack.Pop();
+            while (caster.SpellStack.Count > 0 && spell.Equals(caster.SpellStack.Peek())) {
+                caster.SpellStack.Pop();
             }
         }
     }
 
     void DetermineTargetSelection(Spell spell, Character caster) {
         Util.Assert(spell != null);
-        switch (spell.TargetType) {
-            case SpellTarget.SINGLE_ALLY:
-                DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster.Side));
-                break;
-            case SpellTarget.SINGLE_ENEMY:
-                DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster.Side));
-                break;
-            case SpellTarget.SELF:
-                spell.TryCast(caster, caster);
-                break;
-            case SpellTarget.ALL_ALLY:
-                spell.TryCast(caster, this.GetAllies(caster.Side));
-                break;
-            case SpellTarget.ALL_ENEMY:
-                spell.TryCast(caster, this.GetEnemies(caster.Side));
-                break;
-            case SpellTarget.ALL:
-                spell.TryCast(caster, this.GetAll());
-                break;
-        }
-        if (spell.Result != SpellResult.CANT_CAST) {
-            foreach (Character witness in this.GetAll()) {
-                witness.React(spell);
+
+        //These TargetTypes might require target selection if there's more than 1 possible target.
+        if (spell.TargetType == SpellTarget.SINGLE_ALLY || spell.TargetType == SpellTarget.SINGLE_ENEMY) {
+            switch (spell.TargetType) {
+                case SpellTarget.SINGLE_ALLY:
+                    DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster.Side));
+                    break;
+                case SpellTarget.SINGLE_ENEMY:
+                    DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster.Side));
+                    break;
             }
-            UpdateLastSpellStack(spell, caster);
-            ResetSelection();
+        } else { //These TargetTypes don't need target selection and thusly can have their results be instantly evaluated.
+            switch (spell.TargetType) {
+                case SpellTarget.SELF:
+                    spell.TryCast(caster, caster);
+                    break;
+                case SpellTarget.ALL_ALLY:
+                    spell.TryCast(caster, this.GetAllies(caster.Side));
+                    break;
+                case SpellTarget.ALL_ENEMY:
+                    spell.TryCast(caster, this.GetEnemies(caster.Side));
+                    break;
+                case SpellTarget.ALL:
+                    spell.TryCast(caster, this.GetAll());
+                    break;
+            }
+            SpellCastEnd(spell, caster);
         }
     }
 
@@ -233,10 +230,21 @@ public class BattlePage : Page {
             // Do nothing
         } else if (targets.Count == 1) {
             spell.TryCast(caster, targets[0]);
+            SpellCastEnd(spell, caster);
         } else {
             targetedSpell = spell;
             this.targets = targets;
             currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET); //No linkage from FAIM -> Target
+        }
+    }
+
+    void SpellCastEnd(Spell spell, Character caster) {
+        if (spell.Result != SpellResult.CANT_CAST) {
+            foreach (Character witness in this.GetAll()) {
+                witness.React(spell);
+            }
+            UpdateLastSpellStack(spell, caster);
+            ResetSelection();
         }
     }
 }

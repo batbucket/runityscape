@@ -37,7 +37,7 @@ public class Game : MonoBehaviour {
         PagePresenter = new PagePresenter();
         MainCharacter = new Amit();
 
-        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve() });
+        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve(), new Steve() });
         Page p1 = new ReadPage("What", "Hello world", MainCharacter, new Character[] { new Amit() },
             processes: new Process[] {
                 new Process("Hello", "Say Hello world",
