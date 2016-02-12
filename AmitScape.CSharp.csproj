@@ -91,9 +91,9 @@
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
     <Compile Include="Assets\Scripts\Misc\WeighedRandomizer.cs" />
-    <Compile Include="Assets\Scripts\Model\BattlePage.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Amit.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Character.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\CharacterPresenter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\ChargeStatus.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\ComputerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Entity.cs" />
@@ -107,9 +107,10 @@
     <Compile Include="Assets\Scripts\Model\Items\Inventory.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Lobster.cs" />
-    <Compile Include="Assets\Scripts\Model\Page.cs" />
-    <Compile Include="Assets\Scripts\Model\PagePresenter.cs" />
-    <Compile Include="Assets\Scripts\Model\ReadPage.cs" />
+    <Compile Include="Assets\Scripts\Model\Page\BattlePage.cs" />
+    <Compile Include="Assets\Scripts\Model\Page\Page.cs" />
+    <Compile Include="Assets\Scripts\Model\Page\PagePresenter.cs" />
+    <Compile Include="Assets\Scripts\Model\Page\ReadPage.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Spare.cs" />

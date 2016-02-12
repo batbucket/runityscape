@@ -44,7 +44,7 @@ public abstract class PairedInt {
     }
 
     public float GetRatio() {
-        return ((float)True) / False;
+        return ((float)False) / True;
     }
 
     /**

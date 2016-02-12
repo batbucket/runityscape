@@ -31,6 +31,11 @@ public class Attack : Spell {
         caster.AddToResource(ResourceType.SKILL, false, SP_GAIN);
         if (Damage > 0) {
             CastText = string.Format(SUCCESS_CAST, caster.Name, target.Name, Damage);
+
+            //Hitsplat effect
+            GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
+            hitsplat.GetComponent<HitsplatView>().GrowAndFade(Damage + "!", Color.red);
+            Util.Parent(hitsplat, target.Presenter.PortraitView.gameObject);
         } else {
             CastText = string.Format(NO_DAMAGE_CAST, caster.Name, target.Name, Damage);
         }

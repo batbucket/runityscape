@@ -10,6 +10,8 @@ public abstract class Character : Entity {
     public const int CHARGE_PER_TICK = 1;
     public const int CHARGE_CAP_RATIO = 120;
 
+    public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
+
     public string Name { get; set; }
     public int Level { get; set; }
 

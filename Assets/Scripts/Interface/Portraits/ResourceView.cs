@@ -7,29 +7,24 @@ using System.Collections;
  */
 public class ResourceView : MonoBehaviour {
 
-    Text resourceName; //Name of the Resource. Should be only 2 letters.
-    Image underBar; //Bar that represents max resource
-    Image overBar; //Bar that represents current resource
-    Text fraction; //Text on bar that describes the amount
+    Text _resourceName; //Name of the Resource. Should be only 2 letters.
+    public string ResourceName { get { return _resourceName.text; } set { _resourceName.text = value; } }
+
+    Image _underBar; //Bar that represents max resource
+    public Color UnderColor { get { return _underBar.color; } set { _underBar.color = value; } }
+
+    Image _overBar; //Bar that represents current resource
+    public Color OverColor { get { return _overBar.color; } set { _overBar.color = value; } }
+
+    Text _fraction; //Text on bar that describes the amount
+    public string Fraction { get { return _fraction.text; } set { _fraction.text = value; } }
 
     // Use this for initialization
     void Awake() {
-        resourceName = gameObject.GetComponentsInChildren<Text>()[0];
-        underBar = gameObject.GetComponentsInChildren<Image>()[0];
-        overBar = gameObject.GetComponentsInChildren<Image>()[1];
-        fraction = gameObject.GetComponentsInChildren<Text>()[1];
-    }
-
-    public void SetResourceName(string name) {
-        resourceName.text = name;
-    }
-
-    public void SetUnderBarColor(Color color) {
-        underBar.color = color;
-    }
-
-    public void SetOverBarColor(Color color) {
-        overBar.color = color;
+        _resourceName = gameObject.GetComponentsInChildren<Text>()[0];
+        _underBar = gameObject.GetComponentsInChildren<Image>()[0];
+        _overBar = gameObject.GetComponentsInChildren<Image>()[1];
+        _fraction = gameObject.GetComponentsInChildren<Text>()[1];
     }
 
     /**
@@ -37,9 +32,9 @@ public class ResourceView : MonoBehaviour {
      * This sets the OverBar's scale
      */
     public void SetBarScale(float scale) {
-        Vector3 v = overBar.gameObject.GetComponent<RectTransform>().localScale;
+        Vector3 v = _overBar.gameObject.GetComponent<RectTransform>().localScale;
         v.x = scale;
-        overBar.gameObject.GetComponent<RectTransform>().localScale = v;
+        _overBar.gameObject.GetComponent<RectTransform>().localScale = v;
     }
 
     /**
@@ -47,13 +42,6 @@ public class ResourceView : MonoBehaviour {
      * current / total resource
      */
     public void SetFraction(int numerator, int denominator) {
-        fraction.text = numerator + "/" + denominator;
-    }
-
-    /**
-     * Sets the fraction as a string, for RP segments
-     */
-    public void SetFractionString(string s) {
-        fraction.text = s;
+        _fraction.text = numerator + "/" + denominator;
     }
 }

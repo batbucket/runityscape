@@ -36,18 +36,33 @@ public class Game : MonoBehaviour {
         boolFlags = new Dictionary<string, bool>();
         PagePresenter = new PagePresenter();
         MainCharacter = new Amit();
+        GameObject canvas = GameObject.Find("Canvas");
 
         Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve(), new Steve() });
-        Page p1 = new ReadPage("What", "Hello world", MainCharacter, new Character[] { new Amit() },
+        Page p1 = new ReadPage("What", "Hello world", MainCharacter, new Character[] { MainCharacter }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
                 new Process("Hello", "Say Hello world",
                     () => TextBoxHolderView.Instance.AddTextBoxView(
                         new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
-                new Process("Test Hitsplat", "Test the thing!",
+                new Process("Test Hitsplat on SELF", "Test the thing!",
                     () => {
                         GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
-                        hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.blue);
-                        Util.Parent(hitsplat, TextBoxHolder.gameObject);
+                        hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.red);
+                        Util.Parent(hitsplat, MainCharacter.Presenter.PortraitView.gameObject);
+                    }
+                ),
+                new Process("Test Hitsplat on TOP ENEMY", "Test the thing!",
+                    () => {
+                        GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
+                        hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.red);
+                        Util.Parent(hitsplat, PagePresenter.Page.RightCharacters[0].Presenter.PortraitView.gameObject);
+                    }
+                ),
+                new Process("Test Hitsplat on BOT ENEMY", "Test the thing!",
+                    () => {
+                        GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
+                        hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.red);
+                        Util.Parent(hitsplat, PagePresenter.Page.RightCharacters[1].Presenter.PortraitView.gameObject);
                     }
                 ),
                 new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(p2))

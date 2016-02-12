@@ -36,6 +36,8 @@ public static class Util {
 
     public static void Parent(GameObject child, GameObject parent) {
         child.transform.SetParent(parent.transform);
+        child.transform.position = new Vector2(0, 0);
+        child.transform.localPosition = new Vector2(0, 0);
     }
 
     public static GameObject FindChild(GameObject parent, string childName) {
@@ -51,9 +53,9 @@ public static class Util {
         return source;
     }
 
-    public static void Assert(bool statement) {
+    public static void Assert(bool statement, string message = "Expected value: true") {
         if (!statement) {
-            throw new UnityException("Expected value: true");
+            throw new UnityException(message);
         }
     }
 
@@ -216,5 +218,12 @@ public static class Util {
             return attributes[0].Description;
         else
             return value.ToString();
+    }
+
+    public static void CopyPosition(GameObject source, GameObject destination) {
+        Vector3 destinationPos = destination.GetComponent<RectTransform>().localPosition;
+        destinationPos.x = -destinationPos.x; //For some reason it's backwards
+        destinationPos.y = -destinationPos.y;
+        source.GetComponent<RectTransform>().localPosition = destinationPos;
     }
 }
