@@ -12,14 +12,13 @@ public class HitsplatView : MonoBehaviour {
     }
 
     public IEnumerator GrowAndFade(Text text) {
-        float timer = .2f;
+        float timer = 1.0f;
         while ((timer -= Time.deltaTime) > 0) {
-            transform.localPosition = new Vector2(0, 0);
+            transform.localPosition = new Vector2(transform.localPosition.x, transform.localPosition.y + 1);
             //Wait
             yield return null;
         }
         while (text.color.a > 0) {
-            transform.localPosition = new Vector2(0, 0);
             Color c = text.color;
             c.a -= Time.deltaTime * 3;
             text.color = c;

@@ -31,17 +31,16 @@ public class Attack : Spell {
         caster.AddToResource(ResourceType.SKILL, false, SP_GAIN);
         if (Damage > 0) {
             CastText = string.Format(SUCCESS_CAST, caster.Name, target.Name, Damage);
-
-            //Hitsplat effect
-            GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
-            hitsplat.GetComponent<HitsplatView>().GrowAndFade(Damage + "!", Color.red);
-            Util.Parent(hitsplat, target.Presenter.PortraitView.gameObject);
+            EffectsFactory.CreateBloodsplat(target);
+            SoundView.Instance.Play("Sounds/Attack_0");
         } else {
             CastText = string.Format(NO_DAMAGE_CAST, caster.Name, target.Name, Damage);
         }
+        EffectsFactory.CreateHitsplat(Damage, Damage > 0 ? Health.UNDER_COLOR : Color.grey, target);
     }
 
     protected override void OnFailure(Character caster, Character target) {
+        EffectsFactory.CreateHitsplat("MISS", Color.grey, target);
         CastText = string.Format(FAIL_CAST, caster.Name, target.Name);
     }
 

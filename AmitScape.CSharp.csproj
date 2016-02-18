@@ -73,7 +73,9 @@
     <Compile Include="Assets\Scripts\Core\UndoableProcess.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridView.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
-    <Compile Include="Assets\Scripts\Interface\Hitsplat\HitsplatView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Effects\EffectsFactory.cs" />
+    <Compile Include="Assets\Scripts\Interface\Effects\HitsplatView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Effects\OneShotAnimation.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\HeaderView.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\TimeView.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitHolderView.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="Assets\Scripts\Model\TextBox\TextEffect.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Scripts\Interface\TextBox\tempy.txt" />
     <None Include="Assets\Scripts\Misc\InputSimulator.XML" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

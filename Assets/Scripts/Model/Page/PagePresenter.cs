@@ -34,8 +34,6 @@ public class PagePresenter {
     }
 
     public void Tick() {
-        //Util.KillAllChildren(Game.Instance.LeftPortraits.gameObject);
-        //Util.KillAllChildren(Game.Instance.RightPortraits.gameObject);
         Game.Instance.ActionGrid.ClearAll();
         Game.Instance.ActionGrid.SetButtonAttributes(Page.ActionGrid);
         Game.Instance.Tooltip.Set(Page.Tooltip);

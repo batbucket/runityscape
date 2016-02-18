@@ -45,7 +45,7 @@ public abstract class Character : Entity {
 
         this.Resources = new SortedDictionary<ResourceType, Resource>() {
             {ResourceType.HEALTH, ResourceFactory.CreateResource(ResourceType.HEALTH, vitality * 10) },
-            {ResourceType.CHARGE, ResourceFactory.CreateResource(ResourceType.CHARGE, 100) }
+            {ResourceType.CHARGE, ResourceFactory.CreateResource(ResourceType.CHARGE, 100) },
         };
 
         this.Attack = new Attack();
@@ -53,7 +53,7 @@ public abstract class Character : Entity {
             { Selection.SPELL, new HashSet<Spell>() },
             { Selection.ACT, new HashSet<Spell>() },
             { Selection.ITEM, new Inventory() },
-            { Selection.MERCY, new HashSet<Spell>() }
+            { Selection.MERCY, new HashSet<Spell>() },
         };
         this.TextColor = textColor;
         this.IsTargetable = true;

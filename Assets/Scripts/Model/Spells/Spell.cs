@@ -45,13 +45,18 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     Action IUndoableProcess.UndoAction { get { return new Action(() => Undo()); } }
     Action IProcess.Action { get { return new Action(() => OnSuccess(Caster, Target)); } }
 
-    public Spell(string name, string description, SpellType spellType, SpellTarget targetType, Dictionary<ResourceType, int> costs) {
+    string successSound;
+    string failureSound;
+
+    public Spell(string name, string description, SpellType spellType, SpellTarget targetType, Dictionary<ResourceType, int> costs, string successSound = null, string failureSound = null) {
         this.Name = name;
         this.Description = description;
         this.SpellType = spellType;
         this.TargetType = targetType;
         this.costs = costs;
         this.IsEnabled = true;
+        this.successSound = successSound;
+        this.failureSound = failureSound;
     }
 
     public Spell(string name, SpellType spellType, SpellTarget targetType) {

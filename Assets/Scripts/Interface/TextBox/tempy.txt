@@ -1,0 +1,294 @@
+// 3D Scene Example
+
+import processing.opengl.*;
+
+float time = 0;  // keep track of passing of time
+
+void setup() {
+  size(800, 800, P3D);  // must use 3D here !!!
+  noStroke();           // do not draw the edges of polygons
+}
+
+// Draw a scene with a cylinder, a sphere and a box
+void draw() {
+  
+  resetMatrix();  // set the transformation matrix to the identity (important!)
+
+  background(0);  // clear the screen to black
+  
+  // set up for perspective projection
+  perspective (PI * 0.333, 1.0, 0.01, 1000.0);
+  
+  // place the camera in the scene (just like gluLookAt())
+  camera (0.0, 0.0, 80.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
+    
+  // create an ambient light source
+  ambientLight (102, 102, 102);
+  
+  // create two directional light sources
+  lightSpecular (204, 204, 204);
+  directionalLight (102, 102, 102, -0.7, -0.7, -1);
+  directionalLight (152, 152, 152, 0, 0, -1);
+  
+  //Rotato potato
+  pushMatrix();
+  rotateX(radians(mouseY));
+  rotateY(radians(mouseX));
+  
+  //Legs
+  pushMatrix();
+  fill(255, 255, 255);
+  translate(0, 28);
+  sphere(14);
+  popMatrix();
+  
+  //Torso
+  pushMatrix();
+  fill(255, 255, 255);
+  translate(0, 6);
+  sphere(12);
+  
+  //Left arm
+  pushMatrix();
+  fill(102, 51, 0);
+  translate(-16, -3);
+  rotateZ(radians(25));
+  scale(6, 1, 1);
+  box(2);
+  popMatrix();
+  
+  //Right arm
+  pushMatrix();
+  fill(102, 51, 0);
+  translate(16, -3);
+  rotateZ(radians(-25));
+  scale(6, 1, 1);
+  box(2);
+  popMatrix();
+  
+  //Button Lower
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateX(radians(-25));
+  translate(0, 0, 11.5);
+  rotateX(radians(90));
+  cylinder(1, 1, 32);
+  popMatrix();
+  
+  //Button Mid
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateX(radians(0));
+  translate(0, 0, 11.5);
+  rotateX(radians(90));
+  cylinder(1, 1, 32);
+  popMatrix();
+  
+  //Button Upper
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateX(radians(25));
+  translate(0, 0, 11.5);
+  rotateX(radians(90));
+  cylinder(1, 1, 32);
+  popMatrix();
+  
+  popMatrix();
+  
+  //Head
+  pushMatrix();
+  fill(255, 255, 255);
+  translate(0, -10);
+  sphere(8);
+  
+  //Eye 1
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateY(radians(15));
+  rotateX(radians(25));
+  translate(0, 0, 7.5);
+  rotateX(radians(90));
+  cylinder(1, 1, 32);
+  popMatrix();
+  
+  //Eye 2
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateY(radians(-15));
+  rotateX(radians(25));
+  translate(0, 0, 7.5);
+  rotateX(radians(90));
+  cylinder(1, 1, 32);
+  popMatrix();
+  
+  //Mouth
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateX(radians(-25));
+  translate(0, 0, 7.5);
+  rotateX(radians(90));
+  cylinder(.5, 1, 32);
+  popMatrix();
+  
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateY(radians(15));
+  rotateX(radians(-20));
+  translate(0, 0, 7.5);
+  rotateX(radians(90));
+  cylinder(.5, 1, 32);
+  popMatrix();
+  
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateY(radians(-15));
+  rotateX(radians(-20));
+  translate(0, 0, 7.5);
+  rotateX(radians(90));
+  cylinder(.5, 1, 32);
+  popMatrix();
+  
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateY(radians(20));
+  rotateX(radians(-10));
+  translate(0, 0, 7.5);
+  rotateX(radians(90));
+  cylinder(.5, 1, 32);
+  popMatrix();
+  
+  //Last mouthpiece
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateY(radians(-20));
+  rotateX(radians(-10));
+  translate(0, 0, 7.5);
+  rotateX(radians(90));
+  cylinder(.5, 1, 32);
+  popMatrix();
+  
+  //Nose
+  pushMatrix();
+  fill(235, 173, 33);
+  translate(0, 0, 7.5);
+  box(2);
+  popMatrix();
+  
+  //Pan hat
+  pushMatrix();
+  fill(47, 79, 79);
+  rotateX(radians(25));
+  translate(0, -12);
+  cylinder(6, 8, 32);
+  
+  //Pan handle
+  fill(255, 255, 255);
+  rotateY(radians(45));
+  translate(0, 6, -8.5);
+  scale(1, 0.5, -3);
+  box(2);
+  popMatrix();
+  
+  popMatrix();
+ 
+  popMatrix();
+  time += 0.05;
+}
+
+void legs() {
+  pushMatrix();
+  fill(255, 255, 255);
+  translate(0, 28);
+  sphere(14);
+  popMatrix();
+}
+
+void torso() {
+  pushMatrix();
+  fill(255, 255, 255);
+  translate(0, 6);
+  sphere(12);
+  popMatrix();
+}
+
+void leftArm() {
+  pushMatrix();
+  fill(102, 51, 0);
+  translate(-16, -3);
+  rotateZ(radians(25));
+  scale(6, 1, 1);
+  box(2);
+  popMatrix();
+}
+
+void rightArm() {
+  pushMatrix();
+  fill(102, 51, 0);
+  translate(16, -3);
+  rotateZ(radians(-25));
+  scale(6, 1, 1);
+  box(2);
+  popMatrix(); 
+}
+
+void button() {
+  pushMatrix();
+  fill(0, 0, 0);
+  rotateX(radians(-25));
+  translate(0, 0, 11.5);
+  rotateX(radians(90));
+  cylinder(1, 1, 32);
+  popMatrix();
+}
+
+
+// Draw a cylinder of a given radius, height and number of sides.
+// The base is on the y=0 plane, and it extends vertically in the y direction.
+void cylinder (float radius, float height, int sides) {
+  int i,ii;
+  float []c = new float[sides];
+  float []s = new float[sides];
+
+  for (i = 0; i < sides; i++) {
+    float theta = TWO_PI * i / (float) sides;
+    c[i] = cos(theta);
+    s[i] = sin(theta);
+  }
+  
+  // bottom end cap
+  
+  normal (0.0, -1.0, 0.0);
+  for (i = 0; i < sides; i++) {
+    ii = (i+1) % sides;
+    beginShape(TRIANGLES);
+    vertex (c[ii] * radius, 0.0, s[ii] * radius);
+    vertex (c[i] * radius, 0.0, s[i] * radius);
+    vertex (0.0, 0.0, 0.0);
+    endShape();
+  }
+  
+  // top end cap
+
+  normal (0.0, 1.0, 0.0);
+  for (i = 0; i < sides; i++) {
+    ii = (i+1) % sides;
+    beginShape(TRIANGLES);
+    vertex (c[ii] * radius, height, s[ii] * radius);
+    vertex (c[i] * radius, height, s[i] * radius);
+    vertex (0.0, height, 0.0);
+    endShape();
+  }
+  
+  // main body of cylinder
+  for (i = 0; i < sides; i++) {
+    ii = (i+1) % sides;
+    beginShape();
+    normal (c[i], 0.0, s[i]);
+    vertex (c[i] * radius, 0.0, s[i] * radius);
+    vertex (c[i] * radius, height, s[i] * radius);
+    normal (c[ii], 0.0, s[ii]);
+    vertex (c[ii] * radius, height, s[ii] * radius);
+    vertex (c[ii] * radius, 0.0, s[ii] * radius);
+    endShape(CLOSE);
+  }
+}

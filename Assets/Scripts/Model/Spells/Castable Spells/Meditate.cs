@@ -32,6 +32,8 @@ public class Meditate : Spell {
         amount = (int)(casterHealth.True * .3) + casterIntel.False;
         casterHealth.False += amount;
         CastText = string.Format(CAST_TEXT[0], caster.Name, amount);
+        EffectsFactory.CreateHitsplat(amount, Color.green, target);
+        SoundView.Instance.Play("Sounds/Zip_0");
     }
 
     protected override void OnFailure(Character caster, Character target) {
