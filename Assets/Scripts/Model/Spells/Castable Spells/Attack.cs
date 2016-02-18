@@ -39,14 +39,15 @@ public class Attack : Spell {
 
     protected override void OnSuccess(Character caster, Character target) {
         CastText = string.Format(SUCCESS_CAST, caster.Name, target.Name, Amount);
-        EffectsFactory.CreateBloodsplat(target);
+        EffectsManager.CreateBloodsplat(target);
         SoundView.Instance.Play("Sounds/Attack_0");
-        EffectsFactory.CreateHitsplat(Amount, Health.UNDER_COLOR, target);
+        EffectsManager.CreateHitsplat(Amount, Health.UNDER_COLOR, target);
+        EffectsManager.Instance.RedFadeEffect(target);
     }
 
     protected override void OnFailure(Character caster, Character target) {
         CastText = string.Format(NO_DAMAGE_CAST, caster.Name, target.Name, Amount);
-        EffectsFactory.CreateHitsplat(Amount, Color.grey, target);
+        EffectsManager.CreateHitsplat(Amount, Color.grey, target);
     }
 
     protected override void OnMiss(Character caster, Character target) {

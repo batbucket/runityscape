@@ -15,7 +15,8 @@ public abstract class PortraitView : MonoBehaviour {
     public string PortraitName { get { return _portraitName.text; } set { _portraitName.text = value; } }
 
     Image _iconImage; //Image of the character
-    public Sprite IconImage { get { return _iconImage.sprite; } set { _iconImage.sprite = value; } }
+    public Image Image { get { return _iconImage; } set { _iconImage = value; } }
+    public Sprite Sprite { get { return _iconImage.sprite; } set { _iconImage.sprite = value; } }
 
     public GameObject ResourcesHolder { get; private set; } //Parent of ResourceViews
     public IDictionary<ResourceType, ResourceBundle> ResourceViews { get; private set; }

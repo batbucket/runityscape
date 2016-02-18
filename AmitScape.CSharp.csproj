@@ -73,7 +73,7 @@
     <Compile Include="Assets\Scripts\Core\UndoableProcess.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridView.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
-    <Compile Include="Assets\Scripts\Interface\Effects\EffectsFactory.cs" />
+    <Compile Include="Assets\Scripts\Interface\Effects\EffectsManager.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\HitsplatView.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\OneShotAnimation.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\HeaderView.cs" />

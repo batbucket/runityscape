@@ -36,13 +36,13 @@ public class Meditate : Spell {
 
     protected override void OnSuccess(Character caster, Character target) {
         CastText = string.Format(CAST_TEXT[0], caster.Name, Amount);
-        EffectsFactory.CreateHitsplat(Amount, Color.green, target);
+        EffectsManager.CreateHitsplat(Amount, Color.green, target);
         SoundView.Instance.Play("Sounds/Zip_0");
     }
 
     protected override void OnFailure(Character caster, Character target) {
         CastText = string.Format(CAST_TEXT[0], caster.Name, Amount);
-        EffectsFactory.CreateHitsplat(Amount, Color.grey, target);
+        EffectsManager.CreateHitsplat(Amount, Color.grey, target);
     }
 
     protected override void OnMiss(Character caster, Character target) {
