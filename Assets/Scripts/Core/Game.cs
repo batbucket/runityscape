@@ -49,6 +49,7 @@ public class Game : MonoBehaviour {
                         GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
                         hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.red);
                         Util.Parent(hitsplat, MainCharacter.Presenter.PortraitView.gameObject);
+                        EffectsManager.Instance.RedFadeEffect(MainCharacter);
                     }
                 ),
                 new Process("Test Hitsplat on TOP ENEMY", "Test the thing!",

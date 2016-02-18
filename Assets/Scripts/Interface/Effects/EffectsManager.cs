@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class EffectsManager : MonoBehaviour {
     public static EffectsManager Instance { get; private set; }
+    IDictionary<Character, Coroutine> ColoredFades; //Keep track of Coroutines called on Characters so we can overwrite effects
 
     void Start() {
         Instance = this;
+        ColoredFades = new Dictionary<Character, Coroutine>();
     }
 
     public static void CreateHitsplat(string text, Color color, Character target) {
@@ -24,11 +27,16 @@ public class EffectsManager : MonoBehaviour {
         Util.Parent(bloodsplat, target.Presenter.PortraitView.gameObject);
     }
 
+    //Calling this will override any FadeEffects on the target's image
     public void RedFadeEffect(Character target) {
-        StartCoroutine(ColoredFade(target, Color.red, 2.0f));
+        if (ColoredFades.ContainsKey(target)) {
+            StopCoroutine(ColoredFades[target]); //Stop coroutine
+            target.Presenter.PortraitView.Image.color = Color.white; //Reset color to normal
+        }
+        ColoredFades[target] = StartCoroutine(ColoredFade(target, Color.red, 2.0f));
     }
 
-    static IEnumerator ColoredFade(Character target, Color initial, float fadeDuration) {
+    IEnumerator ColoredFade(Character target, Color initial, float fadeDuration) {
         Image i = target.Presenter.PortraitView.Image;
         Color original = i.color;
         i.color = initial;
@@ -39,6 +47,7 @@ public class EffectsManager : MonoBehaviour {
             i.color = Color.Lerp(i.color, original, time);
             yield return null;
         }
+        ColoredFades.Remove(target);
         yield break;
     }
 }
