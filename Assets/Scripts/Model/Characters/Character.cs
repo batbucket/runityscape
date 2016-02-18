@@ -58,7 +58,7 @@ public abstract class Character : Entity {
         this.TextColor = textColor;
         this.IsTargetable = true;
         this.IsDisplayable = isDisplayable;
-        GetResource(ResourceType.CHARGE).clearFalse();
+        GetResource(ResourceType.CHARGE).ClearFalse();
 
         SpellStack = new Stack<Spell>();
         RecievedSpells = new List<Spell>();
@@ -77,13 +77,6 @@ public abstract class Character : Entity {
         }
     }
 
-    public Attribute GetAttribute(AttributeType attributeType) {
-        Attribute attribute = null;
-        Attributes.TryGetValue(attributeType, out attribute);
-        Debug.Assert(attribute != null);
-        return attribute;
-    }
-
     public bool HasAttribute(AttributeType attributeType) {
         Attribute attribute = null;
         Attributes.TryGetValue(attributeType, out attribute);
@@ -99,10 +92,10 @@ public abstract class Character : Entity {
     public virtual bool AddToAttribute(AttributeType attributeType, bool value, int amount) {
         if (HasAttribute(attributeType)) {
             Attribute attribute = GetAttribute(attributeType);
-            if (value) {
-                attribute.True += amount;
-            } else {
+            if (!value) {
                 attribute.False += amount;
+            } else {
+                attribute.True += amount;
             }
             return true;
         }
@@ -112,25 +105,68 @@ public abstract class Character : Entity {
     public virtual bool AddToResource(ResourceType resourceType, bool value, int amount) {
         if (HasResource(resourceType)) {
             Resource resource = GetResource(resourceType);
-            if (value) {
-                resource.True += amount;
-            } else {
+            if (!value) {
                 resource.False += amount;
+            } else {
+                resource.True += amount;
             }
             return true;
         }
         return false;
     }
 
-    public Resource GetResource(ResourceType resourceType) {
-        Resource resource = null;
+    Resource GetResource(ResourceType resourceType) {
+        Resource resource;
         Resources.TryGetValue(resourceType, out resource);
+        Debug.Assert(resource != null);
         return resource;
+    }
+
+    Attribute GetAttribute(AttributeType attributeType) {
+        Attribute attribute;
+        Attributes.TryGetValue(attributeType, out attribute);
+        Debug.Assert(attribute != null);
+        return attribute;
+    }
+
+    public int GetResourceCount(ResourceType resourceType, bool value) {
+        if (HasResource(resourceType)) {
+            Resource resource;
+            Resources.TryGetValue(resourceType, out resource);
+            Debug.Assert(resource != null);
+            if (!value) {
+                return resource.False;
+            } else {
+                return resource.True;
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    public int GetAttributeCount(AttributeType attributeType, bool value) {
+        if (HasAttribute(attributeType)) {
+            Attribute attribute;
+            Attributes.TryGetValue(attributeType, out attribute);
+            Debug.Assert(attribute != null);
+            if (!value) {
+                return attribute.False;
+            } else {
+                return attribute.True;
+            }
+        } else {
+            return 0;
+        }
     }
 
     public void Charge() {
         Debug.Assert(GetResource(ResourceType.CHARGE) != null);
         GetResource(ResourceType.CHARGE).False += CHARGE_PER_TICK;
+    }
+
+    public void Discharge() {
+        Debug.Assert(GetResource(ResourceType.CHARGE) != null);
+        GetResource(ResourceType.CHARGE).ClearFalse();
     }
 
     public bool IsCharged() {

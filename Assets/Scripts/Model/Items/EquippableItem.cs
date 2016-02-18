@@ -6,7 +6,7 @@ public class EquippableItem : Item {
     public EquippableItem(Character caster, string name, string description, int count) : base(name, description, count) {
     }
 
-    public override int CalculateDamage(Character caster, Character target) {
+    public override int CalculateAmount(Character caster, Character target) {
         throw new NotImplementedException();
     }
 
@@ -23,6 +23,14 @@ public class EquippableItem : Item {
     }
 
     public override void Undo() {
+        throw new NotImplementedException();
+    }
+
+    protected override void OnHit(Character caster, Character target) {
+        throw new NotImplementedException();
+    }
+
+    protected override void OnMiss(Character caster, Character target) {
         throw new NotImplementedException();
     }
 }

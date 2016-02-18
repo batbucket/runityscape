@@ -13,8 +13,6 @@ public class Meditate : Spell {
         {ResourceType.SKILL, 3 }
     };
 
-    int amount;
-
     public Meditate() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
     }
 
@@ -22,26 +20,36 @@ public class Meditate : Spell {
         return 1;
     }
 
-    public override int CalculateDamage(Character caster, Character target) {
-        return Damage = 0;
+    public override int CalculateAmount(Character caster, Character target) {
+        return Amount = Math.Min(caster.GetResourceCount(ResourceType.HEALTH, true) / 2,
+                                 caster.GetResourceCount(ResourceType.HEALTH, true) - caster.GetResourceCount(ResourceType.HEALTH, false));
+    }
+
+    protected override void OnHit(Character caster, Character target) {
+        caster.AddToResource(ResourceType.HEALTH, false, Amount);
+        if (Amount > 0) {
+            OnSuccess(caster, target);
+        } else {
+            OnFailure(caster, target);
+        }
     }
 
     protected override void OnSuccess(Character caster, Character target) {
-        Resource casterHealth = caster.GetResource(ResourceType.HEALTH);
-        Attribute casterIntel = caster.GetAttribute(AttributeType.INTELLIGENCE);
-        amount = (int)(casterHealth.True * .3) + casterIntel.False;
-        casterHealth.False += amount;
-        CastText = string.Format(CAST_TEXT[0], caster.Name, amount);
-        EffectsFactory.CreateHitsplat(amount, Color.green, target);
+        CastText = string.Format(CAST_TEXT[0], caster.Name, Amount);
+        EffectsFactory.CreateHitsplat(Amount, Color.green, target);
         SoundView.Instance.Play("Sounds/Zip_0");
     }
 
     protected override void OnFailure(Character caster, Character target) {
+        CastText = string.Format(CAST_TEXT[0], caster.Name, Amount);
+        EffectsFactory.CreateHitsplat(Amount, Color.grey, target);
+    }
+
+    protected override void OnMiss(Character caster, Character target) {
         throw new NotImplementedException();
     }
 
     public override void Undo() {
-        Resource casterHealth = Caster.GetResource(ResourceType.HEALTH);
-        casterHealth.False -= amount;
+        Caster.AddToResource(ResourceType.HEALTH, false, -Amount);
     }
 }

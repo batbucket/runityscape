@@ -18,7 +18,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     public SpellResult Result { get; private set; }
     public Character Caster { get; private set; }
     public Character Target { get; private set; }
-    public int Damage { get; protected set; }
+    public int Amount { get; protected set; }
 
     /**
      * Inventory needs to be in the Character's Selections
@@ -48,7 +48,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     string successSound;
     string failureSound;
 
-    public Spell(string name, string description, SpellType spellType, SpellTarget targetType, Dictionary<ResourceType, int> costs, string successSound = null, string failureSound = null) {
+    public Spell(string name, string description, SpellType spellType, SpellTarget targetType, Dictionary<ResourceType, int> costs) {
         this.Name = name;
         this.Description = description;
         this.SpellType = spellType;
@@ -86,18 +86,18 @@ public abstract class Spell : ICloneable, IUndoableProcess {
             return false;
         }
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
-            if (caster.GetResource(resourceCost.Key) == null || caster.GetResource(resourceCost.Key).False < resourceCost.Value) {
+            if (!caster.Resources.ContainsKey(resourceCost.Key) || caster.GetResourceCount(resourceCost.Key, false) < resourceCost.Value) {
                 return false;
             }
         }
-        return caster.GetResource(ResourceType.CHARGE).IsMaxed();
+        return caster.IsCharged();
     }
 
     protected virtual void ConsumeResources(Character caster) {
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
-            caster.GetResource(resourceCost.Key).False -= resourceCost.Value;
+            caster.AddToResource(resourceCost.Key, false, -resourceCost.Value);
         }
-        caster.GetResource(ResourceType.CHARGE).clearFalse();
+        caster.Discharge();
     }
 
     public void TryCast(Character caster, Character target) {
@@ -116,15 +116,17 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     }
 
     void Cast(Character caster, Character target) {
+        OnAny(caster, target);
         if (Util.Chance(CalculateHitRate(caster, target))) {
-            this.Caster = caster;
-            this.Target = target;
-            OnSuccess(caster, target);
+            OnHit(caster, target);
             Result = SpellResult.HIT;
         } else {
-            OnFailure(caster, target);
+            EffectsFactory.CreateHitsplat("MISS", Color.grey, target);
+            OnMiss(caster, target);
             Result = SpellResult.MISS;
         }
+        this.Caster = caster;
+        this.Target = target;
         caster.AddToCastSpellHistory((Spell)Clone());
         target.AddToRecievedSpellHistory((Spell)Clone());
     }
@@ -162,8 +164,11 @@ public abstract class Spell : ICloneable, IUndoableProcess {
     }
 
     public abstract double CalculateHitRate(Character caster, Character target);
-    public abstract int CalculateDamage(Character caster, Character target);
+    public abstract int CalculateAmount(Character caster, Character target);
+    protected virtual void OnAny(Character caster, Character target) { }
+    protected abstract void OnHit(Character caster, Character target);
     protected abstract void OnSuccess(Character caster, Character target);
     protected abstract void OnFailure(Character caster, Character target);
+    protected abstract void OnMiss(Character caster, Character target);
     public abstract void Undo();
 }

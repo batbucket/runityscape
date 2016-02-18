@@ -18,7 +18,7 @@ public class Spare : Spell {
         return 1;
     }
 
-    public override int CalculateDamage(Character caster, Character target) {
+    public override int CalculateAmount(Character caster, Character target) {
         return 0;
     }
 
@@ -29,5 +29,13 @@ public class Spare : Spell {
     }
 
     public override void Undo() {
+    }
+
+    protected override void OnHit(Character caster, Character target) {
+        OnSuccess(caster, target);
+    }
+
+    protected override void OnMiss(Character caster, Character target) {
+        throw new NotImplementedException();
     }
 }

@@ -17,8 +17,8 @@ public abstract class Item : Spell {
         return 1;
     }
 
-    public override int CalculateDamage(Character caster, Character target) {
-        return Damage = 0;
+    public override int CalculateAmount(Character caster, Character target) {
+        return Amount = 0;
     }
 
     protected override void OnFailure(Character caster, Character target) {
@@ -53,5 +53,17 @@ public abstract class Item : Spell {
 
         // Return true if the fields match:
         return this.Name.Equals(i.Name);
+    }
+
+    public override int GetHashCode() {
+        return Name.GetHashCode();
+    }
+
+    protected override void OnHit(Character caster, Character target) {
+        OnSuccess(caster, target);
+    }
+
+    protected override void OnMiss(Character caster, Character target) {
+        throw new NotImplementedException();
     }
 }

@@ -10,7 +10,7 @@ public class Attack : Spell {
     public const SpellTarget TARGET_TYPE = SpellTarget.SINGLE_ENEMY;
     public const string SUCCESS_CAST = "* {0} attacks {1} for {2} damage!";
     public const string NO_DAMAGE_CAST = "* {0} attacks {1}! ...But it had no effect!";
-    public const string FAIL_CAST = "* {0} attacks {1}! ...But it missed!";
+    public const string MISS_CAST = "* {0} attacks {1}! ...But it missed!";
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     public const int SP_GAIN = 1;
 
@@ -21,32 +21,41 @@ public class Attack : Spell {
         return .8;
     }
 
-    public override int CalculateDamage(Character caster, Character target) {
-        return Damage = caster.GetAttribute(AttributeType.STRENGTH).False;
+    public override int CalculateAmount(Character caster, Character target) {
+        return Amount = caster.GetAttributeCount(AttributeType.STRENGTH, false);
+    }
+
+    protected override void OnHit(Character caster, Character target) {
+        CalculateAmount(caster, target);
+        target.AddToResource(ResourceType.HEALTH, false, -Amount);
+        caster.AddToResource(ResourceType.SKILL, false, SP_GAIN);
+
+        if (Amount > 0) {
+            OnSuccess(caster, target);
+        } else {
+            OnFailure(caster, target);
+        }
     }
 
     protected override void OnSuccess(Character caster, Character target) {
-        CalculateDamage(caster, target);
-        target.GetResource(ResourceType.HEALTH).False -= Damage;
-        caster.AddToResource(ResourceType.SKILL, false, SP_GAIN);
-        if (Damage > 0) {
-            CastText = string.Format(SUCCESS_CAST, caster.Name, target.Name, Damage);
-            EffectsFactory.CreateBloodsplat(target);
-            SoundView.Instance.Play("Sounds/Attack_0");
-        } else {
-            CastText = string.Format(NO_DAMAGE_CAST, caster.Name, target.Name, Damage);
-        }
-        EffectsFactory.CreateHitsplat(Damage, Damage > 0 ? Health.UNDER_COLOR : Color.grey, target);
+        CastText = string.Format(SUCCESS_CAST, caster.Name, target.Name, Amount);
+        EffectsFactory.CreateBloodsplat(target);
+        SoundView.Instance.Play("Sounds/Attack_0");
+        EffectsFactory.CreateHitsplat(Amount, Health.UNDER_COLOR, target);
     }
 
     protected override void OnFailure(Character caster, Character target) {
-        EffectsFactory.CreateHitsplat("MISS", Color.grey, target);
-        CastText = string.Format(FAIL_CAST, caster.Name, target.Name);
+        CastText = string.Format(NO_DAMAGE_CAST, caster.Name, target.Name, Amount);
+        EffectsFactory.CreateHitsplat(Amount, Color.grey, target);
+    }
+
+    protected override void OnMiss(Character caster, Character target) {
+        CastText = string.Format(MISS_CAST, caster.Name, target.Name);
     }
 
     public override void Undo() {
         if (Result == SpellResult.HIT) {
-            Target.GetResource(ResourceType.HEALTH).False += Damage;
+            Target.AddToResource(ResourceType.HEALTH, false, Amount);
         }
     }
 }

@@ -16,7 +16,7 @@ public class PagePresenter {
         page.OnEnter();
         this.Page.OnExit();
         this.Page = page;
-
+        Util.KillAllChildren(Game.Instance.TextBoxHolder.gameObject);
         Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Page.Text, Color.white, TextEffect.FADE_IN));
     }
 
