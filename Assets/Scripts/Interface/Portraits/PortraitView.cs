@@ -29,7 +29,7 @@ public abstract class PortraitView : MonoBehaviour {
         ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
     }
 
-    protected void AddResources(ResourceType[] resourceTypes, string resourceLocation) {
+    protected void SetResources(ResourceType[] resourceTypes, string resourceLocation) {
 
         //Set all existing isSets to false.
         List<ResourceType> keys = new List<ResourceType>(ResourceViews.Keys); //Can't modify Dictionary in foreach loop
@@ -47,7 +47,10 @@ public abstract class PortraitView : MonoBehaviour {
             } else {
                 rv = ResourceViews[resourceType].resourceView;
             }
-            //rv.ResourceName = name; //Make another Selection-like class, but for ResourceType?
+            rv.ResourceName = resourceType.ShortName;
+            rv.ResourceColor = resourceType.OverColor;
+            rv.OverColor = resourceType.OverColor;
+            rv.UnderColor = resourceType.UnderColor;
             ResourceViews[resourceType] = new ResourceBundle { resourceView = rv, isSet = true };
         }
 
@@ -65,5 +68,5 @@ public abstract class PortraitView : MonoBehaviour {
      * Has to be abstract because the resource prefab is different
      * depending on whether it's left or right on the screen
      */
-    abstract public void AddResources(ResourceType[] resourceTypes);
+    abstract public void SetResources(ResourceType[] resourceTypes);
 }

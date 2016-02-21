@@ -37,15 +37,15 @@ public abstract class Character : Entity {
         this.Name = name;
         this.Level = level;
         this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
-            {AttributeType.STRENGTH, AttributeFactory.CreateAttribute(AttributeType.STRENGTH, strength) },
-            {AttributeType.INTELLIGENCE, AttributeFactory.CreateAttribute(AttributeType.INTELLIGENCE, intelligence) },
-            {AttributeType.DEXTERITY, AttributeFactory.CreateAttribute(AttributeType.DEXTERITY, dexterity) },
-            {AttributeType.VITALITY, AttributeFactory.CreateAttribute(AttributeType.VITALITY, vitality) }
+            {AttributeType.STRENGTH, new Attribute(strength) },
+            {AttributeType.INTELLIGENCE, new Attribute(intelligence) },
+            {AttributeType.DEXTERITY, new Attribute(dexterity) },
+            {AttributeType.VITALITY, new Attribute(vitality) }
         };
 
         this.Resources = new SortedDictionary<ResourceType, Resource>() {
-            {ResourceType.HEALTH, ResourceFactory.CreateResource(ResourceType.HEALTH, vitality * 10) },
-            {ResourceType.CHARGE, ResourceFactory.CreateResource(ResourceType.CHARGE, 100) },
+            {ResourceType.HEALTH, new Resource(vitality * 10) },
+            {ResourceType.CHARGE, new Resource(100) },
         };
 
         this.Attack = new Attack();
@@ -65,16 +65,12 @@ public abstract class Character : Entity {
         CastSpells = new List<Spell>();
     }
 
-    public void AddAttributes(params Attribute[] attributes) {
-        foreach (Attribute attribute in attributes) {
-            this.Attributes.Add(attribute.Type, attribute);
-        }
+    public void AddAttribute(AttributeType attributeType, int initial) {
+        this.Attributes[attributeType] = new Attribute(initial);
     }
 
-    public void AddResources(params Resource[] resources) {
-        foreach (Resource resource in resources) {
-            this.Resources.Add(resource.Type, resource);
-        }
+    public void AddResource(ResourceType resourceType, int initial) {
+        this.Resources[resourceType] = new Resource(initial);
     }
 
     public bool HasAttribute(AttributeType attributeType) {

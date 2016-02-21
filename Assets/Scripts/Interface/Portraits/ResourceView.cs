@@ -6,9 +6,9 @@ using System.Collections;
  * This class manages the Resource prefab
  */
 public class ResourceView : MonoBehaviour {
-
     Text _resourceName; //Name of the Resource. Should be only 2 letters.
     public string ResourceName { get { return _resourceName.text; } set { _resourceName.text = value; } }
+    public Color ResourceColor { get { return _resourceName.color; } set { _resourceName.color = value; } }
 
     Image _underBar; //Bar that represents max resource
     public Color UnderColor { get { return _underBar.color; } set { _underBar.color = value; } }
@@ -33,7 +33,7 @@ public class ResourceView : MonoBehaviour {
      */
     public void SetBarScale(float scale) {
         Vector3 v = _overBar.gameObject.GetComponent<RectTransform>().localScale;
-        v.x = scale;
+        v.x = Mathf.Clamp(scale, 0, 1);
         _overBar.gameObject.GetComponent<RectTransform>().localScale = v;
     }
 

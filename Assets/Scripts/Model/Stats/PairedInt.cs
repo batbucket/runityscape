@@ -11,6 +11,10 @@ public abstract class PairedInt {
     public virtual int False { get { return _false; } set { _false = value; } }
     public virtual int True { get { return _true; } set { _true = value; } }
 
+    public PairedInt(int initial) {
+        Set(initial);
+    }
+
     public bool IsMaxed() {
         return False >= True;
     }

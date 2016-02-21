@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Attack : Spell {
     public const string NAME = "Attack";
-    public static readonly string DESCRIPTION = string.Format("Attack a single enemy for {0} damage.", Util.Color(Strength.SHORT_NAME, Strength.ASSOCIATED_COLOR));
+    public static readonly string DESCRIPTION = string.Format("Attack a single enemy for {0} damage.", Util.Color(AttributeType.STRENGTH.ShortName, AttributeType.STRENGTH.Color));
     public const SpellType SPELL_TYPE = SpellType.OFFENSE;
     public const SpellTarget TARGET_TYPE = SpellTarget.SINGLE_ENEMY;
     public const string SUCCESS_CAST = "* {0} attacks {1} for {2} damage!";
@@ -41,7 +41,7 @@ public class Attack : Spell {
         CastText = string.Format(SUCCESS_CAST, caster.Name, target.Name, Amount);
         EffectsManager.CreateBloodsplat(target);
         SoundView.Instance.Play("Sounds/Attack_0");
-        EffectsManager.CreateHitsplat(Amount, Health.UNDER_COLOR, target);
+        EffectsManager.CreateHitsplat(Amount, ResourceType.HEALTH.UnderColor, target);
         EffectsManager.Instance.RedFadeEffect(target);
     }
 

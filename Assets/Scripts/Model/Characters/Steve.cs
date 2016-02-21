@@ -5,7 +5,7 @@ using System;
 public class Steve : ComputerCharacter {
 
     public Steve() : base(Util.GetSprite("laughing_shinx"), "Steve", 0, 5, 5, 5, 5, Color.red, 4) {
-        AddResources(ResourceFactory.CreateResource(ResourceType.SKILL, 3));
+        AddResource(ResourceType.SKILL, 3);
         Selections[Selection.SPELL].Add(new Attack());
     }
 

@@ -14,15 +14,12 @@ public class CharacterPresenter {
 
     public void Tick() {
         //Attempt to add ResourceViews
-        PortraitView.AddResources(Character.Resources.Keys.ToArray());
+        PortraitView.SetResources(Character.Resources.Keys.ToArray());
 
         //Update ResourceViews' values
         foreach (KeyValuePair<ResourceType, Resource> pair in Character.Resources) {
             ResourceView rv = PortraitView.ResourceViews[pair.Key].resourceView;
             Resource res = pair.Value;
-            rv.ResourceName = res.ShortName;
-            rv.UnderColor = res.UnderColor;
-            rv.OverColor = res.OverColor;
             rv.SetFraction(res.False, res.True);
             rv.SetBarScale(res.GetRatio());
         }

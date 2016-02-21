@@ -4,7 +4,7 @@ using System;
 
 public class LeftPortraitView : PortraitView {
 
-    public override void AddResources(ResourceType[] resourceTypes) {
-        AddResources(resourceTypes, "Left_Resource");
+    public override void SetResources(ResourceType[] resourceTypes) {
+        SetResources(resourceTypes, "Left_Resource");
     }
 }
