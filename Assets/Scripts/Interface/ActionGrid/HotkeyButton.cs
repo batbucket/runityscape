@@ -12,12 +12,9 @@ using WindowsInput;
 public class HotkeyButton : MonoBehaviour {
 
     public KeyCode Hotkey { get; set; } //The keyboard key that interacts with this button
-    Button button; //The button we want a hotkey for
-    UIInput input;
-    public Text Text { get; set; } //The text on the button
-    public Text HotkeyText { get; private set; }
-    public IProcess Process { get; private set; } //Process this button holds
-    public TooltipManager Tooltip { get; set; }
+
+    private IProcess _process;
+    public IProcess Process { get { return _process; } set { SetProcess(value); } } //Process this button holds
 
     bool activated;
     bool mouseInBounds;
@@ -25,23 +22,22 @@ public class HotkeyButton : MonoBehaviour {
     Color INACTIVE_COLOR = Color.black;
     Color ACTIVE_COLOR = Color.white;
 
+    [SerializeField]
+    Button button;
+    [SerializeField]
+    UIInput input;
+    [SerializeField]
+    Text text;
+    [SerializeField]
+    Text hotkeyText;
+
     // Use this for initialization
     void Awake() {
-        //hotkey = KeyCode.None;
-        button = gameObject.GetComponent<Button>();
-        input = gameObject.GetComponent<UIInput>();
-        Text = gameObject.GetComponentsInChildren<Text>()[0];
-        HotkeyText = gameObject.GetComponentsInChildren<Text>()[1];
-        Tooltip = TooltipManager.Instance;
         activated = false;
-
-        Text.text = "";
-        HotkeyText.text = "";
 
         //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
         input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.KeyCodeToVirtualKeyCode(Hotkey))));
         input.AddOnMouseUpListener(new Action<PointerEventData>(p => { InputSimulator.SimulateKeyUp(Util.KeyCodeToVirtualKeyCode(Hotkey)); activated = false; })); //Set activated to false to fix double button click issue
-        ClearProcess();
     }
 
     // Update is called once per frame
@@ -51,18 +47,18 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     public void ClearText() {
-        Text.text = "";
+        text.text = "";
     }
 
-    public void SetProcess(IProcess process) {
+    void SetProcess(IProcess process) {
         if (process == null || process.Action == null) {
             ClearProcess();
         } else {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(process.Play);
-            Text.text = process.Name;
-            this.Process = process;
-            HotkeyText.text = Hotkey.ToString();
+            text.text = process.Name;
+            this._process = process;
+            hotkeyText.text = Hotkey.ToString();
             button.interactable = true;
         }
     }
@@ -70,10 +66,10 @@ public class HotkeyButton : MonoBehaviour {
     public void ClearProcess() {
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => { });
-        Text.text = "";
-        this.Process = new Process();
+        text.text = "";
+        this._process = new Process();
         button.interactable = false;
-        HotkeyText.text = "";
+        hotkeyText.text = "";
     }
 
     void OnMouseExit() {
@@ -101,12 +97,12 @@ public class HotkeyButton : MonoBehaviour {
         }
 
         if (mouseInBounds && button.IsInteractable()) {
-            Tooltip.Set(Process.Description);
+            Game.Instance.Tooltip.Text = Process.Description;
         }
 
         if (activated) {
             if (button.IsInteractable()) {
-                Tooltip.Set(Process.Description);
+                Game.Instance.Tooltip.Text = Process.Description;
             }
 
             //2
@@ -123,7 +119,7 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     void ButtonAppearance() {
-        if (Text.text.Length == 0) {
+        if (text.text.Length == 0) {
             DisabledAppearance();
         } else if ((activated || mouseInBounds) && button.interactable) {
             ActiveAppearance();
@@ -134,18 +130,18 @@ public class HotkeyButton : MonoBehaviour {
 
     void ActiveAppearance() {
         button.image.color = ACTIVE_COLOR;
-        Text.color = INACTIVE_COLOR;
-        HotkeyText.color = INACTIVE_COLOR;
+        text.color = INACTIVE_COLOR;
+        hotkeyText.color = INACTIVE_COLOR;
     }
 
     void InactiveAppearance() {
         button.image.color = INACTIVE_COLOR;
-        Text.color = ACTIVE_COLOR;
-        HotkeyText.color = ACTIVE_COLOR;
+        text.color = ACTIVE_COLOR;
+        hotkeyText.color = ACTIVE_COLOR;
     }
 
     void DisabledAppearance() {
         button.image.color = Color.clear;
-        HotkeyText.color = Color.clear;
+        hotkeyText.color = Color.clear;
     }
 }

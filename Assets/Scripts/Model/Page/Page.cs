@@ -56,6 +56,7 @@ public abstract class Page {
         } else {
             SetSide(right, true);
         }
+        this.RepeatedCharacterCheck(GetAll());
         this.OnFirstEnterAction = (OnFirstEnterAction == null) ? () => { } : onFirstEnter;
         this.OnEnterAction = (onEnter == null) ? () => { } : onEnter;
         this.OnFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
@@ -100,12 +101,13 @@ public abstract class Page {
     }
 
     void SetSide(IList<Character> characters, bool isRightSide) {
-        RepeatedCharacterCheck(characters);
         SetCharacterSides(characters, isRightSide);
+        List<Character> myList = new List<Character>();
+        myList.AddRange(characters);
         if (!isRightSide) {
-            LeftCharacters = characters;
+            LeftCharacters = myList;
         } else {
-            RightCharacters = characters;
+            RightCharacters = myList;
         }
     }
 
@@ -135,7 +137,9 @@ public abstract class Page {
             if (cPair.Value.Count > 1) {
                 int index = 0;
                 foreach (Character c in cPair.Value) {
-                    c.Name = string.Format("{0} {1}", c.Name, Util.IntToLetter(index++));
+                    if (characters.Contains(c)) {
+                        c.Name = string.Format("{0} {1}", c.Name, Util.IntToLetter(index++));
+                    }
                 }
             }
         }
@@ -187,13 +191,13 @@ public abstract class Page {
 
     public List<Character> GetAll() {
         List<Character> allChars = new List<Character>();
-        allChars.AddRange(GetCharacters(true));
         allChars.AddRange(GetCharacters(false));
+        allChars.AddRange(GetCharacters(true));
         return allChars;
     }
 
     static Character GetRandomCharacter(IList<Character> characters) {
-        return characters[UnityEngine.Random.Range(0, characters.Count)];
+        return characters.Any() ? characters[UnityEngine.Random.Range(0, characters.Count)] : null;
     }
 
     protected void ClearActionGrid() {

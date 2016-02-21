@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RightPortraitHolderView : PortraitHolderView {
-    public static PortraitHolderView Instance { get; private set; }
+    [SerializeField]
+    GameObject rightPortraitPrefab;
 
     void Awake() {
         OnAwake();
-        Instance = this;
     }
 
     public override void AddPortraits(string[] portraitNames) {
-        AddPortraits(portraitNames, "Right_Portrait");
+        AddPortraits(portraitNames, rightPortraitPrefab);
     }
 }

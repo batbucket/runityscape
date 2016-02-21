@@ -121,7 +121,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
             OnHit(caster, target);
             Result = SpellResult.HIT;
         } else {
-            EffectsManager.CreateHitsplat("MISS", Color.grey, target);
+            Game.Instance.Effect.CreateHitsplat("MISS", Color.grey, target);
             OnMiss(caster, target);
             Result = SpellResult.MISS;
         }

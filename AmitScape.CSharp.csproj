@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\Interface\Effects\OneShotAnimation.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\HeaderView.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\TimeView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Portraits\BuffView.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitHolderView.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\LeftPortraitView.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\PortraitHolderView.cs" />

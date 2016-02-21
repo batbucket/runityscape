@@ -2,12 +2,12 @@
 using UnityEngine;
 
 public class TextBoxHolderView : MonoBehaviour {
-    public static TextBoxHolderView Instance { get; private set; }
 
-    void Awake() { Instance = this; }
+    [SerializeField]
+    GameObject textBoxPrefab;
 
     public void AddTextBoxView(TextBox textBox) {
-        GameObject g = (GameObject)GameObject.Instantiate(Resources.Load("TextBox"));
+        GameObject g = (GameObject)GameObject.Instantiate(textBoxPrefab);
         TextBoxView textBoxView = g.GetComponent<TextBoxView>();
         Util.Parent(g, gameObject);
         textBoxView.WriteText(textBox);

@@ -59,7 +59,7 @@ public class TextBoxView : MonoBehaviour {
         switch (textBox.Effect) {
             case TextEffect.NONE:
                 text.text = textBox.RawText;
-                SoundView.Instance.Play(textBox.SoundLocation);
+                Game.Instance.Sound.Play(textBox.SoundLocation);
                 yield break;
             case TextEffect.FADE_IN:
                 text.text = textBox.RawText;
@@ -95,7 +95,7 @@ public class TextBoxView : MonoBehaviour {
                         //Don't reset timer or make sound on taggedText and spaces
                         if (!taggedText[index] && !Regex.IsMatch(textBox.TextArray[index], " ")) {
                             timer = 0;
-                            SoundView.Instance.Play(textBox.SoundLocation);
+                            Game.Instance.Sound.Play(textBox.SoundLocation);
                         }
                         if (!taggedText[index]) {
                             currentTextArray[index] = textBox.TextArray[index];

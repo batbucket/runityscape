@@ -13,7 +13,7 @@ public abstract class PortraitHolderView : MonoBehaviour {
 
     public IDictionary<string, PortraitBundle> CharacterViews { get; protected set; }
 
-    protected void AddPortraits(string[] portraitNames, string portraitLocation) {
+    protected void AddPortraits(string[] portraitNames, GameObject portraitPrefab) {
 
         //Set all existing isSets to false.
         List<string> keys = new List<string>(CharacterViews.Keys); //Can't modify Dictionary in foreach loop
@@ -25,7 +25,7 @@ public abstract class PortraitHolderView : MonoBehaviour {
         foreach (string name in portraitNames) {
             PortraitView pv;
             if (!CharacterViews.ContainsKey(name)) {
-                GameObject g = (GameObject)GameObject.Instantiate(Resources.Load(portraitLocation));
+                GameObject g = (GameObject)GameObject.Instantiate(portraitPrefab);
                 Util.Parent(g, gameObject);
                 pv = g.GetComponent<PortraitView>();
             } else {

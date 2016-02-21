@@ -2,9 +2,10 @@
 using UnityEngine;
 
 public class RightPortraitView : PortraitView {
-    public const int X_OFFSET = -100;
+    [SerializeField]
+    GameObject resourcePrefab;
 
     public override void SetResources(ResourceType[] resourceTypes) {
-        SetResources(resourceTypes, "Right_Resource");
+        SetResources(resourceTypes, resourcePrefab);
     }
 }

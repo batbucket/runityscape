@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SoundView : MonoBehaviour {
-    public static SoundView Instance { get; private set; }
     public IDictionary<string, AudioSource> Sound { get; private set; }
 
     void Awake() {
-        Instance = this;
         this.Sound = new Dictionary<string, AudioSource>();
     }
 

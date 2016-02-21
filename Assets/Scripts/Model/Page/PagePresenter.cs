@@ -36,7 +36,7 @@ public class PagePresenter {
     public void Tick() {
         Game.Instance.ActionGrid.ClearAll();
         Game.Instance.ActionGrid.SetButtonAttributes(Page.ActionGrid);
-        Game.Instance.Tooltip.Set(Page.Tooltip);
+        Game.Instance.Tooltip.Text = Page.Tooltip;
         SetCharacterPresenters(Page.LeftCharacters, Game.Instance.LeftPortraits);
         SetCharacterPresenters(Page.RightCharacters, Game.Instance.RightPortraits);
         TickCharacterPresenters(Page.LeftCharacters);

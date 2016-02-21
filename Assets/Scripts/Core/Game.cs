@@ -4,15 +4,44 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Game : MonoBehaviour {
-    public static Game Instance { get; private set; }
+    static Game _instance;
+    public static Game Instance { get { return _instance; } }
 
-    public TimeView Time { get; private set; }
-    public HeaderView Header { get; private set; }
-    public TextBoxHolderView TextBoxHolder { get; private set; }
-    public PortraitHolderView LeftPortraits { get; private set; }
-    public PortraitHolderView RightPortraits { get; private set; }
-    public ActionGridView ActionGrid { get; private set; }
-    public TooltipManager Tooltip { get; private set; }
+    [SerializeField]
+    TimeView _time;
+    public TimeView Time { get { return _time; } }
+
+    [SerializeField]
+    HeaderView _header;
+    public HeaderView Header { get { return _header; } }
+
+    [SerializeField]
+    TextBoxHolderView _textBoxHolder;
+    public TextBoxHolderView TextBoxHolder { get { return _textBoxHolder; } }
+
+    [SerializeField]
+    PortraitHolderView _leftPortraits;
+    public PortraitHolderView LeftPortraits { get { return _leftPortraits; } }
+
+    [SerializeField]
+    PortraitHolderView _rightPortraits;
+    public PortraitHolderView RightPortraits { get { return _rightPortraits; } }
+
+    [SerializeField]
+    ActionGridView _actionGrid;
+    public ActionGridView ActionGrid { get { return _actionGrid; } }
+
+    [SerializeField]
+    TooltipManager _tooltip;
+    public TooltipManager Tooltip { get { return _tooltip; } }
+
+    [SerializeField]
+    EffectsManager _effects;
+    public EffectsManager Effect { get { return _effects; } }
+
+    [SerializeField]
+    SoundView _sound;
+    public SoundView Sound { get { return _sound; } }
 
     public PagePresenter PagePresenter { get; private set; }
     public Character MainCharacter { get; private set; }
@@ -21,53 +50,26 @@ public class Game : MonoBehaviour {
     Dictionary<string, int> intFlags;
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
-    public const string DERP = "Damn, I never really interacted with the fandom and stumbled on this channel by chance, could someone  tell me what was the problem with Granberia? I mean, the guy in the video is making some reasonable points all around and then when it comes to how granberia was handled in part 3 he is like \"nothing of value was lost fellas, move along\" and I dont really get that. She has this really nice build up for part 1 and 2 as a nemesis and her boss fight was probably one of my favourite parts of the series, it had good theming, wasnt too over the top and it estabilishes her as the strongest knight; and then part 3 just dumpsters her, she probably ends up being the weakest knight (Tamamo is revealed to be a god; Alma Elma is suddendly the best fighter in the universe for no reason; Erubetie is arguably on the same level but she has so many neat gimmicks she does with her slime that she just feels more useful in a fight all-around), and all we get in term of character \"development\" about her in part 3 is that: 1. she is the only one who cant even into technology haha so funny 2. she's secretly Alma Elma's super submissive bitch (this fact alone makes her ending so much more dissapointing, takes meaning away from her actions because then it feels like she is just emulating what Alma Elma did to her onto Luka) Talk about sucking all the intimidation out of a character. Her ending was alright, I felt it could have used an aftermath, but so could a lot of other endings (of course only Alice gets one, GOTTA MAKE ALICE LOOK BETTER THAN EVERYONE DAMNIT). Im gonna guess Granberia must have had the worst fanbase, because this review of what happened to her feels like a knee-jerk reaction to fangays that wanted to picture her as this perfect waifu or something.?";
+    public const string DERP = "What";
 
     // Use this for initialization
     void Start() {
-        Instance = this;
-        Time = TimeView.Instance;
-        Header = HeaderView.Instance;
-        TextBoxHolder = TextBoxHolderView.Instance;
-        LeftPortraits = LeftPortraitHolderView.Instance;
-        RightPortraits = RightPortraitHolderView.Instance;
-        ActionGrid = ActionGridView.Instance;
-        Tooltip = TooltipManager.Instance;
+        _instance = this;
         boolFlags = new Dictionary<string, bool>();
         PagePresenter = new PagePresenter();
         MainCharacter = new Amit();
         GameObject canvas = GameObject.Find("Canvas");
 
+        Page p3 = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
         Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve(), new Steve() });
         Page p1 = new ReadPage("What", "Hello world", MainCharacter, new Character[] { MainCharacter }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
                 new Process("Hello", "Say Hello world",
-                    () => TextBoxHolderView.Instance.AddTextBoxView(
+                    () => TextBoxHolder.AddTextBoxView(
                         new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
-                new Process("Test Hitsplat on SELF", "Test the thing!",
-                    () => {
-                        GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
-                        hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.red);
-                        Util.Parent(hitsplat, MainCharacter.Presenter.PortraitView.gameObject);
-                        EffectsManager.Instance.RedFadeEffect(MainCharacter);
-                    }
-                ),
-                new Process("Test Hitsplat on TOP ENEMY", "Test the thing!",
-                    () => {
-                        GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
-                        hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.red);
-                        Util.Parent(hitsplat, PagePresenter.Page.RightCharacters[0].Presenter.PortraitView.gameObject);
-                    }
-                ),
-                new Process("Test Hitsplat on BOT ENEMY", "Test the thing!",
-                    () => {
-                        GameObject hitsplat = GameObject.Instantiate<GameObject>(Resources.Load<GameObject>("Hitsplat"));
-                        hitsplat.GetComponent<HitsplatView>().GrowAndFade("999!", Color.red);
-                        Util.Parent(hitsplat, PagePresenter.Page.RightCharacters[1].Presenter.PortraitView.gameObject);
-                    }
-                ),
-                new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(p2))
-        });
+                new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(p2)),
+                new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { PagePresenter.SetPage(p3); Sound.Play("Music/CleytonRX"); })
+            });
         PagePresenter.SetPage(p1);
     }
 

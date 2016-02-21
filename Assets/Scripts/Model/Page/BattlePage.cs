@@ -53,6 +53,7 @@ public class BattlePage : Page {
             c.Tick();
             c.CalculateSpeed(MainCharacter);
             if (c.IsControllable()) { characterQueue.Enqueue(c); }
+            if (c.IsKilled()) { this.GetCharacters(c.Side).Remove(c); }
         }
 
         /**

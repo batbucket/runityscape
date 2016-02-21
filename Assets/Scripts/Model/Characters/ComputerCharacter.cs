@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public abstract class ComputerCharacter : Character {
     public const bool DISPLAYABLE = false;
     readonly float maxDelay;
-    float delay;
+    protected float delay;
 
     public ComputerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, float maxDelay)
         : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor, DISPLAYABLE) {

@@ -17,7 +17,7 @@ public class Amit : PlayerCharacter {
     }
 
     public override bool IsKilled() {
-        throw new NotImplementedException();
+        return false;
     }
 
     public override void OnBattleEnd() {
@@ -41,6 +41,10 @@ public class Amit : PlayerCharacter {
     }
 
     protected override void OnFullCharge() {
+
+    }
+
+    protected override void WhileFullCharge() {
 
     }
 }

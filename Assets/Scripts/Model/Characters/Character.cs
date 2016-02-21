@@ -8,7 +8,7 @@ using System.Collections.Generic;
  */
 public abstract class Character : Entity {
     public const int CHARGE_PER_TICK = 1;
-    public const int CHARGE_CAP_RATIO = 120;
+    public const int CHARGE_CAP_RATIO = 30;
 
     public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
 
@@ -184,6 +184,7 @@ public abstract class Character : Entity {
                     ChargeStatus = ChargeStatus.FULL_CHARGE;
                     break;
                 case ChargeStatus.FULL_CHARGE:
+                    WhileFullCharge();
                     break;
             }
         }
@@ -232,6 +233,7 @@ public abstract class Character : Entity {
     }
 
     protected abstract void OnFullCharge();
+    protected abstract void WhileFullCharge();
     public abstract void Act();
     public abstract void React(Spell spell);
     public abstract void OnStart();

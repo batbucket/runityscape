@@ -11,25 +11,28 @@ public abstract class PortraitView : MonoBehaviour {
         public bool isSet;
     }
 
+    [SerializeField]
     Text _portraitName; //Name of the character
     public string PortraitName { get { return _portraitName.text; } set { _portraitName.text = value; } }
 
+    [SerializeField]
     Image _iconImage; //Image of the character
     public Image Image { get { return _iconImage; } set { _iconImage = value; } }
     public Sprite Sprite { get { return _iconImage.sprite; } set { _iconImage.sprite = value; } }
-
-    public GameObject ResourcesHolder { get; private set; } //Parent of ResourceViews
     public IDictionary<ResourceType, ResourceBundle> ResourceViews { get; private set; }
+
+    [SerializeField]
+    GameObject ResourcesHolder;
+    [SerializeField]
+    GameObject _hitsplatsHolder;
+    public GameObject Hitsplats { get { return _hitsplatsHolder; } }
 
     // Use this for initialization
     void Awake() {
-        _portraitName = gameObject.GetComponentInChildren<Text>();
-        _iconImage = gameObject.GetComponentInChildren<Image>();
-        ResourcesHolder = Util.FindChild(gameObject, "Resources");
         ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
     }
 
-    protected void SetResources(ResourceType[] resourceTypes, string resourceLocation) {
+    protected void SetResources(ResourceType[] resourceTypes, GameObject resourcePrefab) {
 
         //Set all existing isSets to false.
         List<ResourceType> keys = new List<ResourceType>(ResourceViews.Keys); //Can't modify Dictionary in foreach loop
@@ -41,7 +44,7 @@ public abstract class PortraitView : MonoBehaviour {
         foreach (ResourceType resourceType in resourceTypes) {
             ResourceView rv;
             if (!ResourceViews.ContainsKey(resourceType)) {
-                GameObject g = (GameObject)GameObject.Instantiate(Resources.Load(resourceLocation));
+                GameObject g = (GameObject)GameObject.Instantiate(resourcePrefab);
                 Util.Parent(g, ResourcesHolder);
                 rv = g.GetComponent<ResourceView>();
             } else {
