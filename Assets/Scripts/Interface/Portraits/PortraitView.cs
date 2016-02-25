@@ -51,9 +51,9 @@ public abstract class PortraitView : MonoBehaviour {
                 rv = ResourceViews[resourceType].resourceView;
             }
             rv.ResourceName = resourceType.ShortName;
-            rv.ResourceColor = resourceType.OverColor;
-            rv.OverColor = resourceType.OverColor;
-            rv.UnderColor = resourceType.UnderColor;
+            rv.ResourceColor = resourceType.FillColor;
+            rv.OverColor = resourceType.FillColor;
+            rv.UnderColor = resourceType.EmptyColor;
             ResourceViews[resourceType] = new ResourceBundle { resourceView = rv, isSet = true };
         }
 

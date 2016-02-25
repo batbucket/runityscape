@@ -21,8 +21,8 @@ public class ResourceView : MonoBehaviour {
     public Color OverColor { get { return _overBar.color; } set { _overBar.color = value; } }
 
     [SerializeField]
-    Text _fraction; //Text on bar that describes the amount
-    public string Fraction { get { return _fraction.text; } set { _fraction.text = value; } }
+    Text _text; //Text on bar that describes the amount in some way
+    public string Text { get { return _text.text; } set { _text.text = value; } }
 
     /**
      * Scale should be in the range [0, 1]
@@ -35,10 +35,16 @@ public class ResourceView : MonoBehaviour {
     }
 
     /**
-     * This sets the text on the bar describing
-     * current / total resource
+     * Scale should be in the range [0, 1]
+     * This sets the OverBar's scale
      */
-    public void SetFraction(int numerator, int denominator) {
-        _fraction.text = numerator + "/" + denominator;
+    public void SetBarScale(float a, float b) {
+        Vector3 v = _overBar.gameObject.GetComponent<RectTransform>().localScale;
+        if (b == 0) {
+            v.x = 0;
+        } else {
+            v.x = Mathf.Clamp(a / b, 0, 1);
+        }
+        _overBar.gameObject.GetComponent<RectTransform>().localScale = v;
     }
 }

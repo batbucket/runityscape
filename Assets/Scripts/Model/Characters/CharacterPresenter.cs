@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 public class CharacterPresenter {
@@ -13,15 +11,17 @@ public class CharacterPresenter {
     }
 
     public void Tick() {
-        //Attempt to add ResourceViews
+        //Attempt to set ResourceViews
         PortraitView.SetResources(Character.Resources.Keys.ToArray());
 
         //Update ResourceViews' values
         foreach (KeyValuePair<ResourceType, Resource> pair in Character.Resources) {
             ResourceView rv = PortraitView.ResourceViews[pair.Key].resourceView;
+            ResourceType resType = pair.Key;
             Resource res = pair.Value;
-            rv.SetFraction(res.False, res.True);
-            rv.SetBarScale(res.GetRatio());
+
+            rv.Text = resType.DisplayFunction(res.False, res.True);
+            rv.SetBarScale(res.False, res.True);
         }
     }
 }

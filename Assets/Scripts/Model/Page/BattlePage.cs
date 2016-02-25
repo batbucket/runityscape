@@ -163,8 +163,15 @@ public class BattlePage : Page {
     void ShowSwitchButton(Character current) {
         this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current),
             () => {
+                //Quick switch if there's only one other abledCharacter to switch with
+                IList<Character> abledCharacters = GetAll().FindAll(c => !current.Equals(c) && c.IsDisplayable && c.IsCharged());
                 Tooltip = "";
-                currentSelectionNode = currentSelectionNode.FindChild(Selection.SWITCH);
+                if (abledCharacters.Count == 1) {
+                    activeCharacter = abledCharacters[0];
+                    ResetSelection();
+                } else {
+                    currentSelectionNode = currentSelectionNode.FindChild(Selection.SWITCH);
+                }
             });
     }
 
@@ -246,7 +253,7 @@ public class BattlePage : Page {
         } else {
             targetedSpell = spell;
             this.targets = targets;
-            currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET); //No linkage from FAIM -> Target
+            currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);
         }
     }
 

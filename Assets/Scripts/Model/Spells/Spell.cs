@@ -72,7 +72,7 @@ public abstract class Spell : ICloneable, IUndoableProcess {
         List<string> elements = new List<string>();
         foreach (KeyValuePair<ResourceType, int> entry in costs) {
             if (entry.Key != ResourceType.CHARGE) {
-                Color resourceColor = entry.Key.OverColor;
+                Color resourceColor = entry.Key.FillColor;
                 int cost = entry.Value;
                 elements.Add(Util.Color("" + cost, resourceColor));
             }

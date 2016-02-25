@@ -53,7 +53,7 @@ public class Attack : Spell {
         Game.Instance.Effect.CreateBloodsplat(target);
         Game.Instance.Sound.Play("Sounds/Attack_0");
         Game.Instance.Effect.RedFadeEffect(target);
-        Game.Instance.Effect.CreateHitsplat(!isCrit ? "" + Amount : string.Format("{0}!", Amount), ResourceType.HEALTH.UnderColor, target);
+        Game.Instance.Effect.CreateHitsplat(!isCrit ? "" + Amount : string.Format("{0}!", Amount), ResourceType.HEALTH.EmptyColor, target);
         Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format(!isCrit ? SUCCESS_CAST : SUCCESS_CAST_2, caster.Name, target.Name, Amount), Color.white, TextEffect.FADE_IN));
     }
 
