@@ -1,4 +1,3 @@
-﻿public enum SpellType
-{
+﻿public enum SpellType {
     OFFENSE, DEFENSE, BOOST, ACT, MERCY
 }

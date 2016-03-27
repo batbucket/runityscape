@@ -36,8 +36,7 @@ public static class Util {
 
     public static void Parent(GameObject child, GameObject parent) {
         child.transform.SetParent(parent.transform);
-        child.transform.position = new Vector2(0, 0);
-        child.transform.localPosition = new Vector2(0, 0);
+        child.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     public static GameObject FindChild(GameObject parent, string childName) {

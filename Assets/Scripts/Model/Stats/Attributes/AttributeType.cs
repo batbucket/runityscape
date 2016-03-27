@@ -52,6 +52,8 @@ public sealed class AttributeType : IComparable {
                                                                       Color.yellow,
                                                                       3);
 
+    public static readonly AttributeType[] ALL = new AttributeType[] { STRENGTH, INTELLIGENCE, DEXTERITY, VITALITY };
+
     public int CompareTo(object obj) {
         AttributeType other = (AttributeType)obj;
         int res = this.order.CompareTo(other.order);
@@ -72,5 +74,21 @@ public sealed class AttributeType : IComparable {
 
     public override int GetHashCode() {
         return this.Name.GetHashCode();
+    }
+
+    public static string SplatDisplay(int i) {
+        return i.ToString("+#;-#");
+    }
+
+    public static Color DetermineColor(AttributeType attributeType, int amount) {
+        Color textColor = Color.clear;
+        if (amount < 0) {
+            textColor = attributeType.Color;
+        } else if (amount == 0) {
+            textColor = Color.grey;
+        } else {
+            textColor = attributeType.Color;
+        }
+        return textColor;
     }
 }

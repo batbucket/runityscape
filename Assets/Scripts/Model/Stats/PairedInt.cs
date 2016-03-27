@@ -4,7 +4,7 @@ using System.Collections;
 /**
  * This class represents a pair of integer values
  */
-public abstract class PairedInt {
+public class PairedInt {
     int _false;
     int _true;
 

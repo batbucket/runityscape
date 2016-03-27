@@ -8,7 +8,7 @@ using System.Collections.Generic;
  */
 public abstract class Character : Entity {
     public const int CHARGE_PER_TICK = 1;
-    public const int CHARGE_CAP_RATIO = 30;
+    public const int CHARGE_CAP_RATIO = 60;
 
     public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
 
@@ -17,18 +17,19 @@ public abstract class Character : Entity {
 
     public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
     public IDictionary<ResourceType, Resource> Resources { get; private set; }
-    public Spell Attack { get; set; }
-    public IDictionary<Selection, ICollection<Spell>> Selections { get; private set; }
+    public SpellFactory Attack { get; set; }
+    public IDictionary<Selection, ICollection<SpellFactory>> Selections { get; private set; }
 
-    public Stack<Spell> SpellStack { get; private set; } //Spells casted are pushed here by reference.
-    public IList<Spell> RecievedSpells { get; private set; } //Spells recieved are added by value.
-    public IList<Spell> CastSpells { get; private set; } //Spells cast are added by value.
+    public Stack<SpellFactory> SpellStack { get; private set; }
+    public IList<Spell> RecievedSpells { get; private set; }
+    public IList<Spell> CastSpells { get; private set; }
 
     public Color TextColor { get; private set; }
 
     public bool Side { get; set; }
     public bool IsTargetable { get; set; }
     public bool IsDisplayable { get; set; }
+    public bool IsControllable { get { return this.IsDisplayable && this.IsCharged(); } }
     public ChargeStatus ChargeStatus { get; private set; }
 
     public PortraitView Portrait { get; set; }
@@ -49,18 +50,18 @@ public abstract class Character : Entity {
         };
 
         this.Attack = new Attack();
-        this.Selections = new SortedDictionary<Selection, ICollection<Spell>>() {
-            { Selection.SPELL, new HashSet<Spell>() },
-            { Selection.ACT, new HashSet<Spell>() },
+        this.Selections = new SortedDictionary<Selection, ICollection<SpellFactory>>() {
+            { Selection.SPELL, new HashSet<SpellFactory>() },
+            { Selection.ACT, new HashSet<SpellFactory>() },
             { Selection.ITEM, new Inventory() },
-            { Selection.MERCY, new HashSet<Spell>() },
+            { Selection.MERCY, new HashSet<SpellFactory>() },
         };
         this.TextColor = textColor;
         this.IsTargetable = true;
         this.IsDisplayable = isDisplayable;
-        GetResource(ResourceType.CHARGE).ClearFalse();
+        Resources[ResourceType.CHARGE].ClearFalse();
 
-        SpellStack = new Stack<Spell>();
+        SpellStack = new Stack<SpellFactory>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
     }
@@ -85,9 +86,13 @@ public abstract class Character : Entity {
         return resource != null;
     }
 
-    public virtual bool AddToAttribute(AttributeType attributeType, bool value, int amount) {
-        if (HasAttribute(attributeType)) {
-            Attribute attribute = GetAttribute(attributeType);
+    public bool AddToAttribute(AttributeType attributeType, bool value, int amount, bool hasMinisplat = false) {
+        if (HasAttribute(attributeType) && amount != 0) {
+            if (hasMinisplat) {
+                Game.Instance.Effect.CreateMinisplat(AttributeType.SplatDisplay(amount), AttributeType.DetermineColor(attributeType, amount), this);
+                Game.Instance.Effect.FadeEffect(this, AttributeType.DetermineColor(attributeType, amount));
+            }
+            Attribute attribute = Attributes[attributeType];
             if (!value) {
                 attribute.False += amount;
             } else {
@@ -98,9 +103,13 @@ public abstract class Character : Entity {
         return false;
     }
 
-    public virtual bool AddToResource(ResourceType resourceType, bool value, int amount) {
+    public bool AddToResource(ResourceType resourceType, bool value, int amount, bool hasHitsplat = false) {
         if (HasResource(resourceType)) {
-            Resource resource = GetResource(resourceType);
+            if (hasHitsplat && amount != 0) {
+                Game.Instance.Effect.CreateHitsplat(resourceType.SplatFunction(amount, GetResourceCount(resourceType, true)), ResourceType.DetermineColor(resourceType, amount), this);
+                Game.Instance.Effect.FadeEffect(this, ResourceType.DetermineColor(resourceType, amount));
+            }
+            Resource resource = Resources[resourceType];
             if (!value) {
                 resource.False += amount;
             } else {
@@ -109,20 +118,6 @@ public abstract class Character : Entity {
             return true;
         }
         return false;
-    }
-
-    Resource GetResource(ResourceType resourceType) {
-        Resource resource;
-        Resources.TryGetValue(resourceType, out resource);
-        Debug.Assert(resource != null);
-        return resource;
-    }
-
-    Attribute GetAttribute(AttributeType attributeType) {
-        Attribute attribute;
-        Attributes.TryGetValue(attributeType, out attribute);
-        Debug.Assert(attribute != null);
-        return attribute;
     }
 
     public int GetResourceCount(ResourceType resourceType, bool value) {
@@ -156,23 +151,23 @@ public abstract class Character : Entity {
     }
 
     public void Charge() {
-        Debug.Assert(GetResource(ResourceType.CHARGE) != null);
-        GetResource(ResourceType.CHARGE).False += CHARGE_PER_TICK;
+        Debug.Assert(HasResource(ResourceType.CHARGE));
+        Resources[ResourceType.CHARGE].False += CHARGE_PER_TICK;
     }
 
     public void Discharge() {
-        Debug.Assert(GetResource(ResourceType.CHARGE) != null);
-        GetResource(ResourceType.CHARGE).ClearFalse();
+        Debug.Assert(HasResource(ResourceType.CHARGE));
+        Resources[ResourceType.CHARGE].ClearFalse();
     }
 
     public bool IsCharged() {
-        Debug.Assert(GetResource(ResourceType.CHARGE) != null);
-        return GetResource(ResourceType.CHARGE).IsMaxed();
+        Debug.Assert(HasResource(ResourceType.CHARGE));
+        return Resources[ResourceType.CHARGE].IsMaxed();
     }
 
     public virtual void Tick() {
         Charge();
-        if (!GetResource(ResourceType.CHARGE).IsMaxed()) {
+        if (!Resources[ResourceType.CHARGE].IsMaxed()) {
             ChargeStatus = ChargeStatus.NOT_CHARGED;
         } else {
             switch (ChargeStatus) {
@@ -188,6 +183,8 @@ public abstract class Character : Entity {
                     break;
             }
         }
+        CalculateSpeed(Game.Instance.MainCharacter);
+
         Act();
     }
 
@@ -211,36 +208,25 @@ public abstract class Character : Entity {
         return Name.GetHashCode();
     }
 
-    public void AddToRecievedSpellHistory(Spell spell) {
-        RecievedSpells.Add(spell);
-    }
-
-    public void AddToCastSpellHistory(Spell spell) {
-        CastSpells.Add(spell);
-    }
-
     public void CalculateSpeed(Character mainCharacter) {
         CalculateSpeed(this, mainCharacter);
     }
 
     static void CalculateSpeed(Character current, Character main) {
-        int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttribute(AttributeType.DEXTERITY).False)) / current.GetAttribute(AttributeType.DEXTERITY).False);
-        current.GetResource(ResourceType.CHARGE).True = chargeNeededToAct;
-    }
-
-    public bool IsControllable() {
-        return this.IsDisplayable && this.IsCharged();
+        int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false));
+        current.Resources[ResourceType.CHARGE].True = chargeNeededToAct;
     }
 
     protected abstract void OnFullCharge();
     protected abstract void WhileFullCharge();
     public abstract void Act();
-    public abstract void React(Spell spell);
+    public virtual void React(Spell spell) { spell.Process.Play(); }
+    public virtual void Witness(Spell spell) { }
     public abstract void OnStart();
     public abstract bool IsDefeated();
     public abstract void OnDefeat();
-    public abstract bool IsKilled();
-    public abstract void OnKill();
+    public virtual bool IsKilled() { return GetResourceCount(ResourceType.HEALTH, false) <= 0; }
+    public virtual void OnKill() { Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this); }
     public abstract void OnVictory();
     public abstract void OnBattleEnd();
 }

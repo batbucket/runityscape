@@ -8,6 +8,6 @@
 public interface IProcess {
     string Name { get; }
     string Description { get; }
-    Action Action { get; }
+    Action Action { get; set; }
     void Play();
 }

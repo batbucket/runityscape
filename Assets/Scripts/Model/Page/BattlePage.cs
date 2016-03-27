@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class BattlePage : Page {
     Queue<Character> characterQueue;
     Character activeCharacter;
-    Spell targetedSpell;
+    SpellFactory targetedSpell;
     IList<Character> targets;
     TreeNode<Selection> selectionTree;
     TreeNode<Selection> currentSelectionNode;
@@ -51,9 +51,7 @@ public class BattlePage : Page {
         base.Tick();
         foreach (Character c in GetAll()) {
             c.Tick();
-            c.CalculateSpeed(MainCharacter);
-            if (c.IsControllable()) { characterQueue.Enqueue(c); }
-            if (c.IsKilled()) { this.GetCharacters(c.Side).Remove(c); }
+            if (c.IsControllable) { characterQueue.Enqueue(c); }
         }
 
         /**
@@ -103,8 +101,8 @@ public class BattlePage : Page {
                     DetermineTargetSelection(character.SpellStack.Peek(), character);
                 });
             int index = FAIM_OFFSET;
-            foreach (KeyValuePair<Selection, ICollection<Spell>> myPair in character.Selections) {
-                KeyValuePair<Selection, ICollection<Spell>> pair = myPair;
+            foreach (KeyValuePair<Selection, ICollection<SpellFactory>> myPair in character.Selections) {
+                KeyValuePair<Selection, ICollection<SpellFactory>> pair = myPair;
                 ActionGrid[index++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name),
                     () => {
                         Tooltip = "";
@@ -123,10 +121,10 @@ public class BattlePage : Page {
         }
     }
 
-    void ShowSpellsAsList(ICollection<Spell> spells, Character caster) {
+    void ShowSpellsAsList(ICollection<SpellFactory> spells, Character caster) {
         int index = 0;
-        foreach (Spell mySpell in spells) {
-            Spell spell = mySpell;
+        foreach (SpellFactory mySpell in spells) {
+            SpellFactory spell = mySpell;
             ActionGrid[index++] = new Process(spell.GetNameAndInfo(caster), spell.Description,
                 () => {
                     Tooltip = "";
@@ -201,7 +199,7 @@ public class BattlePage : Page {
         currentSelectionNode = currentSelectionNode.Parent;
     }
 
-    void UpdateLastSpellStack(Spell spell, Character caster) {
+    void UpdateLastSpellStack(SpellFactory spell, Character caster) {
         if (spell != caster.Attack) {
             caster.SpellStack.Push(spell);
         }
@@ -212,31 +210,31 @@ public class BattlePage : Page {
         }
     }
 
-    void DetermineTargetSelection(Spell spell, Character caster) {
+    void DetermineTargetSelection(SpellFactory spell, Character caster) {
         Util.Assert(spell != null);
 
         //These TargetTypes might require target selection if there's more than 1 possible target.
-        if (spell.TargetType == SpellTarget.SINGLE_ALLY || spell.TargetType == SpellTarget.SINGLE_ENEMY) {
+        if (spell.TargetType == TargetType.SINGLE_ALLY || spell.TargetType == TargetType.SINGLE_ENEMY) {
             switch (spell.TargetType) {
-                case SpellTarget.SINGLE_ALLY:
+                case TargetType.SINGLE_ALLY:
                     DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster.Side));
                     break;
-                case SpellTarget.SINGLE_ENEMY:
+                case TargetType.SINGLE_ENEMY:
                     DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster.Side));
                     break;
             }
         } else { //These TargetTypes don't need target selection and thusly can have their results be instantly evaluated.
             switch (spell.TargetType) {
-                case SpellTarget.SELF:
+                case TargetType.SELF:
                     spell.TryCast(caster, caster);
                     break;
-                case SpellTarget.ALL_ALLY:
+                case TargetType.ALL_ALLY:
                     spell.TryCast(caster, this.GetAllies(caster.Side));
                     break;
-                case SpellTarget.ALL_ENEMY:
+                case TargetType.ALL_ENEMY:
                     spell.TryCast(caster, this.GetEnemies(caster.Side));
                     break;
-                case SpellTarget.ALL:
+                case TargetType.ALL:
                     spell.TryCast(caster, this.GetAll());
                     break;
             }
@@ -244,7 +242,7 @@ public class BattlePage : Page {
         }
     }
 
-    void DetermineSingleTargetQuickCast(Spell spell, Character caster, IList<Character> targets) {
+    void DetermineSingleTargetQuickCast(SpellFactory spell, Character caster, IList<Character> targets) {
         if (targets.Count == 0) {
             // Do nothing
         } else if (targets.Count == 1) {
@@ -257,13 +255,8 @@ public class BattlePage : Page {
         }
     }
 
-    void SpellCastEnd(Spell spell, Character caster) {
-        if (spell.Result != SpellResult.CANT_CAST) {
-            foreach (Character witness in this.GetAll()) {
-                witness.React(spell);
-            }
-            UpdateLastSpellStack(spell, caster);
-            ResetSelection();
-        }
+    void SpellCastEnd(SpellFactory spell, Character caster) {
+        UpdateLastSpellStack(spell, caster);
+        ResetSelection();
     }
 }

@@ -4,25 +4,37 @@ using System.Collections;
 
 public class HitsplatView : MonoBehaviour {
 
-    public void GrowAndFade(string s, Color c) {
+    public void Animation(string s, Color c) {
         Text text = gameObject.GetComponent<Text>();
         text.text = s;
         text.color = c;
-        StartCoroutine(GrowAndFade(text));
+        StartCoroutine(Animation(text));
     }
 
-    public IEnumerator GrowAndFade(Text text) {
-        float timer = 1.0f;
-        while ((timer -= Time.deltaTime) > 0) {
-            transform.localPosition = new Vector2(transform.localPosition.x, transform.localPosition.y + 1);
-            //Wait
+    const float TIME_UPSIZED = 1.0f;
+    const float TIME_BEFORE_DECAY = .75f;
+    const float ACCEL_RATE = 3.0f;
+    static readonly Vector2 INITIAL_SIZE = new Vector2(1.5f, 1.5f);
+    static readonly Vector2 FINAL_SIZE = new Vector2(1, 1);
+
+    public IEnumerator Animation(Text text) {
+        float timer = TIME_UPSIZED;
+        float accel = 0;
+        while ((timer -= Time.deltaTime * accel) > 0) {
+            text.transform.localScale = Vector2.Lerp(INITIAL_SIZE, FINAL_SIZE, (TIME_UPSIZED - timer) / TIME_UPSIZED);
+            accel += ACCEL_RATE;
             yield return null;
         }
+
+        float timer2 = TIME_BEFORE_DECAY;
+        while ((timer2 -= Time.deltaTime) > 0) {
+            yield return null;
+        }
+
         while (text.color.a > 0) {
             Color c = text.color;
             c.a -= Time.deltaTime * 3;
             text.color = c;
-            text.transform.localScale = new Vector3(text.transform.localScale.x + Time.deltaTime, text.transform.localScale.y + Time.deltaTime, text.transform.localScale.z);
             yield return null;
         }
         Destroy(text.gameObject);

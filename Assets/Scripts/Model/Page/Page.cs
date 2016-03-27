@@ -7,7 +7,7 @@ using System.Linq;
 public abstract class Page {
 
     public string Text { get; protected set; }
-    public string Tooltip { get; protected set; }
+    public string Tooltip { get; set; }
     public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
@@ -56,20 +56,16 @@ public abstract class Page {
         } else {
             SetSide(right, true);
         }
+
         this.RepeatedCharacterCheck(GetAll());
-        this.OnFirstEnterAction = (OnFirstEnterAction == null) ? () => { } : onFirstEnter;
-        this.OnEnterAction = (onEnter == null) ? () => { } : onEnter;
-        this.OnFirstExitAction = (onFirstExit == null) ? () => { } : onFirstExit;
-        this.OnExitAction = (onExit == null) ? () => { } : onExit;
+        this.OnFirstEnterAction = onFirstEnter ?? (() => { });
+        this.OnEnterAction = onEnter ?? (() => { });
+        this.OnFirstExitAction = onFirstExit ?? (() => { });
+        this.OnExitAction = onExit ?? (() => { });
 
-        //ActionGrid initialization
-        if (processes == null) {
-            this.ActionGrid = new Process[ActionGridView.ROWS * ActionGridView.COLS];
-        } else {
-            ActionGrid = processes;
-        }
+        this.ActionGrid = processes ?? new Process[ActionGridView.ROWS * ActionGridView.COLS];
 
-        this.OnTick = (onTick == null) ? () => { } : onTick;
+        this.OnTick = onTick ?? (() => { });
         this.Id = idCount++;
     }
 

@@ -19,7 +19,7 @@ public abstract class ComputerCharacter : Character {
         delay = UnityEngine.Random.Range(0, maxDelay);
     }
 
-    protected void QuickCast(Spell spell, Character target = null) {
+    protected void QuickCast(SpellFactory spell, Character target = null) {
         Page page = Game.Instance.PagePresenter.Page;
         if (!spell.IsCastable(this)) {
             return;
@@ -28,28 +28,25 @@ public abstract class ComputerCharacter : Character {
             spell.TryCast(this, target);
         } else {
             switch (spell.TargetType) {
-                case SpellTarget.SINGLE_ALLY:
+                case TargetType.SINGLE_ALLY:
                     spell.TryCast(this, page.GetRandomAlly(this.Side));
                     break;
-                case SpellTarget.SINGLE_ENEMY:
+                case TargetType.SINGLE_ENEMY:
                     spell.TryCast(this, page.GetRandomEnemy(this.Side));
                     break;
-                case SpellTarget.SELF:
+                case TargetType.SELF:
                     spell.TryCast(this, this);
                     break;
-                case SpellTarget.ALL_ALLY:
+                case TargetType.ALL_ALLY:
                     spell.TryCast(this, page.GetAllies(this.Side));
                     break;
-                case SpellTarget.ALL_ENEMY:
+                case TargetType.ALL_ENEMY:
                     spell.TryCast(this, page.GetEnemies(this.Side));
                     break;
-                case SpellTarget.ALL:
+                case TargetType.ALL:
                     spell.TryCast(this, page.GetAll());
                     break;
             }
-        }
-        foreach (Character witness in page.GetAll()) {
-            witness.React(spell);
         }
     }
 }

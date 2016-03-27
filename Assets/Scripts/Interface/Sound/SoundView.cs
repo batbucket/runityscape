@@ -18,4 +18,12 @@ public class SoundView : MonoBehaviour {
         }
         Sound[resourceLocation].Play();
     }
+
+    public void Play(AudioSource sound) {
+        Util.Assert(sound != null);
+        if (!Sound.ContainsKey(sound.name)) {
+            Sound.Add(sound.name, sound);
+        }
+        Sound[sound.name].Play();
+    }
 }

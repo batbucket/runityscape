@@ -7,7 +7,14 @@ public sealed class ResourceType : IComparable {
         NUMERIC, PERCENTAGE, NONE
     }
 
-    public static readonly IDictionary<DisplayMode, Func<int, int, string>> DISPLAY_FUNCTIONS
+    public static readonly IDictionary<DisplayMode, Func<int, int, string>> SPLAT_FUNCTIONS
+        = new Dictionary<DisplayMode, Func<int, int, string>>() {
+            { DisplayMode.NONE,       (a, b) =>          string.Format("", a.ToString("+#;-#")) },
+            { DisplayMode.NUMERIC,    (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) },
+            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a) : string.Format("{0}%", ((a * 100) / b).ToString("+#;-#")) }
+        };
+
+    public static readonly IDictionary<DisplayMode, Func<int, int, string>> BAR_DISPLAY_FUNCTIONS
         = new Dictionary<DisplayMode, Func<int, int, string>>() {
             { DisplayMode.NONE, (a, b) =>                string.Format("", a, b) },
             { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}/{1}", a, b) },
@@ -34,6 +41,8 @@ public sealed class ResourceType : IComparable {
 
     Func<int, int, string> _displayFunction;
     public Func<int, int, string> DisplayFunction { get { return _displayFunction; } } //Display actual values or percentage
+    Func<int, int, string> _splatFunction;
+    public Func<int, int, string> SplatFunction { get { return _splatFunction; } }
 
     public ResourceType(string name, string shortName, string description, Color fillColor, Color emptyColor, int order, DisplayMode displayMode = DisplayMode.NUMERIC) {
         this._name = name;
@@ -42,28 +51,29 @@ public sealed class ResourceType : IComparable {
         this._fillColor = fillColor;
         this._emptyColor = emptyColor;
         this._order = order;
-        this._displayFunction = DISPLAY_FUNCTIONS[displayMode];
+        this._displayFunction = BAR_DISPLAY_FUNCTIONS[displayMode];
+        this._splatFunction = SPLAT_FUNCTIONS[displayMode];
     }
 
     public static readonly ResourceType HEALTH = new ResourceType("Health",
                                                                   "LIFE",
                                                                   "Vital state.",
                                                                   Color.green,
-                                                                  Color.black,
+                                                                  Color.red,
                                                                   0);
 
     public static readonly ResourceType SKILL = new ResourceType("Skill",
-                                                             "SKIL",
-                                                             "Replenished on Basic Attacks,",
-                                                             Color.yellow,
-                                                             Color.black,
-                                                             1);
+                                                                 "SKIL",
+                                                                 "Replenished on Basic Attacks,",
+                                                                 Color.yellow,
+                                                                 Color.black,
+                                                                 1);
 
     public static readonly ResourceType MANA = new ResourceType("Mana",
                                                                 "MANA",
                                                                 "Magical resources.",
                                                                 Color.blue,
-                                                                Color.black,
+                                                                Color.magenta,
                                                                 2);
 
     public static readonly ResourceType CHARGE = new ResourceType("Charge",
@@ -73,6 +83,8 @@ public sealed class ResourceType : IComparable {
                                                                   Color.black,
                                                                   999,
                                                                   DisplayMode.PERCENTAGE);
+
+    public static readonly ResourceType[] ALL = new ResourceType[] { HEALTH, SKILL, MANA, CHARGE };
 
     public int CompareTo(object obj) {
         ResourceType other = (ResourceType)obj;
@@ -94,5 +106,17 @@ public sealed class ResourceType : IComparable {
 
     public override int GetHashCode() {
         return this.Name.GetHashCode();
+    }
+
+    public static Color DetermineColor(ResourceType resourceType, int amount) {
+        Color textColor = Color.clear;
+        if (amount < 0) {
+            textColor = resourceType.EmptyColor;
+        } else if (amount == 0) {
+            textColor = Color.grey;
+        } else {
+            textColor = resourceType.FillColor;
+        }
+        return textColor;
     }
 }

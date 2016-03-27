@@ -13,5 +13,17 @@ public abstract class PlayerCharacter : Character {
 
     public override void Act() { }
 
-    public override void React(Spell spell) { }
+    public override bool IsDefeated() { throw new NotImplementedException(); }
+
+    public override void OnBattleEnd() { throw new NotImplementedException(); }
+
+    public override void OnDefeat() { throw new NotImplementedException(); }
+
+    public override void OnStart() { throw new NotImplementedException(); }
+
+    public override void OnVictory() { throw new NotImplementedException(); }
+
+    protected override void OnFullCharge() { }
+
+    protected override void WhileFullCharge() { }
 }

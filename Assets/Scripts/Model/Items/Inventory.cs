@@ -8,17 +8,17 @@ using System;
  * Set it as that since Character's Selections
  * is an IDictionary<Selection, ICollection<Spell>>
  */
-public class Inventory : ICollection<Spell> {
+public class Inventory : ICollection<SpellFactory> {
     public const int CAPACITY = 11;
 
-    public List<Spell> Items { get; private set; }
+    public List<SpellFactory> Items { get; private set; }
     public int Count { get { return CalculateCount(); } }
     public bool IsFull { get { return Count >= CAPACITY; } }
     public bool IsReadOnly { get { return false; } }
     public bool IsEnabled { get; set; }
 
     public Inventory() {
-        Items = new List<Spell>();
+        Items = new List<SpellFactory>();
         IsEnabled = true;
     }
 
@@ -33,7 +33,7 @@ public class Inventory : ICollection<Spell> {
     }
 
     public bool Remove(Item item) {
-        Spell res = Find(item);
+        SpellFactory res = Find(item);
         if (res == null) {
             return false;
         } else {
@@ -53,7 +53,7 @@ public class Inventory : ICollection<Spell> {
         return count;
     }
 
-    Spell Find(Spell item) {
+    SpellFactory Find(SpellFactory item) {
         return Items.Find(x => x.Equals(item));
     }
 
@@ -82,27 +82,27 @@ public class Inventory : ICollection<Spell> {
      * This is way better than the alternative.
      */
 
-    public void Add(Spell spell) {
+    public void Add(SpellFactory spell) {
         Util.Assert(spell is Item);
         Add((Item)spell);
     }
 
-    public bool Contains(Spell spell) {
+    public bool Contains(SpellFactory spell) {
         Util.Assert(spell is Item);
         return Contains((Item)spell);
     }
 
-    public void CopyTo(Spell[] array, int arrayIndex) {
+    public void CopyTo(SpellFactory[] array, int arrayIndex) {
         Util.Assert(array is Item[]);
-        CopyTo((Spell[])array, arrayIndex);
+        CopyTo((SpellFactory[])array, arrayIndex);
     }
 
-    public bool Remove(Spell spell) {
+    public bool Remove(SpellFactory spell) {
         Util.Assert(spell is Item);
         return Remove((Item)spell);
     }
 
-    public IEnumerator<Spell> GetEnumerator() {
+    public IEnumerator<SpellFactory> GetEnumerator() {
         return Items.GetEnumerator();
     }
 }

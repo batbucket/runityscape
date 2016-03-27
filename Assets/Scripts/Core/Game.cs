@@ -51,14 +51,13 @@ public class Game : MonoBehaviour {
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
     public const string DERP = "What";
-
+    //ASRIEL   DREEMURR
     // Use this for initialization
     void Start() {
         _instance = this;
         boolFlags = new Dictionary<string, bool>();
         PagePresenter = new PagePresenter();
         MainCharacter = new Amit();
-        GameObject canvas = GameObject.Find("Canvas");
 
         Page p3 = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
         Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve(), new Steve() });

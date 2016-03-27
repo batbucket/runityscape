@@ -4,15 +4,16 @@ public class Process : IProcess {
 
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public Action Action { get; private set; }
+    public Action Action { get; set; }
 
-    public Process(string name, string description, Action action) {
+    public Process(string name = "",
+                   string description = "",
+                   Action action = null) {
+
         this.Name = name;
         this.Description = description;
-        this.Action = action;
+        this.Action = action ?? (() => { });
     }
-
-    public Process() : this("", "", null) { }
 
     public void Play() {
         Action.Invoke();

@@ -3,26 +3,14 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public abstract class Item : Spell {
+public abstract class Item : SpellFactory {
     public const SpellType SPELL_TYPE = SpellType.BOOST;
-    public const SpellTarget TARGET_TYPE = SpellTarget.SINGLE_ALLY;
+    public const TargetType TARGET_TYPE = TargetType.SINGLE_ALLY;
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
 
     public Item(string name, string description, int count = 1) : base(name, description, SPELL_TYPE, TARGET_TYPE, COSTS) {
         Util.Assert(count > 0);
         this.Count = count;
-    }
-
-    public override double CalculateHitRate(Character caster, Character target) {
-        return 1;
-    }
-
-    public override int CalculateAmount(Character caster, Character target) {
-        return Amount = 0;
-    }
-
-    protected override void OnFailure(Character caster, Character target) {
-        throw new NotImplementedException();
     }
 
     public override string GetNameAndInfo(Character caster) {
@@ -39,31 +27,37 @@ public abstract class Item : Spell {
         caster.Selections[Selection.ITEM].Remove(this);
     }
 
-    public override bool Equals(object obj) {
-        // If parameter is null return false.
-        if (obj == null) {
-            return false;
-        }
-
-        // If parameter cannot be cast to Page return false.
-        Item i = obj as Item;
-        if ((object)i == null) {
-            return false;
-        }
-
-        // Return true if the fields match:
-        return this.Name.Equals(i.Name);
+    public override bool IsCritical(Spell effect) {
+        return false;
     }
 
-    public override int GetHashCode() {
-        return Name.GetHashCode();
+    public override bool IsHit(Spell effect) {
+        return true;
     }
 
-    protected override void OnHit(Character caster, Character target) {
-        OnSuccess(caster, target);
+    protected override void OnOnce(Character caster) { }
+
+    protected override void OnCritical(Spell effect) {
+        throw new NotImplementedException();
     }
 
-    protected override void OnMiss(Character caster, Character target) {
+    protected override void OnMiss(Spell effect) {
+        throw new NotImplementedException();
+    }
+
+    protected override void OnMissCalculation(Spell effect) {
+        throw new NotImplementedException();
+    }
+
+    protected override void OnCriticalCalculation(Spell effect) {
+        throw new NotImplementedException();
+    }
+
+    protected override string OnMissText(Spell spell) {
+        throw new NotImplementedException();
+    }
+
+    protected override string OnCriticalText(Spell spell) {
         throw new NotImplementedException();
     }
 }

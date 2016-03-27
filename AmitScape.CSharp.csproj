@@ -121,8 +121,8 @@
     <Compile Include="Assets\Scripts\Model\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellFactory.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellResult.cs" />
-    <Compile Include="Assets\Scripts\Model\Spells\SpellTarget.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellType.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\TargetType.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\Attribute.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\AttributeType.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\PairedInt.cs" />
@@ -132,7 +132,6 @@
     <Compile Include="Assets\Scripts\Model\TextBox\TextEffect.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Scripts\Interface\TextBox\tempy.txt" />
     <None Include="Assets\Scripts\Misc\InputSimulator.XML" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

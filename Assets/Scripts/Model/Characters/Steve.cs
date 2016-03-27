@@ -40,10 +40,6 @@ public class Steve : ComputerCharacter {
         throw new NotImplementedException();
     }
 
-    public override void React(Spell spell) {
-
-    }
-
     protected override void DecideSpell() {
         throw new NotImplementedException();
     }
