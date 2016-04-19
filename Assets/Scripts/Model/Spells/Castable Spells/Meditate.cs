@@ -15,15 +15,7 @@ public class Meditate : SpellFactory {
 
     public Meditate() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
 
-    protected override void OnHitCalculation(Spell spell) {
-        spell.Resources[ResourceType.HEALTH].False = spell.Caster.GetResourceCount(ResourceType.HEALTH, true) / 2;
-    }
-
-    protected override string OnHitText(Spell spell) {
-        return string.Format(CAST_TEXT, spell.Caster.Name, spell.Resources[ResourceType.HEALTH]);
-    }
-
-    protected override void OnHitSFX(Spell spell) {
-        Game.Instance.Sound.Play("Sounds/Zip_0");
+    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
+        throw new NotImplementedException();
     }
 }

@@ -15,6 +15,11 @@ public class PairedInt {
         Set(initial);
     }
 
+    public PairedInt(int trueValue, int falseValue) {
+        _true = trueValue;
+        _false = falseValue;
+    }
+
     public bool IsMaxed() {
         return False >= True;
     }

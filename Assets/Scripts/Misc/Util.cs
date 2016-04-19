@@ -14,6 +14,10 @@ using System.ComponentModel;
  */
 public static class Util {
 
+    public static Sprite LoadIcon(string name) {
+        return Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name));
+    }
+
     public static bool Chance(double probability) {
         return UnityEngine.Random.Range(0f, 1f) < probability;
     }
@@ -217,12 +221,5 @@ public static class Util {
             return attributes[0].Description;
         else
             return value.ToString();
-    }
-
-    public static void CopyPosition(GameObject source, GameObject destination) {
-        Vector3 destinationPos = destination.GetComponent<RectTransform>().localPosition;
-        destinationPos.x = -destinationPos.x; //For some reason it's backwards
-        destinationPos.y = -destinationPos.y;
-        source.GetComponent<RectTransform>().localPosition = destinationPos;
     }
 }

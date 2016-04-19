@@ -17,6 +17,18 @@ public abstract class PortraitView : MonoBehaviour {
         public int falseValue;
     }
 
+    public struct BuffParams {
+        public int id;
+        public Sprite sprite;
+        public Color color;
+        public string duration;
+    }
+    public struct BuffBundle {
+        public BuffView buffView;
+        public bool isSet;
+    }
+    public IDictionary<int, BuffBundle> BuffViews { get; private set; }
+
     [SerializeField]
     Text _portraitName; //Name of the character
     public string PortraitName { get { return _portraitName.text; } set { _portraitName.text = value; } }
@@ -33,11 +45,17 @@ public abstract class PortraitView : MonoBehaviour {
     [SerializeField]
     GameObject _hitsplatsHolder;
     public GameObject Hitsplats { get { return _hitsplatsHolder; } }
+    [SerializeField]
+    GameObject _buffsHolder;
+    public GameObject BuffsHolder { get { return _buffsHolder; } }
+    [SerializeField]
+    GameObject _buffPrefab;
 
     // Use this for initialization
     void Awake() {
         ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
         AttributeViews = new SortedDictionary<AttributeType, AttributeBundle>();
+        BuffViews = new SortedDictionary<int, BuffBundle>();
     }
 
     protected void SetResources(ResourceType[] resourceTypes, GameObject resourcePrefab) {
@@ -93,4 +111,37 @@ public abstract class PortraitView : MonoBehaviour {
      * depending on whether it's left or right on the screen
      */
     abstract public void SetResources(ResourceType[] resourceTypes);
+
+    public void SetBuffs(BuffParams[] buffParams) {
+        //Set all existing isSets to false.
+        List<int> keys = new List<int>(BuffViews.Keys); //Can't modify Dictionary in foreach loop
+        foreach (int key in keys) {
+            BuffViews[key] = new BuffBundle { buffView = BuffViews[key].buffView, isSet = false };
+        }
+
+        //Add or possibly replace new BuffViews.
+        foreach (BuffParams b in buffParams) {
+            BuffView bv;
+            if (!BuffViews.ContainsKey(b.id)) {
+                GameObject g = Instantiate(_buffPrefab);
+                Util.Parent(g, BuffsHolder);
+                bv = g.GetComponent<BuffView>();
+            } else {
+                bv = BuffViews[b.id].buffView;
+            }
+            bv.Icon.sprite = b.sprite;
+            bv.Icon.color = b.color;
+            bv.Text = b.duration;
+            BuffViews[b.id] = new BuffBundle { buffView = bv, isSet = true };
+        }
+
+        //Check if any isSets are false, if so, remove them and Destroy their gameObjects.
+        //We can use same keys list as before since newly added keys cannot be false
+        foreach (int key in keys) {
+            if (!BuffViews[key].isSet) {
+                Destroy(BuffViews[key].buffView.gameObject);
+                BuffViews.Remove(key);
+            }
+        }
+    }
 }

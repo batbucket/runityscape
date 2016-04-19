@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public class Lobster : ConsumableItem {
 
@@ -12,15 +13,7 @@ public class Lobster : ConsumableItem {
 
     public Lobster(int count = 1) : base(NAME, DESCRIPTION, count) { }
 
-    protected override void OnHitCalculation(Spell spell) {
-        spell.Resources[ResourceType.HEALTH].False = HEAL_AMOUNT;
-    }
-
-    public override void Undo(Spell spell) {
-        spell.Caster.Selections[Selection.ITEM].Add(new Lobster());
-    }
-
-    protected override string OnHitText(Spell spell) {
-        return string.Format(USE_TEXT, spell.Caster, HEAL_AMOUNT);
+    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
+        throw new NotImplementedException();
     }
 }

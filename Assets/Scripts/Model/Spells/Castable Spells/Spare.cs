@@ -14,11 +14,7 @@ public class Spare : SpellFactory {
 
     public Spare() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
 
-    protected override void OnHitCalculation(Spell spell) {
+    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
         throw new NotImplementedException();
-    }
-
-    protected override string OnHitText(Spell spell) {
-        return string.Format(SUCCESS_CAST, spell.Caster, spell.Target);
     }
 }

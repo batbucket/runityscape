@@ -40,7 +40,7 @@ public sealed class AttributeType : IComparable {
                                                                        "DEX",
                                                                        "Increases Charge generation and evasion rate.",
                                                                        "Increases critical hit rate and accuracy.",
-                                                                       "Increases Action Point regeneration.",
+                                                                       "Increases Charge generation.",
                                                                        Color.green,
                                                                        2);
 

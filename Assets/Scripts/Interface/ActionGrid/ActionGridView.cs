@@ -42,12 +42,12 @@ public sealed class ActionGridView : MonoBehaviour {
      * Set what a Button does
      * and its description (text on the button)
      */
-    public void SetButtonAttribute(IProcess process, int r, int c) {
+    public void SetButtonAttribute(Process process, int r, int c) {
         Util.Assert(CoordinatesInBounds(r, c));
         actionButtons[CalculateOffset(r, c)].Process = process;
     }
 
-    public void SetButtonAttribute(IProcess process, int index) {
+    public void SetButtonAttribute(Process process, int index) {
         Util.Assert(0 <= index && index < ROWS * COLS);
         actionButtons[index].Process = process;
     }

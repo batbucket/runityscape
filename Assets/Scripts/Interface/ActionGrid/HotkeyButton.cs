@@ -13,8 +13,8 @@ public class HotkeyButton : MonoBehaviour {
 
     public KeyCode Hotkey { get; set; } //The keyboard key that interacts with this button
 
-    private IProcess _process;
-    public IProcess Process { get { return _process; } set { SetProcess(value); } } //Process this button holds
+    private Process _process;
+    public Process Process { get { return _process; } set { SetProcess(value); } } //Process this button holds
 
     bool activated;
     bool mouseInBounds;
@@ -50,7 +50,7 @@ public class HotkeyButton : MonoBehaviour {
         text.text = "";
     }
 
-    void SetProcess(IProcess process) {
+    void SetProcess(Process process) {
         if (process == null || process.Action == null) {
             ClearProcess();
         } else {

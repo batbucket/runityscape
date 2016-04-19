@@ -26,38 +26,4 @@ public abstract class Item : SpellFactory {
         base.ConsumeResources(caster);
         caster.Selections[Selection.ITEM].Remove(this);
     }
-
-    public override bool IsCritical(Spell effect) {
-        return false;
-    }
-
-    public override bool IsHit(Spell effect) {
-        return true;
-    }
-
-    protected override void OnOnce(Character caster) { }
-
-    protected override void OnCritical(Spell effect) {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnMiss(Spell effect) {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnMissCalculation(Spell effect) {
-        throw new NotImplementedException();
-    }
-
-    protected override void OnCriticalCalculation(Spell effect) {
-        throw new NotImplementedException();
-    }
-
-    protected override string OnMissText(Spell spell) {
-        throw new NotImplementedException();
-    }
-
-    protected override string OnCriticalText(Spell spell) {
-        throw new NotImplementedException();
-    }
 }

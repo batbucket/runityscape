@@ -21,6 +21,7 @@ public abstract class Character : Entity {
     public IDictionary<Selection, ICollection<SpellFactory>> Selections { get; private set; }
 
     public Stack<SpellFactory> SpellStack { get; private set; }
+    public IList<Spell> Buffs { get; private set; }
     public IList<Spell> RecievedSpells { get; private set; }
     public IList<Spell> CastSpells { get; private set; }
 
@@ -62,6 +63,7 @@ public abstract class Character : Entity {
         Resources[ResourceType.CHARGE].ClearFalse();
 
         SpellStack = new Stack<SpellFactory>();
+        Buffs = new List<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
     }
@@ -185,6 +187,15 @@ public abstract class Character : Entity {
         }
         CalculateSpeed(Game.Instance.MainCharacter);
 
+        for (int i = 0; i < Buffs.Count; i++) {
+            Spell s = Buffs[i];
+            if (s.IsFinished) {
+                Buffs.RemoveAt(i);
+            } else {
+                s.Tick();
+            }
+        }
+
         Act();
     }
 
@@ -212,6 +223,10 @@ public abstract class Character : Entity {
         CalculateSpeed(this, mainCharacter);
     }
 
+    public void AddToBuffs(Spell spell) {
+        Buffs.Add(spell);
+    }
+
     static void CalculateSpeed(Character current, Character main) {
         int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false));
         current.Resources[ResourceType.CHARGE].True = chargeNeededToAct;
@@ -220,7 +235,13 @@ public abstract class Character : Entity {
     protected abstract void OnFullCharge();
     protected abstract void WhileFullCharge();
     public abstract void Act();
-    public virtual void React(Spell spell) { spell.Process.Play(); }
+    public virtual void React(Spell spell) {
+        Result result = spell.Current.DetermineResult();
+        Calculation calc = result.Calculation();
+        result.Effect(calc);
+        result.SFX(calc);
+        Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(result.CreateText(calc), Color.white, TextEffect.FADE_IN));
+    }
     public virtual void Witness(Spell spell) { }
     public abstract void OnStart();
     public abstract bool IsDefeated();

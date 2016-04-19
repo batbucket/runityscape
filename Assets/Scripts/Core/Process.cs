@@ -1,10 +1,10 @@
 ﻿using System;
 
-public class Process : IProcess {
+public class Process {
 
-    public string Name { get; private set; }
-    public string Description { get; private set; }
-    public Action Action { get; set; }
+    public virtual string Name { get; private set; }
+    public virtual string Description { get; private set; }
+    public virtual Action Action { get; set; }
 
     public Process(string name = "",
                    string description = "",

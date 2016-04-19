@@ -60,7 +60,7 @@ public class EffectsManager : MonoBehaviour {
         if (pastInitial.Equals(initial) || i.color.Equals(END_COLOR)) {
             i.color = initial;
         } else { //Add in initial when a different color
-            i.color += initial;
+            i.color = (i.color / 2) + (initial / 2);
         }
         float time = 0;
 

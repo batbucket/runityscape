@@ -90,20 +90,13 @@ public class BattlePage : Page {
         Tooltip = string.Format(currentSelectionNode.Value.Question, character.Name, targetedSpell == null ? "" : targetedSpell.Name);
         if (currentSelectionNode.Value == Selection.FAIM) {
             ShowSwitchButton(character);
-            ActionGrid[ATTACK_INDEX] = new Process(character.Attack.Name, character.Attack.Description,
-                () => {
-                    Tooltip = "";
-                    DetermineTargetSelection(character.Attack, character);
-                });
-            ActionGrid[LAST_SPELL_INDEX] = character.SpellStack.Count == 0 ? new Process() : new Process(character.SpellStack.Peek().GetNameAndInfo(character), character.SpellStack.Peek().Description,
-                () => {
-                    Tooltip = "";
-                    DetermineTargetSelection(character.SpellStack.Peek(), character);
-                });
-            int index = FAIM_OFFSET;
+            ActionGrid[ATTACK_INDEX] = CreateSpellProcess(character.Attack, character);
+            ActionGrid[LAST_SPELL_INDEX] = character.SpellStack.Count == 0 ? new Process() : CreateSpellProcess(character.SpellStack.Peek(), character);
+
+            int offsetIndex = FAIM_OFFSET;
             foreach (KeyValuePair<Selection, ICollection<SpellFactory>> myPair in character.Selections) {
                 KeyValuePair<Selection, ICollection<SpellFactory>> pair = myPair;
-                ActionGrid[index++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name),
+                ActionGrid[offsetIndex++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name),
                     () => {
                         Tooltip = "";
                         currentSelectionNode = currentSelectionNode.FindChild(pair.Key);
@@ -121,32 +114,41 @@ public class BattlePage : Page {
         }
     }
 
+    //Creates a Process that brings up the "Who to target with this Spell" display
+    Process CreateSpellProcess(SpellFactory spell, Character caster) {
+        return new Process(spell.GetNameAndInfo(caster), spell.Description,
+            () => {
+                Tooltip = "";
+                DetermineTargetSelection(spell, caster);
+            });
+    }
+
     void ShowSpellsAsList(ICollection<SpellFactory> spells, Character caster) {
         int index = 0;
         foreach (SpellFactory mySpell in spells) {
             SpellFactory spell = mySpell;
-            ActionGrid[index++] = new Process(spell.GetNameAndInfo(caster), spell.Description,
-                () => {
-                    Tooltip = "";
-                    DetermineTargetSelection(spell, caster);
-                });
+            ActionGrid[index++] = CreateSpellProcess(spell, caster);
         }
+    }
+
+    //Creates a process that targets a specific Character with a spell
+    Process CreateTargetProcess(SpellFactory spell, Character caster, Character target) {
+        return new Process(
+            spell.IsCastable(caster, target) ? target.Name : Util.Color(target.Name, Color.red),
+            string.Format(currentSelectionNode.Value.Declare, caster.Name, target.Name, spell.Name),
+            () => {
+                Tooltip = "";
+                spell.TryCast(caster, target);
+                SpellCastEnd(spell, caster);
+            }
+        );
     }
 
     void ShowTargetsAsList(IList<Character> targets, Character caster) {
         int index = 0;
         foreach (Character myTarget in targets) {
             Character target = myTarget;
-            ActionGrid[index++] =
-                new Process(
-                    targetedSpell.IsCastable(caster, target) ? target.Name : Util.Color(target.Name, Color.red),
-                    string.Format(currentSelectionNode.Value.Declare, caster.Name, target.Name, targetedSpell.Name),
-                    () => {
-                        Tooltip = "";
-                        targetedSpell.TryCast(caster, target);
-                        SpellCastEnd(targetedSpell, caster);
-                    }
-                );
+            ActionGrid[index++] = CreateTargetProcess(targetedSpell, caster, target);
         }
     }
 
@@ -243,9 +245,7 @@ public class BattlePage : Page {
     }
 
     void DetermineSingleTargetQuickCast(SpellFactory spell, Character caster, IList<Character> targets) {
-        if (targets.Count == 0) {
-            // Do nothing
-        } else if (targets.Count == 1) {
+        if (spell.IsSingleTargetQuickCastable(caster, targets)) {
             spell.TryCast(caster, targets[0]);
             SpellCastEnd(spell, caster);
         } else {

@@ -9,8 +9,6 @@ using UnityEngine;
  */
 public abstract class SpellFactory {
 
-    readonly IDictionary<SpellResult.Type, SpellResult> results;
-
     string _name;
     public string Name { get { return _name; } }
 
@@ -58,29 +56,6 @@ public abstract class SpellFactory {
         this._targetType = targetType;
         this.costs = costs;
         this.IsEnabled = true;
-
-        this.results = new SortedDictionary<SpellResult.Type, SpellResult>() {
-            { SpellResult.Type.MISS, new SpellResult() {        isState         = (s) => !IsHit(s),
-                                                                calculateEffect = OnMissCalculation,
-                                                                doEffect        = OnMiss,
-                                                                createText      = OnMissText,
-                                                                undoEffect      = OnMissUndo,
-                                                                sfx             = OnMissSFX } },
-
-            { SpellResult.Type.CRITICAL, new SpellResult() {    isState         = IsCritical,
-                                                                calculateEffect = OnCriticalCalculation,
-                                                                doEffect        = OnCritical,
-                                                                createText      = OnCriticalText,
-                                                                undoEffect      = OnCriticalUndo,
-                                                                sfx             = OnCriticalSFX } },
-
-            { SpellResult.Type.HIT, new SpellResult() {         isState         = (s) => true,
-                                                                calculateEffect = OnHitCalculation,
-                                                                doEffect        = OnHit,
-                                                                createText      = OnHitText,
-                                                                undoEffect      = OnHitUndo,
-                                                                sfx             = OnHitSFX } },
-        };
     }
 
     public virtual string GetNameAndInfo(Character caster) {
@@ -129,40 +104,24 @@ public abstract class SpellFactory {
             ConsumeResources(caster);
             OnOnce(caster);
             foreach (Character target in targets) {
-                Cast(caster, target, new Spell(this, caster, target));
+                Cast(caster, target);
             }
         }
     }
 
-    void Cast(Character caster, Character target, Spell spell) {
-        SpellResult res = DetermineResult(spell);
-
-        res.calculateEffect(spell);
-        spell.CastText = res.createText(spell);
-        spell.Process.Action = () => {
-            res.doEffect(spell);
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(res.createText(spell), Color.white, TextEffect.FADE_IN));
-            res.sfx(spell);
-        };
-        spell.Process.UndoAction = () => res.undoEffect(spell);
+    public const string PRIMARY = "Primary_Component";
+    void Cast(Character caster, Character target) {
+        Spell spell = new Spell(this, caster, target);
+        IDictionary<string, SpellComponent> components = CreateComponents(caster, target, spell);
+        spell.Components = components;
 
         caster.CastSpells.Add(spell);
         target.RecievedSpells.Add(spell);
-        target.React(spell);
-
-        foreach (Character c in Game.Instance.PagePresenter.Page.GetAll()) {
-            c.Witness(spell);
-        }
+        target.AddToBuffs(spell);
     }
 
-    SpellResult DetermineResult(Spell spell) {
-        foreach (KeyValuePair<SpellResult.Type, SpellResult> pair in results) {
-            if (pair.Value.isState(spell)) {
-                spell.Result = pair.Key;
-                return pair.Value;
-            }
-        }
-        throw new UnityException("Iterated through results Dictionary and no isState evaluated to true!");
+    public bool IsSingleTargetQuickCastable(Character caster, IList<Character> targets) {
+        return targets.Count == 1;
     }
 
     public override bool Equals(object obj) {
@@ -185,29 +144,6 @@ public abstract class SpellFactory {
         return Name.GetHashCode();
     }
 
-    //Helper methods to make SpellFactories easier to make
-
-    public virtual bool IsHit(Spell spell) { return true; }
-    protected abstract void OnHitCalculation(Spell spell);
-    protected virtual void OnHit(Spell spell) { spell.NumericPlay(); }
-    protected abstract string OnHitText(Spell spell);
-    protected virtual void OnHitUndo(Spell spell) { Undo(spell); }
-    protected virtual void OnHitSFX(Spell spell) { }
-
-    protected virtual void OnMissCalculation(Spell spell) { }
-    protected virtual void OnMiss(Spell spell) { spell.NumericPlay(); }
-    protected virtual string OnMissText(Spell spell) { return "MISS TEXT NOT IMPLEMENTED."; }
-    protected virtual void OnMissUndo(Spell spell) { Undo(spell); }
-    protected virtual void OnMissSFX(Spell spell) { }
-
-    public virtual bool IsCritical(Spell spell) { return false; }
-    protected virtual void OnCriticalCalculation(Spell spell) { }
-    protected virtual void OnCritical(Spell spell) { spell.NumericPlay(); }
-    protected virtual string OnCriticalText(Spell spell) { return "CRITICAL TEXT NOT IMPLEMENTED."; }
-    protected virtual void OnCriticalUndo(Spell spell) { Undo(spell); }
-    protected virtual void OnCriticalSFX(Spell spell) { }
-
     protected virtual void OnOnce(Character caster) { }
-
-    public virtual void Undo(Spell spell) { spell.NumericUndo(); }
+    protected abstract IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell);
 }

@@ -2,58 +2,47 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Spell {
     public SpellFactory SpellFactory { get; set; }
-    public string CastText { get; set; }
-    public SpellResult.Type Result { get; set; }
     public Character Caster { get; set; }
     public Character Target { get; set; }
-    public IDictionary<AttributeType, PairedInt> Attributes { get; set; }
-    public IDictionary<ResourceType, PairedInt> Resources { get; set; }
-    public IUndoableProcess Process { get; set; }
+
+    public SpellComponent Current { get { return Components[CurrentString]; } }
+    string _currentString;
+    public string CurrentString { get { return _currentString; } set { _currentString = value; } }
+
+    IDictionary<string, SpellComponent> _components;
+    public IDictionary<string, SpellComponent> Components {
+        get { return _components; }
+        set {
+            foreach (KeyValuePair<string, SpellComponent> pair in value) {
+                pair.Value.Spell = this;
+            }
+            _components = value;
+        }
+    }
+
+    static int count;
+    int _id;
+    public int Id { get { return _id; } }
+
+    bool _isFinished;
+    public bool IsFinished { get { return _isFinished; } set { _isFinished = value; } }
 
     public Spell(SpellFactory spellFactory, Character caster, Character target) {
-        SpellFactory = spellFactory;
-        CastText = "";
-        Result = SpellResult.Type.UNDEFINED;
-        Caster = caster;
-        Target = target;
+        this.SpellFactory = spellFactory;
+        this.Caster = caster;
+        this.Target = target;
+        this._currentString = SpellFactory.PRIMARY;
 
-        Attributes = new SortedDictionary<AttributeType, PairedInt>();
-        foreach (AttributeType val in AttributeType.ALL) {
-            Attributes.Add(val, new PairedInt(0));
-        }
-
-        Resources = new SortedDictionary<ResourceType, PairedInt>();
-        foreach (ResourceType val in ResourceType.ALL) {
-            Resources.Add(val, new PairedInt(0));
-        }
-
-
-        Process = new UndoableProcess(spellFactory.Name, spellFactory.Description);
+        _id = count++;
     }
 
-    public void Invoke() {
-        Process.Play();
-    }
-
-    public void NumericPlay() {
-        MultipliedAction(1);
-    }
-
-    public void NumericUndo() {
-        MultipliedAction(-1);
-    }
-
-    void MultipliedAction(int multiplier) {
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in this.Attributes) {
-            this.Target.AddToAttribute(pair.Key, true, multiplier * pair.Value.True, true);
-            this.Target.AddToAttribute(pair.Key, false, multiplier * pair.Value.False, true);
-        }
-        foreach (KeyValuePair<ResourceType, PairedInt> pair in this.Resources) {
-            this.Target.AddToResource(pair.Key, true, multiplier * pair.Value.True, true);
-            this.Target.AddToResource(pair.Key, false, multiplier * pair.Value.False, true);
+    public void Tick() {
+        if (!Current.IsTimedOut) {
+            Current.Tick();
         }
     }
 }
