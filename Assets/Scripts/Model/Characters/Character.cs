@@ -7,7 +7,7 @@ using System.Collections.Generic;
  * Attributes and Resources
  */
 public abstract class Character : Entity {
-    public const int CHARGE_PER_TICK = 1;
+    public const int CHARGE_MULTIPLIER = 35;
     public const int CHARGE_CAP_RATIO = 60;
 
     public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
@@ -33,7 +33,7 @@ public abstract class Character : Entity {
     public bool IsControllable { get { return this.IsDisplayable && this.IsCharged(); } }
     public ChargeStatus ChargeStatus { get; private set; }
 
-    public PortraitView Portrait { get; set; }
+    public Equipment Equipment { get; private set; }
 
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
         this.Name = name;
@@ -66,6 +66,7 @@ public abstract class Character : Entity {
         Buffs = new List<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
+        Equipment = new Equipment();
     }
 
     public void AddAttribute(AttributeType attributeType, int initial) {
@@ -88,34 +89,34 @@ public abstract class Character : Entity {
         return resource != null;
     }
 
-    public bool AddToAttribute(AttributeType attributeType, bool value, int amount, bool hasMinisplat = false) {
+    public bool AddToAttribute(AttributeType attributeType, bool value, float amount, bool hasMinisplat = false) {
         if (HasAttribute(attributeType) && amount != 0) {
             if (hasMinisplat) {
-                Game.Instance.Effect.CreateMinisplat(AttributeType.SplatDisplay(amount), AttributeType.DetermineColor(attributeType, amount), this);
-                Game.Instance.Effect.FadeEffect(this, AttributeType.DetermineColor(attributeType, amount));
+                Game.Instance.Effect.CreateMinisplat(AttributeType.SplatDisplay((int)amount), AttributeType.DetermineColor(attributeType, (int)amount), this);
+                Game.Instance.Effect.FadeEffect(this, AttributeType.DetermineColor(attributeType, (int)amount));
             }
             Attribute attribute = Attributes[attributeType];
             if (!value) {
                 attribute.False += amount;
             } else {
-                attribute.True += amount;
+                attribute.True += (int)amount;
             }
             return true;
         }
         return false;
     }
 
-    public bool AddToResource(ResourceType resourceType, bool value, int amount, bool hasHitsplat = false) {
+    public bool AddToResource(ResourceType resourceType, bool value, float amount, bool hasHitsplat = false) {
         if (HasResource(resourceType)) {
             if (hasHitsplat && amount != 0) {
-                Game.Instance.Effect.CreateHitsplat(resourceType.SplatFunction(amount, GetResourceCount(resourceType, true)), ResourceType.DetermineColor(resourceType, amount), this);
-                Game.Instance.Effect.FadeEffect(this, ResourceType.DetermineColor(resourceType, amount));
+                Game.Instance.Effect.CreateHitsplat(resourceType.SplatFunction((int)amount, GetResourceCount(resourceType, true)), ResourceType.DetermineColor(resourceType, (int)amount), this);
+                Game.Instance.Effect.FadeEffect(this, ResourceType.DetermineColor(resourceType, (int)amount));
             }
             Resource resource = Resources[resourceType];
             if (!value) {
                 resource.False += amount;
             } else {
-                resource.True += amount;
+                resource.True += (int)amount;
             }
             return true;
         }
@@ -128,7 +129,7 @@ public abstract class Character : Entity {
             Resources.TryGetValue(resourceType, out resource);
             Debug.Assert(resource != null);
             if (!value) {
-                return resource.False;
+                return (int)resource.False;
             } else {
                 return resource.True;
             }
@@ -143,7 +144,7 @@ public abstract class Character : Entity {
             Attributes.TryGetValue(attributeType, out attribute);
             Debug.Assert(attribute != null);
             if (!value) {
-                return attribute.False;
+                return (int)attribute.False;
             } else {
                 return attribute.True;
             }
@@ -154,7 +155,7 @@ public abstract class Character : Entity {
 
     public void Charge() {
         Debug.Assert(HasResource(ResourceType.CHARGE));
-        Resources[ResourceType.CHARGE].False += CHARGE_PER_TICK;
+        AddToResource(ResourceType.CHARGE, false, Time.deltaTime * CHARGE_MULTIPLIER);
     }
 
     public void Discharge() {

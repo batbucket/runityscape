@@ -39,10 +39,7 @@ public class Attack : SpellFactory {
                             }
                         );
                     },
-                    perform: (c, t, calc) => {
-                        Result.NumericPerform(c, t, calc);
-                        spell.CurrentString = "Bleed";
-                    },
+                    //Implicit perform
                     createText: (c, t, calc) => {
                         return string.Format(SUCCESS_TEXT, c.Name, t.Name, -calc.TargetResources[ResourceType.HEALTH].False);
                     },
@@ -52,7 +49,7 @@ public class Attack : SpellFactory {
                 ),
                 critical: new Result(
                         isState: (c, t) => {
-                            return Util.Chance(0); //Todo change this to .2
+                            return Util.Chance(.2);
                         },
                         calculation: (c, t) => {
                             return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() {
@@ -80,45 +77,14 @@ public class Attack : SpellFactory {
                         );
                     },
                     perform: (c, t, calc) => {
-                        //it's literally nothing
+                        c.AddToResource(ResourceType.CHARGE, false, c.GetResourceCount(ResourceType.CHARGE, true) / 2, true);
                     },
                     createText: (c, t, calc) => {
                         return string.Format(MISS_TEXT, c.Name, t.Name);
                     },
                     sfx: (c, t, calc) => {
-                        Game.Instance.Sound.Play("Sounds/Attack_0");
-                        Game.Instance.Effect.CreateBloodsplat(t);
+                        Game.Instance.Effect.CreateHitsplat("MISS", Color.grey, t);
                     })
-            )
-            },
-
-            { "Bleed", new TimedSpellComponent(
-                sprite: Util.LoadIcon("Icon.1_06"),
-                isGood: false,
-                hit: new Result(
-                    isState: (c, t) => {
-                        return true;
-                    },
-                    calculation: (c, t) => {
-                        return new Calculation(
-                            targetResources: new Dictionary<ResourceType, PairedInt>() {
-                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), t.GetAttributeCount(AttributeType.STRENGTH, false))) }
-                            }
-                        );
-                    },
-                    //Implicit perform that just does Character + Calculation values is created here
-                    createText: (c, t, calc) => {
-                        return string.Format("* {1} bled for {2} damage!", c.Name, t.Name, -calc.TargetResources[ResourceType.HEALTH].False);
-                    },
-                    sfx: (c, t, calc) => {
-                        Game.Instance.Sound.Play("Sounds/Attack_0");
-                    }
-                ),
-                critical: null,
-                miss: null,
-                timePerTick: .5f,
-                totalDuration: 5.0f,
-                onEnd: () => { spell.IsFinished = true; }
             )
             }
         };

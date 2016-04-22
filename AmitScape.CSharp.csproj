@@ -107,6 +107,7 @@
     <Compile Include="Assets\Scripts\Model\Items\Inventory.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Lobster.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\Scimitar.cs" />
     <Compile Include="Assets\Scripts\Model\Page\BattlePage.cs" />
     <Compile Include="Assets\Scripts\Model\Page\Page.cs" />
     <Compile Include="Assets\Scripts\Model\Page\PagePresenter.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class AttributeType : IComparable {
@@ -18,7 +19,10 @@ public sealed class AttributeType : IComparable {
         this.ShortDescription = shortDescription;
         this.Color = color;
         this.order = order;
+        ALL.Add(this);
     }
+
+    public static readonly IList<AttributeType> ALL = new List<AttributeType>();
 
     public static readonly AttributeType STRENGTH = new AttributeType("Strength",
                                                                       "STR",
@@ -51,8 +55,6 @@ public sealed class AttributeType : IComparable {
                                                                       "Increases health.",
                                                                       Color.yellow,
                                                                       3);
-
-    public static readonly AttributeType[] ALL = new AttributeType[] { STRENGTH, INTELLIGENCE, DEXTERITY, VITALITY };
 
     public int CompareTo(object obj) {
         AttributeType other = (AttributeType)obj;

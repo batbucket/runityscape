@@ -53,7 +53,10 @@ public sealed class ResourceType : IComparable {
         this._order = order;
         this._displayFunction = BAR_DISPLAY_FUNCTIONS[displayMode];
         this._splatFunction = SPLAT_FUNCTIONS[displayMode];
+        ALL.Add(this);
     }
+
+    public static readonly IList<ResourceType> ALL = new List<ResourceType>();
 
     public static readonly ResourceType HEALTH = new ResourceType("Health",
                                                                   "LIFE",
@@ -66,7 +69,7 @@ public sealed class ResourceType : IComparable {
                                                                  "SKIL",
                                                                  "Replenished on Basic Attacks,",
                                                                  Color.yellow,
-                                                                 Color.black,
+                                                                 new Color(51.0f / 255, 51.0f / 255, 0),
                                                                  1);
 
     public static readonly ResourceType MANA = new ResourceType("Mana",
@@ -83,8 +86,6 @@ public sealed class ResourceType : IComparable {
                                                                   Color.black,
                                                                   999,
                                                                   DisplayMode.PERCENTAGE);
-
-    public static readonly ResourceType[] ALL = new ResourceType[] { HEALTH, SKILL, MANA, CHARGE };
 
     public int CompareTo(object obj) {
         ResourceType other = (ResourceType)obj;

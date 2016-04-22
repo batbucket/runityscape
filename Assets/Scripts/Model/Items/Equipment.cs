@@ -13,15 +13,17 @@ public class Equipment {
         equipment.Add(EquipmentType.TRINKET, null);
     }
 
-    public Equipment Equip(EquipmentType equipmentType, EquippableItem equippableItem) {
-        return null;
+    public EquippableItem Equip(EquipmentType equipmentType, EquippableItem equippableItem) {
+        EquippableItem current = equipment[equipmentType];
+        equipment[equipmentType] = equippableItem;
+        return current;
     }
 
-    public Equipment Unequip(EquipmentType equipmentType) {
-        return null;
+    public EquippableItem Unequip(EquipmentType equipmentType) {
+        return Equip(equipmentType, null);
     }
 
     public bool HasEquipment(EquipmentType equipmentType) {
-        return false;
+        return equipment.ContainsKey(equipmentType);
     }
 }

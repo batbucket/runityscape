@@ -21,9 +21,4 @@ public abstract class Item : SpellFactory {
     public override bool IsCastable(Character caster, Character target = null) {
         return base.IsCastable(caster, target) && Count > 0;
     }
-
-    protected override void ConsumeResources(Character caster) {
-        base.ConsumeResources(caster);
-        caster.Selections[Selection.ITEM].Remove(this);
-    }
 }

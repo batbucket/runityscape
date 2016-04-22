@@ -5,10 +5,10 @@ using System.Collections;
  * This class represents a pair of integer values
  */
 public class PairedInt {
-    int _false;
+    float _false;
     int _true;
 
-    public virtual int False { get { return _false; } set { _false = value; } }
+    public virtual float False { get { return _false; } set { _false = value; } }
     public virtual int True { get { return _true; } set { _true = value; } }
 
     public PairedInt(int initial) {

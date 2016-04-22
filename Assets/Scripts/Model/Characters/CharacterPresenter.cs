@@ -11,14 +11,12 @@ public class CharacterPresenter {
         this.PortraitView = portraitView;
     }
 
-
-
     public void Tick() {
         //Attempt to set ResourceViews
         PortraitView.SetResources(Character.Resources.Keys.ToArray());
 
         foreach (KeyValuePair<AttributeType, Attribute> pair in Character.Attributes) {
-            PortraitView.SetAttributes(pair.Key, new PortraitView.AttributeBundle { falseValue = pair.Value.False, trueValue = pair.Value.True });
+            PortraitView.SetAttributes(pair.Key, new PortraitView.AttributeBundle { falseValue = (int)pair.Value.False, trueValue = pair.Value.True });
         }
 
         //Update ResourceViews' values
@@ -27,7 +25,7 @@ public class CharacterPresenter {
             ResourceType resType = pair.Key;
             Resource res = pair.Value;
 
-            rv.Text = resType.DisplayFunction(res.False, res.True);
+            rv.Text = resType.DisplayFunction((int)res.False, res.True);
             rv.SetBarScale(res.False, res.True);
         }
 

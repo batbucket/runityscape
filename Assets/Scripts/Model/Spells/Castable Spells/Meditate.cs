@@ -16,6 +16,26 @@ public class Meditate : SpellFactory {
     public Meditate() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
 
     protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
-        throw new NotImplementedException();
+        return new Dictionary<string, SpellComponent>() {
+            { SpellFactory.PRIMARY, new SpellComponent(
+                hit: new Result(
+                    isState: (c, t) => {
+                        return true;
+                    },
+                    calculation: (c, t) => {
+                        return new Calculation(
+                            targetResources: new Dictionary<ResourceType, PairedInt>() {
+                                { ResourceType.HEALTH, new PairedInt(0, t.GetResourceCount(ResourceType.HEALTH, true) / 2) }
+                            });
+                    },
+                    //Implicit perform
+                    createText: (c, t, calc) => {
+                        return string.Format(CAST_TEXT, t, calc.TargetResources[ResourceType.HEALTH].False);
+                    },
+                    sfx: (c, t, calc) => {
+                        Game.Instance.Sound.Play("Sounds/Zip_0");
+                    }
+                )) }
+        };
     }
 }

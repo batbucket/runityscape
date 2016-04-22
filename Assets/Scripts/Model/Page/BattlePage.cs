@@ -91,7 +91,7 @@ public class BattlePage : Page {
         if (currentSelectionNode.Value == Selection.FAIM) {
             ShowSwitchButton(character);
             ActionGrid[ATTACK_INDEX] = CreateSpellProcess(character.Attack, character);
-            ActionGrid[LAST_SPELL_INDEX] = character.SpellStack.Count == 0 ? new Process() : CreateSpellProcess(character.SpellStack.Peek(), character);
+            ActionGrid[LAST_SPELL_INDEX] = character.SpellStack.Count == 0 ? null : CreateSpellProcess(character.SpellStack.Peek(), character);
 
             int offsetIndex = FAIM_OFFSET;
             foreach (KeyValuePair<Selection, ICollection<SpellFactory>> myPair in character.Selections) {
