@@ -10,7 +10,7 @@ public class SoundView : MonoBehaviour {
     }
 
     public void Play(string resourceLocation) {
-        Util.Assert(Resources.Load(resourceLocation) != null);
+        Util.Assert(Resources.Load(resourceLocation) != null, "Sound location does not exist!");
         if (!Sound.ContainsKey(resourceLocation)) {
             AudioSource audioSource = gameObject.AddComponent<AudioSource>();
             audioSource.clip = Resources.Load<AudioClip>(resourceLocation);
@@ -20,7 +20,7 @@ public class SoundView : MonoBehaviour {
     }
 
     public void Play(AudioSource sound) {
-        Util.Assert(sound != null);
+        Util.Assert(sound != null, "Sound does not exist!");
         if (!Sound.ContainsKey(sound.name)) {
             Sound.Add(sound.name, sound);
         }

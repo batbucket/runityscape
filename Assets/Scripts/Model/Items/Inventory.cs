@@ -23,6 +23,7 @@ public class Inventory : ICollection<SpellFactory> {
     }
 
     public void Add(Item item) {
+        Util.Assert(item.Count > 0, "Attempted to add an item with Count of 0!");
         if (IsFull) {
             return;
         } else if (!Items.Contains(item)) {

@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 public abstract class Item : SpellFactory {
     public const SpellType SPELL_TYPE = SpellType.BOOST;

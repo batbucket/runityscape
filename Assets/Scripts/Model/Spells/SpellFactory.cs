@@ -130,7 +130,7 @@ public abstract class SpellFactory {
             return false;
         }
 
-        // If parameter cannot be cast to Page return false.
+        // If parameter cannot be cast to SpellFactory return false.
         SpellFactory s = obj as SpellFactory;
         if ((object)s == null) {
             return false;

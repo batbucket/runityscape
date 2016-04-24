@@ -36,11 +36,11 @@ public class BattlePage : Page {
          * Set up the Selection Tree.
          * Tree looks like this:
          *               FAIM   -> TARGET (quickcast)
-         * SPELLS    ACTS   ITEMS    MERCIES    SWITCH
-         * TARGET   TARGET  TARGET   TARGET     TARGET
+         * SPELLS    ACTS   ITEMS    MERCIES  EQUIPS  SWITCH
+         * TARGET   TARGET  TARGET   TARGET           TARGET
          */
         selectionTree = new TreeNode<Selection>(Selection.FAIM); //Topmost node
-        selectionTree.AddChildren(Selection.SPELL, Selection.ACT, Selection.ITEM, Selection.MERCY, Selection.SWITCH, Selection.TARGET);
+        selectionTree.AddChildren(Selection.SPELL, Selection.ACT, Selection.ITEM, Selection.MERCY, Selection.EQUIP, Selection.SWITCH, Selection.TARGET);
         foreach (TreeNode<Selection> st in selectionTree.Children) {
             st.AddChild(Selection.TARGET);
         }
@@ -93,10 +93,9 @@ public class BattlePage : Page {
             ActionGrid[ATTACK_INDEX] = CreateSpellProcess(character.Attack, character);
             ActionGrid[LAST_SPELL_INDEX] = character.SpellStack.Count == 0 ? null : CreateSpellProcess(character.SpellStack.Peek(), character);
 
-            int offsetIndex = FAIM_OFFSET;
             foreach (KeyValuePair<Selection, ICollection<SpellFactory>> myPair in character.Selections) {
                 KeyValuePair<Selection, ICollection<SpellFactory>> pair = myPair;
-                ActionGrid[offsetIndex++] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name),
+                ActionGrid[pair.Key.Index] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name),
                     () => {
                         Tooltip = "";
                         currentSelectionNode = currentSelectionNode.FindChild(pair.Key);
@@ -108,6 +107,8 @@ public class BattlePage : Page {
                 ShowTargetsAsList(targets, character);
             } else if (currentSelectionNode.Value == Selection.SWITCH) {
                 ShowSwitchMenu(character);
+            } else if (currentSelectionNode.Value == Selection.EQUIP) {
+                ShowEquipment(character);
             } else {
                 ShowSpellsAsList(character.Selections[currentSelectionNode.Value], character);
             }
@@ -121,6 +122,29 @@ public class BattlePage : Page {
                 Tooltip = "";
                 DetermineTargetSelection(spell, caster);
             });
+    }
+
+    //Show worn equipment first that can be unequipped, then Items in inventory that can be equipped
+    void ShowEquipment(Character current) {
+        int index = 0;
+        foreach (EquippableItem myEquip in current.Selections[Selection.EQUIP]) {
+            EquippableItem equip = myEquip;
+            ActionGrid[index++] = CreateUnequipProcess(current, equip, current.Selections[Selection.EQUIP]);
+        }
+        foreach (Item i in current.Selections[Selection.ITEM]) {
+            if (i is EquippableItem) {
+                EquippableItem e = (EquippableItem)i;
+                ActionGrid[index++] = CreateSpellProcess(e, current);
+            }
+        }
+    }
+
+    Process CreateUnequipProcess(Character caster, EquippableItem item, ICollection<SpellFactory> equipment) {
+        return new Process(Util.Color(item.Name, Color.yellow), item.Description, () => {
+            Tooltip = "";
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("* {0} unequipped their {1}.", caster.Name, item.Name), Color.white, TextEffect.FADE_IN));
+            equipment.Remove(item);
+        });
     }
 
     void ShowSpellsAsList(ICollection<SpellFactory> spells, Character caster) {
@@ -205,7 +229,7 @@ public class BattlePage : Page {
         if (spell != caster.Attack) {
             caster.SpellStack.Push(spell);
         }
-        if (spell is Item && ((Item)spell).Count <= 0) {
+        if (spell is Item && ((Item)spell).Count <= 1) {
             while (caster.SpellStack.Count > 0 && spell.Equals(caster.SpellStack.Peek())) {
                 caster.SpellStack.Pop();
             }

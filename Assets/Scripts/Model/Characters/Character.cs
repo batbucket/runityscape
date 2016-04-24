@@ -33,8 +33,6 @@ public abstract class Character : Entity {
     public bool IsControllable { get { return this.IsDisplayable && this.IsCharged(); } }
     public ChargeStatus ChargeStatus { get; private set; }
 
-    public Equipment Equipment { get; private set; }
-
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
         this.Name = name;
         this.Level = level;
@@ -51,11 +49,13 @@ public abstract class Character : Entity {
         };
 
         this.Attack = new Attack();
+        Inventory inventory = new Inventory();
         this.Selections = new SortedDictionary<Selection, ICollection<SpellFactory>>() {
             { Selection.SPELL, new HashSet<SpellFactory>() },
             { Selection.ACT, new HashSet<SpellFactory>() },
-            { Selection.ITEM, new Inventory() },
+            { Selection.ITEM, inventory },
             { Selection.MERCY, new HashSet<SpellFactory>() },
+            { Selection.EQUIP, new Equipment(inventory) }
         };
         this.TextColor = textColor;
         this.IsTargetable = true;
@@ -66,7 +66,7 @@ public abstract class Character : Entity {
         Buffs = new List<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
-        Equipment = new Equipment();
+
     }
 
     public void AddAttribute(AttributeType attributeType, int initial) {
