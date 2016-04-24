@@ -12,45 +12,19 @@ public class Steve : ComputerCharacter {
     public override void Act() {
     }
 
-    public override bool IsDefeated() {
-        throw new NotImplementedException();
-    }
-
-    public override bool IsKilled() {
-        return Resources[ResourceType.HEALTH].False <= 0;
-    }
-
-    public override void OnBattleEnd() {
-        throw new NotImplementedException();
-    }
-
-    public override void OnDefeat() {
-        throw new NotImplementedException();
-    }
-
-    public override void OnKill() {
-        throw new NotImplementedException();
-    }
-
-    public override void OnStart() {
-        throw new NotImplementedException();
-    }
-
-    public override void OnVictory() {
-        throw new NotImplementedException();
-    }
-
     protected override void DecideSpell() {
-        throw new NotImplementedException();
-    }
-
-    protected override void WhileFullCharge() {
         if (Game.Instance.PagePresenter.Page.GetEnemies(Side).Count > 0 && (delay -= Time.deltaTime) <= 0) {
             if ((new Meditate()).IsCastable(this) && Resources[ResourceType.HEALTH].GetRatio() < .5f) {
                 QuickCast(new Meditate(), this);
             } else {
                 QuickCast(new Attack(), Game.Instance.PagePresenter.Page.GetRandomEnemy(Side));
             }
+        }
+    }
+
+    protected override void WhileFullCharge() {
+        if (!IsDefeated()) {
+            DecideSpell();
         }
     }
 }

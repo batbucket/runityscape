@@ -112,6 +112,7 @@
     <Compile Include="Assets\Scripts\Model\Page\Page.cs" />
     <Compile Include="Assets\Scripts\Model\Page\PagePresenter.cs" />
     <Compile Include="Assets\Scripts\Model\Page\ReadPage.cs" />
+    <Compile Include="Assets\Scripts\Model\Perks\Perk.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Calculation.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />

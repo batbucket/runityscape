@@ -52,6 +52,8 @@ public class BattlePage : Page {
         foreach (Character c in GetAll()) {
             c.Tick();
             if (c.IsControllable) { characterQueue.Enqueue(c); }
+            if (c.IsDefeated()) { c.OnDefeat(); }
+            if (c.IsKilled()) { c.OnKill(); }
         }
 
         /**

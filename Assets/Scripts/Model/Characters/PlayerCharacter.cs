@@ -1,8 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 public abstract class PlayerCharacter : Character {
     public const bool DISPLAYABLE = true;
@@ -11,19 +7,11 @@ public abstract class PlayerCharacter : Character {
         : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor, true) {
     }
 
-    public override void Act() { }
+    public override void Act() {
 
-    public override bool IsDefeated() { throw new NotImplementedException(); }
+    }
 
-    public override void OnBattleEnd() { throw new NotImplementedException(); }
+    protected override void WhileFullCharge() {
 
-    public override void OnDefeat() { throw new NotImplementedException(); }
-
-    public override void OnStart() { throw new NotImplementedException(); }
-
-    public override void OnVictory() { throw new NotImplementedException(); }
-
-    protected override void OnFullCharge() { }
-
-    protected override void WhileFullCharge() { }
+    }
 }

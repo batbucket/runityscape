@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System;
+using System.Linq;
 using System.Collections.Generic;
 
 /**
@@ -32,6 +32,9 @@ public abstract class Character : Entity {
     public bool IsDisplayable { get; set; }
     public bool IsControllable { get { return this.IsDisplayable && this.IsCharged(); } }
     public ChargeStatus ChargeStatus { get; private set; }
+
+    public ICollection<Perk.CharacterPerk> CharacterPerks { get; private set; }
+    public ICollection<Perk.SpellPerk> SpellPerks { get; private set; }
 
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
         this.Name = name;
@@ -67,6 +70,8 @@ public abstract class Character : Entity {
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
 
+        CharacterPerks = new List<Perk.CharacterPerk>();
+        SpellPerks = new List<Perk.SpellPerk>();
     }
 
     public void AddAttribute(AttributeType attributeType, int initial) {
@@ -169,6 +174,7 @@ public abstract class Character : Entity {
     }
 
     public virtual void Tick() {
+        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.TICK);
         Charge();
         if (!Resources[ResourceType.CHARGE].IsMaxed()) {
             ChargeStatus = ChargeStatus.NOT_CHARGED;
@@ -228,27 +234,90 @@ public abstract class Character : Entity {
         Buffs.Add(spell);
     }
 
+    public void InvokeCharacterPerks(Perk.CharacterPerk.PerkType type, Character other = null) {
+        foreach (Perk.CharacterPerk p in CharacterPerks) {
+            if (p.Type == type) {
+                p.Invoke(this, other);
+            }
+        }
+    }
+
+    public void InvokeSpellPerks(Perk.SpellPerk.PerkType type, Spell s, Result r, Calculation c) {
+        foreach (Perk.SpellPerk p in SpellPerks) {
+            if (p.Type == type) {
+                p.Invoke(s, r, c);
+            }
+        }
+    }
+
     static void CalculateSpeed(Character current, Character main) {
         int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false));
         current.Resources[ResourceType.CHARGE].True = chargeNeededToAct;
     }
 
-    protected abstract void OnFullCharge();
+    protected virtual void OnFullCharge() {
+        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.ON_FULL_CHARGE);
+    }
+
     protected abstract void WhileFullCharge();
+
     public abstract void Act();
+
     public virtual void React(Spell spell) {
         Result result = spell.Current.DetermineResult();
         Calculation calc = result.Calculation();
+        InvokeSpellPerks(Perk.SpellPerk.PerkType.RECIEVE_SPELL, spell, result, calc);
         result.Effect(calc);
         result.SFX(calc);
         Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(result.CreateText(calc), Color.white, TextEffect.FADE_IN));
     }
     public virtual void Witness(Spell spell) { }
-    public abstract void OnStart();
-    public abstract bool IsDefeated();
-    public abstract void OnDefeat();
-    public virtual bool IsKilled() { return GetResourceCount(ResourceType.HEALTH, false) <= 0; }
-    public virtual void OnKill() { Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this); }
-    public abstract void OnVictory();
-    public abstract void OnBattleEnd();
+
+    public virtual void OnBattleStart() {
+        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.BATTLE_START);
+    }
+
+    public virtual bool IsDefeated() { return isDefeated || GetResourceCount(ResourceType.HEALTH, false) <= 0; }
+
+    bool isDefeated = false;
+    public virtual void OnDefeat() {
+        if (isDefeated) {
+            return;
+        }
+        Character defeater = RecievedSpells[RecievedSpells.Count - 1].Caster;
+        Game.Instance.TextBoxHolder.AddTextBoxView(
+            new TextBox(
+                string.Format("* {0} was defeated by {1}.", Name, defeater.Name),
+                Color.white, TextEffect.FADE_IN));
+        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.SELF_DEFEAT);
+        AddToResource(ResourceType.HEALTH, false, 1, false);
+        isDefeated = true;
+    }
+
+    public virtual bool IsKilled() {
+        return isKilled || (isDefeated && GetResourceCount(ResourceType.HEALTH, false) <= 0);
+    }
+
+    bool isKilled = false;
+    public virtual void OnKill() {
+        if (isKilled) {
+            return;
+        }
+        Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
+        Game.Instance.TextBoxHolder.AddTextBoxView(
+            new TextBox(
+                string.Format("* {0} was slain by {1}.", Name, killer.Name),
+                Color.white, TextEffect.FADE_IN));
+        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.SELF_KILLED, killer);
+        Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this);
+        isKilled = true;
+    }
+
+    public virtual void OnVictory() {
+        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.BATTLE_VICTORY);
+    }
+
+    public virtual void OnBattleEnd() {
+        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.BATTLE_END);
+    }
 }

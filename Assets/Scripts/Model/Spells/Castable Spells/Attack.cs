@@ -35,7 +35,7 @@ public class Attack : SpellFactory {
                     calculation: (c, t) => {
                         return new Calculation(
                             targetResources: new Dictionary<ResourceType, PairedInt>() {
-                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), t.GetAttributeCount(AttributeType.STRENGTH, false))) }
+                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false))) }
                             }
                         );
                     },
