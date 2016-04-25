@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public abstract class PortraitHolderView : MonoBehaviour {
+
     public struct PortraitBundle {
         public PortraitView portraitView;
         public bool isSet;

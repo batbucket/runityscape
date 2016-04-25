@@ -14,6 +14,10 @@ using System.ComponentModel;
  */
 public static class Util {
 
+    public static Sprite TextureToSprite(Texture2D texture) {
+        return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+    }
+
     public static Sprite LoadIcon(string name) {
         return Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name));
     }
@@ -192,7 +196,7 @@ public static class Util {
     }
 
     public static Sprite GetSprite(string name) {
-        return Resources.Load<Sprite>(name);
+        return Resources.Load<Sprite>(string.Format("{0}/{1}", "Images", name));
     }
 
     /**

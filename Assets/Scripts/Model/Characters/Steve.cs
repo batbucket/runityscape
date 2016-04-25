@@ -23,8 +23,6 @@ public class Steve : ComputerCharacter {
     }
 
     protected override void WhileFullCharge() {
-        if (!IsDefeated()) {
-            DecideSpell();
-        }
+        DecideSpell();
     }
 }

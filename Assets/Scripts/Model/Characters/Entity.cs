@@ -7,17 +7,9 @@ using UnityEngine.UI;
  * Naturally, the most basic one just has a sprite representation
  */
 public abstract class Entity {
-    Sprite sprite;
+    public Sprite Sprite { get; set; }
 
     public Entity(Sprite sprite) {
-        this.sprite = sprite;
-    }
-
-    public void SetSprite(Sprite sprite) {
-        this.sprite = sprite;
-    }
-
-    public Sprite GetSprite() {
-        return sprite;
+        this.Sprite = sprite;
     }
 }

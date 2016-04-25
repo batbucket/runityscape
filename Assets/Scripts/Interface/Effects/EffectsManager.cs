@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class EffectsManager : MonoBehaviour {
 
@@ -12,15 +13,47 @@ public class EffectsManager : MonoBehaviour {
     [SerializeField]
     GameObject bloodsplatPrefab;
 
-    IDictionary<Character, FadeBundle> ColoredFades; //Keep track of Coroutines called on Characters so we can overwrite effects
-
     struct FadeBundle {
         public Coroutine coroutine;
         public Color pastInitial;
     }
+    IDictionary<Character, FadeBundle> ColoredFades; //Keep track of Coroutines called on Characters so we can overwrite effects
+
+    struct ShakeBundle {
+        public Coroutine coroutine;
+        public Vector2 originalPos;
+    }
+    IDictionary<Character, ShakeBundle> Shakes;
 
     void Start() {
         ColoredFades = new Dictionary<Character, FadeBundle>();
+        Shakes = new Dictionary<Character, ShakeBundle>();
+    }
+
+    const float BASE_INTENSITY = 50;
+    const float DURATION = 1.0f;
+    public void ShakeEffect(Character target, float startIntensityPercentage, float endIntensityPercentage = 0) {
+        if (Shakes.ContainsKey(target) && Shakes[target].coroutine != null) {
+            StopCoroutine(Shakes[target].coroutine); //Stop coroutine
+            target.Presenter.PortraitView.IconTransform.localPosition = Shakes[target].originalPos;
+        }
+        Vector2 originalPos = target.Presenter.PortraitView.IconTransform.localPosition;
+        Shakes[target] = new ShakeBundle() { coroutine = StartCoroutine(ShakeIcon(target, startIntensityPercentage * BASE_INTENSITY, endIntensityPercentage * BASE_INTENSITY)), originalPos = originalPos };
+    }
+
+    IEnumerator ShakeIcon(Character target, float startIntensity, float endIntensity = 0) {
+        RectTransform icon = target.Presenter.PortraitView.IconTransform;
+        Vector2 originalPos = icon.localPosition;
+        float currentIntensity = startIntensity;
+        while (target.Presenter.PortraitView != null && currentIntensity > 0) {
+            Mathf.SmoothDamp(currentIntensity, endIntensity, ref currentIntensity, DURATION);
+            icon.localPosition = new Vector2(originalPos.x + Mathf.Sin(UnityEngine.Random.Range(0, 5)) * currentIntensity, originalPos.y + Mathf.Sin(UnityEngine.Random.Range(0, 5)) * currentIntensity);
+            yield return null;
+        }
+        if (target.Presenter.PortraitView != null) {
+            icon.localPosition = originalPos;
+        }
+        yield break;
     }
 
     public void CreateMinisplat(string text, Color color, Character target) {
@@ -52,6 +85,12 @@ public class EffectsManager : MonoBehaviour {
         ColoredFades[target] = new FadeBundle() { coroutine = StartCoroutine(ColoredFade(target, color, !ColoredFades.ContainsKey(target) ? Color.white : ColoredFades[target].pastInitial)), pastInitial = color };
     }
 
+    public void StopFadeEffect(Character target) {
+        if (ColoredFades.ContainsKey(target) && ColoredFades[target].coroutine != null) {
+            StopCoroutine(ColoredFades[target].coroutine); //Stop coroutine
+        }
+    }
+
     static readonly Color END_COLOR = Color.white;
     IEnumerator ColoredFade(Character target, Color initial, Color pastInitial, float fadeDuration = 2.0f) {
         Image i = target.Presenter.PortraitView.Image;
@@ -73,6 +112,40 @@ public class EffectsManager : MonoBehaviour {
             yield return null;
         }
         ColoredFades.Remove(target);
+        yield break;
+    }
+
+    public void FadeAwayEffect(Character target, float duration, Action endCall = null) {
+        StartCoroutine(FadeAway(target, duration, endCall));
+    }
+
+    IEnumerator FadeAway(Character target, float duration, Action endCall = null) {
+        PortraitView pv = target.Presenter.PortraitView;
+        Image[] images = pv.gameObject.GetComponentsInChildren<Image>();
+        Text[] texts = pv.gameObject.GetComponentsInChildren<Text>();
+        float timer = duration;
+
+        target.Sprite = null;
+
+        foreach (Image i in images) {
+            i.color = Color.white;
+        }
+        foreach (Text t in texts) {
+            t.color = Color.white;
+        }
+        while ((timer -= Time.deltaTime) > 0) {
+            float alpha = 1.0f - (duration - timer) / duration;
+            foreach (Image i in images) {
+                Util.SetImageAlpha(i, alpha);
+            }
+            foreach (Text t in texts) {
+                Util.SetTextAlpha(t, alpha);
+            }
+            yield return null;
+        }
+        if (endCall != null) {
+            endCall.Invoke();
+        }
         yield break;
     }
 }

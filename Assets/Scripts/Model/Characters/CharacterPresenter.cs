@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UI;
 
 public class CharacterPresenter {
     public Character Character { get; private set; }
@@ -31,5 +30,7 @@ public class CharacterPresenter {
 
         //Set buffs and durations
         PortraitView.SetBuffs(Character.Buffs.Select(s => s.Current).Where(b => b is TimedSpellComponent).Cast<TimedSpellComponent>().Select(b => new PortraitView.BuffParams { id = b.Spell.Id, sprite = b.Sprite, color = b.Color, duration = b.DurationText }).ToArray());
+
+        this.PortraitView.Sprite = Character.Sprite;
     }
 }

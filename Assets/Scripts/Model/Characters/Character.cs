@@ -116,6 +116,9 @@ public abstract class Character : Entity {
             if (hasHitsplat && amount != 0) {
                 Game.Instance.Effect.CreateHitsplat(resourceType.SplatFunction((int)amount, GetResourceCount(resourceType, true)), ResourceType.DetermineColor(resourceType, (int)amount), this);
                 Game.Instance.Effect.FadeEffect(this, ResourceType.DetermineColor(resourceType, (int)amount));
+                if (resourceType == ResourceType.HEALTH && !value && amount < 0) { //Shake on negative health additions, intensity based on hit
+                    Game.Instance.Effect.ShakeEffect(this, -amount / GetResourceCount(ResourceType.HEALTH, true));
+                }
             }
             Resource resource = Resources[resourceType];
             if (!value) {
@@ -159,24 +162,21 @@ public abstract class Character : Entity {
     }
 
     public void Charge() {
-        Debug.Assert(HasResource(ResourceType.CHARGE));
         AddToResource(ResourceType.CHARGE, false, Time.deltaTime * CHARGE_MULTIPLIER);
     }
 
     public void Discharge() {
-        Debug.Assert(HasResource(ResourceType.CHARGE));
-        Resources[ResourceType.CHARGE].ClearFalse();
+        AddToResource(ResourceType.CHARGE, false, -GetResourceCount(ResourceType.CHARGE, true));
     }
 
     public bool IsCharged() {
-        Debug.Assert(HasResource(ResourceType.CHARGE));
-        return Resources[ResourceType.CHARGE].IsMaxed();
+        return HasResource(ResourceType.CHARGE) && (GetResourceCount(ResourceType.CHARGE, false) == GetResourceCount(ResourceType.CHARGE, true));
     }
 
     public virtual void Tick() {
         InvokeCharacterPerks(Perk.CharacterPerk.PerkType.TICK);
         Charge();
-        if (!Resources[ResourceType.CHARGE].IsMaxed()) {
+        if (!IsCharged()) {
             ChargeStatus = ChargeStatus.NOT_CHARGED;
         } else {
             switch (ChargeStatus) {
@@ -252,7 +252,8 @@ public abstract class Character : Entity {
 
     static void CalculateSpeed(Character current, Character main) {
         int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false));
-        current.Resources[ResourceType.CHARGE].True = chargeNeededToAct;
+        current.AddToResource(ResourceType.CHARGE, true, -current.GetResourceCount(ResourceType.CHARGE, true));
+        current.AddToResource(ResourceType.CHARGE, true, chargeNeededToAct);
     }
 
     protected virtual void OnFullCharge() {
@@ -289,9 +290,19 @@ public abstract class Character : Entity {
             new TextBox(
                 string.Format("* {0} was defeated by {1}.", Name, defeater.Name),
                 Color.white, TextEffect.FADE_IN));
+        Game.Instance.Effect.ShakeEffect(this, 1f, 0.05f);
+        Game.Instance.Effect.StopFadeEffect(this);
+        Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
+        Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
         InvokeCharacterPerks(Perk.CharacterPerk.PerkType.SELF_DEFEAT);
         AddToResource(ResourceType.HEALTH, false, 1, false);
         isDefeated = true;
+
+        foreach (ResourceType res in ResourceType.ALL) {
+            if (res != ResourceType.HEALTH) {
+                Resources.Remove(res);
+            }
+        }
     }
 
     public virtual bool IsKilled() {
@@ -309,7 +320,8 @@ public abstract class Character : Entity {
                 string.Format("* {0} was slain by {1}.", Name, killer.Name),
                 Color.white, TextEffect.FADE_IN));
         InvokeCharacterPerks(Perk.CharacterPerk.PerkType.SELF_KILLED, killer);
-        Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this);
+        Game.Instance.Sound.Play("Sounds/Boom_6");
+        Game.Instance.Effect.FadeAwayEffect(this, 0.5f, () => Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this));
         isKilled = true;
     }
 

@@ -32,6 +32,7 @@ public abstract class PortraitView : MonoBehaviour {
     [SerializeField]
     Text _portraitName; //Name of the character
     public string PortraitName { get { return _portraitName.text; } set { _portraitName.text = value; } }
+    public Text PortraitText { get { return _portraitName; } }
 
     [SerializeField]
     Image _iconImage; //Image of the character
@@ -50,6 +51,9 @@ public abstract class PortraitView : MonoBehaviour {
     public GameObject BuffsHolder { get { return _buffsHolder; } }
     [SerializeField]
     GameObject _buffPrefab;
+    [SerializeField]
+    RectTransform _iconTransform;
+    public RectTransform IconTransform { get { return _iconTransform; } }
 
     // Use this for initialization
     void Awake() {
@@ -73,13 +77,14 @@ public abstract class PortraitView : MonoBehaviour {
                 GameObject g = (GameObject)GameObject.Instantiate(resourcePrefab);
                 Util.Parent(g, ResourcesHolder);
                 rv = g.GetComponent<ResourceView>();
+                rv.ResourceName = resourceType.ShortName;
+                rv.ResourceColor = resourceType.FillColor;
+                rv.OverColor = resourceType.FillColor;
+                rv.UnderColor = resourceType.EmptyColor;
             } else {
                 rv = ResourceViews[resourceType].resourceView;
             }
-            rv.ResourceName = resourceType.ShortName;
-            rv.ResourceColor = resourceType.FillColor;
-            rv.OverColor = resourceType.FillColor;
-            rv.UnderColor = resourceType.EmptyColor;
+
             ResourceViews[resourceType] = new ResourceBundle { resourceView = rv, isSet = true };
         }
 

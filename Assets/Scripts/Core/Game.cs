@@ -67,7 +67,9 @@ public class Game : MonoBehaviour {
                     () => TextBoxHolder.AddTextBoxView(
                         new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
                 new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(p2)),
-                new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { PagePresenter.SetPage(p3); Sound.Play("Music/CleytonRX"); })
+                new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { PagePresenter.SetPage(p3); Sound.Play("Music/99P"); }),
+                new Process("Shake yourself", "Literally U******E", () => { Effect.ShakeEffect(MainCharacter, .05f); }),
+                new Process("Fade yourself", "Literally U******E x2", () => { Effect.FadeAwayEffect(MainCharacter, 1.0f); })
             });
         PagePresenter.SetPage(p1);
     }

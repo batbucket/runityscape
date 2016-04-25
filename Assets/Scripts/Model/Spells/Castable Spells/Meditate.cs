@@ -25,7 +25,7 @@ public class Meditate : SpellFactory {
                     calculation: (c, t) => {
                         return new Calculation(
                             targetResources: new Dictionary<ResourceType, PairedInt>() {
-                                { ResourceType.HEALTH, new PairedInt(0, t.GetResourceCount(ResourceType.HEALTH, true) / 2) }
+                                { ResourceType.HEALTH, new PairedInt(0, 3) } //TODO change back to t.GetResourceCount(ResourceType.HEALTH, true) / 2
                             });
                     },
                     //Implicit perform

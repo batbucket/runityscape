@@ -53,7 +53,7 @@ public class Attack : SpellFactory {
                         },
                         calculation: (c, t) => {
                             return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() {
-                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false) * 2, t.GetAttributeCount(AttributeType.STRENGTH, false) * 2)) }
+                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false) * 2, c.GetAttributeCount(AttributeType.STRENGTH, false) * 2)) }
                             }
                             );
                         },
@@ -77,7 +77,7 @@ public class Attack : SpellFactory {
                         );
                     },
                     perform: (c, t, calc) => {
-                        c.AddToResource(ResourceType.CHARGE, false, c.GetResourceCount(ResourceType.CHARGE, true) / 2, true);
+
                     },
                     createText: (c, t, calc) => {
                         return string.Format(MISS_TEXT, c.Name, t.Name);
