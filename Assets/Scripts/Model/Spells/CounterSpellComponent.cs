@@ -5,10 +5,8 @@ using System;
 public class CounterSpellComponent : TimedSpellComponent {
     CounterSpellFactory counterSpellFactory;
     Func<Spell, Result, Calculation, bool> isReact;
-    Func<Spell, Result, bool> isReactOverride;
 
     Func<Spell, Result, Calculation, bool> isWitness;
-    Func<Spell, Result, bool> isWitnessOverride;
 
     bool isUnlimited;
     int count;
@@ -16,12 +14,10 @@ public class CounterSpellComponent : TimedSpellComponent {
 
     public bool HasCount { get { return count > 0; } }
 
-    void Init(CounterSpellFactory counterSpellFactory, Func<Spell, Result, Calculation, bool> isReact, Func<Spell, Result, bool> isReactOverride, Func<Spell, Result, Calculation, bool> isWitness, Func<Spell, Result, bool> isWitnessOverride) {
+    void Init(CounterSpellFactory counterSpellFactory, Func<Spell, Result, Calculation, bool> isReact, Func<Spell, Result, Calculation, bool> isWitness) {
         this.counterSpellFactory = counterSpellFactory;
         this.isReact = isReact;
-        this.isReactOverride = isReactOverride ?? ((s, r) => { return false; });
         this.isWitness = isWitness ?? ((s, r, c) => { return false; });
-        this.isWitnessOverride = isWitnessOverride ?? ((s, r) => { return false; });
     }
 
     public CounterSpellComponent(Sprite sprite,
@@ -33,11 +29,9 @@ public class CounterSpellComponent : TimedSpellComponent {
                                Result hit,
                                Result critical = null,
                                Result miss = null,
-                               Func<Spell, Result, Calculation, bool> isWitness = null,
-                               Func<Spell, Result, bool> isReactOverride = null,
-                               Func<Spell, Result, bool> isWitnessOverride = null)
+                               Func<Spell, Result, Calculation, bool> isWitness = null)
                                : base(sprite, isGood, totalDuration, hit, critical, miss) {
-        Init(counterSpellFactory, isReact, isReactOverride, isWitness, isWitnessOverride);
+        Init(counterSpellFactory, isReact, isWitness);
         this.count = count;
         this.counter = count;
         this.isUnlimited = false;
@@ -53,7 +47,7 @@ public class CounterSpellComponent : TimedSpellComponent {
                            Result miss = null,
                            Func<Spell, Result, Calculation, bool> isWitness = null)
                            : base(sprite, isGood, totalDuration, hit, critical, miss) {
-        Init(counterSpellFactory, isReact, isReactOverride, isWitness, isWitnessOverride);
+        Init(counterSpellFactory, isReact, isWitness);
         this.isUnlimited = true;
     }
 
@@ -67,7 +61,7 @@ public class CounterSpellComponent : TimedSpellComponent {
                            Result miss = null,
                            Func<Spell, Result, Calculation, bool> isWitness = null)
                            : base(sprite, isGood, hit, critical, miss) {
-        Init(counterSpellFactory, isReact, isReactOverride, isWitness, isWitnessOverride);
+        Init(counterSpellFactory, isReact, isWitness);
         this.count = count;
         this.counter = count;
         this.isUnlimited = false;
@@ -82,12 +76,8 @@ public class CounterSpellComponent : TimedSpellComponent {
                        Result miss = null,
                        Func<Spell, Result, Calculation, bool> isWitness = null)
                        : base(sprite, isGood, hit, critical, miss) {
-        Init(counterSpellFactory, isReact, isReactOverride, isWitness, isWitnessOverride);
+        Init(counterSpellFactory, isReact, isWitness);
         this.isUnlimited = true;
-    }
-
-    public override bool IsReactOverride(Spell spell, Result res) {
-        return isReactOverride(spell, res);
     }
 
     public override void React(Spell s, Result r, Calculation c) {
@@ -95,10 +85,6 @@ public class CounterSpellComponent : TimedSpellComponent {
             counterSpellFactory.TryCast(Spell.Caster, s.Caster, new SpellDetails(s, r, c));
             counter--;
         }
-    }
-
-    public override bool IsWitnessOverride(Spell spell, Result res) {
-        return isWitnessOverride(spell, res);
     }
 
     public override void Witness(Spell s, Result r, Calculation c) {

@@ -237,16 +237,12 @@ public abstract class Character : Entity, IReactable {
 
     public abstract void Act();
 
-    public bool IsReactOverride(Spell s, Result r) { return false; }
     public virtual void React(Spell spell, Result res, Calculation calc) {
 
     }
 
-    public bool IsWitnessOverride(Spell s, Result r) { return false; }
     public virtual void Witness(Spell spell, Result res, Calculation calc) {
-        foreach (Spell s in Buffs) {
-            s.Current.Witness(spell, res, calc);
-        }
+
     }
 
     public virtual void OnBattleStart() {

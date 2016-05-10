@@ -45,31 +45,27 @@ public class SpellComponent : IReactable {
         Calculation calc = result.Calculation();
 
         Spell.Target.React(Spell, result, calc);
-        if (!IsReactOverride(Spell, result)) {
-            for (int i = 0; i < Spell.Caster.Buffs.Count; i++) {
-                Spell s = Spell.Caster.Buffs[i];
-                s.Current.React(Spell, result, calc);
-            }
-            for (int i = 0; i < Spell.Target.Buffs.Count; i++) {
-                Spell s = Spell.Target.Buffs[i];
-                s.Current.React(Spell, result, calc);
-            }
+        for (int i = 0; i < Spell.Caster.Buffs.Count; i++) {
+            Spell s = Spell.Caster.Buffs[i];
+            s.Current.React(Spell, result, calc);
+        }
+        for (int i = 0; i < Spell.Target.Buffs.Count; i++) {
+            Spell s = Spell.Target.Buffs[i];
+            s.Current.React(Spell, result, calc);
+        }
 
-            IList<Character> characters = Game.Instance.PagePresenter.Page.GetAll();
-            for (int i = 0; i < characters.Count; i++) {
-                Character c = characters[i];
-                c.Witness(Spell, result, calc);
-                for (int j = 0; j < c.Buffs.Count; j++) {
-                    Spell s = c.Buffs[j];
-                    s.Current.Witness(Spell, result, calc);
-                }
-            }
-            if (!IsWitnessOverride(Spell, result)) {
-                result.Effect(calc);
-                result.SFX(calc);
-                Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(result.CreateText(calc), Color.white, TextEffect.FADE_IN));
+        IList<Character> characters = Game.Instance.PagePresenter.Page.GetAll();
+        for (int i = 0; i < characters.Count; i++) {
+            Character c = characters[i];
+            c.Witness(Spell, result, calc);
+            for (int j = 0; j < c.Buffs.Count; j++) {
+                Spell s = c.Buffs[j];
+                s.Current.Witness(Spell, result, calc);
             }
         }
+        result.Effect(calc);
+        result.SFX(calc);
+        Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(result.CreateText(calc), Color.white, TextEffect.FADE_IN));
     }
 
     public virtual void Tick() {
