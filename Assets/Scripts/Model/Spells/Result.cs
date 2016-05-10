@@ -12,42 +12,50 @@ public class Result {
     }
 
     public Type type { get; set; }
-    Func<Character, Character, bool> isState;
-    Func<Character, Character, Calculation> calculation;
-    Action<Character, Character, Calculation> perform;
-    Func<Character, Character, Calculation, string> createText;
-    Action<Character, Character, Calculation> sfx;
+    Func<Character, Character, SpellDetails, bool> _isState;
+    Func<Character, Character, SpellDetails, Calculation> _calculation;
+    Action<Character, Character, Calculation, SpellDetails> _perform;
+    Func<Character, Character, Calculation, SpellDetails, string> _createText;
+    Action<Character, Character, Calculation, SpellDetails> _sfx;
 
-    public Result(Func<Character, Character, bool> isState = null,
-              Func<Character, Character, Calculation> calculation = null,
-              Action<Character, Character, Calculation> perform = null,
-              Func<Character, Character, Calculation, string> createText = null,
-              Action<Character, Character, Calculation> sfx = null) {
-        this.isState = isState ?? ((c, t) => { return false; });
-        this.calculation = calculation ?? ((c, t) => { return new Calculation(); });
-        this.perform = perform ?? NumericPerform;
-        this.createText = createText ?? ((c, t, calc) => { return ""; });
-        this.sfx = sfx ?? ((c, t, calc) => { });
+    public Func<Character, Character, SpellDetails, bool> IsStateFunc { set { _isState = value; } }
+    public Func<Character, Character, SpellDetails, Calculation> CalculationFunc { set { _calculation = value; } }
+    public Action<Character, Character, Calculation, SpellDetails> PerformFunc { set { _perform = value; } }
+    public Func<Character, Character, Calculation, SpellDetails, string> CreateTextFunc { set { _createText = value; } }
+    public Action<Character, Character, Calculation, SpellDetails> SFXFunc { set { _sfx = value; } }
+
+    public Result(Func<Character, Character, SpellDetails, bool> isState = null,
+              Func<Character, Character, SpellDetails, Calculation> calculation = null,
+              Action<Character, Character, Calculation, SpellDetails> perform = null,
+              Func<Character, Character, Calculation, SpellDetails, string> createText = null,
+              Action<Character, Character, Calculation, SpellDetails> sfx = null) {
+        this._isState = isState ?? ((c, t, o) => { return false; });
+        this._calculation = calculation ?? ((c, t, o) => { return new Calculation(); });
+        this._perform = perform ?? ((c, t, calc, o) => { NumericPerform(c, t, calc); });
+        this._createText = createText ?? ((c, t, calc, o) => { return ""; });
+        this._sfx = sfx ?? ((c, t, calc, o) => { });
     }
 
     public bool IsState() {
-        return isState(Component.Spell.Caster, Component.Spell.Target);
+        return _isState(Component.Spell.Caster, Component.Spell.Target, Component.Spell.Other);
     }
 
     public Calculation Calculation() {
-        return calculation(Component.Spell.Caster, Component.Spell.Target);
+        Calculation c = _calculation(Component.Spell.Caster, Component.Spell.Target, Component.Spell.Other);
+        c.Result = this;
+        return c;
     }
 
     public void Effect(Calculation calculation) {
-        perform(Component.Spell.Caster, Component.Spell.Target, calculation);
+        _perform(Component.Spell.Caster, Component.Spell.Target, calculation, Component.Spell.Other);
     }
 
     public void SFX(Calculation calculation) {
-        sfx(Component.Spell.Caster, Component.Spell.Target, calculation);
+        _sfx(Component.Spell.Caster, Component.Spell.Target, calculation, Component.Spell.Other);
     }
 
     public string CreateText(Calculation calculation) {
-        return createText(Component.Spell.Caster, Component.Spell.Target, calculation);
+        return _createText(Component.Spell.Caster, Component.Spell.Target, calculation, Component.Spell.Other);
     }
 
     public static void NumericPerform(Character caster, Character target, Calculation calculation) {

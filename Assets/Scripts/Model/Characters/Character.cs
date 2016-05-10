@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
+using System;
 
 /**
  * Characters are special Entities with
  * Attributes and Resources
  */
-public abstract class Character : Entity {
+public abstract class Character : Entity, IReactable {
     public const int CHARGE_MULTIPLIER = 35;
     public const int CHARGE_CAP_RATIO = 60;
 
@@ -33,9 +34,6 @@ public abstract class Character : Entity {
     public bool IsControllable { get { return this.IsDisplayable && this.IsCharged(); } }
     public ChargeStatus ChargeStatus { get; private set; }
 
-    public ICollection<Perk.CharacterPerk> CharacterPerks { get; private set; }
-    public ICollection<Perk.SpellPerk> SpellPerks { get; private set; }
-
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
         this.Name = name;
         this.Level = level;
@@ -51,7 +49,7 @@ public abstract class Character : Entity {
             {ResourceType.CHARGE, new Resource(100) },
         };
 
-        this.Attack = new Attack();
+        this.Attack = new CounterAttack();
         Inventory inventory = new Inventory();
         this.Selections = new SortedDictionary<Selection, ICollection<SpellFactory>>() {
             { Selection.SPELL, new HashSet<SpellFactory>() },
@@ -69,9 +67,6 @@ public abstract class Character : Entity {
         Buffs = new List<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
-
-        CharacterPerks = new List<Perk.CharacterPerk>();
-        SpellPerks = new List<Perk.SpellPerk>();
     }
 
     public void AddAttribute(AttributeType attributeType, int initial) {
@@ -174,7 +169,6 @@ public abstract class Character : Entity {
     }
 
     public virtual void Tick() {
-        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.TICK);
         Charge();
         if (!IsCharged()) {
             ChargeStatus = ChargeStatus.NOT_CHARGED;
@@ -196,11 +190,7 @@ public abstract class Character : Entity {
 
         for (int i = 0; i < Buffs.Count; i++) {
             Spell s = Buffs[i];
-            if (s.IsFinished) {
-                Buffs.RemoveAt(i);
-            } else {
-                s.Tick();
-            }
+            s.Tick();
         }
 
         Act();
@@ -234,22 +224,6 @@ public abstract class Character : Entity {
         Buffs.Add(spell);
     }
 
-    public void InvokeCharacterPerks(Perk.CharacterPerk.PerkType type, Character other = null) {
-        foreach (Perk.CharacterPerk p in CharacterPerks) {
-            if (p.Type == type) {
-                p.Invoke(this, other);
-            }
-        }
-    }
-
-    public void InvokeSpellPerks(Perk.SpellPerk.PerkType type, Spell s, Result r, Calculation c) {
-        foreach (Perk.SpellPerk p in SpellPerks) {
-            if (p.Type == type) {
-                p.Invoke(s, r, c);
-            }
-        }
-    }
-
     static void CalculateSpeed(Character current, Character main) {
         int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false));
         current.AddToResource(ResourceType.CHARGE, true, -current.GetResourceCount(ResourceType.CHARGE, true));
@@ -257,25 +231,25 @@ public abstract class Character : Entity {
     }
 
     protected virtual void OnFullCharge() {
-        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.ON_FULL_CHARGE);
     }
 
     protected abstract void WhileFullCharge();
 
     public abstract void Act();
 
-    public virtual void React(Spell spell) {
-        Result result = spell.Current.DetermineResult();
-        Calculation calc = result.Calculation();
-        InvokeSpellPerks(Perk.SpellPerk.PerkType.RECIEVE_SPELL, spell, result, calc);
-        result.Effect(calc);
-        result.SFX(calc);
-        Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(result.CreateText(calc), Color.white, TextEffect.FADE_IN));
+    public bool IsReactOverride(Spell s, Result r) { return false; }
+    public virtual void React(Spell spell, Result res, Calculation calc) {
+
     }
-    public virtual void Witness(Spell spell) { }
+
+    public bool IsWitnessOverride(Spell s, Result r) { return false; }
+    public virtual void Witness(Spell spell, Result res, Calculation calc) {
+        foreach (Spell s in Buffs) {
+            s.Current.Witness(spell, res, calc);
+        }
+    }
 
     public virtual void OnBattleStart() {
-        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.BATTLE_START);
     }
 
     public virtual bool IsDefeated() { return isDefeated || GetResourceCount(ResourceType.HEALTH, false) <= 0; }
@@ -294,7 +268,6 @@ public abstract class Character : Entity {
         Game.Instance.Effect.StopFadeEffect(this);
         Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
         Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
-        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.SELF_DEFEAT);
         AddToResource(ResourceType.HEALTH, false, 1, false);
         isDefeated = true;
 
@@ -319,17 +292,14 @@ public abstract class Character : Entity {
             new TextBox(
                 string.Format("* {0} was slain by {1}.", Name, killer.Name),
                 Color.white, TextEffect.FADE_IN));
-        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.SELF_KILLED, killer);
         Game.Instance.Sound.Play("Sounds/Boom_6");
         Game.Instance.Effect.FadeAwayEffect(this, 0.5f, () => Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this));
         isKilled = true;
     }
 
     public virtual void OnVictory() {
-        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.BATTLE_VICTORY);
     }
 
     public virtual void OnBattleEnd() {
-        InvokeCharacterPerks(Perk.CharacterPerk.PerkType.BATTLE_END);
     }
 }

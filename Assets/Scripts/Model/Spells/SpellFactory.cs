@@ -42,7 +42,8 @@ public abstract class SpellFactory {
             _count = value;
         }
     }
-    Dictionary<ResourceType, int> costs;
+
+    protected Dictionary<ResourceType, int> costs;
 
     public SpellFactory(string name,
                         string description,
@@ -95,26 +96,24 @@ public abstract class SpellFactory {
         caster.Discharge();
     }
 
-    public void TryCast(Character caster, Character target) {
-        TryCast(caster, new List<Character>() { target });
+    public void TryCast(Character caster, Character target, SpellDetails other = null) {
+        TryCast(caster, new List<Character>() { target }, other);
     }
 
-    public void TryCast(Character caster, IList<Character> targets) {
+    public void TryCast(Character caster, IList<Character> targets, SpellDetails other = null) {
         if (IsCastable(caster)) {
             ConsumeResources(caster);
-            OnOnce(caster);
+            OnOnce(caster, other);
             foreach (Character target in targets) {
-                Cast(caster, target);
+                Cast(caster, target, other);
             }
         }
     }
 
     public const string PRIMARY = "Primary_Component";
-    void Cast(Character caster, Character target) {
+    public void Cast(Character caster, Character target, SpellDetails other) {
         Spell spell = new Spell(this, caster, target);
-        IDictionary<string, SpellComponent> components = CreateComponents(caster, target, spell);
-        spell.Components = components;
-
+        spell.Components = CreateComponents(caster, target, spell, other);
         caster.CastSpells.Add(spell);
         target.RecievedSpells.Add(spell);
         target.AddToBuffs(spell);
@@ -144,6 +143,6 @@ public abstract class SpellFactory {
         return Name.GetHashCode();
     }
 
-    protected virtual void OnOnce(Character caster) { }
-    protected abstract IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell);
+    protected virtual void OnOnce(Character caster, SpellDetails other) { }
+    protected abstract IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other = null);
 }

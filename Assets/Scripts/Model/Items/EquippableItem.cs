@@ -13,22 +13,18 @@ public abstract class EquippableItem : Item {
         this._equipmentType = equipmentType;
     }
 
-    protected override void ConsumeResources(Character caster) {
-        base.ConsumeResources(caster);
-        caster.Selections[Selection.ITEM].Remove(this);
-    }
-
-    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
+    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {
         return new Dictionary<string, SpellComponent>() {
             { SpellFactory.PRIMARY, new SpellComponent(
                 hit: new Result(
-                    isState: (c, t) => {
+                    isState: (c, t, o) => {
                         return true;
                     },
-                    perform: (c, t, calc) => {
+                    perform: (c, t, calc, o) => {
+                        caster.Selections[Selection.ITEM].Remove(this);
                         caster.Selections[Selection.EQUIP].Add(this);
                     },
-                    createText: (c, t, calc) => {
+                    createText: (c, t, calc, o) => {
                         return string.Format((c == t) ? SELF_EQUIP_TEXT : OTHER_EQUIP_TEXT, c.Name, t.Name, this.Name);
                     }
                 )

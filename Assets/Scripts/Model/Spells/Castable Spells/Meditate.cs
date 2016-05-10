@@ -15,24 +15,24 @@ public class Meditate : SpellFactory {
 
     public Meditate() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
 
-    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
+    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {
         return new Dictionary<string, SpellComponent>() {
             { SpellFactory.PRIMARY, new SpellComponent(
                 hit: new Result(
-                    isState: (c, t) => {
+                    isState: (c, t, o) => {
                         return true;
                     },
-                    calculation: (c, t) => {
+                    calculation: (c, t, o) => {
                         return new Calculation(
                             targetResources: new Dictionary<ResourceType, PairedInt>() {
                                 { ResourceType.HEALTH, new PairedInt(0, 3) } //TODO change back to t.GetResourceCount(ResourceType.HEALTH, true) / 2
                             });
                     },
                     //Implicit perform
-                    createText: (c, t, calc) => {
+                    createText: (c, t, calc, o) => {
                         return string.Format(CAST_TEXT, t, calc.TargetResources[ResourceType.HEALTH].False);
                     },
-                    sfx: (c, t, calc) => {
+                    sfx: (c, t, calc, o) => {
                         Game.Instance.Sound.Play("Sounds/Zip_0");
                     }
                 )) }

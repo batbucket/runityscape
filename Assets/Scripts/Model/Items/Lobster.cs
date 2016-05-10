@@ -8,8 +8,8 @@ public class Lobster : ConsumableItem {
     public const string NAME = "Lobster";
     public static readonly string DESCRIPTION = string.Format("Eat a Lobster for {0} HP, just like in RuneScape™. Property of Jagex Ltd. The most popular Free-To-Play MMORPG played by millions worldwide.", HEAL_AMOUNT);
     public const int HEAL_AMOUNT = 12;
-    public const string USE_TEXT_SELF = "{1} ate a Lobster, restoring {2} life!";
-    public const string USE_TEXT_OTHER = "{0} fed a Lobster to {1}, restoring {2} life!";
+    public const string USE_TEXT_SELF = "* {1} ate a Lobster, restoring {2} life!";
+    public const string USE_TEXT_OTHER = "* {0} fed a Lobster to {1}, restoring {2} life!";
 
     public Lobster(int count = 1) : base(NAME, DESCRIPTION, count) { }
 

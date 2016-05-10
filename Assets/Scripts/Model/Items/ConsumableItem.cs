@@ -7,25 +7,26 @@ public abstract class ConsumableItem : Item {
 
     public ConsumableItem(string name, string description, int count) : base(name, description, count) { }
 
-    protected override void ConsumeResources(Character caster) {
-        base.ConsumeResources(caster);
-    }
-
-    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
+    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {
         return new Dictionary<string, SpellComponent>() {
             { SpellFactory.PRIMARY, new SpellComponent(
                 hit: new Result(
-                    isState: (c, t) => {
+                    isState: (c, t, o) => {
                         return true;
                     },
-                    calculation: GetCalculation,
-                    perform: (c, t, calc) => {
-                        caster.Selections[Selection.ITEM].Remove(this);
+                    calculation: (c, t, o) => {
+                        return GetCalculation(c, t);
                     },
-                    createText: (c, t, calc) => {
+                    perform: (c, t, calc, o) => {
+                        caster.Selections[Selection.ITEM].Remove(this);
+                        Result.NumericPerform(c, t, calc);
+                    },
+                    createText: (c, t, calc, o) => {
                         return (c == t) ? SelfUseText(c, t, calc) : OtherUseText(c, t, calc);
                     },
-                    sfx: SFX
+                    sfx: (c, t, calc, o) => {
+                        SFX(c, t, calc);
+                    }
                 )
             )}
         };

@@ -8,6 +8,7 @@ public class Spell {
     public SpellFactory SpellFactory { get; set; }
     public Character Caster { get; set; }
     public Character Target { get; set; }
+    public SpellDetails Other { get; set; }
 
     public SpellComponent Current { get { return Components[CurrentString]; } }
     string _currentString;
@@ -28,21 +29,36 @@ public class Spell {
     int _id;
     public int Id { get { return _id; } }
 
-    bool _isFinished;
-    public bool IsFinished { get { return _isFinished; } set { _isFinished = value; } }
-
-    public Spell(SpellFactory spellFactory, Character caster, Character target) {
+    public Spell(SpellFactory spellFactory, Character caster, Character target, SpellDetails other = null) {
         this.SpellFactory = spellFactory;
         this.Caster = caster;
         this.Target = target;
+        this.Other = other;
         this._currentString = SpellFactory.PRIMARY;
 
         _id = count++;
     }
 
     public void Tick() {
-        if (!Current.IsTimedOut) {
+        if (!Current.IsFinished) {
             Current.Tick();
+        } else {
+            Target.Buffs.Remove(this);
         }
+    }
+
+    public override bool Equals(object obj) {
+        if (obj == null) {
+            return false;
+        }
+        Spell s = obj as Spell;
+        if (s == null) {
+            return false;
+        }
+        return this.Id.Equals(s.Id);
+    }
+
+    public override int GetHashCode() {
+        return Id;
     }
 }

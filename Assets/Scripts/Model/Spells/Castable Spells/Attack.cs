@@ -21,18 +21,18 @@ public class Attack : SpellFactory {
 
 
 
-    protected override void OnOnce(Character caster) {
+    protected override void OnOnce(Character caster, SpellDetails other) {
         caster.AddToResource(ResourceType.SKILL, false, 1, true);
     }
 
-    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell) {
+    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {
         return new Dictionary<string, SpellComponent>() {
             { SpellFactory.PRIMARY, new SpellComponent(
                 hit: new Result(
-                    isState: (c, t) => {
+                    isState: (c, t, o) => {
                         return Util.Chance(.8);
                     },
-                    calculation: (c, t) => {
+                    calculation: (c, t, o) => {
                         return new Calculation(
                             targetResources: new Dictionary<ResourceType, PairedInt>() {
                                 { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false))) }
@@ -40,49 +40,49 @@ public class Attack : SpellFactory {
                         );
                     },
                     //Implicit perform
-                    createText: (c, t, calc) => {
+                    createText: (c, t, calc, o) => {
                         return string.Format(SUCCESS_TEXT, c.Name, t.Name, -calc.TargetResources[ResourceType.HEALTH].False);
                     },
-                    sfx: (c, t, calc) => {
+                    sfx: (c, t, calc, o) => {
                         Game.Instance.Sound.Play("Sounds/Attack_0");
                     }
                 ),
                 critical: new Result(
-                        isState: (c, t) => {
+                        isState: (c, t, o) => {
                             return Util.Chance(.2);
                         },
-                        calculation: (c, t) => {
+                        calculation: (c, t, o) => {
                             return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() {
                                 { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false) * 2, c.GetAttributeCount(AttributeType.STRENGTH, false) * 2)) }
                             }
                             );
                         },
-                        createText: (c, t, calc) => {
+                        createText: (c, t, calc, o) => {
                             return string.Format(CRITICAL_TEXT, c.Name, t.Name, -calc.TargetResources[ResourceType.HEALTH].False);
                         },
-                        sfx: (c, t, calc) => {
+                        sfx: (c, t, calc, o) => {
                             Game.Instance.Sound.Play("Sounds/Attack_0");
                             Game.Instance.Effect.CreateBloodsplat(t);
                         }
                 ),
                 miss: new Result(
-                    isState: (c, t) => {
+                    isState: (c, t, o) => {
                         return true;
                     },
-                    calculation: (c, t) => {
+                    calculation: (c, t, o) => {
                         return new Calculation(
                             targetResources: new Dictionary<ResourceType, PairedInt>() {
                                 { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false) * 2, t.GetAttributeCount(AttributeType.STRENGTH, false) * 2)) }
                             }
                         );
                     },
-                    perform: (c, t, calc) => {
+                    perform: (c, t, calc, o) => {
 
                     },
-                    createText: (c, t, calc) => {
+                    createText: (c, t, calc, o) => {
                         return string.Format(MISS_TEXT, c.Name, t.Name);
                     },
-                    sfx: (c, t, calc) => {
+                    sfx: (c, t, calc, o) => {
                         Game.Instance.Effect.CreateHitsplat("MISS", Color.grey, t);
                     })
             )

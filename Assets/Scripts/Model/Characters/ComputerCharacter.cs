@@ -13,6 +13,12 @@ public abstract class ComputerCharacter : Character {
         this.maxDelay = maxDelay;
     }
 
+    public override void Act() {
+        if (Game.Instance.PagePresenter.Page.GetEnemies(Side).Count > 0 && IsCharged() && (delay -= Time.deltaTime) <= 0) {
+            DecideSpell();
+        }
+    }
+
     protected abstract void DecideSpell();
 
     protected override void OnFullCharge() {

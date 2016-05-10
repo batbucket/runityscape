@@ -14,6 +14,7 @@ public class Calculation {
     public IDictionary<ResourceType, PairedInt> _casterResources;
     public IDictionary<ResourceType, PairedInt> CasterResources { get { return _casterResources; } }
 
+    public Result Result { get; set; }
 
     public Calculation(IDictionary<AttributeType, PairedInt> targetAttributes = null,
                         IDictionary<ResourceType, PairedInt> targetResources = null,
@@ -23,5 +24,12 @@ public class Calculation {
         this._targetResources = targetResources ?? new Dictionary<ResourceType, PairedInt>();
         this._casterAttributes = casterAttributes ?? new Dictionary<AttributeType, PairedInt>();
         this._casterResources = casterResources ?? new Dictionary<ResourceType, PairedInt>();
+    }
+
+    public void Clear() {
+        this._targetAttributes = new Dictionary<AttributeType, PairedInt>();
+        this._targetResources = new Dictionary<ResourceType, PairedInt>();
+        this._casterAttributes = new Dictionary<AttributeType, PairedInt>();
+        this._casterResources = new Dictionary<ResourceType, PairedInt>();
     }
 }

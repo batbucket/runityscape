@@ -60,7 +60,7 @@ public class Game : MonoBehaviour {
         MainCharacter = new Amit();
 
         Page p3 = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
-        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { MainCharacter }, right: new Character[] { new Steve(), new Steve() });
+        Page p2 = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { MainCharacter, new Amit() }, right: new Character[] { new Steve(), new Steve() });
         Page p1 = new ReadPage("What", "Hello world", MainCharacter, new Character[] { MainCharacter }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
                 new Process("Hello", "Say Hello world",
