@@ -10,15 +10,15 @@ public class HeaderView : MonoBehaviour {
 
     [SerializeField]
     Text location;
-    string Location { set { location.text = value; } }
+    public string Location { set { location.text = value; } }
 
     [SerializeField]
     Text chapter;
-    string Chapter { set { chapter.text = value; } }
+    public string Chapter { set { chapter.text = value; } }
 
     [SerializeField]
     Text mainQuestBlurb;
-    string Blurb { set { mainQuestBlurb.text = value; } }
+    public string Blurb { set { mainQuestBlurb.text = value; } }
 
     // Update is called once per frame
     void Update() {

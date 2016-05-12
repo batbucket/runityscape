@@ -84,6 +84,9 @@
     <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitHolderView.cs" />
     <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitView.cs" />
     <Compile Include="Assets\Scripts\Interface\Sound\SoundView.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\AvatarBoxView.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\LeftBoxView.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\RightBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />

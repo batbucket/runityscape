@@ -20,6 +20,9 @@ public class BattlePage : Page {
     public BattlePage(
         string text = "",
         string tooltip = "",
+        string location = "",
+        string chapter = "",
+        string quest = "",
         Character mainCharacter = null,
         Character[] left = null,
         Character[] right = null,
@@ -29,7 +32,7 @@ public class BattlePage : Page {
         Action onExit = null,
         Action onTick = null
         )
-        : base(text, tooltip, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
+        : base(text, tooltip, location, chapter, quest, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
 
         characterQueue = new Queue<Character>();
 

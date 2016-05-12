@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TextBoxHolderView : MonoBehaviour {
 
     [SerializeField]
     GameObject textBoxPrefab;
+    [SerializeField]
+    GameObject leftBoxPrefab;
+    [SerializeField]
+    GameObject rightBoxPrefab;
+
     IList<GameObject> children;
 
     const int TEXTBOX_LIMIT = 25;
@@ -13,12 +19,20 @@ public class TextBoxHolderView : MonoBehaviour {
         this.children = new List<GameObject>();
     }
 
-    public void AddTextBoxView(TextBox textBox) {
+    public void AddTextBoxView(TextBox textBox, Action callBack = null) {
         GameObject g = (GameObject)GameObject.Instantiate(textBoxPrefab);
         children.Add(g);
         TextBoxView textBoxView = g.GetComponent<TextBoxView>();
         Util.Parent(g, gameObject);
-        textBoxView.WriteText(textBox);
+        textBoxView.WriteText(textBox, callBack);
+    }
+
+    public void AddAvatarBoxView(bool isRightSide, string spriteLocation, TextBox textBox, Action callBack = null) {
+        GameObject g = Instantiate(isRightSide ? rightBoxPrefab : leftBoxPrefab);
+        children.Add(g);
+        AvatarBoxView textBoxView = g.GetComponent<AvatarBoxView>();
+        Util.Parent(g, gameObject);
+        textBoxView.WriteText(Util.GetSprite(spriteLocation), textBox, callBack);
     }
 
     void Update() {

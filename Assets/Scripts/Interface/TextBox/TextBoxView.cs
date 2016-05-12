@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Text.RegularExpressions;
+using System;
 
 /**
  * This class manages a TextBox prefab
@@ -20,34 +21,33 @@ public class TextBoxView : MonoBehaviour {
     public const int BLIP_INTERVAL = 1; //Letters needed for a sound to occur
     public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
 
-    public void WriteText(string fullText, Color color, TextEffect effect = TextEffect.NONE, string soundLocation = "Blip_0", float timePerLetter = 0) {
-        WriteText(new TextBox(fullText, color, effect, soundLocation, timePerLetter));
+    public void WriteText(string fullText, Color color, TextEffect effect = TextEffect.NONE, string soundLocation = "Blip_0", float timePerLetter = 0, Action callBack = null) {
+        WriteText(new TextBox(fullText, color, effect, soundLocation, timePerLetter), callBack);
     }
 
-    public void WriteText(TextBox textBox) {
-        StartCoroutine(TypeWriter(text, textBox));
+    public void WriteText(TextBox textBox, Action callBack = null) {
+        StartCoroutine(TypeWriter(text, textBox, callBack));
     }
 
-    IEnumerator TypeWriter(Text text, TextBox textBox) {
+    IEnumerator TypeWriter(Text text, TextBox textBox, Action callBack) {
         text.color = textBox.Color;
         switch (textBox.Effect) {
             case TextEffect.NONE:
                 text.text = textBox.RawText;
                 Game.Instance.Sound.Play(textBox.SoundLocation);
-                yield break;
+                break;
             case TextEffect.FADE_IN:
                 text.text = textBox.RawText;
-                CanvasRenderer cr = gameObject.GetComponent<CanvasRenderer>();
-                Color c = cr.GetColor();
-                c.a = 0;
-                cr.SetColor(c);
-                while (cr.GetColor().a < 1) {
-                    c = cr.GetColor();
+                Color color = text.color;
+                color.a = 0;
+                text.color = color;
+                while (text.color.a < 1) {
+                    Color c = text.color;
                     c.a += Time.deltaTime * 3;
-                    cr.SetColor(c);
+                    text.color = c;
                     yield return null;
                 }
-                yield break;
+                break;
             case TextEffect.TYPE:
                 string[] currentTextArray = new string[textBox.TextArray.Length];
                 bool[] taggedText = new bool[currentTextArray.Length];
@@ -82,7 +82,11 @@ public class TextBoxView : MonoBehaviour {
                     }
                     yield return null;
                 }
-                yield break;
+                break;
         }
+        if (callBack != null) {
+            callBack.Invoke();
+        }
+        yield break;
     }
 }

@@ -8,6 +8,9 @@ public abstract class Page {
 
     public string Text { get; protected set; }
     public string Tooltip { get; set; }
+    public string Location { get; set; }
+    public string Chapter { get; set; }
+    public string Quest { get; set; }
     public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
@@ -28,6 +31,9 @@ public abstract class Page {
     public Page(
         string text = "",
         string tooltip = "",
+        string location = "",
+        string chapter = "",
+        string quest = "",
         Character mainCharacter = null,
         Character[] left = null,
         Character[] right = null,

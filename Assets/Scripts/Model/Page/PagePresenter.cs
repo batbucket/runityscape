@@ -37,6 +37,9 @@ public class PagePresenter {
         Game.Instance.ActionGrid.ClearAll();
         Game.Instance.ActionGrid.SetButtonAttributes(Page.ActionGrid);
         Game.Instance.Tooltip.Text = Page.Tooltip;
+        Game.Instance.Header.Location = Page.Location;
+        Game.Instance.Header.Chapter = Page.Chapter;
+        Game.Instance.Header.Blurb = Page.Quest;
         SetCharacterPresenters(Page.LeftCharacters, Game.Instance.LeftPortraits);
         SetCharacterPresenters(Page.RightCharacters, Game.Instance.RightPortraits);
         TickCharacterPresenters(Page.LeftCharacters);
