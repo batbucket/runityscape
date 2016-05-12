@@ -1,11 +1,19 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 
 public class PagePresenter {
     public Page Page { get; private set; }
     public IList<CharacterPresenter> CharacterPresenters { get; private set; }
+
+    InputBoxView inputBox;
+    public string InputtedText {
+        get {
+            Util.Assert(inputBox != null, "Cannot get InputBox value from a Page without an InputBox!");
+            return inputBox.Input;
+        }
+    }
 
     public PagePresenter() {
         this.Page = new ReadPage();
@@ -17,7 +25,18 @@ public class PagePresenter {
         this.Page.OnExit();
         this.Page = page;
         Util.KillAllChildren(Game.Instance.TextBoxHolder.gameObject);
-        Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Page.Text, Color.white, TextEffect.FADE_IN));
+
+        if (!string.IsNullOrEmpty(Page.Text)) {
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Page.Text, Color.white, TextEffect.FADE_IN));
+        }
+
+        Game.Instance.ActionGrid.HasHotkeysEnabled = !this.Page.HasInputField;
+        if (this.Page.HasInputField) {
+            inputBox = Game.Instance.TextBoxHolder.AddInputBoxView();
+            inputBox.Input = Page.InputtedString;
+        } else {
+            inputBox = null;
+        }
     }
 
     void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
@@ -44,6 +63,7 @@ public class PagePresenter {
         SetCharacterPresenters(Page.RightCharacters, Game.Instance.RightPortraits);
         TickCharacterPresenters(Page.LeftCharacters);
         TickCharacterPresenters(Page.RightCharacters);
+        Page.InputtedString = Page.HasInputField ? inputBox.Input : "";
         Page.Tick();
     }
 }

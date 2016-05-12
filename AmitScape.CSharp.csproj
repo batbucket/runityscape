@@ -85,6 +85,7 @@
     <Compile Include="Assets\Scripts\Interface\Portraits\RightPortraitView.cs" />
     <Compile Include="Assets\Scripts\Interface\Sound\SoundView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\AvatarBoxView.cs" />
+    <Compile Include="Assets\Scripts\Interface\TextBox\InputBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\LeftBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\RightBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderView.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Assets\Scripts\Model\Characters\ComputerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Entity.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Amit.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Hero.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Steve.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Selection.cs" />

@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
-using System;
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 /**
@@ -22,10 +20,19 @@ public sealed class ActionGridView : MonoBehaviour {
         };
     public const int ROWS = 3;
     public const int COLS = 4;
+    public const int TOTAL_BUTTON_COUNT = ROWS * COLS;
 
     HotkeyButton[] actionButtons;
     [SerializeField]
     GameObject actionButtonPrefab;
+
+    public bool HasHotkeysEnabled {
+        set {
+            foreach (HotkeyButton b in actionButtons) {
+                b.IsHotkeyEnabled = value;
+            }
+        }
+    }
 
     // Use this for initialization
     void Awake() {

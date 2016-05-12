@@ -11,6 +11,7 @@ public class ReadPage : Page {
         string location = "",
         string chapter = "",
         string quest = "",
+        bool hasInputField = false,
         Character mainCharacter = null,
         Character[] left = null,
         Character[] right = null,
@@ -21,6 +22,6 @@ public class ReadPage : Page {
         Action onTick = null,
         Process[] processes = null
         )
-        : base(text, tooltip, location, chapter, quest, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes) {
+        : base(text, tooltip, location, chapter, quest, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes) {
     }
 }

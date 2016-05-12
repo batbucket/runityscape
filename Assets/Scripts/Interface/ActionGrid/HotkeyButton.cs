@@ -11,7 +11,8 @@ using WindowsInput;
  */
 public class HotkeyButton : MonoBehaviour {
 
-    public KeyCode Hotkey { get; set; } //The keyboard key that interacts with this button
+    KeyCode _hotkey;
+    public KeyCode Hotkey { get { return IsHotkeyEnabled ? _hotkey : KeyCode.None; } set { _hotkey = value; } } //The keyboard key that interacts with this button
 
     private Process _process;
     public Process Process { get { return _process; } set { SetProcess(value); } } //Process this button holds
@@ -21,6 +22,8 @@ public class HotkeyButton : MonoBehaviour {
 
     Color INACTIVE_COLOR = Color.black;
     Color ACTIVE_COLOR = Color.white;
+
+    public bool IsHotkeyEnabled { get; set; }
 
     [SerializeField]
     Button button;
@@ -38,6 +41,7 @@ public class HotkeyButton : MonoBehaviour {
         //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
         input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.KeyCodeToVirtualKeyCode(Hotkey))));
         input.AddOnMouseUpListener(new Action<PointerEventData>(p => { InputSimulator.SimulateKeyUp(Util.KeyCodeToVirtualKeyCode(Hotkey)); activated = false; })); //Set activated to false to fix double button click issue
+        IsHotkeyEnabled = true;
     }
 
     // Update is called once per frame
@@ -58,7 +62,7 @@ public class HotkeyButton : MonoBehaviour {
             button.onClick.AddListener(process.Play);
             text.text = process.Name;
             this._process = process;
-            hotkeyText.text = Hotkey.ToString();
+            hotkeyText.text = IsHotkeyEnabled ? Hotkey.ToString() : "";
             button.interactable = true;
         }
     }

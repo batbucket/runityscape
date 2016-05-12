@@ -10,6 +10,8 @@ public class TextBoxHolderView : MonoBehaviour {
     GameObject leftBoxPrefab;
     [SerializeField]
     GameObject rightBoxPrefab;
+    [SerializeField]
+    GameObject inputBoxPrefab;
 
     IList<GameObject> children;
 
@@ -33,6 +35,13 @@ public class TextBoxHolderView : MonoBehaviour {
         AvatarBoxView textBoxView = g.GetComponent<AvatarBoxView>();
         Util.Parent(g, gameObject);
         textBoxView.WriteText(Util.GetSprite(spriteLocation), textBox, callBack);
+    }
+
+    public InputBoxView AddInputBoxView() {
+        GameObject g = Instantiate(inputBoxPrefab);
+        children.Add(g);
+        Util.Parent(g, gameObject);
+        return g.GetComponent<InputBoxView>();
     }
 
     void Update() {

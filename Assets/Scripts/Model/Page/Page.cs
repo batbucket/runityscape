@@ -11,6 +11,7 @@ public abstract class Page {
     public string Location { get; set; }
     public string Chapter { get; set; }
     public string Quest { get; set; }
+    public bool HasInputField { get; set; }
     public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
@@ -28,12 +29,16 @@ public abstract class Page {
     public static int idCount = 0;
     public int Id { get; private set; }
 
+    string _inputtedString;
+    public string InputtedString { get { return _inputtedString; } set { _inputtedString = value; } }
+
     public Page(
         string text = "",
         string tooltip = "",
         string location = "",
         string chapter = "",
         string quest = "",
+        bool hasInputField = false,
         Character mainCharacter = null,
         Character[] left = null,
         Character[] right = null,
@@ -48,6 +53,12 @@ public abstract class Page {
         this.Text = text;
         this.Tooltip = tooltip;
         this.MainCharacter = mainCharacter;
+        this.HasInputField = hasInputField;
+
+        this.Location = location;
+        this.Chapter = chapter;
+        this.Quest = quest;
+
 
         //Left Characters initialization
         if (left == null || left.Length == 0) {
@@ -73,6 +84,8 @@ public abstract class Page {
 
         this.OnTick = onTick ?? (() => { });
         this.Id = idCount++;
+
+        this._inputtedString = "";
     }
 
 
