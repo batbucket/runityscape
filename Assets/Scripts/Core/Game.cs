@@ -50,7 +50,7 @@ public class Game : MonoBehaviour {
     Dictionary<string, int> intFlags;
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
-    public const string DERP = "What";
+    public const string DERP = "because I'm not paying a bunch of money to take shitty humanity classes because I'm not paying a bunch of money to take shitty humanity classes because I'm not paying a bunch of money to take shitty humanity classes";
     //ASRIEL   DREEMURR
     // Use this for initialization
     void Start() {

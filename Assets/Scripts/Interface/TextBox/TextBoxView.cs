@@ -52,7 +52,7 @@ public class TextBoxView : MonoBehaviour {
                 string[] currentTextArray = new string[textBox.TextArray.Length];
                 bool[] taggedText = new bool[currentTextArray.Length];
 
-                //Prescreen and enable all html tags
+                //Prescreen and enable all html tags and spaces
                 for (int i = 0; i < currentTextArray.Length; i++) {
                     if (Regex.IsMatch(textBox.TextArray[i], "(<.*?>)")) {
                         currentTextArray[i] = textBox.TextArray[i];
@@ -72,6 +72,10 @@ public class TextBoxView : MonoBehaviour {
                             Game.Instance.Sound.Play(characterSound);
                         }
                         if (!taggedText[index]) {
+                            int start = index;
+                            while (start < textBox.TextArray.Length && !textBox.TextArray[start].Equals(" ")) {
+                                currentTextArray[start++] = "\u00A0";
+                            }
                             currentTextArray[index] = textBox.TextArray[index];
                         }
                         index++;
