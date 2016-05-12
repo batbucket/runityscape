@@ -4,7 +4,7 @@ using System.Linq;
 public class Steve : ComputerCharacter {
 
     public Steve() : base(Util.GetSprite("laughing_shinx"), "Steve", 0, 10, 2, 5, 5, Color.red, 4) {
-        AddResource(ResourceType.SKILL, 3);
+        AddResource(new NamedResource.Skill());
         Selections[Selection.SPELL].Add(new Counter());
     }
 
@@ -16,7 +16,7 @@ public class Steve : ComputerCharacter {
             done = true;
         }
 
-        if (Resources[ResourceType.HEALTH].GetRatio() < .5f) {
+        if ((GetResourceCount(ResourceType.HEALTH, false) + 0.0f) / GetResourceCount(ResourceType.HEALTH, true) < .5f) {
             QuickCast(new Meditate());
         }
     }

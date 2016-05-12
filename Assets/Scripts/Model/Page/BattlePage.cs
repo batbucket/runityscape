@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class BattlePage : Page {
     Queue<Character> characterQueue;
@@ -47,10 +48,15 @@ public class BattlePage : Page {
         currentSelectionNode = selectionTree;
     }
 
+    public override void OnAnyEnter() {
+        OnEnterAction.Invoke();
+        GetAll().Where(c => c.HasResource(ResourceType.CHARGE)).ToList().ForEach(c => c.Resources[ResourceType.CHARGE].IsVisible = true);
+    }
+
     public override void Tick() {
         base.Tick();
         foreach (Character c in GetAll()) {
-            c.Tick();
+            c.Tick(true);
             if (c.IsControllable) { characterQueue.Enqueue(c); }
             if (c.IsDefeated()) { c.OnDefeat(); }
             if (c.IsKilled()) { c.OnKill(); }
@@ -60,7 +66,7 @@ public class BattlePage : Page {
          * Remove activeCharacter if they are not charged,
          * Indicating that they've casted a spell or are under some status effect
          */
-        if (activeCharacter == null || (activeCharacter != null && !activeCharacter.IsCharged())) {
+        if (activeCharacter == null || (activeCharacter != null && (!activeCharacter.IsCharged() || activeCharacter.IsDefeated() || activeCharacter.IsKilled()))) {
             activeCharacter = PopAbledCharacter();
         }
 
@@ -242,13 +248,16 @@ public class BattlePage : Page {
         Util.Assert(spell != null);
 
         //These TargetTypes might require target selection if there's more than 1 possible target.
-        if (spell.TargetType == TargetType.SINGLE_ALLY || spell.TargetType == TargetType.SINGLE_ENEMY) {
+        if (spell.TargetType == TargetType.SINGLE_ALLY || spell.TargetType == TargetType.SINGLE_ENEMY || spell.TargetType == TargetType.ANY) {
             switch (spell.TargetType) {
                 case TargetType.SINGLE_ALLY:
                     DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster.Side));
                     break;
                 case TargetType.SINGLE_ENEMY:
                     DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster.Side));
+                    break;
+                case TargetType.ANY:
+                    DetermineSingleTargetQuickCast(spell, caster, this.GetAll());
                     break;
             }
         } else { //These TargetTypes don't need target selection and thusly can have their results be instantly evaluated.

@@ -7,7 +7,7 @@ public abstract class CounterSpellFactory : SpellFactory {
                                : base("", "", spellType, targetType, new Dictionary<ResourceType, int>()) { }
 
     protected override void ConsumeResources(Character caster) {
-        foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
+        foreach (KeyValuePair<ResourceType, int> resourceCost in _costs) {
             caster.AddToResource(resourceCost.Key, false, -resourceCost.Value);
         }
     }
@@ -19,7 +19,7 @@ public abstract class CounterSpellFactory : SpellFactory {
         if (!IsEnabled) {
             return false;
         }
-        foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
+        foreach (KeyValuePair<ResourceType, int> resourceCost in _costs) {
             if (!caster.Resources.ContainsKey(resourceCost.Key) || caster.GetResourceCount(resourceCost.Key, false) < resourceCost.Value) {
                 return false;
             }

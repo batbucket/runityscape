@@ -26,6 +26,10 @@ public class Equipment : ICollection<SpellFactory> {
         return equipment[equipmentType];
     }
 
+    public bool ContainsEquipment(EquipmentType equipmentType) {
+        return equipment[equipmentType] != null;
+    }
+
     public void Add(SpellFactory myItem) {
         Util.Assert(myItem is EquippableItem);
         EquippableItem item = (EquippableItem)myItem;

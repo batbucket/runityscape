@@ -20,11 +20,15 @@ public class TextBoxView : MonoBehaviour {
     public const int BLIP_INTERVAL = 1; //Letters needed for a sound to occur
     public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
 
-    public void WriteText(TextBox textBox) {
-        StartCoroutine(WriteText(text, textBox));
+    public void WriteText(string fullText, Color color, TextEffect effect = TextEffect.NONE, string soundLocation = "Blip_0", float timePerLetter = 0) {
+        WriteText(new TextBox(fullText, color, effect, soundLocation, timePerLetter));
     }
 
-    IEnumerator WriteText(Text text, TextBox textBox) {
+    public void WriteText(TextBox textBox) {
+        StartCoroutine(TypeWriter(text, textBox));
+    }
+
+    IEnumerator TypeWriter(Text text, TextBox textBox) {
         text.color = textBox.Color;
         switch (textBox.Effect) {
             case TextEffect.NONE:

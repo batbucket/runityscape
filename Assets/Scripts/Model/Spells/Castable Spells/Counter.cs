@@ -36,23 +36,6 @@ public class Counter : SpellFactory {
                 isReact: (s, r, c) => {
                     return s.SpellFactory.SpellType == SpellType.OFFENSE && s.Caster != caster;
                 },
-                hit: new Result(
-                    isState: (c, t, o) => {
-                        return true;
-                    },
-                    calculation: (c, t, o) => {
-                        return new Calculation(
-                            targetResources:
-                                new Dictionary<ResourceType, PairedInt>() {
-                                    { ResourceType.HEALTH, new PairedInt(0, UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false))) }
-                                });
-                    },
-                    createText: (c, t, calc, o) => {
-                        return string.Format("{0} strikes back at {1} for {2} damage!", c.Name, t.Name, calc.TargetResources[ResourceType.HEALTH].False);
-                    }
-                ),
-                critical: null,
-                miss: null,
                 totalDuration: 10)
             }
         };

@@ -37,16 +37,17 @@ public abstract class Character : Entity, IReactable {
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
         this.Name = name;
         this.Level = level;
+
         this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
-            {AttributeType.STRENGTH, new Attribute(strength) },
-            {AttributeType.INTELLIGENCE, new Attribute(intelligence) },
-            {AttributeType.DEXTERITY, new Attribute(dexterity) },
-            {AttributeType.VITALITY, new Attribute(vitality) }
+            {AttributeType.STRENGTH, new NamedAttribute.Strength(strength) },
+            {AttributeType.INTELLIGENCE, new NamedAttribute.Intelligence(intelligence) },
+            {AttributeType.DEXTERITY, new NamedAttribute.Dexterity(dexterity) },
+            {AttributeType.VITALITY, new NamedAttribute.Vitality(vitality) }
         };
 
         this.Resources = new SortedDictionary<ResourceType, Resource>() {
-            {ResourceType.HEALTH, new Resource(vitality * 10) },
-            {ResourceType.CHARGE, new Resource(100) },
+            {ResourceType.HEALTH, new NamedResource.Health((NamedAttribute.Vitality)Attributes[AttributeType.VITALITY]) },
+            {ResourceType.CHARGE, new NamedResource.Charge() },
         };
 
         this.Attack = new CounterAttack();
@@ -61,20 +62,22 @@ public abstract class Character : Entity, IReactable {
         this.TextColor = textColor;
         this.IsTargetable = true;
         this.IsDisplayable = isDisplayable;
-        Resources[ResourceType.CHARGE].ClearFalse();
 
         SpellStack = new Stack<SpellFactory>();
         Buffs = new List<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
+
+        CalculateResources();
+        FillResources();
     }
 
-    public void AddAttribute(AttributeType attributeType, int initial) {
-        this.Attributes[attributeType] = new Attribute(initial);
+    public void AddAttribute(Attribute attribute) {
+        this.Attributes.Add(attribute.Type, attribute);
     }
 
-    public void AddResource(ResourceType resourceType, int initial) {
-        this.Resources[resourceType] = new Resource(initial);
+    public void AddResource(Resource resource) {
+        this.Resources.Add(resource.Type, resource);
     }
 
     public bool HasAttribute(AttributeType attributeType) {
@@ -168,32 +171,65 @@ public abstract class Character : Entity, IReactable {
         return HasResource(ResourceType.CHARGE) && (GetResourceCount(ResourceType.CHARGE, false) == GetResourceCount(ResourceType.CHARGE, true));
     }
 
-    public virtual void Tick() {
-        Charge();
-        if (!IsCharged()) {
-            ChargeStatus = ChargeStatus.NOT_CHARGED;
-        } else {
-            switch (ChargeStatus) {
-                case ChargeStatus.NOT_CHARGED:
-                    ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;
-                    break;
-                case ChargeStatus.HIT_FULL_CHARGE:
-                    OnFullCharge();
-                    ChargeStatus = ChargeStatus.FULL_CHARGE;
-                    break;
-                case ChargeStatus.FULL_CHARGE:
-                    WhileFullCharge();
-                    break;
+    void CalculateResources() {
+        foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
+            pair.Value.Calculate();
+        }
+
+        //Set Skill cap to be highest skill costing Spell
+        if (Resources.ContainsKey(ResourceType.SKILL) && Selections[Selection.SPELL].Count > 0) {
+            Resources[ResourceType.SKILL].True = Selections[Selection.SPELL].Where(s => s.Costs.ContainsKey(ResourceType.SKILL)).Select(s => s.Costs[ResourceType.SKILL]).OrderByDescending(i => i).FirstOrDefault();
+        }
+    }
+
+    void FillResources() {
+        foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
+            pair.Value.False = pair.Value.True;
+        }
+    }
+
+    public virtual void Tick(bool isInCombat) {
+        CalculateResources();
+        if (isInCombat) {
+
+            foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
+                if (pair.Key != ResourceType.HEALTH) {
+                    pair.Value.IsVisible = !IsDefeated();
+                }
             }
-        }
-        CalculateSpeed(Game.Instance.MainCharacter);
 
-        for (int i = 0; i < Buffs.Count; i++) {
-            Spell s = Buffs[i];
-            s.Tick();
-        }
+            if (isDefeated && GetResourceCount(ResourceType.HEALTH, false) > 1) {
+                isDefeated = false;
+            }
 
-        Act();
+            if (!IsDefeated()) {
+                Charge();
+            }
+            if (!IsCharged()) {
+                ChargeStatus = ChargeStatus.NOT_CHARGED;
+            } else {
+                switch (ChargeStatus) {
+                    case ChargeStatus.NOT_CHARGED:
+                        ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;
+                        break;
+                    case ChargeStatus.HIT_FULL_CHARGE:
+                        OnFullCharge();
+                        ChargeStatus = ChargeStatus.FULL_CHARGE;
+                        break;
+                    case ChargeStatus.FULL_CHARGE:
+                        WhileFullCharge();
+                        break;
+                }
+            }
+            CalculateSpeed(Game.Instance.MainCharacter);
+
+            for (int i = 0; i < Buffs.Count; i++) {
+                Spell s = Buffs[i];
+                s.Tick();
+            }
+
+            Act();
+        }
     }
 
     public override bool Equals(object obj) {
@@ -248,7 +284,9 @@ public abstract class Character : Entity, IReactable {
     public virtual void OnBattleStart() {
     }
 
-    public virtual bool IsDefeated() { return isDefeated || GetResourceCount(ResourceType.HEALTH, false) <= 0; }
+    public virtual bool IsDefeated() {
+        return (isDefeated && GetResourceCount(ResourceType.HEALTH, false) == 1) || GetResourceCount(ResourceType.HEALTH, false) <= 0;
+    }
 
     bool isDefeated = false;
     public virtual void OnDefeat() {
@@ -264,18 +302,14 @@ public abstract class Character : Entity, IReactable {
         Game.Instance.Effect.StopFadeEffect(this);
         Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
         Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
+        Game.Instance.Effect.CreateHitsplat("DEFEAT", Color.white, this);
         AddToResource(ResourceType.HEALTH, false, 1, false);
+        Discharge();
         isDefeated = true;
-
-        foreach (ResourceType res in ResourceType.ALL) {
-            if (res != ResourceType.HEALTH) {
-                Resources.Remove(res);
-            }
-        }
     }
 
     public virtual bool IsKilled() {
-        return isKilled || (isDefeated && GetResourceCount(ResourceType.HEALTH, false) <= 0);
+        return isKilled || (IsDefeated() && GetResourceCount(ResourceType.HEALTH, false) <= 0);
     }
 
     bool isKilled = false;
@@ -289,6 +323,7 @@ public abstract class Character : Entity, IReactable {
                 string.Format("* {0} was slain by {1}.", Name, killer.Name),
                 Color.white, TextEffect.FADE_IN));
         Game.Instance.Sound.Play("Sounds/Boom_6");
+        Game.Instance.Effect.CreateHitsplat("DEATH", Color.white, this);
         Game.Instance.Effect.FadeAwayEffect(this, 0.5f, () => Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this));
         isKilled = true;
     }

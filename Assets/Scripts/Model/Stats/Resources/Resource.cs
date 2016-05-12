@@ -7,22 +7,21 @@
  * These values have a lesser cap of 0
  * and a variable greater cap
  */
-public class Resource : PairedInt {
+public abstract class Resource : PairedInt {
+    public bool IsVisible { get; set; }
+
+    readonly ResourceType _type;
+    public ResourceType Type { get { return _type; } }
 
     public const int LESSER_CAP = 0;
 
     public override float False { get { return base.False; } set { base.False = Mathf.Clamp(value, LESSER_CAP, True); } }
     public override int True { get { return base.True; } set { base.True = Mathf.Clamp(value, LESSER_CAP, 99999); } }
 
-    public Resource(int initial) : base(initial) { }
-
-    public void ClearFalse() {
-        False = LESSER_CAP;
+    public Resource(int initial, ResourceType type) : base(initial) {
+        this._type = type;
+        this.IsVisible = true;
     }
 
-    public virtual void regenerate() { }
-
-    public virtual void regenerate(int amount) {
-        False += amount;
-    }
+    public virtual void Calculate() { }
 }

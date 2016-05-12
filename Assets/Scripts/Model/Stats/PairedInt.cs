@@ -11,6 +11,10 @@ public class PairedInt {
     public virtual float False { get { return _false; } set { _false = value; } }
     public virtual int True { get { return _true; } set { _true = value; } }
 
+    //Alternate naming scheme
+    public virtual float Percent { get { return False; } set { False = value; } }
+    public virtual int Flat { get { return True; } set { True = value; } }
+
     public PairedInt(int initial) {
         Set(initial);
     }
@@ -20,56 +24,8 @@ public class PairedInt {
         _false = falseValue;
     }
 
-    public bool IsMaxed() {
-        return False >= True;
-    }
-
-    public void Set(int both) {
+    void Set(int both) {
         True = both;
         False = both;
-    }
-
-    public void Add(int both) {
-        True += both;
-        False += both;
-    }
-
-    public void Subtract(int both) {
-        True -= both;
-        False -= both;
-    }
-
-    public void SetPercentage(float percentage) {
-        SetTruePercentage(percentage);
-        SetFalsePercentage(percentage);
-    }
-
-    public void SetTruePercentage(float percentage) {
-        True = (int)(True * percentage);
-    }
-
-    public void SetFalsePercentage(float percentage) {
-        False = (int)(False * percentage);
-    }
-
-    public float GetRatio() {
-        return ((float)False) / True;
-    }
-
-    /**
-     * Reset falseValue to be trueValue
-     */
-    public void Reset() {
-        False = True;
-    }
-
-    /**
-     * resetValue = trueValue * percentage
-     * set falseValue to resetValue if
-     * it's greater, otherwise, keep falseValue
-     */
-    public void Reset(float percentage) {
-        int resetValue = (int)(percentage * False);
-        False = Mathf.Max(resetValue, True);
     }
 }

@@ -25,7 +25,7 @@ public sealed class AttributeType : IComparable {
     public static readonly IList<AttributeType> ALL = new List<AttributeType>();
 
     public static readonly AttributeType STRENGTH = new AttributeType("Strength",
-                                                                      "STR",
+                                                                      "<color=red>STR</color>",
                                                                       "Increases basic attack damage and minimum spell effects.",
                                                                       "Increases health.",
                                                                       "Increases basic attack damage.",
@@ -33,7 +33,7 @@ public sealed class AttributeType : IComparable {
                                                                       0);
 
     public static readonly AttributeType INTELLIGENCE = new AttributeType("Intelligence",
-                                                                          "INT",
+                                                                          "<color=blue>INT</color>",
                                                                           "Increases spell effects and minimum basic attack damage.",
                                                                           "Increases critical hit rate.",
                                                                           "Increases spell effects.",
@@ -41,7 +41,7 @@ public sealed class AttributeType : IComparable {
                                                                           1);
 
     public static readonly AttributeType DEXTERITY = new AttributeType("Dexterity",
-                                                                       "DEX",
+                                                                       "<color=lime>DEX</color>",
                                                                        "Increases Charge generation and evasion rate.",
                                                                        "Increases critical hit rate and accuracy.",
                                                                        "Increases Charge generation.",
@@ -49,7 +49,7 @@ public sealed class AttributeType : IComparable {
                                                                        2);
 
     public static readonly AttributeType VITALITY = new AttributeType("Vitality",
-                                                                      "VIT",
+                                                                      "<color=yellow>VIT</color>",
                                                                       "Increases health and healing from items.",
                                                                       "Increases armor and magical resistances.",
                                                                       "Increases health.",

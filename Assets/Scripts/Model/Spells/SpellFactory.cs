@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -43,27 +43,28 @@ public abstract class SpellFactory {
         }
     }
 
-    protected Dictionary<ResourceType, int> costs;
+    protected readonly IDictionary<ResourceType, int> _costs;
+    public IDictionary<ResourceType, int> Costs { get { return _costs; } }
 
     public SpellFactory(string name,
                         string description,
                         SpellType spellType,
                         TargetType targetType,
-                        Dictionary<ResourceType, int> costs) {
+                        Dictionary<ResourceType, int> costs = null) {
 
         this._name = name;
         this._description = description;
         this._spellType = spellType;
         this._targetType = targetType;
-        this.costs = costs;
+        this._costs = costs ?? new Dictionary<ResourceType, int>();
         this.IsEnabled = true;
     }
 
     public virtual string GetNameAndInfo(Character caster) {
         StringBuilder s = new StringBuilder();
-        s.Append((IsCastable(caster) ? Name : Util.Color(Name, Color.red)) + (costs.Count == 0 ? "" : " - "));
+        s.Append((IsCastable(caster) ? Name : Util.Color(Name, Color.red)) + (_costs.Count == 0 ? "" : " - "));
         List<string> elements = new List<string>();
-        foreach (KeyValuePair<ResourceType, int> entry in costs) {
+        foreach (KeyValuePair<ResourceType, int> entry in _costs) {
             if (entry.Key != ResourceType.CHARGE) {
                 Color resourceColor = entry.Key.FillColor;
                 int cost = entry.Value;
@@ -81,7 +82,7 @@ public abstract class SpellFactory {
         if (!caster.IsCharged() || !IsEnabled) {
             return false;
         }
-        foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
+        foreach (KeyValuePair<ResourceType, int> resourceCost in _costs) {
             if (!caster.Resources.ContainsKey(resourceCost.Key) || caster.GetResourceCount(resourceCost.Key, false) < resourceCost.Value) {
                 return false;
             }
@@ -90,7 +91,7 @@ public abstract class SpellFactory {
     }
 
     protected virtual void ConsumeResources(Character caster) {
-        foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
+        foreach (KeyValuePair<ResourceType, int> resourceCost in _costs) {
             caster.AddToResource(resourceCost.Key, false, -resourceCost.Value);
         }
         caster.Discharge();
@@ -101,7 +102,7 @@ public abstract class SpellFactory {
     }
 
     public void TryCast(Character caster, IList<Character> targets, SpellDetails other = null) {
-        if (IsCastable(caster)) {
+        if (targets.Any(target => IsCastable(caster, target))) {
             ConsumeResources(caster);
             OnOnce(caster, other);
             foreach (Character target in targets) {

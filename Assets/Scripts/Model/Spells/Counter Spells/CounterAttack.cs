@@ -17,6 +17,9 @@ public class CounterAttack : CounterSpellFactory {
         other.Result.CreateTextFunc = (c, t, calc, o) => {
             return string.Format("* {0}'s {2} was blocked by {1}!", c.Name, t.Name, other.Spell.SpellFactory.Name);
         };
+        other.Result.SFXFunc = (c, t, calc, o) => {
+            Game.Instance.Sound.Play("Sounds/Ping_0");
+        };
     }
 
     protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {

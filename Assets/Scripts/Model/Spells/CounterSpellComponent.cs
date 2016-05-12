@@ -26,11 +26,8 @@ public class CounterSpellComponent : TimedSpellComponent {
                                int count,
                                Func<Spell, Result, Calculation, bool> isReact,
                                float totalDuration,
-                               Result hit,
-                               Result critical = null,
-                               Result miss = null,
                                Func<Spell, Result, Calculation, bool> isWitness = null)
-                               : base(sprite, isGood, totalDuration, hit, critical, miss) {
+                               : base(sprite, isGood, totalDuration, new Result(isState: (c, t, o) => true), null, null) {
         Init(counterSpellFactory, isReact, isWitness);
         this.count = count;
         this.counter = count;
@@ -42,11 +39,8 @@ public class CounterSpellComponent : TimedSpellComponent {
                            CounterSpellFactory counterSpellFactory,
                            Func<Spell, Result, Calculation, bool> isReact,
                            float totalDuration,
-                           Result hit,
-                           Result critical = null,
-                           Result miss = null,
                            Func<Spell, Result, Calculation, bool> isWitness = null)
-                           : base(sprite, isGood, totalDuration, hit, critical, miss) {
+                           : base(sprite, isGood, totalDuration, new Result(isState: (c, t, o) => true), null, null) {
         Init(counterSpellFactory, isReact, isWitness);
         this.isUnlimited = true;
     }
@@ -56,11 +50,8 @@ public class CounterSpellComponent : TimedSpellComponent {
                            CounterSpellFactory counterSpellFactory,
                            Func<Spell, Result, Calculation, bool> isReact,
                            int count,
-                           Result hit,
-                           Result critical = null,
-                           Result miss = null,
                            Func<Spell, Result, Calculation, bool> isWitness = null)
-                           : base(sprite, isGood, hit, critical, miss) {
+                           : base(sprite, isGood, new Result(isState: (c, t, o) => true), null, null) {
         Init(counterSpellFactory, isReact, isWitness);
         this.count = count;
         this.counter = count;
@@ -71,11 +62,8 @@ public class CounterSpellComponent : TimedSpellComponent {
                        bool isGood,
                        CounterSpellFactory counterSpellFactory,
                        Func<Spell, Result, Calculation, bool> isReact,
-                       Result hit,
-                       Result critical = null,
-                       Result miss = null,
                        Func<Spell, Result, Calculation, bool> isWitness = null)
-                       : base(sprite, isGood, hit, critical, miss) {
+                       : base(sprite, isGood, new Result(isState: (c, t, o) => true), null, null) {
         Init(counterSpellFactory, isReact, isWitness);
         this.isUnlimited = true;
     }

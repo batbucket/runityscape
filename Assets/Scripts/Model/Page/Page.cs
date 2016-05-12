@@ -71,29 +71,36 @@ public abstract class Page {
 
 
     public void OnEnter() {
-        if (!HasEnteredBefore && OnFirstEnterAction != null) {
+        if (!HasEnteredBefore) {
             HasEnteredBefore = true;
             OnFirstEnter();
-        } else if (OnEnterAction != null) {
-            OnEnterAction.Invoke();
         }
+        OnAnyEnter();
     }
 
-    public void OnFirstEnter() {
+    public virtual void OnFirstEnter() {
         OnFirstEnterAction.Invoke();
     }
 
-    public void OnExit() {
-        if (!HasExitedBefore && OnFirstExitAction != null) {
-            HasExitedBefore = true;
-            OnFirstExit();
-        } else if (OnExitAction != null) {
-            OnExitAction.Invoke();
-        }
+    public virtual void OnAnyEnter() {
+        OnEnterAction.Invoke();
+        GetAll().Where(c => c.HasResource(ResourceType.CHARGE)).ToList().ForEach(c => c.Resources[ResourceType.CHARGE].IsVisible = false);
     }
 
-    public void OnFirstExit() {
+    public void OnExit() {
+        if (!HasExitedBefore) {
+            HasExitedBefore = true;
+            OnFirstExit();
+        }
+        OnExitAction.Invoke();
+    }
+
+    public virtual void OnFirstExit() {
         OnFirstExitAction.Invoke();
+    }
+
+    public virtual void OnAnyExit() {
+        OnExitAction.Invoke();
     }
 
     void SetSide(IList<Character> characters, bool isRightSide) {
@@ -202,5 +209,8 @@ public abstract class Page {
 
     public virtual void Tick() {
         OnTick.Invoke();
+        foreach (Character c in GetAll()) {
+            c.Tick(false);
+        }
     }
 }
