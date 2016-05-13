@@ -25,8 +25,6 @@ public class PagePresenter {
 
     public void SetPage(Page page) {
 
-        this.Page.OnExit();
-        page.OnEnter();
         this.Page = page;
         Util.KillAllChildren(Game.Instance.TextBoxHolder.gameObject);
 
@@ -49,6 +47,9 @@ public class PagePresenter {
         } else {
             inputBox = null;
         }
+
+        this.Page.OnExit();
+        page.OnEnter();
     }
 
     public void AddTextBox(TextBox t, Action callBack = null) {

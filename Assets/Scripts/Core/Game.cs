@@ -44,6 +44,10 @@ public class Game : MonoBehaviour {
     SoundView _sound;
     public SoundView Sound { get { return _sound; } }
 
+    [SerializeField]
+    HotkeyButton _menuButton;
+    public HotkeyButton MenuButton { get { return _menuButton; } }
+
     public PagePresenter PagePresenter { get; private set; }
     public Character MainCharacter { get; private set; }
 
@@ -60,6 +64,7 @@ public class Game : MonoBehaviour {
     string PageID {
         set {
             Util.Assert(pages.ContainsKey(value), string.Format("Page: \"{0}\" does not exist!", value));
+            Effect.StopAllCoroutines();
             if (pageID != null && !pageLinks.ContainsKey(value)) {
                 pageLinks.Add(value, pageID);
             }
@@ -75,7 +80,6 @@ public class Game : MonoBehaviour {
         _instance = this;
         boolFlags = new Dictionary<string, bool>();
         PagePresenter = new PagePresenter();
-        MainCharacter = new Amit();
         pages = new Dictionary<string, Page>();
         Time.IsEnabled = false;
         pageLinks = new Dictionary<string, string>();
@@ -83,12 +87,26 @@ public class Game : MonoBehaviour {
         Header.IsBlurbEnabled = false;
         Header.IsChapterEnabled = false;
 
+        MenuButton.Hotkey = KeyCode.None;
+        MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => PageID = "primary");
+
         pages["primary"] = new ReadPage(
             tooltip: "Welcome to RunityScape.",
             processes: new Process[] {
                 new Process("New Game", "Start a new game.", () => PageID = "newGame-Name"),
                 new Process("Load Game", "Load a saved game.", condition: () => false),
-                new Process("Debug", "Visit the Debug page.", () => PageID = "debug")
+                new Process("Debug", "Enter the debug page.", () => PageID = "debug"),
+                new Process(),
+
+                new Process(),
+                new Process(),
+                new Process(),
+                new Process(),
+
+                new Process(),
+                new Process(),
+                new Process(),
+                new Process("Exit", "Exit the application.", () => Application.Quit())
         });
 
         CreateWorld();
@@ -164,7 +182,7 @@ public class Game : MonoBehaviour {
                     "Confirm your assigned Attribute points.",
                     () => {
                         hero.FillResources();
-                        PageID = "newGame-PerkSel";
+                        PageID = "intro-HelloWorld";
                     },
                     () => currentPoints <= 0
                 ),
@@ -189,37 +207,28 @@ public class Game : MonoBehaviour {
                 hero.AddToResource(ResourceType.HEALTH, false, 0.5f);
             }
         );
-
-
-        pages["newGame-PerkSel"] = new ReadPage(
-        text: "Choose a perk. Just kidding. Those aren't implemented yet.",
-        processes: ProcessesWithBack(
-                new Process(
-                    "Continue",
-                    action: () => {
-                        PageID = "intro-HelloWorld";
-                    }
-            )
-        )
-        );
     }
 
     void CreateIntro() {
-        pages["intro-HelloWorld"] = new ReadPage();
+        pages["intro-HelloWorld"] = new ReadPage(
+            onFirstEnter: () => {
+                AddTextBox(new RightBox("placeholder", "This turtle is everything I want to be. I envy him so completely.", Color.yellow));
+            }
+            );
     }
 
     void CreateDebug() {
-        pages["debug"] = new ReadPage("What", "Hello world", mainCharacter: MainCharacter, left: new Character[] { MainCharacter }, right: new Character[] { new Steve(), new Steve() },
+        pages["debug"] = new ReadPage("What", "Hello world", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
                 new Process("Normal TextBox", "Say Hello world",
                     () => AddTextBox(
                         new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
                 new Process("LeftBox", "Say Hello world",
                     () => AddTextBox(
-                        new LeftBox("crying_mudkip", DERP))),
+                        new LeftBox("crying_mudkip", DERP, Color.white))),
                 new Process("RightBox", "Say Hello world",
                     () => AddTextBox(
-                        new RightBox("crying_mudkip", DERP))),
+                        new RightBox("crying_mudkip", DERP, Color.white))),
                 new Process("InputBox", "Type something",
                     () => TextBoxHolder.AddInputBoxView()),
                 new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(pages["debug1"])),
@@ -232,8 +241,40 @@ public class Game : MonoBehaviour {
                 new Process("Back", "Go back to the main menu.", () => { PagePresenter.SetPage(pages["primary"]); })
             }
         );
-        pages["debug1"] = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { MainCharacter, new Amit() }, right: new Character[] { new Steve(), new Steve() });
+        pages["debug1"] = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve(), new Steve() });
         pages["debug2"] = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
+    }
+
+    BattlePage CreateBattle(string text = "",
+                            string tooltip = "",
+                            string location = "",
+                            Character mainCharacter = null,
+                            Character[] left = null,
+                            Character[] right = null,
+                            Action onFirstEnter = null,
+                            Action onEnter = null,
+                            Action onFirstExit = null,
+                            Action onExit = null,
+                            Action onTick = null
+                            ) {
+        return new BattlePage(text, tooltip, location, MainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick);
+    }
+
+    ReadPage CreateRead(string text = "",
+                        string tooltip = "",
+                        string location = "",
+                        bool hasInputField = false,
+                        Character mainCharacter = null,
+                        Character[] left = null,
+                        Character[] right = null,
+                        Action onFirstEnter = null,
+                        Action onEnter = null,
+                        Action onFirstExit = null,
+                        Action onExit = null,
+                        Action onTick = null,
+                        Process[] processes = null
+                        ) {
+        return new ReadPage(text, tooltip, location, hasInputField, MainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes);
     }
 
     void GoToLastPage() {

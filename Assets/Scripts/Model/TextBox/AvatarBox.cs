@@ -7,10 +7,11 @@ public abstract class AvatarBox : TextBox {
 
     public AvatarBox(string spriteLoc,
                      string text,
+                     Color color,
                      TextEffect effect = TextEffect.TYPE,
                      string soundLocation = "Sounds/Blip_0",
                      float timePerLetter = 0.5f)
-                     : base(text, effect, soundLocation, timePerLetter) {
+                     : base(text, color, effect, soundLocation, timePerLetter) {
         this._sprite = Util.GetSprite(spriteLoc);
     }
 

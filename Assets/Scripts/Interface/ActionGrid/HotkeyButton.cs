@@ -62,7 +62,7 @@ public class HotkeyButton : MonoBehaviour {
             button.onClick.AddListener(process.Play);
             text.text = process.Name;
             this._process = process;
-            hotkeyText.text = IsHotkeyEnabled ? Hotkey.ToString() : "";
+            hotkeyText.text = IsHotkeyEnabled && Hotkey != KeyCode.None ? Hotkey.ToString() : "";
             button.interactable = true;
         }
     }
@@ -100,12 +100,12 @@ public class HotkeyButton : MonoBehaviour {
             activated = true;
         }
 
-        if (mouseInBounds && button.IsInteractable()) {
+        if (mouseInBounds && button.IsInteractable() && !string.IsNullOrEmpty(Process.Description)) {
             Game.Instance.Tooltip.Text = Process.Description;
         }
 
         if (activated) {
-            if (button.IsInteractable()) {
+            if (button.IsInteractable() && !string.IsNullOrEmpty(Process.Description)) {
                 Game.Instance.Tooltip.Text = Process.Description;
             }
 

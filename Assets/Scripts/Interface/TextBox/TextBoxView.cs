@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System;
 
@@ -57,7 +58,7 @@ public class TextBoxView : MonoBehaviour {
                 }
                 float timer = 0;
                 int index = 0;
-                while (text.text.Length < textBox.RawText.Length) {
+                while (text.text.Length - text.text.Count(s => s == '\u2007') < textBox.RawText.Length) {
                     text.text = string.Join("", currentTextArray);
                     timer += Time.deltaTime;
                     if (timer >= textBox.TimePerLetter) {
@@ -72,7 +73,7 @@ public class TextBoxView : MonoBehaviour {
 
                             //Go forward on the word and set each letter as a non-wrapped space to ensure text is wrapped
                             while (start < textBox.TextArray.Length && !textBox.TextArray[start].Equals(" ")) {
-                                currentTextArray[start++] = "\u00A0";
+                                currentTextArray[start++] = "\u2007";
                             }
                             currentTextArray[index] = textBox.TextArray[index];
                         }

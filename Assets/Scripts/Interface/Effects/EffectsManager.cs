@@ -161,12 +161,13 @@ public class EffectsManager : MonoBehaviour {
     }
 
     IEnumerator FadeEffect(GameObject target, float duration, float initial, float destination, Action endCall = null) {
+        float timer = duration;
         Image[] images = target.gameObject.GetComponentsInChildren<Image>();
         Text[] texts = target.gameObject.GetComponentsInChildren<Text>();
         Outline[] outlines = target.gameObject.GetComponentsInChildren<Outline>();
-        float timer = duration;
 
         while ((timer -= Time.deltaTime) > 0) {
+
             float alpha = Mathf.Lerp(initial, destination, (duration - timer) / duration);
             foreach (Image i in images) {
                 Util.SetImageAlpha(i, alpha);
@@ -175,9 +176,7 @@ public class EffectsManager : MonoBehaviour {
                 Util.SetTextAlpha(t, alpha);
             }
             foreach (Outline o in outlines) {
-                Color c = o.effectColor;
-                c.a = alpha;
-                o.effectColor = c;
+                Util.SetOutlineAlpha(o, alpha);
             }
             yield return null;
         }
@@ -188,9 +187,7 @@ public class EffectsManager : MonoBehaviour {
             Util.SetTextAlpha(t, destination);
         }
         foreach (Outline o in outlines) {
-            Color c = o.effectColor;
-            c.a = destination;
-            o.effectColor = c;
+            Util.SetOutlineAlpha(o, destination);
         }
         if (endCall != null) {
             endCall.Invoke();

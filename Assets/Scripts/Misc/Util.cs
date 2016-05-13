@@ -31,15 +31,27 @@ public static class Util {
     }
 
     public static void SetTextAlpha(Text target, float alpha) {
-        Color c = target.color;
-        c.a = alpha;
-        target.color = c;
+        if (target != null) {
+            Color c = target.color;
+            c.a = alpha;
+            target.color = c;
+        }
+    }
+
+    public static void SetOutlineAlpha(Outline target, float alpha) {
+        if (target != null) {
+            Color c = target.effectColor;
+            c.a = alpha;
+            target.effectColor = c;
+        }
     }
 
     public static void SetImageAlpha(Image target, float alpha) {
-        Color c = target.color;
-        c.a = alpha;
-        target.color = c;
+        if (target != null) {
+            Color c = target.color;
+            c.a = alpha;
+            target.color = c;
+        }
     }
 
     public static void Parent(GameObject child, GameObject parent) {
