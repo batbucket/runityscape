@@ -11,13 +11,25 @@ public class TimeView : MonoBehaviour {
     [SerializeField]
     Text _day;
     string Day { set { _day.text = value; } }
+    public bool IsDayEnabled {
+        set {
+            _day.enabled = value;
+        }
+    }
 
     [SerializeField]
     Text _time;
     string Time { set { _time.text = value; } }
+    public bool IsTimeEnabled {
+        set {
+            _time.enabled = value;
+        }
+    }
 
-    public void Enable(bool enable) {
-        _day.enabled = enable;
-        _time.enabled = enable;
+    public bool IsEnabled {
+        set {
+            IsDayEnabled = value;
+            IsTimeEnabled = value;
+        }
     }
 }

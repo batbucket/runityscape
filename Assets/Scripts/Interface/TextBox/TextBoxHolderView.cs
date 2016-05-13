@@ -14,27 +14,24 @@ public class TextBoxHolderView : MonoBehaviour {
     GameObject inputBoxPrefab;
 
     IList<GameObject> children;
+    IDictionary<TextBoxType, GameObject> textBoxes;
 
     const int TEXTBOX_LIMIT = 25;
 
     void Awake() {
         this.children = new List<GameObject>();
+        textBoxes = new Dictionary<TextBoxType, GameObject>() {
+            { TextBoxType.TEXT, textBoxPrefab },
+            { TextBoxType.LEFT, leftBoxPrefab },
+            { TextBoxType.RIGHT, rightBoxPrefab }
+        };
     }
 
     public void AddTextBoxView(TextBox textBox, Action callBack = null) {
-        GameObject g = (GameObject)GameObject.Instantiate(textBoxPrefab);
+        GameObject g = Instantiate(textBoxes[textBox.Type]);
         children.Add(g);
-        TextBoxView textBoxView = g.GetComponent<TextBoxView>();
         Util.Parent(g, gameObject);
-        textBoxView.WriteText(textBox, callBack);
-    }
-
-    public void AddAvatarBoxView(bool isRightSide, string spriteLocation, TextBox textBox, Action callBack = null) {
-        GameObject g = Instantiate(isRightSide ? rightBoxPrefab : leftBoxPrefab);
-        children.Add(g);
-        AvatarBoxView textBoxView = g.GetComponent<AvatarBoxView>();
-        Util.Parent(g, gameObject);
-        textBoxView.WriteText(Util.GetSprite(spriteLocation), textBox, callBack);
+        textBox.Write(g);
     }
 
     public InputBoxView AddInputBoxView() {
@@ -46,8 +43,8 @@ public class TextBoxHolderView : MonoBehaviour {
 
     void Update() {
         if (children.Count > TEXTBOX_LIMIT) {
-            Destroy(children[TEXTBOX_LIMIT]);
-            children.RemoveAt(TEXTBOX_LIMIT);
+            Destroy(children[0]);
+            children.RemoveAt(0);
         }
     }
 }

@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class Game : MonoBehaviour {
     static Game _instance;
@@ -53,14 +54,14 @@ public class Game : MonoBehaviour {
     public const string DERP = "because I'm not paying a bunch of money to take shitty humanity classes";
 
     IDictionary<string, Page> pages;
-    Stack<string> lastPageStack;
+    IDictionary<string, string> pageLinks;
 
     string pageID;
     string PageID {
         set {
             Util.Assert(pages.ContainsKey(value), string.Format("Page: \"{0}\" does not exist!", value));
-            if (pageID != null) {
-                lastPageStack.Push(pageID);
+            if (pageID != null && !pageLinks.ContainsKey(value)) {
+                pageLinks.Add(value, pageID);
             }
             pageID = value;
             PagePresenter.SetPage(pages[value]);
@@ -76,65 +77,180 @@ public class Game : MonoBehaviour {
         PagePresenter = new PagePresenter();
         MainCharacter = new Amit();
         pages = new Dictionary<string, Page>();
-        Time.Enable(false);
+        Time.IsEnabled = false;
+        pageLinks = new Dictionary<string, string>();
+
+        Header.IsBlurbEnabled = false;
+        Header.IsChapterEnabled = false;
 
         pages["primary"] = new ReadPage(
             tooltip: "Welcome to RunityScape.",
             processes: new Process[] {
                 new Process("New Game", "Start a new game.", () => PageID = "newGame-Name"),
-                new Process("Load Game", "Load a saved game."),
+                new Process("Load Game", "Load a saved game.", condition: () => false),
                 new Process("Debug", "Visit the Debug page.", () => PageID = "debug")
         });
 
-        Hero hero = new Hero("Unnamed Hero", 0, 0, 0, 0);
+        CreateWorld();
+
+        PageID = "primary";
+    }
+
+    void CreateWorld() {
+        CreateNewGame();
+        CreateIntro();
+        CreateDebug();
+    }
+
+    void CreateNewGame() {
+        const int STARTING_ATTRIBUTE_COUNT = 1;
+        Hero hero = new Hero(STARTING_ATTRIBUTE_COUNT, STARTING_ATTRIBUTE_COUNT, STARTING_ATTRIBUTE_COUNT, STARTING_ATTRIBUTE_COUNT);
+        foreach (Resource r in hero.Resources.Values) {
+            r.IsVisible = false;
+        }
         pages["newGame-Name"] = new ReadPage(
             tooltip: "What is your name?",
             hasInputField: true,
             left: new Character[] { hero },
-            processes: ProcessesWithBack(new Process("Confirm", "Use this name.")),
+            processes: ProcessesWithBack(
+                new Process(
+                    "Confirm",
+                    "Use this name.",
+                    () => {
+                        PageID = "newGame-AttSel";
+                    },
+                    () => {
+                        return Page.InputtedString.Length > 0;
+                    }
+                )
+            ),
             onTick: () => {
                 hero.Name = Page.InputtedString;
             }
         );
 
+        const int ASSIGNABLE_POINTS = 2;
+        int currentPoints = ASSIGNABLE_POINTS;
+        Process[] attributeAdder = new Process[AttributeType.ALL.Count];
+        int index = 0;
+        foreach (AttributeType myAttributeType in AttributeType.ALL) {
+            AttributeType attributeType = myAttributeType;
+            attributeAdder[index++] = new Process(
+                attributeType.Name,
+                attributeType.ShortDescription,
+                () => {
+                    if (currentPoints > 0) {
+                        Sound.Play("Sounds/Blip_0");
+                        hero.AddToAttribute(attributeType, false, 1);
+                        hero.AddToAttribute(attributeType, true, 1, true);
+                        AddTextBox(new TextBox(string.Format("You have assigned a point to {0}.", attributeType.Name)));
+                        AddTextBox(new TextBox(string.Format("Your current Attribute distribution is:\n{0}", hero.AttributeDistribution)));
+                        AddTextBox(new TextBox(string.Format(--currentPoints > 0 ? "You have {0} point{1} remaining." : "You have no points remaining.", currentPoints, currentPoints == 1 ? "" : "s")));
+                    }
+                },
+                () => currentPoints > 0
+            );
+        }
+        foreach (Resource r in hero.Resources.Values) {
+            r.IsVisible = true;
+        }
         pages["newGame-AttSel"] = new ReadPage(
-            tooltip: "Choose your Attribute distribution.",
-            processes: ProcessesWithBack(new Process())
+            text: string.Format("Choose {0} Attributes to assign points to.", ASSIGNABLE_POINTS),
+            left: new Character[] { hero },
+            processes: ProcessesWithBack(
+                attributeAdder,
+                new Process(
+                    "Confirm",
+                    "Confirm your assigned Attribute points.",
+                    () => {
+                        hero.FillResources();
+                        PageID = "newGame-PerkSel";
+                    },
+                    () => currentPoints <= 0
+                ),
+                new Process(
+                        "Reset",
+                        "Reset your assigned Attribute points.",
+                        () => {
+                            Sound.Play("Sounds/Zip_1");
+                            AddTextBox(new TextBox("You have reset your Attribute point assignments."));
+                            AddTextBox(new TextBox(string.Format("Choose {0} Attributes to assign points to.", ASSIGNABLE_POINTS)));
+                            currentPoints = ASSIGNABLE_POINTS;
+                            foreach (Attribute a in hero.Attributes.Values) {
+                                a.False = STARTING_ATTRIBUTE_COUNT;
+                                a.True = STARTING_ATTRIBUTE_COUNT;
+                            }
+                            Effect.CreateHitsplat("RESET", Color.white, hero);
+                        },
+                        () => currentPoints < 2
+                )
+            ),
+            onTick: () => {
+                hero.AddToResource(ResourceType.HEALTH, false, 0.5f);
+            }
         );
 
-        //Debug Pages
 
+        pages["newGame-PerkSel"] = new ReadPage(
+        text: "Choose a perk. Just kidding. Those aren't implemented yet.",
+        processes: ProcessesWithBack(
+                new Process(
+                    "Continue",
+                    action: () => {
+                        PageID = "intro-HelloWorld";
+                    }
+            )
+        )
+        );
+    }
+
+    void CreateIntro() {
+        pages["intro-HelloWorld"] = new ReadPage();
+    }
+
+    void CreateDebug() {
         pages["debug"] = new ReadPage("What", "Hello world", mainCharacter: MainCharacter, left: new Character[] { MainCharacter }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
-                        new Process("Normal TextBox", "Say Hello world",
-                            () => TextBoxHolder.AddTextBoxView(
-                                new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
-                        new Process("LeftBox", "Say Hello world",
-                            () => TextBoxHolder.AddAvatarBoxView(false, "crying_mudkip",
-                                new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
-                        new Process("RightBox", "Say Hello world",
-                            () => TextBoxHolder.AddAvatarBoxView(true, "crying_mudkip",
-                                new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
-                        new Process("InputBox", "Type something",
-                            () => TextBoxHolder.AddInputBoxView()),
-                        new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(pages["debug1"])),
-                        new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { PagePresenter.SetPage(pages["debug2"]); Sound.Play("Music/99P"); }),
-                        new Process("Shake yourself", "Literally U******E", () => { Effect.ShakeEffect(MainCharacter, .05f); }),
-                        new Process("Fade yourself", "Literally U******E x2", () => { Effect.FadeAwayEffect(MainCharacter, 1.0f); }),
-                        new Process(),
-                        new Process(),
-                        new Process(),
-                        new Process("Back", "Go back to the main menu.", () => { PagePresenter.SetPage(pages["primary"]); })
-        });
+                new Process("Normal TextBox", "Say Hello world",
+                    () => AddTextBox(
+                        new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
+                new Process("LeftBox", "Say Hello world",
+                    () => AddTextBox(
+                        new LeftBox("crying_mudkip", DERP))),
+                new Process("RightBox", "Say Hello world",
+                    () => AddTextBox(
+                        new RightBox("crying_mudkip", DERP))),
+                new Process("InputBox", "Type something",
+                    () => TextBoxHolder.AddInputBoxView()),
+                new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(pages["debug1"])),
+                new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { PagePresenter.SetPage(pages["debug2"]); Sound.Play("Music/99P"); }),
+                new Process("Shake yourself", "Literally U******E", () => { Effect.ShakeEffect(MainCharacter, .05f); }),
+                new Process("Fade yourself", "Literally U******E x2", () => { Effect.CharacterDeath(MainCharacter, 1.0f); }),
+                new Process(),
+                new Process(),
+                new Process(),
+                new Process("Back", "Go back to the main menu.", () => { PagePresenter.SetPage(pages["primary"]); })
+            }
+        );
         pages["debug1"] = new BattlePage(text: "Hello world!", mainCharacter: MainCharacter, left: new Character[] { MainCharacter, new Amit() }, right: new Character[] { new Steve(), new Steve() });
         pages["debug2"] = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
-
-        PagePresenter.SetPage(pages["primary"]);
     }
 
     void GoToLastPage() {
-        Util.Assert(lastPageStack.Count > 0, "No last page to go to!");
-        PageID = lastPageStack.Pop();
+        PageID = pageLinks[pageID];
+    }
+
+    public void AddTextBox(TextBox t, Action callBack = null) {
+        PagePresenter.AddTextBox(t, callBack);
+    }
+
+    Process[] ProcessesWithBack(Process[] processes0, params Process[] processes1) {
+        Util.Assert(processes0.Length + processes1.Length < ActionGridView.TOTAL_BUTTON_COUNT - 1, "Too many processes!");
+        Process[] full = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
+        processes0.CopyTo(full, 0);
+        processes1.CopyTo(full, processes0.Length);
+        full[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Go back to the previous page.", GoToLastPage);
+        return full;
     }
 
     Process[] ProcessesWithBack(params Process[] processes) {

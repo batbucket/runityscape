@@ -11,21 +11,17 @@ public class TextBoxView : MonoBehaviour {
 
     [SerializeField]
     Text text;
-    [SerializeField]
-    AudioSource characterSound;
+
     float timePerLetter; //Speed at which the letters appear
 
     int index; //Which letter to make visible
     float timer; //Needs to be >= timePerLetter for a letter to appear
 
-    public const int BLIP_INTERVAL = 1; //Letters needed for a sound to occur
+    public const int BLIP_INTERVAL = 3; //Letters needed for a sound to occur
     public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
 
-    public void WriteText(string fullText, Color color, TextEffect effect = TextEffect.NONE, string soundLocation = "Blip_0", float timePerLetter = 0, Action callBack = null) {
-        WriteText(new TextBox(fullText, color, effect, soundLocation, timePerLetter), callBack);
-    }
-
-    public void WriteText(TextBox textBox, Action callBack = null) {
+    public virtual void WriteText(TextBox textBox, Action callBack = null) {
+        Game.Instance.Effect.Fade(gameObject, 0.25f, 0f, 1.0f);
         StartCoroutine(TypeWriter(text, textBox, callBack));
     }
 
@@ -34,7 +30,7 @@ public class TextBoxView : MonoBehaviour {
         switch (textBox.Effect) {
             case TextEffect.NONE:
                 text.text = textBox.RawText;
-                Game.Instance.Sound.Play(textBox.SoundLocation);
+                Game.Instance.Sound.Play(textBox.SoundLoc);
                 break;
             case TextEffect.FADE_IN:
                 text.text = textBox.RawText;
@@ -69,10 +65,12 @@ public class TextBoxView : MonoBehaviour {
                         //Don't reset timer or make sound on taggedText and spaces
                         if (!taggedText[index] && !Regex.IsMatch(textBox.TextArray[index], " ")) {
                             timer = 0;
-                            Game.Instance.Sound.Play(characterSound);
+                            Game.Instance.Sound.Play(textBox.SoundLoc);
                         }
                         if (!taggedText[index]) {
                             int start = index;
+
+                            //Go forward on the word and set each letter as a non-wrapped space to ensure text is wrapped
                             while (start < textBox.TextArray.Length && !textBox.TextArray[start].Equals(" ")) {
                                 currentTextArray[start++] = "\u00A0";
                             }

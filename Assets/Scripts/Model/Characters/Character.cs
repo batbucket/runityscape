@@ -34,6 +34,9 @@ public abstract class Character : Entity, IReactable {
     public bool IsControllable { get { return this.IsDisplayable && this.IsCharged(); } }
     public ChargeStatus ChargeStatus { get; private set; }
 
+    public IDictionary<PerkType.Character, IList<InvokePerk>> CharacterPerks;
+    public IDictionary<PerkType.React, IList<ReactPerk>> ReactPerks;
+
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
         this.Name = name;
         this.Level = level;
@@ -67,6 +70,11 @@ public abstract class Character : Entity, IReactable {
         Buffs = new List<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
+
+
+        PerkType.Character[] characterPerkTypes = (PerkType.Character[])Enum.GetValues(typeof(PerkType.Character));
+
+        PerkType.React[] reactPerkTypes = (PerkType.React[])Enum.GetValues(typeof(PerkType.React));
 
         CalculateResources();
         FillResources();
@@ -182,7 +190,7 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    void FillResources() {
+    public void FillResources() {
         foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
             pair.Value.False = pair.Value.True;
         }
@@ -298,8 +306,8 @@ public abstract class Character : Entity, IReactable {
             new TextBox(
                 string.Format("* {0} was defeated by {1}.", Name, defeater.Name),
                 Color.white, TextEffect.FADE_IN));
-        Game.Instance.Effect.ShakeEffect(this, 1f, 0.05f);
         Game.Instance.Effect.StopFadeEffect(this);
+        Game.Instance.Effect.ShakeEffect(this, 1f, 0.05f);
         Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
         Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
         Game.Instance.Effect.CreateHitsplat("DEFEAT", Color.white, this);
@@ -324,8 +332,18 @@ public abstract class Character : Entity, IReactable {
                 Color.white, TextEffect.FADE_IN));
         Game.Instance.Sound.Play("Sounds/Boom_6");
         Game.Instance.Effect.CreateHitsplat("DEATH", Color.white, this);
-        Game.Instance.Effect.FadeAwayEffect(this, 0.5f, () => Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this));
+        Game.Instance.Effect.CharacterDeath(this, 0.5f, () => Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this));
         isKilled = true;
+    }
+
+    public string AttributeDistribution {
+        get {
+            List<string> s = new List<string>();
+            foreach (KeyValuePair<AttributeType, Attribute> pair in Attributes) {
+                s.Add(string.Format("{0} {1}/{2}", pair.Key.ShortName, pair.Value.False, pair.Value.True));
+            }
+            return string.Format("{1}.", Name, string.Join(", ", s.ToArray()));
+        }
     }
 
     public virtual void OnVictory() {

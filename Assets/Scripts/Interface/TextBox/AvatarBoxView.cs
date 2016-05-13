@@ -2,14 +2,14 @@
 using UnityEngine.UI;
 using System;
 
-public abstract class AvatarBoxView : MonoBehaviour {
+public class AvatarBoxView : MonoBehaviour {
     [SerializeField]
     TextBoxView textBoxView;
+    [SerializeField]
+    Image avatar;
 
-    protected void WriteText(Image avatar, Sprite sprite, TextBox textBox, Action callBack = null) {
-        avatar.sprite = sprite;
-        textBoxView.WriteText(textBox, callBack);
+    public void WriteText(AvatarBox a, Action callBack = null) {
+        avatar.sprite = a.Sprite;
+        textBoxView.WriteText(a, callBack);
     }
-
-    public abstract void WriteText(Sprite sprite, TextBox textBox, Action callBack = null);
 }

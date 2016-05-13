@@ -3,27 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class SoundView : MonoBehaviour {
-    public IDictionary<string, AudioSource> Sound { get; private set; }
+    public IDictionary<string, AudioClip> Sound { get; private set; }
 
     void Awake() {
-        this.Sound = new Dictionary<string, AudioSource>();
+        this.Sound = new Dictionary<string, AudioClip>();
     }
 
     public void Play(string resourceLocation) {
-        Util.Assert(Resources.Load(resourceLocation) != null, "Sound location does not exist!");
+        Util.Assert(Resources.Load<AudioClip>(resourceLocation) != null, "Sound location does not exist!");
         if (!Sound.ContainsKey(resourceLocation)) {
-            AudioSource audioSource = gameObject.AddComponent<AudioSource>();
-            audioSource.clip = Resources.Load<AudioClip>(resourceLocation);
-            Sound.Add(resourceLocation, audioSource);
+            Sound[resourceLocation] = Resources.Load<AudioClip>(resourceLocation);
         }
-        Sound[resourceLocation].Play();
+        StartCoroutine(PlayThenDestroy(resourceLocation));
     }
 
-    public void Play(AudioSource sound) {
-        Util.Assert(sound != null, "Sound does not exist!");
-        if (!Sound.ContainsKey(sound.name)) {
-            Sound.Add(sound.name, sound);
+    IEnumerator PlayThenDestroy(string resourceLocation) {
+        AudioSource source = gameObject.AddComponent<AudioSource>();
+        source.clip = Sound[resourceLocation];
+        source.Play();
+        while (source.isPlaying) {
+            yield return null;
         }
-        Sound[sound.name].Play();
+        Destroy(source);
+        yield break;
     }
 }

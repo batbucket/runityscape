@@ -86,8 +86,6 @@
     <Compile Include="Assets\Scripts\Interface\Sound\SoundView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\AvatarBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\InputBoxView.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBox\LeftBoxView.cs" />
-    <Compile Include="Assets\Scripts\Interface\TextBox\RightBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
@@ -118,6 +116,9 @@
     <Compile Include="Assets\Scripts\Model\Page\Page.cs" />
     <Compile Include="Assets\Scripts\Model\Page\PagePresenter.cs" />
     <Compile Include="Assets\Scripts\Model\Page\ReadPage.cs" />
+    <Compile Include="Assets\Scripts\Model\Perks\InvokePerk.cs" />
+    <Compile Include="Assets\Scripts\Model\Perks\PerkType.cs" />
+    <Compile Include="Assets\Scripts\Model\Perks\ReactPerk.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Calculation.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Check.cs" />
@@ -127,7 +128,6 @@
     <Compile Include="Assets\Scripts\Model\Spells\Counter Spells\CounterAttack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\CounterSpellComponent.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\CounterSpellFactory.cs" />
-    <Compile Include="Assets\Scripts\Model\Spells\PerkType.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Result.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Spell.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellComponent.cs" />
@@ -145,7 +145,11 @@
     <Compile Include="Assets\Scripts\Model\Stats\Resources\NamedResource.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Resources\Resource.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Resources\ResourceType.cs" />
+    <Compile Include="Assets\Scripts\Model\TextBox\AvatarBox.cs" />
+    <Compile Include="Assets\Scripts\Model\TextBox\LeftBox.cs" />
+    <Compile Include="Assets\Scripts\Model\TextBox\RightBox.cs" />
     <Compile Include="Assets\Scripts\Model\TextBox\TextBox.cs" />
+    <Compile Include="Assets\Scripts\Model\TextBox\TextBoxType.cs" />
     <Compile Include="Assets\Scripts\Model\TextBox\TextEffect.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -5,21 +5,44 @@ using System.Text.RegularExpressions;
 using System.Linq;
 
 public class TextBox {
-    public string[] TextArray { get; private set; }
-    public string RawText { get; private set; }
-    public Color Color { get; private set; } //Base color
-    public float TimePerLetter { get; private set; }
-    public string SoundLocation { get; private set; }
-    public TextEffect Effect { get; private set; }
+    public virtual TextBoxType Type { get { return TextBoxType.TEXT; } }
 
-    public TextBox(string text, Color color, TextEffect effect = TextEffect.NONE, string soundLocation = "Blip_0", float timePerLetter = 0) {
+    string[] _textArray;
+    public string[] TextArray { get { return _textArray; } }
 
-        //Splits by rich text, then letters
-        this.TextArray = Regex.Matches(text, "(<.*?>)|.").Cast<Match>().Select(m => m.Value).ToArray();
-        this.RawText = text;
-        this.Color = color;
-        this.TimePerLetter = timePerLetter;
-        this.Effect = effect;
-        this.SoundLocation = soundLocation;
+    string _rawText;
+    public string RawText { get { return _rawText; } }
+
+    Color _color;
+    public Color Color { get { return _color; } }
+
+    float _timePerLetter;
+    public float TimePerLetter { get { return _timePerLetter; } }
+
+    string _soundLoc;
+    public string SoundLoc { get { return _soundLoc; } }
+
+    TextEffect _effect;
+    public TextEffect Effect { get { return _effect; } }
+
+    void Init(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Sounds/Blip_0", float timePerLetter = 0) {
+        this._textArray = Regex.Matches(text, "(<.*?>)|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
+        this._rawText = text;
+        this._color = color;
+        this._timePerLetter = timePerLetter;
+        this._soundLoc = soundLocation;
+        this._effect = effect;
+    }
+
+    public TextBox(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Sounds/Blip_0", float timePerLetter = 0) {
+        Init(text, color, effect, soundLocation, timePerLetter);
+    }
+
+    public TextBox(string text, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Sounds/Blip_0", float timePerLetter = 0) {
+        Init(text, Color.white, effect, soundLocation, timePerLetter);
+    }
+
+    public virtual void Write(GameObject textBoxPrefab) {
+        textBoxPrefab.GetComponent<TextBoxView>().WriteText(this);
     }
 }

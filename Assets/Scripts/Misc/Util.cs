@@ -47,6 +47,13 @@ public static class Util {
         child.transform.localPosition = new Vector3(0, 0, 0);
     }
 
+    public static void Parent(IList<GameObject> child, GameObject parent) {
+        foreach (GameObject myG in child) {
+            GameObject g = myG;
+            Parent(g, parent);
+        }
+    }
+
     public static GameObject FindChild(GameObject parent, string childName) {
         return parent.transform.FindChild(childName).gameObject;
     }
@@ -75,7 +82,7 @@ public static class Util {
      * So we search for VK_ + [KEYCODE]
      */
     public static VirtualKeyCode KeyCodeToVirtualKeyCode(KeyCode keyToConvert) {
-        return (VirtualKeyCode)System.Enum.Parse(typeof(VirtualKeyCode), "VK_" + keyToConvert.ToString());
+        return keyToConvert == KeyCode.None ? VirtualKeyCode.NONAME : (VirtualKeyCode)System.Enum.Parse(typeof(VirtualKeyCode), "VK_" + keyToConvert.ToString());
     }
 
     public static Color InvertColor(Color color) {

@@ -9,13 +9,11 @@ public abstract class Page {
     public string Text { get; protected set; }
     public string Tooltip { get; set; }
     public string Location { get; set; }
-    public string Chapter { get; set; }
-    public string Quest { get; set; }
     public bool HasInputField { get; set; }
     public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
-    public Process[] ActionGrid { get; protected set; }
+    public Process[] ActionGrid { get; set; }
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
@@ -36,8 +34,6 @@ public abstract class Page {
         string text = "",
         string tooltip = "",
         string location = "",
-        string chapter = "",
-        string quest = "",
         bool hasInputField = false,
         Character mainCharacter = null,
         Character[] left = null,
@@ -56,8 +52,6 @@ public abstract class Page {
         this.HasInputField = hasInputField;
 
         this.Location = location;
-        this.Chapter = chapter;
-        this.Quest = quest;
 
 
         //Left Characters initialization

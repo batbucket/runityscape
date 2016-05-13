@@ -115,17 +115,27 @@ public class EffectsManager : MonoBehaviour {
         yield break;
     }
 
-    public void FadeAwayEffect(Character target, float duration, Action endCall = null) {
-        StartCoroutine(FadeAway(target, duration, endCall));
+    public void CharacterDeath(Character target, float duration, Action endCall = null) {
+        target.Sprite = null;
+        StartCoroutine(ColorTransition(target.Presenter.PortraitView.gameObject, duration, Color.white, Color.clear, endCall));
     }
 
-    IEnumerator FadeAway(Character target, float duration, Action endCall = null) {
-        PortraitView pv = target.Presenter.PortraitView;
-        Image[] images = pv.gameObject.GetComponentsInChildren<Image>();
-        Text[] texts = pv.gameObject.GetComponentsInChildren<Text>();
-        float timer = duration;
+    public void FadeIn(Character target, float duration, Action endCall = null) {
+        StartCoroutine(ColorTransition(target.Presenter.PortraitView.gameObject, duration, Color.clear, Color.white, endCall));
+    }
 
-        target.Sprite = null;
+    public void ColorShift(GameObject target, float duration, Color initial, Color destination, Action endCall = null) {
+        StartCoroutine(ColorTransition(target, duration, initial, destination, endCall));
+    }
+
+    public void Fade(GameObject target, float duration, float initial, float destination, Action endCall = null) {
+        StartCoroutine(FadeEffect(target, duration, initial, destination, endCall));
+    }
+
+    IEnumerator ColorTransition(GameObject target, float duration, Color initial, Color destination, Action endCall = null) {
+        Image[] images = target.gameObject.GetComponentsInChildren<Image>();
+        Text[] texts = target.gameObject.GetComponentsInChildren<Text>();
+        float timer = duration;
 
         foreach (Image i in images) {
             i.color = Color.white;
@@ -133,15 +143,54 @@ public class EffectsManager : MonoBehaviour {
         foreach (Text t in texts) {
             t.color = Color.white;
         }
+
         while ((timer -= Time.deltaTime) > 0) {
-            float alpha = 1.0f - (duration - timer) / duration;
+            Color lerp = Color.Lerp(initial, destination, (duration - timer) / duration);
+            foreach (Image i in images) {
+                i.color = lerp;
+            }
+            foreach (Text t in texts) {
+                t.color = lerp;
+            }
+            yield return null;
+        }
+        if (endCall != null) {
+            endCall.Invoke();
+        }
+        yield break;
+    }
+
+    IEnumerator FadeEffect(GameObject target, float duration, float initial, float destination, Action endCall = null) {
+        Image[] images = target.gameObject.GetComponentsInChildren<Image>();
+        Text[] texts = target.gameObject.GetComponentsInChildren<Text>();
+        Outline[] outlines = target.gameObject.GetComponentsInChildren<Outline>();
+        float timer = duration;
+
+        while ((timer -= Time.deltaTime) > 0) {
+            float alpha = Mathf.Lerp(initial, destination, (duration - timer) / duration);
             foreach (Image i in images) {
                 Util.SetImageAlpha(i, alpha);
             }
             foreach (Text t in texts) {
                 Util.SetTextAlpha(t, alpha);
             }
+            foreach (Outline o in outlines) {
+                Color c = o.effectColor;
+                c.a = alpha;
+                o.effectColor = c;
+            }
             yield return null;
+        }
+        foreach (Image i in images) {
+            Util.SetImageAlpha(i, destination);
+        }
+        foreach (Text t in texts) {
+            Util.SetTextAlpha(t, destination);
+        }
+        foreach (Outline o in outlines) {
+            Color c = o.effectColor;
+            c.a = destination;
+            o.effectColor = c;
         }
         if (endCall != null) {
             endCall.Invoke();

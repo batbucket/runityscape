@@ -21,8 +21,6 @@ public class BattlePage : Page {
         string text = "",
         string tooltip = "",
         string location = "",
-        string chapter = "",
-        string quest = "",
         bool hasInputField = false,
         Character mainCharacter = null,
         Character[] left = null,
@@ -33,7 +31,7 @@ public class BattlePage : Page {
         Action onExit = null,
         Action onTick = null
         )
-        : base(text, tooltip, location, chapter, quest, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
+        : base(text, tooltip, location, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
 
         characterQueue = new Queue<Character>();
 
@@ -238,7 +236,7 @@ public class BattlePage : Page {
     }
 
     void UpdateLastSpellStack(SpellFactory spell, Character caster) {
-        if (spell != caster.Attack) {
+        if (spell != caster.Attack && !(spell is EquippableItem)) {
             caster.SpellStack.Push(spell);
         }
         if (spell is Item && ((Item)spell).Count <= 1) {
