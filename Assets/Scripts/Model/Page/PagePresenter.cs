@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Reflection;
 
 public class PagePresenter {
     public Page Page { get; set; }
@@ -36,6 +37,7 @@ public class PagePresenter {
         } else {
             IList<TextBox> textBoxes = textBoxHistory[page];
             foreach (TextBox t in textBoxes) {
+                t.Effect = TextEffect.OLD;
                 Game.Instance.TextBoxHolder.AddTextBoxView(t);
             }
         }

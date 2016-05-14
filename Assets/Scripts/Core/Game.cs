@@ -182,7 +182,6 @@ public class Game : MonoBehaviour {
                     "Confirm your assigned Attribute points.",
                     () => {
                         hero.FillResources();
-                        MainCharacter = hero;
                         PageID = "intro-HelloWorld";
                     },
                     () => currentPoints <= 0
@@ -208,14 +207,36 @@ public class Game : MonoBehaviour {
                 hero.AddToResource(ResourceType.HEALTH, false, 0.5f);
             }
         );
+        MainCharacter = hero;
     }
 
     void CreateIntro() {
         pages["intro-HelloWorld"] = new ReadPage(
+            left: new Character[] { MainCharacter },
             onFirstEnter: () => {
-                OrderedTexts(
-                    new TextBundle(new RightBox("placeholder", string.Format("{0}.", MainCharacter.Name), Color.yellow)),
-                    new TextBundle(new RightBox("placeholder", string.Format("Wutface.", MainCharacter.Name), Color.yellow))
+                OrderedEvents(
+                    new Event(new RightBox("placeholder", string.Format("{0}.", MainCharacter.Name), Color.yellow), 1),
+                    new Event(new RightBox("placeholder", string.Format("O redeemed {0}...", MainCharacter.Name), Color.yellow), 1),
+                    new Event(new RightBox("placeholder", string.Format("Can you hear my voice?", MainCharacter.Name), Color.yellow), 1),
+                    new Event(() => pages["intro-HelloWorld"].ActionGrid
+                            = new Process[] {
+                            new Process("I can!",
+                                action: () => {
+
+                                }
+                            ),
+                            new Process("Nope",
+                                action: () => {
+
+                                }
+                            ),
+                            new Process("...",
+                                action: () => {
+
+                                }
+                            )
+                        }
+                    )
                 );
             }
             );
@@ -253,29 +274,22 @@ public class Game : MonoBehaviour {
         public readonly Action action;
         public readonly Func<bool> hasEnded;
         public readonly float delay;
+
         public Event(Action action, Func<bool> endCondition = null, float delay = 0) {
             this.action = action;
             this.hasEnded = endCondition ?? (() => true);
             this.delay = delay;
         }
-    }
 
-    struct TextBundle {
-        public readonly Event e;
-        public TextBundle(TextBox t, float delay = 0) {
-            e = new Event(
-                () => Instance.AddTextBox(t),
-                () => t.IsDone,
-                delay
-            );
+        //Special Text-Event builder
+        public Event(TextBox t, float delay = 0) {
+            this.action = () => Instance.AddTextBox(t);
+            this.hasEnded = () => t.IsDone;
+            this.delay = delay;
         }
     }
     void OrderedEvents(params Event[] events) {
         StartCoroutine(Timeline(events));
-    }
-
-    void OrderedTexts(params TextBundle[] tb) {
-        StartCoroutine(Timeline(tb.Select(t => t.e).ToArray()));
     }
 
     IEnumerator Timeline(Event[] events) {

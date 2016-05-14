@@ -24,7 +24,7 @@ public class TextBox {
     public string SoundLoc { get { return _soundLoc; } }
 
     TextEffect _effect;
-    public TextEffect Effect { get { return _effect; } }
+    public TextEffect Effect { get { return _effect; } set { _effect = value; } }
 
     bool _isDone;
     public bool IsDone { get; set; }
