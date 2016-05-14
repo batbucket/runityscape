@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 public class Game : MonoBehaviour {
     static Game _instance;
@@ -55,7 +55,7 @@ public class Game : MonoBehaviour {
     Dictionary<string, int> intFlags;
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
-    public const string DERP = "because I'm not paying a bunch of money to take shitty humanity classes";
+    public static string DERP = "because I'm not paying a bunch of money to take <color=red>shitty</color> humanity classes";
 
     IDictionary<string, Page> pages;
     IDictionary<string, string> pageLinks;
@@ -95,7 +95,7 @@ public class Game : MonoBehaviour {
             processes: new Process[] {
                 new Process("New Game", "Start a new game.", () => PageID = "newGame-Name"),
                 new Process("Load Game", "Load a saved game.", condition: () => false),
-                new Process("Debug", "Enter the debug page.", () => PageID = "debug"),
+                new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => PageID = "debug"),
                 new Process(),
 
                 new Process(),
@@ -182,6 +182,7 @@ public class Game : MonoBehaviour {
                     "Confirm your assigned Attribute points.",
                     () => {
                         hero.FillResources();
+                        MainCharacter = hero;
                         PageID = "intro-HelloWorld";
                     },
                     () => currentPoints <= 0
@@ -212,7 +213,10 @@ public class Game : MonoBehaviour {
     void CreateIntro() {
         pages["intro-HelloWorld"] = new ReadPage(
             onFirstEnter: () => {
-                AddTextBox(new RightBox("placeholder", "This turtle is everything I want to be. I envy him so completely.", Color.yellow));
+                OrderedTexts(
+                    new TextBundle(new RightBox("placeholder", string.Format("{0}.", MainCharacter.Name), Color.yellow)),
+                    new TextBundle(new RightBox("placeholder", string.Format("Wutface.", MainCharacter.Name), Color.yellow))
+                );
             }
             );
     }
@@ -222,7 +226,7 @@ public class Game : MonoBehaviour {
             processes: new Process[] {
                 new Process("Normal TextBox", "Say Hello world",
                     () => AddTextBox(
-                        new TextBox(DERP, Color.white, TextEffect.TYPE, "Sounds/Blip_0", .1f))),
+                        new TextBox(DERP, Color.white, TextEffect.FADE_IN, "Sounds/Blip_0", .1f))),
                 new Process("LeftBox", "Say Hello world",
                     () => AddTextBox(
                         new LeftBox("crying_mudkip", DERP, Color.white))),
@@ -243,6 +247,48 @@ public class Game : MonoBehaviour {
         );
         pages["debug1"] = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve(), new Steve() });
         pages["debug2"] = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
+    }
+
+    struct Event {
+        public readonly Action action;
+        public readonly Func<bool> hasEnded;
+        public readonly float delay;
+        public Event(Action action, Func<bool> endCondition = null, float delay = 0) {
+            this.action = action;
+            this.hasEnded = endCondition ?? (() => true);
+            this.delay = delay;
+        }
+    }
+
+    struct TextBundle {
+        public readonly Event e;
+        public TextBundle(TextBox t, float delay = 0) {
+            e = new Event(
+                () => Instance.AddTextBox(t),
+                () => t.IsDone,
+                delay
+            );
+        }
+    }
+    void OrderedEvents(params Event[] events) {
+        StartCoroutine(Timeline(events));
+    }
+
+    void OrderedTexts(params TextBundle[] tb) {
+        StartCoroutine(Timeline(tb.Select(t => t.e).ToArray()));
+    }
+
+    IEnumerator Timeline(Event[] events) {
+        foreach (Event e in events) {
+            e.action.Invoke();
+            while (!e.hasEnded.Invoke()) {
+                yield return null;
+            }
+            float timer = 0;
+            while ((timer += UnityEngine.Time.deltaTime) < e.delay) {
+                yield return null;
+            }
+        }
     }
 
     BattlePage CreateBattle(string text = "",

@@ -23,5 +23,10 @@ public abstract class Resource : PairedInt {
         this.IsVisible = true;
     }
 
+    public Resource(int trueValue, int falseValue, ResourceType type) : base(trueValue, falseValue) {
+        this._type = type;
+        this.IsVisible = true;
+    }
+
     public virtual void Calculate() { }
 }

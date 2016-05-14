@@ -8,8 +8,8 @@
 public abstract class DependentResource : Resource {
     Attribute attribute;
 
-    public override float False { get { return base.False; } set { base.False = Mathf.Clamp(value, LESSER_CAP, True); } }
-    public override int True { get { return base.True; } set { base.True = Mathf.Clamp(value, LESSER_CAP, 99999); } }
+    public override sealed float False { get { return base.False; } set { base.False = Mathf.Clamp(value, LESSER_CAP, True); } }
+    public override sealed int True { get { return base.True; } set { base.True = Mathf.Clamp(value, LESSER_CAP, 99999); } }
 
     public DependentResource(Attribute attribute, ResourceType type) : base(0, type) {
         this.attribute = attribute;

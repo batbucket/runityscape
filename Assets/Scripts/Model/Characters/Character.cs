@@ -342,7 +342,7 @@ public abstract class Character : Entity, IReactable {
             foreach (KeyValuePair<AttributeType, Attribute> pair in Attributes) {
                 s.Add(string.Format("{0} {1}/{2}", pair.Key.ShortName, pair.Value.False, pair.Value.True));
             }
-            return string.Format("{1}.", Name, string.Join(", ", s.ToArray()));
+            return string.Format("{0}.", string.Join(", ", s.ToArray()));
         }
     }
 

@@ -18,7 +18,7 @@ public class TextBoxView : MonoBehaviour {
     int index; //Which letter to make visible
     float timer; //Needs to be >= timePerLetter for a letter to appear
 
-    public const int BLIP_INTERVAL = 3; //Letters needed for a sound to occur
+    public const int BLIP_INTERVAL = 1; //Letters needed for a sound to occur
     public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
 
     public virtual void WriteText(TextBox textBox, Action callBack = null) {
@@ -51,39 +51,46 @@ public class TextBoxView : MonoBehaviour {
 
                 //Prescreen and enable all html tags and spaces
                 for (int i = 0; i < currentTextArray.Length; i++) {
-                    if (Regex.IsMatch(textBox.TextArray[i], "(<.*?>)")) {
+                    if (Regex.IsMatch(textBox.TextArray[i], "(<.*?>)|\\.")) {
                         currentTextArray[i] = textBox.TextArray[i];
                         taggedText[i] = true;
                     }
                 }
                 float timer = 0;
                 int index = 0;
-                while (text.text.Length - text.text.Count(s => s == '\u2007') < textBox.RawText.Length) {
-                    text.text = string.Join("", currentTextArray);
-                    timer += Time.deltaTime;
-                    if (timer >= textBox.TimePerLetter) {
-
-                        //Don't reset timer or make sound on taggedText and spaces
-                        if (!taggedText[index] && !Regex.IsMatch(textBox.TextArray[index], " ")) {
-                            timer = 0;
-                            Game.Instance.Sound.Play(textBox.SoundLoc);
-                        }
+                text.text = string.Join("", currentTextArray);
+                string wrapper = ".";//"\u2007";
+                while (index < textBox.TextArray.Length) {
+                    if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                         if (!taggedText[index]) {
-                            int start = index;
 
-                            //Go forward on the word and set each letter as a non-wrapped space to ensure text is wrapped
-                            while (start < textBox.TextArray.Length && !textBox.TextArray[start].Equals(" ")) {
-                                currentTextArray[start++] = "\u2007";
+                            //Preset forward characters to ensure wrapping
+                            if (!string.Equals(currentTextArray[index], wrapper)) {
+                                int start = index;
+
+                                //Don't overshoot, only make one word, and don't replace any tagged text
+                                while (start < textBox.TextArray.Length && !textBox.TextArray[start].Equals(" ") && !taggedText[start]) {
+                                    currentTextArray[start++] = wrapper;
+                                }
                             }
                             currentTextArray[index] = textBox.TextArray[index];
+
+                            //Don't reset timer or make sound on spaces
+                            if (!Regex.IsMatch(textBox.TextArray[index], " ")) {
+                                timer = 0;
+                                Game.Instance.Sound.Play(textBox.SoundLoc);
+                            }
                         }
+                        text.text = string.Join("", currentTextArray);
                         index++;
                     }
                     yield return null;
                 }
                 break;
         }
+        textBox.IsDone = true;
         if (callBack != null) {
+            Debug.Log("here!");
             callBack.Invoke();
         }
         yield break;

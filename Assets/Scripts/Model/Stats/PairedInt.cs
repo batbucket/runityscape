@@ -25,7 +25,7 @@ public class PairedInt {
     }
 
     void Set(int both) {
-        True = both;
-        False = both;
+        _false = both;
+        _true = both;
     }
 }

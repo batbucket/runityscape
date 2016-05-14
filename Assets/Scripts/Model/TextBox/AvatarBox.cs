@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public abstract class AvatarBox : TextBox {
 
@@ -15,7 +16,7 @@ public abstract class AvatarBox : TextBox {
         this._sprite = Util.GetSprite(spriteLoc);
     }
 
-    public override void Write(GameObject avatarBoxPrefab) {
-        avatarBoxPrefab.GetComponent<AvatarBoxView>().WriteText(this);
+    public override void Write(GameObject avatarBoxPrefab, Action callBack) {
+        avatarBoxPrefab.GetComponent<AvatarBoxView>().WriteText(this, callBack);
     }
 }

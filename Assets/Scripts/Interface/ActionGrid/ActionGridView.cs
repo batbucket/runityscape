@@ -75,7 +75,7 @@ public sealed class ActionGridView : MonoBehaviour {
 
     public void Clear(int r, int c) {
         if (!CoordinatesInBounds(r, c)) {
-            throw new UnityException(string.Format("R: 0<{0}<{0}, C: 0<{0}<{0}. At least one of these are not in bounds.", r, ROWS, c, COLS));
+            throw new UnityException(string.Format("R: 0<{0}<{1}, C: 0<{2}<{3}. At least one of these are not in bounds.", r, ROWS, c, COLS));
         }
         actionButtons[CalculateOffset(r, c)].ClearProcess();
         actionButtons[CalculateOffset(r, c)].ClearText();

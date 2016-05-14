@@ -31,7 +31,7 @@ public class TextBoxHolderView : MonoBehaviour {
         GameObject g = Instantiate(textBoxes[textBox.Type]);
         children.Add(g);
         Util.Parent(g, gameObject);
-        textBox.Write(g);
+        textBox.Write(g, callBack);
     }
 
     public InputBoxView AddInputBoxView() {
