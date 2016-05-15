@@ -12,4 +12,6 @@ public class RightBox : AvatarBox {
                    float timePerLetter = 0.075f)
                    : base(spriteLoc, text, color, effect, soundLocation, timePerLetter) {
     }
+
+    public RightBox(Character c, string text) : base(c, text) { }
 }

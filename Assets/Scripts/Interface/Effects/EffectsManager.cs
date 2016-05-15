@@ -25,9 +25,19 @@ public class EffectsManager : MonoBehaviour {
     }
     IDictionary<Character, ShakeBundle> Shakes;
 
-    void Start() {
+    void Awake() {
         ColoredFades = new Dictionary<Character, FadeBundle>();
         Shakes = new Dictionary<Character, ShakeBundle>();
+    }
+
+    public void CancelEffects() {
+        StopAllCoroutines();
+        foreach (KeyValuePair<Character, FadeBundle> pair in ColoredFades) {
+            pair.Key.Presenter.PortraitView.Image.color = Color.white;
+        }
+        foreach (KeyValuePair<Character, ShakeBundle> pair in Shakes) {
+            pair.Key.Presenter.PortraitView.IconTransform.localPosition = new Vector2(0, 0);
+        }
     }
 
     const float BASE_INTENSITY = 50;
@@ -53,6 +63,7 @@ public class EffectsManager : MonoBehaviour {
         if (target.Presenter.PortraitView != null) {
             icon.localPosition = originalPos;
         }
+        Shakes.Remove(target);
         yield break;
     }
 
@@ -89,6 +100,7 @@ public class EffectsManager : MonoBehaviour {
         if (ColoredFades.ContainsKey(target) && ColoredFades[target].coroutine != null) {
             StopCoroutine(ColoredFades[target].coroutine); //Stop coroutine
         }
+        ColoredFades.Remove(target);
     }
 
     static readonly Color END_COLOR = Color.white;

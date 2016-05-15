@@ -13,4 +13,5 @@ public class LeftBox : AvatarBox {
                    : base(spriteLoc, text, color, effect, soundLocation, timePerLetter) {
 
     }
+    public LeftBox(Character c, string text) : base(c, text) { }
 }

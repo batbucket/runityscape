@@ -15,7 +15,7 @@ public class TextBox {
     public string RawText { get { return _rawText; } }
 
     Color _color;
-    public Color Color { get { return _color; } }
+    public Color Color { get { return _color; } set { _color = value; } }
 
     float _timePerLetter;
     public float TimePerLetter { get { return _timePerLetter; } }

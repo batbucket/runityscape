@@ -64,7 +64,8 @@ public class Game : MonoBehaviour {
     string PageID {
         set {
             Util.Assert(pages.ContainsKey(value), string.Format("Page: \"{0}\" does not exist!", value));
-            Effect.StopAllCoroutines();
+            StopAllCoroutines();
+            Effect.CancelEffects();
             if (pageID != null && !pageLinks.ContainsKey(value)) {
                 pageLinks.Add(value, pageID);
             }
@@ -88,7 +89,7 @@ public class Game : MonoBehaviour {
         Header.IsChapterEnabled = false;
 
         MenuButton.Hotkey = KeyCode.None;
-        MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => PageID = "primary");
+        MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => { Start(); PageID = "primary"; });
 
         pages["primary"] = new ReadPage(
             tooltip: "Welcome to RunityScape.",
@@ -211,28 +212,70 @@ public class Game : MonoBehaviour {
     }
 
     void CreateIntro() {
+        Guardian g = new Guardian();
+        g.Resources.Remove(ResourceType.HEALTH);
+        Action normal = () => OrderedEvents(
+            new Event(new RightBox("placeholder", "My name is ██████, and I am the guardian of this world.", Color.yellow))
+        );
+
         pages["intro-HelloWorld"] = new ReadPage(
             left: new Character[] { MainCharacter },
+            right: new Character[] { g },
             onFirstEnter: () => {
                 OrderedEvents(
-                    new Event(new RightBox("placeholder", string.Format("{0}.", MainCharacter.Name), Color.yellow), 1),
+                    new Event(new RightBox("placeholder", string.Format("{0}...", MainCharacter.Name), Color.yellow), 1),
                     new Event(new RightBox("placeholder", string.Format("O redeemed {0}...", MainCharacter.Name), Color.yellow), 1),
                     new Event(new RightBox("placeholder", string.Format("Can you hear my voice?", MainCharacter.Name), Color.yellow), 1),
                     new Event(() => pages["intro-HelloWorld"].ActionGrid
                             = new Process[] {
-                            new Process("I can!",
+                            new Process(
+                                "I can!",
                                 action: () => {
-
+                                    pages["intro-HelloWorld"].ActionGrid = new Process[0];
+                                    OrderedEvents(
+                                        new Event(new LeftBox("placeholder", "I can!", Color.white), 1),
+                                        new Event()
+                                    );
                                 }
                             ),
-                            new Process("Nope",
+                            new Process(
+                                "Nope.",
                                 action: () => {
-
+                                    pages["intro-HelloWorld"].ActionGrid = new Process[0];
+                                    OrderedEvents(
+                                        new Event(new LeftBox("placeholder", "Nope.", Color.white), 1),
+                                        new Event(new RightBox("placeholder", "...", Color.yellow), 1),
+                                        new Event(new RightBox("placeholder", "Then why did you respond?", Color.yellow), 1),
+                                        new Event(new LeftBox("placeholder", "...", Color.white), 1),
+                                        new Event(normal, 1)
+                                    );
                                 }
                             ),
-                            new Process("...",
+                            new Process(
+                                "...",
                                 action: () => {
-
+                                    pages["intro-HelloWorld"].ActionGrid = new Process[0];
+                                    OrderedEvents(
+                                        new Event(new LeftBox("placeholder", "...", Color.white), 1),
+                                        new Event(new RightBox("placeholder", "...", Color.yellow), 1),
+                                        new Event(new LeftBox("placeholder", "......", Color.white), 1),
+                                        new Event(new RightBox("placeholder", "......", Color.yellow), 1),
+                                        new Event(new LeftBox("placeholder", "............", Color.white), 0),
+                                        new Event(() => {
+                                            MainCharacter.OnDefeat(true);
+                                            MainCharacter.AddToResource(ResourceType.HEALTH, false, Int32.MinValue, true);
+                                            AddTextBox(new TextBox(string.Format("A bolt of divine lightning strikes {0} for <color=red>2147483648</color> damage!", MainCharacter.Name)));
+                                            Game.Instance.Sound.Play("Sounds/Boom_1");
+                                        }, 4),
+                                        new Event(() => MainCharacter.OnKill(true)),
+                                        new Event(() => {
+                                            Page.Tooltip = "You have died.";
+                                            pages["intro-HelloWorld"].ActionGrid = new Process[] { new Process("Main Menu", "Return to the main menu.", () => { Start(); PageID = "primary"; }) };
+                                        }, 10),
+                                        new Event(new RightBox("placeholder", "Perhaps they were too afraid to speak?", Color.red), 2),
+                                        new Event(new RightBox("placeholder", "Or unwise?", Color.grey), 2),
+                                        new Event(new RightBox("placeholder", "Then they were not meant to be Redeemer.", Color.yellow), 0)
+                                    );
                                 }
                             )
                         }
@@ -272,20 +315,21 @@ public class Game : MonoBehaviour {
 
     struct Event {
         public readonly Action action;
-        public readonly Func<bool> hasEnded;
         public readonly float delay;
+        public readonly Func<bool> hasEnded;
 
-        public Event(Action action, Func<bool> endCondition = null, float delay = 0) {
+        public Event(Action action, float delay = 0, Func<bool> endCondition = null) {
             this.action = action;
             this.hasEnded = endCondition ?? (() => true);
             this.delay = delay;
         }
 
-        //Special Text-Event builder
-        public Event(TextBox t, float delay = 0) {
+        //Special Text-Event builders
+
+        public Event(TextBox t, float delay = 1) {
             this.action = () => Instance.AddTextBox(t);
-            this.hasEnded = () => t.IsDone;
             this.delay = delay;
+            this.hasEnded = () => t.IsDone;
         }
     }
     void OrderedEvents(params Event[] events) {

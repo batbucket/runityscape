@@ -99,6 +99,7 @@
     <Compile Include="Assets\Scripts\Model\Characters\ComputerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Entity.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Amit.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Guardian.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Hero.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Steve.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\PlayerCharacter.cs" />

@@ -112,7 +112,7 @@ public abstract class SpellFactory {
     }
 
     public const string PRIMARY = "Primary_Component";
-    public void Cast(Character caster, Character target, SpellDetails other) {
+    public void Cast(Character caster, Character target, SpellDetails other = null) {
         Spell spell = new Spell(this, caster, target);
         spell.Components = CreateComponents(caster, target, spell, other);
         caster.CastSpells.Add(spell);

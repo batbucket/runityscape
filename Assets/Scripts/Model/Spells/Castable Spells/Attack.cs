@@ -8,9 +8,9 @@ public class Attack : SpellFactory {
     public static readonly string DESCRIPTION = string.Format("Attack a single enemy for {0} damage.", Util.Color(AttributeType.STRENGTH.ShortName, AttributeType.STRENGTH.Color));
     public const SpellType SPELL_TYPE = SpellType.OFFENSE;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
-    public const string SUCCESS_TEXT = "* {0} attacks {1} for {2} damage!";
-    public const string CRITICAL_TEXT = "* {0} critically strikes {1} for {2} damage!";
-    public const string MISS_TEXT = "* {0} attacks {1}... But it missed!";
+    public const string SUCCESS_TEXT = "{0} attacks {1} for {2} damage!";
+    public const string CRITICAL_TEXT = "{0} critically strikes {1} for {2} damage!";
+    public const string MISS_TEXT = "{0} attacks {1}... But it missed!";
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     public const int SP_GAIN = 1;
 

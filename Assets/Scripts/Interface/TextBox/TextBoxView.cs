@@ -40,7 +40,6 @@ public class TextBoxView : MonoBehaviour {
         switch (textBox.Effect) {
             case TextEffect.OLD:
                 text.text = textBox.RawText;
-                Game.Instance.Sound.Play(textBox.SoundLoc);
                 break;
             case TextEffect.FADE_IN:
                 text.text = textBox.RawText;

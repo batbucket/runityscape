@@ -13,7 +13,8 @@ public abstract class Character : Entity, IReactable {
 
     public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
 
-    public string Name { get; set; }
+    string _name;
+    public string Name { get { return Util.Color(_name, TextColor); } set { _name = value; } }
     public int Level { get; set; }
 
     public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
@@ -38,7 +39,7 @@ public abstract class Character : Entity, IReactable {
     public IDictionary<PerkType.React, IList<ReactPerk>> ReactPerks;
 
     public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
-        this.Name = name;
+        this._name = name;
         this.Level = level;
 
         this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
@@ -231,6 +232,9 @@ public abstract class Character : Entity, IReactable {
             }
             CalculateSpeed(Game.Instance.MainCharacter);
 
+            if (IsDefeated()) { OnDefeat(); }
+            if (IsKilled()) { OnKill(); }
+
             for (int i = 0; i < Buffs.Count; i++) {
                 Spell s = Buffs[i];
                 s.Tick();
@@ -297,20 +301,24 @@ public abstract class Character : Entity, IReactable {
     }
 
     bool isDefeated = false;
-    public virtual void OnDefeat() {
+    public virtual void OnDefeat(bool isSilent = false) {
         if (isDefeated) {
             return;
         }
-        Character defeater = RecievedSpells[RecievedSpells.Count - 1].Caster;
-        Game.Instance.TextBoxHolder.AddTextBoxView(
-            new TextBox(
-                string.Format("* {0} was defeated by {1}.", Name, defeater.Name),
-                Color.white, TextEffect.FADE_IN));
+        if (!isSilent) {
+            Character defeater = RecievedSpells[RecievedSpells.Count - 1].Caster;
+            Game.Instance.TextBoxHolder.AddTextBoxView(
+                new TextBox(
+                    string.Format("{0} was defeated by {1}.", Name, defeater.Name),
+                    Color.white, TextEffect.FADE_IN)
+                );
+            Game.Instance.Effect.CreateHitsplat("DEFEAT", Color.white, this);
+        }
+
         Game.Instance.Effect.StopFadeEffect(this);
         Game.Instance.Effect.ShakeEffect(this, 1f, 0.05f);
         Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
         Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
-        Game.Instance.Effect.CreateHitsplat("DEFEAT", Color.white, this);
         AddToResource(ResourceType.HEALTH, false, 1, false);
         Discharge();
         isDefeated = true;
@@ -321,17 +329,19 @@ public abstract class Character : Entity, IReactable {
     }
 
     bool isKilled = false;
-    public virtual void OnKill() {
+    public virtual void OnKill(bool isSilent = false) {
         if (isKilled) {
             return;
         }
-        Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
-        Game.Instance.TextBoxHolder.AddTextBoxView(
-            new TextBox(
-                string.Format("* {0} was slain by {1}.", Name, killer.Name),
-                Color.white, TextEffect.FADE_IN));
-        Game.Instance.Sound.Play("Sounds/Boom_6");
-        Game.Instance.Effect.CreateHitsplat("DEATH", Color.white, this);
+        if (!isSilent) {
+            Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
+            Game.Instance.TextBoxHolder.AddTextBoxView(
+                new TextBox(
+                    string.Format("{0} was slain by {1}.", Name, killer.Name),
+                    Color.white, TextEffect.FADE_IN));
+            Game.Instance.Sound.Play("Sounds/Boom_6");
+            Game.Instance.Effect.CreateHitsplat("DEATH", Color.white, this);
+        }
         Game.Instance.Effect.CharacterDeath(this, 0.5f, () => Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this));
         isKilled = true;
     }
