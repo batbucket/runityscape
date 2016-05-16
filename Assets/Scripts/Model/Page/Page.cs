@@ -84,7 +84,9 @@ public abstract class Page {
 
 
     public void OnEnter() {
+        Debug.Log("Calling onEnter()");
         if (!HasEnteredBefore) {
+            Debug.Log("First enter!");
             HasEnteredBefore = true;
             OnFirstEnter();
         }

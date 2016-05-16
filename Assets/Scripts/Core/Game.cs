@@ -85,8 +85,9 @@ public class Game : MonoBehaviour {
         Time.IsEnabled = false;
         pageLinks = new Dictionary<string, string>();
 
-        Header.IsBlurbEnabled = false;
-        Header.IsChapterEnabled = false;
+        Header.Blurb = "";
+        Header.Chapter = "";
+        Header.Location = "hee";
 
         MenuButton.Hotkey = KeyCode.None;
         MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => { Start(); PageID = "primary"; });
@@ -118,6 +119,7 @@ public class Game : MonoBehaviour {
     void CreateWorld() {
         CreateNewGame();
         CreateIntro();
+        CreateTutorial();
         CreateDebug();
     }
 
@@ -215,7 +217,13 @@ public class Game : MonoBehaviour {
         Guardian g = new Guardian();
         g.Resources.Remove(ResourceType.HEALTH);
         Action normal = () => OrderedEvents(
-            new Event(new RightBox("placeholder", "My name is ██████, and I am the guardian of this world.", Color.yellow))
+            new Event(new RightBox("placeholder", "I am Goddess Alestre, the guardian of this world.", Color.yellow)),
+            new Event(new RightBox("placeholder", "Six purifiers used to hallow the elements in these mortal lands.", Color.yellow)),
+            new Event(new RightBox("placeholder", "Abhorrent, unnatural creatures have sealed all but one purifier.", Color.yellow)),
+            new Event(new RightBox("placeholder", "The temple we are in now is my last sphere of influence here.", Color.yellow)),
+            new Event(new RightBox("placeholder", "The mortal lands are nearly lost...", Color.yellow)),
+            new Event(new RightBox("placeholder", string.Format("O faithful Redeemer, awaken from your slumber and come to me...", MainCharacter.Name), Color.yellow)),
+            new Event(() => pages["intro-HelloWorld"].ActionGrid = new Process[] { new Process("Awaken", action: () => PageID = "temple-waterRoom") })
         );
 
         pages["intro-HelloWorld"] = new ReadPage(
@@ -223,6 +231,7 @@ public class Game : MonoBehaviour {
             right: new Character[] { g },
             onFirstEnter: () => {
                 OrderedEvents(
+                    new Event(new TextBox("You feel weightless..."), 3),
                     new Event(new RightBox("placeholder", string.Format("{0}...", MainCharacter.Name), Color.yellow), 1),
                     new Event(new RightBox("placeholder", string.Format("O redeemed {0}...", MainCharacter.Name), Color.yellow), 1),
                     new Event(new RightBox("placeholder", string.Format("Can you hear my voice?", MainCharacter.Name), Color.yellow), 1),
@@ -234,7 +243,7 @@ public class Game : MonoBehaviour {
                                     pages["intro-HelloWorld"].ActionGrid = new Process[0];
                                     OrderedEvents(
                                         new Event(new LeftBox("placeholder", "I can!", Color.white), 1),
-                                        new Event()
+                                        new Event(normal, 1)
                                     );
                                 }
                             ),
@@ -274,7 +283,7 @@ public class Game : MonoBehaviour {
                                         }, 10),
                                         new Event(new RightBox("placeholder", "Perhaps they were too afraid to speak?", Color.red), 2),
                                         new Event(new RightBox("placeholder", "Or unwise?", Color.grey), 2),
-                                        new Event(new RightBox("placeholder", "Then they were not meant to be Redeemer.", Color.yellow), 0)
+                                        new Event(new RightBox("placeholder", "Then they could not save us.", Color.yellow), 0)
                                     );
                                 }
                             )
@@ -283,6 +292,35 @@ public class Game : MonoBehaviour {
                 );
             }
             );
+    }
+
+    void CreateTutorial() {
+        Process[] waterRoomSubsequent = new Process[] {
+                        new Process("Leave", action: () => Debug.Log("This isn't implemented yet.")),
+                        new OneShotProcess("Look around", action: () =>
+                            AddTextBox(
+                                new TextBox("The pleasantly warm room is tiny. The pool of water is just large enough for one person. Water drips into and exits the pool from an unknown source, providing a pleasant ambience sure to lull anyone to sleep.")
+                            )
+                        )
+        };
+        pages["temple-waterRoom"] = new ReadPage(
+            left: new Character[] { MainCharacter },
+            mainCharacter: MainCharacter,
+            location: "Last Temple - Rebirth Room",
+            processes: waterRoomSubsequent,
+            onFirstEnter: () => {
+                AddTextBox(new TextBox("As you wake up, you realize that you are floating on water. The water matches your temperature perfectly, making you feel as if you are suspended in nothingness."));
+                Header.Blurb = "Go to Alestre.";
+                Header.Chapter = "Chapter 0";
+                pages["temple-waterRoom"].ActionGrid = new Process[] {
+                    new OneShotProcess("Get up", action: () =>
+                    {
+                        AddTextBox(new TextBox("You climb out of the pool."));
+                        pages["temple-waterRoom"].ActionGrid = waterRoomSubsequent;
+                    })
+                };
+            }
+        );
     }
 
     void CreateDebug() {
@@ -303,7 +341,7 @@ public class Game : MonoBehaviour {
                 new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { PagePresenter.SetPage(pages["debug2"]); Sound.Play("Music/99P"); }),
                 new Process("Shake yourself", "Literally U******E", () => { Effect.ShakeEffect(MainCharacter, .05f); }),
                 new Process("Fade yourself", "Literally U******E x2", () => { Effect.CharacterDeath(MainCharacter, 1.0f); }),
-                new Process(),
+                new OneShotProcess("Test OneShotProcess", action: () => Debug.Log("ya did it!")),
                 new Process(),
                 new Process(),
                 new Process("Back", "Go back to the main menu.", () => { PagePresenter.SetPage(pages["primary"]); })
