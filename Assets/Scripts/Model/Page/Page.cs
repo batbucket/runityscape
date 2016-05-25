@@ -13,7 +13,12 @@ public abstract class Page {
     public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
-    public Process[] ActionGrid { get; set; }
+
+    IList<Process[]> actionGridHistory;
+    public Process[] ActionGrid {
+        get { return actionGridHistory.Last(); }
+        set { actionGridHistory.Add(value); }
+    }
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
@@ -74,6 +79,7 @@ public abstract class Page {
         this.OnFirstExitAction = onFirstExit ?? (() => { });
         this.OnExitAction = onExit ?? (() => { });
 
+        this.actionGridHistory = new List<Process[]>();
         this.ActionGrid = processes ?? new Process[ActionGridView.ROWS * ActionGridView.COLS];
 
         this.OnTick = onTick ?? (() => { });
@@ -82,11 +88,12 @@ public abstract class Page {
         this._inputtedString = "";
     }
 
+    public void ResetActionGrid() {
+        actionGridHistory = new List<Process[]>() { actionGridHistory.First() };
+    }
 
     public void OnEnter() {
-        Debug.Log("Calling onEnter()");
         if (!HasEnteredBefore) {
-            Debug.Log("First enter!");
             HasEnteredBefore = true;
             OnFirstEnter();
         }

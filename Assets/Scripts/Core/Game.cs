@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public class Game : MonoBehaviour {
     static Game _instance;
@@ -60,6 +61,10 @@ public class Game : MonoBehaviour {
     IDictionary<string, Page> pages;
     IDictionary<string, string> pageLinks;
 
+    static IDictionary<string, RightBox> FORBIDDEN_NAMES = new Dictionary<string, RightBox>() {
+        { "Alestre", new RightBox("placeholder", "Redeemer. Please do not do that.", Color.yellow) },
+    };
+
     string pageID;
     string PageID {
         set {
@@ -87,7 +92,7 @@ public class Game : MonoBehaviour {
 
         Header.Blurb = "";
         Header.Chapter = "";
-        Header.Location = "hee";
+        Header.Location = "";
 
         MenuButton.Hotkey = KeyCode.None;
         MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => { Start(); PageID = "primary"; });
@@ -113,7 +118,7 @@ public class Game : MonoBehaviour {
 
         CreateWorld();
 
-        PageID = "primary";
+        PageID = "primary";//"tutorial-battle0";
     }
 
     void CreateWorld() {
@@ -130,7 +135,6 @@ public class Game : MonoBehaviour {
             r.IsVisible = false;
         }
         pages["newGame-Name"] = new ReadPage(
-            tooltip: "What is your name?",
             hasInputField: true,
             left: new Character[] { hero },
             processes: ProcessesWithBack(
@@ -141,12 +145,13 @@ public class Game : MonoBehaviour {
                         PageID = "newGame-AttSel";
                     },
                     () => {
-                        return Page.InputtedString.Length > 0;
+                        return Page.InputtedString.Length > 0 && !FORBIDDEN_NAMES.Keys.Any(s => string.Compare(Page.InputtedString, s, StringComparison.OrdinalIgnoreCase) == 0);
                     }
                 )
             ),
             onTick: () => {
                 hero.Name = Page.InputtedString;
+                pages["newGame-Name"].Tooltip = FORBIDDEN_NAMES.Keys.Any(s => string.Compare(Page.InputtedString, s, StringComparison.OrdinalIgnoreCase) == 0) ? "That name is forbidden." : "What is your name?";
             }
         );
 
@@ -216,13 +221,21 @@ public class Game : MonoBehaviour {
     void CreateIntro() {
         Guardian g = new Guardian();
         g.Resources.Remove(ResourceType.HEALTH);
+        g.Name = "";
         Action normal = () => OrderedEvents(
-            new Event(new RightBox("placeholder", "I am Goddess Alestre, the guardian of this world.", Color.yellow)),
-            new Event(new RightBox("placeholder", "Six purifiers used to hallow the elements in these mortal lands.", Color.yellow)),
-            new Event(new RightBox("placeholder", "Abhorrent, unnatural creatures have sealed all but one purifier.", Color.yellow)),
-            new Event(new RightBox("placeholder", "The temple we are in now is my last sphere of influence here.", Color.yellow)),
-            new Event(new RightBox("placeholder", "The mortal lands are nearly lost...", Color.yellow)),
-            new Event(new RightBox("placeholder", string.Format("O faithful Redeemer, awaken from your slumber and come to me...", MainCharacter.Name), Color.yellow)),
+            new Event(new RightBox(g, "I am Goddess Alestre, gardener of this world.")),
+            new Event(() => g.Name = "Alestre"),
+            new Event(new RightBox(g, "For millenia I have tended to this blue marble, but I may not be able to for much longer.")),
+            new Event(new RightBox(g, "My followers created six purifiers to hallow the elements in your mortal lands.")),
+            new Event(new RightBox(g, "Celestial beings are... quite sensitive to impurities.")),
+            new Event(new RightBox(g, "Exposure to even a single fleck of corruption would irreversibly taint my body and soul, dooming this world.")),
+            new Event(new RightBox(g, "But this world is also inhabited by other <i>creatures</i>, who are not as light-touched as your kind. These abhorrent beings have begun sealing these purifiers, seeking to end my——humanity's presence here forever.")),
+            new Event(new RightBox(g, "These abhorrent beings have begun sealing these purifiers, seeking to end my——humanity's presence here forever.")),
+            new Event(new RightBox(g, "The purifier for light is below this temple. It is the last unsealed purifier in this world.")),
+            new Event(new RightBox(g, "In life, you led humanity against these terrible creatures.")),
+            new Event(new RightBox(g, "But as with all good heroes, your stay was too brief for this world. Cut down by one of your own.")),
+            new Event(new RightBox(g, "I have given you a second chance to save humanity.")),
+            new Event(new RightBox(g, string.Format("O faithful Redeemer, awaken from your slumber and come to me...", MainCharacter.Name))),
             new Event(() => pages["intro-HelloWorld"].ActionGrid = new Process[] { new Process("Awaken", action: () => PageID = "temple-waterRoom") })
         );
 
@@ -231,7 +244,7 @@ public class Game : MonoBehaviour {
             right: new Character[] { g },
             onFirstEnter: () => {
                 OrderedEvents(
-                    new Event(new TextBox("You feel weightless..."), 3),
+                    new Event(new TextBox("You feel weightless..."), 0),
                     new Event(new RightBox("placeholder", string.Format("{0}...", MainCharacter.Name), Color.yellow), 1),
                     new Event(new RightBox("placeholder", string.Format("O redeemed {0}...", MainCharacter.Name), Color.yellow), 1),
                     new Event(new RightBox("placeholder", string.Format("Can you hear my voice?", MainCharacter.Name), Color.yellow), 1),
@@ -269,21 +282,21 @@ public class Game : MonoBehaviour {
                                         new Event(new RightBox("placeholder", "...", Color.yellow), 1),
                                         new Event(new LeftBox("placeholder", "......", Color.white), 1),
                                         new Event(new RightBox("placeholder", "......", Color.yellow), 1),
-                                        new Event(new LeftBox("placeholder", "............", Color.white), 0),
+                                        new Event(new LeftBox("placeholder", "...........?", Color.white), 1),
                                         new Event(() => {
                                             MainCharacter.OnDefeat(true);
                                             MainCharacter.AddToResource(ResourceType.HEALTH, false, Int32.MinValue, true);
-                                            AddTextBox(new TextBox(string.Format("A bolt of divine lightning strikes {0} for <color=red>2147483648</color> damage!", MainCharacter.Name)));
+                                            AddTextBox(new TextBox(string.Format("A streak of divine lightning hits {0} for <color=red>2147483648</color> damage!", MainCharacter.Name)));
                                             Game.Instance.Sound.Play("Sounds/Boom_1");
-                                        }, 4),
+                                        }, 0),
                                         new Event(() => MainCharacter.OnKill(true)),
                                         new Event(() => {
                                             Page.Tooltip = "You have died.";
                                             pages["intro-HelloWorld"].ActionGrid = new Process[] { new Process("Main Menu", "Return to the main menu.", () => { Start(); PageID = "primary"; }) };
-                                        }, 10),
-                                        new Event(new RightBox("placeholder", "Perhaps they were too afraid to speak?", Color.red), 2),
+                                        }, 1),
+                                        new Event(new RightBox("placeholder", "Perhaps they were too afraid to speak?", Color.red), 10),
                                         new Event(new RightBox("placeholder", "Or unwise?", Color.grey), 2),
-                                        new Event(new RightBox("placeholder", "Then they could not save us.", Color.yellow), 0)
+                                        new Event(new RightBox("placeholder", "Then they could not have saved us.", Color.yellow), 2)
                                     );
                                 }
                             )
@@ -295,8 +308,9 @@ public class Game : MonoBehaviour {
     }
 
     void CreateTutorial() {
+
         Process[] waterRoomSubsequent = new Process[] {
-                        new Process("Leave", action: () => Debug.Log("This isn't implemented yet.")),
+                        new Process("Leave", action: () => PageID = "temple-hallway"),
                         new OneShotProcess("Look around", action: () =>
                             AddTextBox(
                                 new TextBox("The pleasantly warm room is tiny. The pool of water is just large enough for one person. Water drips into and exits the pool from an unknown source, providing a pleasant ambience sure to lull anyone to sleep.")
@@ -309,7 +323,7 @@ public class Game : MonoBehaviour {
             location: "Last Temple - Rebirth Room",
             processes: waterRoomSubsequent,
             onFirstEnter: () => {
-                AddTextBox(new TextBox("As you wake up, you realize that you are floating on water. The water matches your temperature perfectly, making you feel as if you are suspended in nothingness."));
+                AddTextBox(new TextBox("As you wake up, you realize that you are floating on water. The water matches your temperature perfectly, making you feel as if you are suspended in nothingness. A soft golden light reflects off the walls."));
                 Header.Blurb = "Go to Alestre.";
                 Header.Chapter = "Chapter 0";
                 pages["temple-waterRoom"].ActionGrid = new Process[] {
@@ -321,6 +335,87 @@ public class Game : MonoBehaviour {
                 };
             }
         );
+
+        pages["temple-hallway"] = new ReadPage(
+            text: "The hallway is absolutely massive.",
+            tooltip: "",
+            left: new Character[] { MainCharacter },
+            right: new Character[] { },
+            mainCharacter: MainCharacter,
+            location: "Last Temple - Hallway",
+            processes: new Process[] {
+                new Process("Throne", action: () => PageID = "temple-throne"),
+                new Process("Rebirth", action: () => PageID = "temple-waterRoom"),
+                new Process("Corrupted Entrance", action: () => PageID = "temple-corruptRoom0", condition: () => false),
+                new OneShotProcess("Exit", ("Leave the temple."),
+                () => {
+                    OrderedEvents(
+                        new Event(new TextBox("As you try to leave the temple, a voice begins to echo through your head...")),
+                        new Event(new RightBox("placeholder", "This isn't implemented yet...", Color.cyan, soundLocation: "Sounds/Attack_0"))
+                    );
+                    }
+                )
+            }
+        );
+
+        Guardian g = new Guardian();
+        pages["temple-throne"] = new ReadPage(
+            text: "Goddess Alestre is sitting on her throne.",
+            tooltip: "",
+            left: new Character[] { MainCharacter },
+            right: new Character[] { },
+            mainCharacter: MainCharacter,
+            location: "Last Temple - Throne Room",
+            processes: new Process[] {
+                new Process("Approach", action: () => {
+                    pages["temple-throne"].ActionGrid = new Process[0];
+                    pages["temple-throne"].RightCharacters.Add(g);
+                    OrderedEvents(
+                        new Event(new TextBox("Some appearance description."), 0),
+                        new Event(new RightBox(g, "When you are ready, I will teach you how to defend yourself against these wicked creatures."), 2),
+                        new Event(() => {
+                            pages["temple-throne"].ActionGrid = new Process[] {
+                                new OneShotProcess("I'm ready.", action: () => {
+                                    pages["temple-throne"].ActionGrid = new Process[0];
+                                    OrderedEvents(
+                                        new Event(new LeftBox(MainCharacter, "I'm ready."), 0),
+                                        new Event(new RightBox(g, string.Format("Very well. Let's see what you're made of... Redeemer {0}!", MainCharacter.Name)), 1),
+                                        new Event(() => {
+                                            PageID = "tutorial-battle0";
+                                        }, 1)
+                                    );
+                                }),
+                                new OneShotProcess("Not yet.", action: () => {
+                                    pages["temple-throne"].ActionGrid = new Process[0];
+                                    OrderedEvents(
+                                        new Event(new RightBox(g, string.Format("When you are ready, Redeemer {0}.", MainCharacter.Name)), 0),
+                                        new Event(() => {
+                                            pages["temple-throne"].ResetActionGrid();
+                                        }, 0)
+                                    );
+                                })
+                            };
+                        })
+                    );
+                }
+                ),
+                new Process("Hallway", action: () => {
+                    pageID = "temple-hallway";
+                })
+            },
+            onFirstEnter: () => {
+                AddTextBox(new RightBox(g, string.Format("Hello, {0}.", MainCharacter.Name)));
+            }
+        );
+
+        pages["tutorial-battle0"] = new BattlePage(
+            text: "You are fighting Alestre!",
+            location: "Last Temple - Throne Room",
+            mainCharacter: MainCharacter,
+            left: new Character[] { MainCharacter },
+            right: new Character[] { g }
+        );
+
     }
 
     void CreateDebug() {
@@ -342,7 +437,7 @@ public class Game : MonoBehaviour {
                 new Process("Shake yourself", "Literally U******E", () => { Effect.ShakeEffect(MainCharacter, .05f); }),
                 new Process("Fade yourself", "Literally U******E x2", () => { Effect.CharacterDeath(MainCharacter, 1.0f); }),
                 new OneShotProcess("Test OneShotProcess", action: () => Debug.Log("ya did it!")),
-                new Process(),
+                new Process("deadm00se", "Text not displaying right.", () => AddTextBox(new RightBox("placeholder", "But this world is also inhabited by other <i>creatures</i>, who are not as light-touched as your kind. These abhorrent beings have begun sealing these purifiers, seeking to end my——humanity's presence here forever.", Color.white))),
                 new Process(),
                 new Process("Back", "Go back to the main menu.", () => { PagePresenter.SetPage(pages["primary"]); })
             }
@@ -351,7 +446,7 @@ public class Game : MonoBehaviour {
         pages["debug2"] = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
     }
 
-    struct Event {
+    public struct Event {
         public readonly Action action;
         public readonly float delay;
         public readonly Func<bool> hasEnded;
@@ -370,18 +465,18 @@ public class Game : MonoBehaviour {
             this.hasEnded = () => t.IsDone;
         }
     }
-    void OrderedEvents(params Event[] events) {
+    public void OrderedEvents(params Event[] events) {
         StartCoroutine(Timeline(events));
     }
 
     IEnumerator Timeline(Event[] events) {
         foreach (Event e in events) {
-            e.action.Invoke();
-            while (!e.hasEnded.Invoke()) {
-                yield return null;
-            }
             float timer = 0;
             while ((timer += UnityEngine.Time.deltaTime) < e.delay) {
+                yield return null;
+            }
+            e.action.Invoke();
+            while (!e.hasEnded.Invoke()) {
                 yield return null;
             }
         }

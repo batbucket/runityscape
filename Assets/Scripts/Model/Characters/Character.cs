@@ -230,7 +230,7 @@ public abstract class Character : Entity, IReactable {
                         break;
                 }
             }
-            CalculateSpeed(Game.Instance.MainCharacter);
+            CalculateChargeRequirement(Game.Instance.MainCharacter);
 
             if (IsDefeated()) { OnDefeat(); }
             if (IsKilled()) { OnKill(); }
@@ -264,16 +264,16 @@ public abstract class Character : Entity, IReactable {
         return Name.GetHashCode();
     }
 
-    public void CalculateSpeed(Character mainCharacter) {
-        CalculateSpeed(this, mainCharacter);
+    public void CalculateChargeRequirement(Character mainCharacter) {
+        CalculateChargeRequirement(this, mainCharacter);
     }
 
     public void AddToBuffs(Spell spell) {
         Buffs.Add(spell);
     }
 
-    static void CalculateSpeed(Character current, Character main) {
-        int chargeNeededToAct = (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false));
+    static void CalculateChargeRequirement(Character current, Character main) {
+        int chargeNeededToAct = Math.Max(1, (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false)));
         current.AddToResource(ResourceType.CHARGE, true, -current.GetResourceCount(ResourceType.CHARGE, true));
         current.AddToResource(ResourceType.CHARGE, true, chargeNeededToAct);
     }

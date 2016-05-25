@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class ReadPage : Page {
 
@@ -21,5 +22,10 @@ public class ReadPage : Page {
         Process[] processes = null
         )
         : base(text, tooltip, location, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes) {
+    }
+
+    public override void Tick() {
+        base.Tick();
+        GetAll().Where(c => c.HasResource(ResourceType.CHARGE)).ToList().ForEach(c => c.Resources[ResourceType.CHARGE].IsVisible = false);
     }
 }

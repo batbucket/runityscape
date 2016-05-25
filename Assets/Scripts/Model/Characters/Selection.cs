@@ -22,7 +22,7 @@ public sealed class Selection : IComparable {
 
     public static readonly Selection FAIM = new Selection(Type.FAIM, "FAIM", "null", "What will {0} do?", -1);
     public static readonly Selection SPELL = new Selection(Type.SPELL, "Spell", "{0} will cast a SPELL.", "What SPELL will {0} cast?", 4);
-    public static readonly Selection ACT = new Selection(Type.ACT, "Act", "{0} will perform an ACTION.", "What ACTION will {0} perform?", 5);
+    public static readonly Selection ACT = new Selection(Type.ACTION, "Action", "{0} will perform an ACTION.", "What ACTION will {0} perform?", 5);
     public static readonly Selection ITEM = new Selection(Type.ITEM, "Item", "{0} will use an ITEM.", "What ITEM will {0} use?", 6);
     public static readonly Selection MERCY = new Selection(Type.MERCY, "Mercy", "{0} will show MERCY.", "How will {0} show MERCY?", 7);
     public static readonly Selection EQUIP = new Selection(Type.EQUIP, "Equip", "{0} will manage EQUIPMENT.", "What EQUIPMENT will {0} use?", 10);
@@ -30,7 +30,7 @@ public sealed class Selection : IComparable {
     public static readonly Selection SWITCH = new Selection(Type.SWITCH, "Switch", "{0} will GIVE control to another character.", "Who will {0} SWITCH with?", 11);
 
     public enum Type {
-        FAIM, SPELL, ACT, ITEM, MERCY, TARGET, SWITCH, EQUIP
+        FAIM, SPELL, ACTION, ITEM, MERCY, TARGET, SWITCH, EQUIP
     }
 
     public int CompareTo(object obj) {

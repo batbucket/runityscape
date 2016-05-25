@@ -16,7 +16,9 @@ public abstract class AvatarBox : TextBox {
         this._sprite = Util.GetSprite(spriteLoc);
     }
 
-    public AvatarBox(Character c, string text) : base(text, TextEffect.TYPE, timePerLetter: 0.075f) { }
+    public AvatarBox(Character c, string text) : base(text, c.TextColor, TextEffect.TYPE, timePerLetter: 0.075f) {
+        this._sprite = c.Sprite;
+    }
 
     public override void Write(GameObject avatarBoxPrefab, Action callBack) {
         avatarBoxPrefab.GetComponent<AvatarBoxView>().WriteText(this, callBack);

@@ -49,16 +49,12 @@ public class BattlePage : Page {
         currentSelectionNode = selectionTree;
     }
 
-    public override void OnAnyEnter() {
-        OnEnterAction.Invoke();
-        GetAll().Where(c => c.HasResource(ResourceType.CHARGE)).ToList().ForEach(c => c.Resources[ResourceType.CHARGE].IsVisible = true);
-    }
-
     public override void Tick() {
         base.Tick();
         foreach (Character c in GetAll()) {
             c.Tick(true);
             if (c.IsControllable) { characterQueue.Enqueue(c); }
+            if (c.HasResource(ResourceType.CHARGE)) { c.Resources[ResourceType.CHARGE].IsVisible = true; }
         }
 
         /**
@@ -97,7 +93,7 @@ public class BattlePage : Page {
         Tooltip = string.Format(currentSelectionNode.Value.Question, character.Name, targetedSpell == null ? "" : targetedSpell.Name);
         if (currentSelectionNode.Value == Selection.FAIM) {
             ShowSwitchButton(character);
-            ActionGrid[ATTACK_INDEX] = CreateSpellProcess(character.Attack, character);
+            ActionGrid[ATTACK_INDEX] = character.Attack == null ? new Process() : CreateSpellProcess(character.Attack, character);
             ActionGrid[LAST_SPELL_INDEX] = character.SpellStack.Count == 0 ? null : CreateSpellProcess(character.SpellStack.Peek(), character);
 
             foreach (KeyValuePair<Selection, ICollection<SpellFactory>> myPair in character.Selections) {
