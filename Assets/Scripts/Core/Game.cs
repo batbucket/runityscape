@@ -224,13 +224,16 @@ public class Game : MonoBehaviour {
         g.Name = "";
         Action normal = () => OrderedEvents(
             new Event(new RightBox(g, "I am Goddess Alestre, gardener of this world.")),
-            new Event(() => g.Name = "Alestre"),
-            new Event(new RightBox(g, "For millenia I have tended to this blue marble, but I may not be able to for much longer.")),
+            new Event(() => {
+                g.Name = "Alestre";
+                Header.Chapter = "The Gardener";
+            }),
+            new Event(new RightBox(g, "For millenia I have tended to this life-filled orb, but I may not be able to for much longer.")),
             new Event(new RightBox(g, "My followers created six purifiers to hallow the elements in your mortal lands.")),
             new Event(new RightBox(g, "Celestial beings are... quite sensitive to impurities.")),
             new Event(new RightBox(g, "Exposure to even a single fleck of corruption would irreversibly taint my body and soul, dooming this world.")),
-            new Event(new RightBox(g, "But this world is also inhabited by other <i>creatures</i>, who are not as light-touched as your kind. These abhorrent beings have begun sealing these purifiers, seeking to end my——humanity's presence here forever.")),
-            new Event(new RightBox(g, "These abhorrent beings have begun sealing these purifiers, seeking to end my——humanity's presence here forever.")),
+            new Event(new RightBox(g, "But this world is also inhabited by other <i>creatures</i>, who are not as light-touched as your kind.")),
+            new Event(new RightBox(g, "These abhorrent beings have begun sealing these purifiers, seeking to end my—humanity's presence here forever.")),
             new Event(new RightBox(g, "The purifier for light is below this temple. It is the last unsealed purifier in this world.")),
             new Event(new RightBox(g, "In life, you led humanity against these terrible creatures.")),
             new Event(new RightBox(g, "But as with all good heroes, your stay was too brief for this world. Cut down by one of your own.")),
@@ -240,6 +243,7 @@ public class Game : MonoBehaviour {
         );
 
         pages["intro-HelloWorld"] = new ReadPage(
+            location: "Unknown Location",
             left: new Character[] { MainCharacter },
             right: new Character[] { g },
             onFirstEnter: () => {
@@ -413,7 +417,8 @@ public class Game : MonoBehaviour {
             location: "Last Temple - Throne Room",
             mainCharacter: MainCharacter,
             left: new Character[] { MainCharacter },
-            right: new Character[] { g }
+            right: new Character[] { g },
+            onEnter: () => Header.Blurb = "Defeat Alestre."
         );
 
     }
@@ -472,11 +477,11 @@ public class Game : MonoBehaviour {
     IEnumerator Timeline(Event[] events) {
         foreach (Event e in events) {
             float timer = 0;
-            while ((timer += UnityEngine.Time.deltaTime) < e.delay) {
+            while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.delay) {
                 yield return null;
             }
             e.action.Invoke();
-            while (!e.hasEnded.Invoke()) {
+            while (!Input.GetKey(KeyCode.LeftControl) && !e.hasEnded.Invoke()) {
                 yield return null;
             }
         }

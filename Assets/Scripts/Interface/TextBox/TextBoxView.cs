@@ -69,6 +69,12 @@ public class TextBoxView : MonoBehaviour {
                 text.text = string.Join("", currentTextArray);
                 string wrapper = "\u2007";
                 while (index < textBox.TextArray.Length) {
+
+                    //Change to FADE_IN Mode if Space (skip) key is held
+                    if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.LeftControl)) {
+                        text.text = "";
+                        goto case TextEffect.FADE_IN;
+                    }
                     if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                         if (!taggedText[index]) {
 

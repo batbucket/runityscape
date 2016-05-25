@@ -33,10 +33,14 @@ public class EffectsManager : MonoBehaviour {
     public void CancelEffects() {
         StopAllCoroutines();
         foreach (KeyValuePair<Character, FadeBundle> pair in ColoredFades) {
-            pair.Key.Presenter.PortraitView.Image.color = Color.white;
+            if (pair.Key.Presenter.PortraitView.Image != null) {
+                pair.Key.Presenter.PortraitView.Image.color = Color.white;
+            }
         }
         foreach (KeyValuePair<Character, ShakeBundle> pair in Shakes) {
-            pair.Key.Presenter.PortraitView.IconTransform.localPosition = new Vector2(0, 0);
+            if (pair.Key.Presenter.PortraitView.Image != null) {
+                pair.Key.Presenter.PortraitView.IconTransform.localPosition = new Vector2(0, 0);
+            }
         }
     }
 
