@@ -188,7 +188,7 @@ public class BattlePage : Page {
     }
 
     void ShowSwitchButton(Character current) {
-        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current),
+        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current.Name),
             () => {
                 //Quick switch if there's only one other abledCharacter to switch with
                 IList<Character> abledCharacters = GetAll().FindAll(c => !current.Equals(c) && c.IsDisplayable && c.IsCharged());
