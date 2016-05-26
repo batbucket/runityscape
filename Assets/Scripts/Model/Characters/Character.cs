@@ -79,6 +79,7 @@ public abstract class Character : Entity, IReactable {
 
         CalculateResources();
         FillResources();
+        IsCharging = true;
     }
 
     public void AddAttribute(Attribute attribute) {
@@ -197,9 +198,11 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
+    public bool IsCharging { set; get; }
+
     public virtual void Tick(bool isInCombat) {
         CalculateResources();
-        if (isInCombat) {
+        if (isInCombat && IsCharging) {
 
             foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
                 if (pair.Key != ResourceType.HEALTH) {

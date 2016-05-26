@@ -118,7 +118,7 @@ public class Game : MonoBehaviour {
 
         CreateWorld();
 
-        PageID = "primary";//"tutorial-battle0";
+        PageID = "tutorial-battle0";
     }
 
     void CreateWorld() {
@@ -232,13 +232,15 @@ public class Game : MonoBehaviour {
             new Event(new RightBox(g, "My followers created six purifiers to hallow the elements in your mortal lands.")),
             new Event(new RightBox(g, "Celestial beings are... quite sensitive to impurities.")),
             new Event(new RightBox(g, "Exposure to even a single fleck of corruption would irreversibly taint my body and soul, dooming this world.")),
-            new Event(new RightBox(g, "But this world is also inhabited by other <i>creatures</i>, who are not as light-touched as your kind.")),
+            new Event(new RightBox(g, "But this world is also inhabited by other creatures, who are not as light-touched as your kind.")),
             new Event(new RightBox(g, "These abhorrent beings have begun sealing these purifiers, seeking to end my—humanity's presence here forever.")),
             new Event(new RightBox(g, "The purifier for light is below this temple. It is the last unsealed purifier in this world.")),
+            new Event(new RightBox(g, "Do you still remember?")),
             new Event(new RightBox(g, "In life, you led humanity against these terrible creatures.")),
-            new Event(new RightBox(g, "But as with all good heroes, your stay was too brief for this world. Cut down by one of your own.")),
-            new Event(new RightBox(g, "I have given you a second chance to save humanity.")),
+            new Event(new RightBox(g, "But as with all good heroes, your stay was too brief for this world. Cut down by one just like you.")),
+            new Event(new RightBox(g, "I have given you a second chance to serve humanity.")),
             new Event(new RightBox(g, string.Format("O faithful Redeemer, awaken from your slumber and come to me...", MainCharacter.Name))),
+            new Event(() => Header.Blurb = "Go to Alestre."),
             new Event(() => pages["intro-HelloWorld"].ActionGrid = new Process[] { new Process("Awaken", action: () => PageID = "temple-waterRoom") })
         );
 
@@ -290,7 +292,7 @@ public class Game : MonoBehaviour {
                                         new Event(() => {
                                             MainCharacter.OnDefeat(true);
                                             MainCharacter.AddToResource(ResourceType.HEALTH, false, Int32.MinValue, true);
-                                            AddTextBox(new TextBox(string.Format("A streak of divine lightning hits {0} for <color=red>2147483648</color> damage!", MainCharacter.Name)));
+                                            AddTextBox(new TextBox(string.Format("A streak of divine lightning impacts {0} for <color=red>2147483648</color> damage!", MainCharacter.Name)));
                                             Game.Instance.Sound.Play("Sounds/Boom_1");
                                         }, 0),
                                         new Event(() => MainCharacter.OnKill(true)),
@@ -328,7 +330,6 @@ public class Game : MonoBehaviour {
             processes: waterRoomSubsequent,
             onFirstEnter: () => {
                 AddTextBox(new TextBox("As you wake up, you realize that you are floating on water. The water matches your temperature perfectly, making you feel as if you are suspended in nothingness. A soft golden light reflects off the walls."));
-                Header.Blurb = "Go to Alestre.";
                 Header.Chapter = "Chapter 0";
                 pages["temple-waterRoom"].ActionGrid = new Process[] {
                     new OneShotProcess("Get up", action: () =>
@@ -383,7 +384,7 @@ public class Game : MonoBehaviour {
                                     pages["temple-throne"].ActionGrid = new Process[0];
                                     OrderedEvents(
                                         new Event(new LeftBox(MainCharacter, "I'm ready."), 0),
-                                        new Event(new RightBox(g, string.Format("Very well. Let's see what you're made of... Redeemer {0}!", MainCharacter.Name)), 1),
+                                        new Event(new RightBox(g, string.Format("Very well. Let's see what you still remember.", MainCharacter.Name)), 1),
                                         new Event(() => {
                                             PageID = "tutorial-battle0";
                                         }, 1)

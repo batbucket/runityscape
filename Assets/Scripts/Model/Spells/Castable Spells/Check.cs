@@ -16,7 +16,7 @@ public class Check : SpellFactory {
                         foreach (KeyValuePair<AttributeType, Attribute> pair in t.Attributes) {
                             s.Add(string.Format("{0} {1}/{2}", pair.Key.ShortName, pair.Value.False, pair.Value.True));
                         }
-                        return string.Format("* {0}: {1}.", t.Name, string.Join(", ", s.ToArray()));
+                        return string.Format("{0}  Lvl {1}\n{2}", t.Name, t.Level, string.Join("\n", s.ToArray()));
                     }
                     )
                 ) }

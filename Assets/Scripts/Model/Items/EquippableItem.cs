@@ -6,8 +6,8 @@ using System.Collections.Generic;
 public abstract class EquippableItem : Item {
     readonly EquipmentType _equipmentType;
     public EquipmentType EquipmentType { get { return _equipmentType; } }
-    const string SELF_EQUIP_TEXT = "* {1} equipped their {2}!";
-    const string OTHER_EQUIP_TEXT = "* {0} equipped {1} with the {2}.";
+    const string SELF_EQUIP_TEXT = "{1} equipped <color=yellow>{2}</color>!";
+    const string OTHER_EQUIP_TEXT = "{0} equipped {1} with <color=yellow>{2}</color>.";
 
     readonly IDictionary<AttributeType, PairedInt> bonuses;
 

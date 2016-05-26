@@ -145,7 +145,7 @@ public class BattlePage : Page {
     Process CreateUnequipProcess(Character caster, EquippableItem item, ICollection<SpellFactory> equipment) {
         return new Process(Util.Color(item.Name, Color.yellow), item.Description, () => {
             Tooltip = "";
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("* {0} unequipped their {1}.", caster.Name, item.Name), Color.white, TextEffect.FADE_IN));
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("{0} unequipped {1}.", caster.Name, item.Name), Color.white, TextEffect.FADE_IN));
             equipment.Remove(item);
         });
     }

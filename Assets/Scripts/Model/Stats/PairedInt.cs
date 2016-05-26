@@ -24,6 +24,11 @@ public class PairedInt {
         _false = falseValue;
     }
 
+    public PairedInt(int flat, float percent) {
+        _true = flat;
+        _false = percent;
+    }
+
     void Set(int both) {
         _false = both;
         _true = both;

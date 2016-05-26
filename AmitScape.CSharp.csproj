@@ -112,6 +112,8 @@
     <Compile Include="Assets\Scripts\Model\Items\EquippableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Inventory.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Item.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\Named Items\LightArmor.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\Named Items\LightSword.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\Lobster.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\Scimitar.cs" />
     <Compile Include="Assets\Scripts\Model\Page\BattlePage.cs" />
