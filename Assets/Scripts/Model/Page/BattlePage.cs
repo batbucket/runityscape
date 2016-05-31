@@ -28,9 +28,10 @@ public class BattlePage : Page {
         Action onEnter = null,
         Action onFirstExit = null,
         Action onExit = null,
-        Action onTick = null
+        Action onTick = null,
+        string musicLoc = null
         )
-        : base(text, tooltip, location, false, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick) {
+        : base(text, tooltip, location, false, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
 
         characterQueue = new Queue<Character>();
 

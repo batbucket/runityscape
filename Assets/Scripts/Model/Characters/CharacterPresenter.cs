@@ -11,6 +11,7 @@ public class CharacterPresenter {
     }
 
     public void Tick() {
+
         //Attempt to set ResourceViews
         PortraitView.SetResources(Character.Resources.Keys.Where(k => Character.Resources[k].IsVisible).ToArray());
 
@@ -33,6 +34,6 @@ public class CharacterPresenter {
         //Set buffs and durations
         PortraitView.SetBuffs(Character.Buffs.Select(s => s.Current).Where(b => b is TimedSpellComponent).Cast<TimedSpellComponent>().Select(b => new PortraitView.BuffParams { id = b.Spell.Id, sprite = b.Sprite, color = b.Color, duration = b.DurationText }).ToArray());
 
-        this.PortraitView.Sprite = Character.Sprite;
+        this.PortraitView.Sprite = Util.GetSprite(Character.SpriteLoc);
     }
 }

@@ -27,6 +27,15 @@ public class PagePresenter {
     public void SetPage(Page page) {
 
         this.Page.OnExit();
+
+        if (string.IsNullOrEmpty(page.Music)) {
+            Game.Instance.Sound.StopAll();
+        } else if (string.Equals(page.Music, Page.Music)) {
+            //Don't change music if both pages use same
+        } else {
+            Game.Instance.Sound.Play(page.Music);
+        }
+
         this.Page = page;
         Util.KillAllChildren(Game.Instance.TextBoxHolder.gameObject);
 

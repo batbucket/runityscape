@@ -28,6 +28,7 @@ public abstract class Page {
 
     public bool HasEnteredBefore { get; protected set; }
     public bool HasExitedBefore { get; protected set; }
+    public string Music { get; protected set; }
 
     public static int idCount = 0;
     public int Id { get; private set; }
@@ -48,7 +49,8 @@ public abstract class Page {
         Action onFirstExit = null,
         Action onExit = null,
         Action onTick = null,
-        Process[] processes = null
+        Process[] processes = null,
+        string musicLoc = null
         ) {
 
         this.Text = text;
@@ -83,6 +85,8 @@ public abstract class Page {
         this.ActionGrid = processes ?? new Process[ActionGridView.ROWS * ActionGridView.COLS];
 
         this.OnTick = onTick ?? (() => { });
+        this.Music = musicLoc;
+
         this.Id = idCount++;
 
         this._inputtedString = "";

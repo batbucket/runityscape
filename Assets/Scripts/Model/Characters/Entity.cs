@@ -7,9 +7,9 @@ using UnityEngine.UI;
  * Naturally, the most basic one just has a sprite representation
  */
 public abstract class Entity {
-    public Sprite Sprite { get; set; }
+    public string SpriteLoc { get; set; }
 
-    public Entity(Sprite sprite) {
-        this.Sprite = sprite;
+    public Entity(string spriteLoc) {
+        this.SpriteLoc = spriteLoc;
     }
 }

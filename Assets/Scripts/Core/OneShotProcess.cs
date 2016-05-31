@@ -17,7 +17,9 @@ public class OneShotProcess : Process {
     }
 
     public override void Play() {
-        this.wasCalled = true;
-        base.Play();
+        if (!wasCalled) {
+            this.wasCalled = true;
+            base.Play();
+        }
     }
 }

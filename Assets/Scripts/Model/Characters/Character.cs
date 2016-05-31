@@ -38,7 +38,7 @@ public abstract class Character : Entity, IReactable {
     public IDictionary<PerkType.Character, IList<InvokePerk>> CharacterPerks;
     public IDictionary<PerkType.React, IList<ReactPerk>> ReactPerks;
 
-    public Character(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(sprite) {
+    public Character(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(spriteLoc) {
         this._name = name;
         this.Level = level;
 

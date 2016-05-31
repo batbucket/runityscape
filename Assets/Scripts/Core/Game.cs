@@ -56,7 +56,7 @@ public class Game : MonoBehaviour {
     Dictionary<string, int> intFlags;
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
-    public static string DERP = "because I'm not paying a bunch of money to take <color=red>shitty</color> humanity classes";
+    public static string DERP = "[8:33:40 AM] lanrete: did you know that you can get to the tutorial battle from the start by just spamming Q";
 
     IDictionary<string, Page> pages;
     IDictionary<string, string> pageLinks;
@@ -118,7 +118,7 @@ public class Game : MonoBehaviour {
 
         CreateWorld();
 
-        PageID = "tutorial-battle0";
+        PageID = "primary";//"tutorial-battle0";
     }
 
     void CreateWorld() {
@@ -417,6 +417,7 @@ public class Game : MonoBehaviour {
             text: "You are fighting Alestre!",
             location: "Last Temple - Throne Room",
             mainCharacter: MainCharacter,
+            musicLoc: "Music/Hero Immortal",
             left: new Character[] { MainCharacter },
             right: new Character[] { g },
             onEnter: () => Header.Blurb = "Defeat Alestre."
@@ -456,19 +457,25 @@ public class Game : MonoBehaviour {
         public readonly Action action;
         public readonly float delay;
         public readonly Func<bool> hasEnded;
+        public readonly bool isOneShot;
+        public bool HasPlayed { get; set; }
 
-        public Event(Action action, float delay = 0, Func<bool> endCondition = null) {
+        public Event(Action action, float delay = 0, bool isOneShot = true, Func<bool> endCondition = null) {
             this.action = action;
             this.hasEnded = endCondition ?? (() => true);
             this.delay = delay;
+            this.isOneShot = isOneShot;
+            this.HasPlayed = false;
         }
 
         //Special Text-Event builders
 
-        public Event(TextBox t, float delay = 1) {
+        public Event(TextBox t, float delay = 1, bool isOneShot = true) {
             this.action = () => Instance.AddTextBox(t);
             this.delay = delay;
             this.hasEnded = () => t.IsDone;
+            this.isOneShot = isOneShot;
+            this.HasPlayed = false;
         }
     }
     public void OrderedEvents(params Event[] events) {
@@ -476,14 +483,18 @@ public class Game : MonoBehaviour {
     }
 
     IEnumerator Timeline(Event[] events) {
-        foreach (Event e in events) {
-            float timer = 0;
-            while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.delay) {
-                yield return null;
-            }
-            e.action.Invoke();
-            while (!Input.GetKey(KeyCode.LeftControl) && !e.hasEnded.Invoke()) {
-                yield return null;
+        foreach (Event myEvent in events) {
+            Event e = myEvent;
+            if (!e.isOneShot || (e.isOneShot && !e.HasPlayed)) {
+                float timer = 0;
+                while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.delay) {
+                    yield return null;
+                }
+                e.action.Invoke();
+                while (!Input.GetKey(KeyCode.LeftControl) && !e.hasEnded.Invoke()) {
+                    yield return null;
+                }
+                e.HasPlayed = true;
             }
         }
     }

@@ -19,9 +19,10 @@ public class ReadPage : Page {
         Action onFirstExit = null,
         Action onExit = null,
         Action onTick = null,
-        Process[] processes = null
+        Process[] processes = null,
+        string musicLoc = null
         )
-        : base(text, tooltip, location, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes) {
+        : base(text, tooltip, location, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes, musicLoc) {
     }
 
     public override void Tick() {

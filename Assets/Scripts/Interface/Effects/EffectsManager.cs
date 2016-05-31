@@ -132,7 +132,6 @@ public class EffectsManager : MonoBehaviour {
     }
 
     public void CharacterDeath(Character target, float duration, Action endCall = null) {
-        target.Sprite = null;
         StartCoroutine(ColorTransition(target.Presenter.PortraitView.gameObject, duration, Color.white, Color.clear, endCall));
     }
 

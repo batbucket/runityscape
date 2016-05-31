@@ -3,7 +3,7 @@ using System.Linq;
 
 public class Steve : ComputerCharacter {
 
-    public Steve() : base(Util.GetSprite("laughing_shinx"), "Steve", 0, 10, 2, 5, 5, Color.red, 4) {
+    public Steve() : base("laughing_shinx", "Steve", 0, 10, 2, 5, 5, Color.red, 4) {
         AddResource(new NamedResource.Skill());
         Selections[Selection.SPELL].Add(new Counter());
     }

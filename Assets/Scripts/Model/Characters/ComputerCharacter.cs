@@ -8,8 +8,8 @@ public abstract class ComputerCharacter : Character {
     readonly float maxDelay;
     protected float delay;
 
-    public ComputerCharacter(Sprite sprite, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, float maxDelay)
-        : base(sprite, name, level, strength, intelligence, dexterity, vitality, textColor, DISPLAYABLE) {
+    public ComputerCharacter(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, float maxDelay)
+        : base(spriteLoc, name, level, strength, intelligence, dexterity, vitality, textColor, DISPLAYABLE) {
         this.maxDelay = maxDelay;
     }
 
