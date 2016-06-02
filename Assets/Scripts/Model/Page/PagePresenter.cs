@@ -33,7 +33,7 @@ public class PagePresenter {
         } else if (string.Equals(page.Music, Page.Music)) {
             //Don't change music if both pages use same
         } else {
-            Game.Instance.Sound.Play(page.Music);
+            Game.Instance.Sound.Loop(page.Music);
         }
 
         this.Page = page;
@@ -69,9 +69,9 @@ public class PagePresenter {
     }
 
     void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
-        portraitHolder.AddPortraits(characters.Select(c => c.Name).ToArray()); //Pass in characters' Names as parameter
+        portraitHolder.AddPortraits(characters.ToArray()); //Pass in characters' Names as parameter
         foreach (Character c in characters) {
-            c.Presenter = new CharacterPresenter(c, portraitHolder.CharacterViews[c.Name].portraitView);
+            c.Presenter = new CharacterPresenter(c, portraitHolder.CharacterViews[c].portraitView);
         }
     }
 

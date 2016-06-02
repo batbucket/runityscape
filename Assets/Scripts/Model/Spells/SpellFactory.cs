@@ -50,7 +50,7 @@ public abstract class SpellFactory {
                         string description,
                         SpellType spellType,
                         TargetType targetType,
-                        Dictionary<ResourceType, int> costs = null) {
+                        IDictionary<ResourceType, int> costs = null) {
 
         this._name = name;
         this._description = description;

@@ -65,7 +65,10 @@ public class SpellComponent : IReactable {
         }
         result.Effect(calc);
         result.SFX(calc);
-        Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(result.CreateText(calc), Color.white, TextEffect.FADE_IN));
+        string text = result.CreateText(calc);
+        if (!string.IsNullOrEmpty(text)) {
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(result.CreateText(calc), Color.white, TextEffect.FADE_IN));
+        }
     }
 
     public virtual void Tick() {

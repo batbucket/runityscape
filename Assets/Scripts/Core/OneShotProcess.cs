@@ -16,6 +16,10 @@ public class OneShotProcess : Process {
         this.wasCalled = false;
     }
 
+    public OneShotProcess(Action action) : base(null, null, action) {
+        this.wasCalled = false;
+    }
+
     public override void Play() {
         if (!wasCalled) {
             this.wasCalled = true;

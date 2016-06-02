@@ -12,6 +12,8 @@ public class EffectsManager : MonoBehaviour {
     GameObject minisplatPrefab;
     [SerializeField]
     GameObject bloodsplatPrefab;
+    [SerializeField]
+    GameObject lightningPrefab;
 
     struct FadeBundle {
         public Coroutine coroutine;
@@ -208,5 +210,10 @@ public class EffectsManager : MonoBehaviour {
             endCall.Invoke();
         }
         yield break;
+    }
+
+    public void LightningEffect(Character t) {
+        GameObject g = Instantiate(lightningPrefab);
+        Util.Parent(g, t.Presenter.PortraitView.gameObject);
     }
 }

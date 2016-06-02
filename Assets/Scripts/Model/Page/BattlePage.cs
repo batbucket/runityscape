@@ -12,6 +12,8 @@ public class BattlePage : Page {
     TreeNode<Selection> selectionTree;
     TreeNode<Selection> currentSelectionNode;
 
+    public Selection CurrentSelection { get { return currentSelectionNode.Value; } }
+
     public const int BACK_INDEX = ActionGridView.ROWS * ActionGridView.COLS - 1;
     public const int ATTACK_INDEX = 0;
     public const int LAST_SPELL_INDEX = 1;
@@ -146,7 +148,7 @@ public class BattlePage : Page {
     Process CreateUnequipProcess(Character caster, EquippableItem item, ICollection<SpellFactory> equipment) {
         return new Process(Util.Color(item.Name, Color.yellow), item.Description, () => {
             Tooltip = "";
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("{0} unequipped {1}.", caster.Name, item.Name), Color.white, TextEffect.FADE_IN));
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.Name, item.Name), Color.white, TextEffect.FADE_IN));
             equipment.Remove(item);
         });
     }
@@ -230,7 +232,7 @@ public class BattlePage : Page {
     }
 
     void UpdateLastSpellStack(SpellFactory spell, Character caster) {
-        if (spell != caster.Attack && !(spell is EquippableItem)) {
+        if (spell != caster.Attack && !(spell is EquippableItem) && spell.IsCastable(caster)) {
             caster.SpellStack.Push(spell);
         }
         if (spell is Item && ((Item)spell).Count <= 1) {
@@ -240,8 +242,11 @@ public class BattlePage : Page {
         }
     }
 
+    // TODO FIX THIS SO IT DOESN'T RESET SELECTION IF YOU CAN'T CAST A SPELL B/C OF NO ENEMIES AND ETC.
     void DetermineTargetSelection(SpellFactory spell, Character caster) {
         Util.Assert(spell != null);
+
+        bool resetSelection = spell.IsCastable(caster);
 
         //These TargetTypes might require target selection if there's more than 1 possible target.
         if (spell.TargetType == TargetType.SINGLE_ALLY || spell.TargetType == TargetType.SINGLE_ENEMY || spell.TargetType == TargetType.ANY) {
@@ -271,6 +276,9 @@ public class BattlePage : Page {
                     spell.TryCast(caster, this.GetAll());
                     break;
             }
+        }
+
+        if (resetSelection) {
             SpellCastEnd(spell, caster);
         }
     }
@@ -278,11 +286,12 @@ public class BattlePage : Page {
     void DetermineSingleTargetQuickCast(SpellFactory spell, Character caster, IList<Character> targets) {
         if (spell.IsSingleTargetQuickCastable(caster, targets)) {
             spell.TryCast(caster, targets[0]);
-            SpellCastEnd(spell, caster);
         } else {
-            targetedSpell = spell;
-            this.targets = targets;
-            currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);
+            if (spell.IsCastable(caster) && targets.Count > 0) {
+                targetedSpell = spell;
+                this.targets = targets;
+                currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);
+            }
         }
     }
 

@@ -170,7 +170,9 @@ public abstract class Character : Entity, IReactable {
     }
 
     public void Charge() {
-        AddToResource(ResourceType.CHARGE, false, Time.deltaTime * CHARGE_MULTIPLIER);
+        if (IsCharging) {
+            AddToResource(ResourceType.CHARGE, false, Time.deltaTime * CHARGE_MULTIPLIER);
+        }
     }
 
     public void Discharge() {
@@ -188,7 +190,7 @@ public abstract class Character : Entity, IReactable {
 
         //Set Skill cap to be highest skill costing Spell
         if (Resources.ContainsKey(ResourceType.SKILL) && Selections[Selection.SPELL].Count > 0) {
-            Resources[ResourceType.SKILL].True = Selections[Selection.SPELL].Where(s => s.Costs.ContainsKey(ResourceType.SKILL)).Select(s => s.Costs[ResourceType.SKILL]).OrderByDescending(i => i).FirstOrDefault();
+            Resources[ResourceType.SKILL].True = Mathf.Max(2, Selections[Selection.SPELL].Where(s => s.Costs.ContainsKey(ResourceType.SKILL)).Select(s => s.Costs[ResourceType.SKILL]).OrderByDescending(i => i).FirstOrDefault());
         }
     }
 
@@ -202,7 +204,7 @@ public abstract class Character : Entity, IReactable {
 
     public virtual void Tick(bool isInCombat) {
         CalculateResources();
-        if (isInCombat && IsCharging) {
+        if (isInCombat) {
 
             foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
                 if (pair.Key != ResourceType.HEALTH) {
@@ -260,7 +262,7 @@ public abstract class Character : Entity, IReactable {
         }
 
         // Return true if the fields match:
-        return this.Name.Equals(c.Name);
+        return this == c;
     }
 
     public override int GetHashCode() {

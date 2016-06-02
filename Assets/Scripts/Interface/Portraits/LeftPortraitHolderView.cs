@@ -10,8 +10,8 @@ public class LeftPortraitHolderView : PortraitHolderView {
         OnAwake();
     }
 
-    public override void AddPortraits(string[] portraitNames) {
-        AddPortraits(portraitNames, leftPortraitPrefab);
+    public override void AddPortraits(Character[] characters) {
+        AddPortraits(characters, leftPortraitPrefab);
     }
 }
 

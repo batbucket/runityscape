@@ -75,7 +75,7 @@ public abstract class Page {
             SetSide(right, true);
         }
 
-        this.RepeatedCharacterCheck(GetAll());
+        //this.RepeatedCharacterCheck(GetAll());
         this.OnFirstEnterAction = onFirstEnter ?? (() => { });
         this.OnEnterAction = onEnter ?? (() => { });
         this.OnFirstExitAction = onFirstExit ?? (() => { });

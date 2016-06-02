@@ -118,7 +118,7 @@ public class Game : MonoBehaviour {
 
         CreateWorld();
 
-        PageID = "primary";//"tutorial-battle0";
+        PageID = "tutorial-battle0";
     }
 
     void CreateWorld() {
@@ -422,7 +422,6 @@ public class Game : MonoBehaviour {
             right: new Character[] { g },
             onEnter: () => Header.Blurb = "Defeat Alestre."
         );
-
     }
 
     void CreateDebug() {
@@ -449,7 +448,7 @@ public class Game : MonoBehaviour {
                 new Process("Back", "Go back to the main menu.", () => { PagePresenter.SetPage(pages["primary"]); })
             }
         );
-        pages["debug1"] = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Steve(), new Steve() });
+        pages["debug1"] = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Amit(), new Steve(), new Steve() });
         pages["debug2"] = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
     }
 

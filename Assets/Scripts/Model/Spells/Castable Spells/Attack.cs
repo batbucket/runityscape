@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 public class Attack : SpellFactory {
     public const string NAME = "Attack";
-    public static readonly string DESCRIPTION = string.Format("Attack a single enemy for {0} damage.", Util.Color(AttributeType.STRENGTH.ShortName, AttributeType.STRENGTH.Color));
+    public static readonly string DESCRIPTION = string.Format("Damage a single enemy.");
     public const SpellType SPELL_TYPE = SpellType.OFFENSE;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
-    public const string SUCCESS_TEXT = "{0} attacks {1} for {2} damage!";
-    public const string CRITICAL_TEXT = "{0} critically strikes {1} for {2} damage!";
+    public const string SUCCESS_TEXT = "{0} attacks {1} for <color=red>{2}</color> damage!";
+    public const string CRITICAL_TEXT = "{0} critically strikes {1} for <color=red>{2}</color> damage!";
     public const string MISS_TEXT = "{0} attacks {1}... But it missed!";
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     public const int SP_GAIN = 1;
@@ -18,8 +18,6 @@ public class Attack : SpellFactory {
     Sprite bleedIcon;
 
     public Attack() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
-
-
 
     protected override void OnOnce(Character caster, SpellDetails other) {
         caster.AddToResource(ResourceType.SKILL, false, 1, true);
@@ -35,7 +33,14 @@ public class Attack : SpellFactory {
                     calculation: (c, t, o) => {
                         return new Calculation(
                             targetResources: new Dictionary<ResourceType, PairedInt>() {
-                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false))) }
+                                { ResourceType.HEALTH,
+                                    new PairedInt(0,
+                                        -UnityEngine.Random.Range(
+                                            Mathf.Min(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false)),
+                                            Mathf.Max(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false))
+                                        )
+                                    )
+                                }
                             }
                         );
                     },
@@ -44,7 +49,7 @@ public class Attack : SpellFactory {
                         return string.Format(SUCCESS_TEXT, c.Name, t.Name, -calc.TargetResources[ResourceType.HEALTH].False);
                     },
                     sfx: (c, t, calc, o) => {
-                        Game.Instance.Sound.Play("Sounds/Attack_0");
+                        Game.Instance.Sound.Play("Sounds/Slash_0");
                     }
                 ),
                 critical: new Result(
@@ -53,7 +58,13 @@ public class Attack : SpellFactory {
                         },
                         calculation: (c, t, o) => {
                             return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() {
-                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false) * 2, c.GetAttributeCount(AttributeType.STRENGTH, false) * 2)) }
+                                { ResourceType.HEALTH, new PairedInt(0,
+                                        -UnityEngine.Random.Range(
+                                            Mathf.Min(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false)) * 2,
+                                            Mathf.Max(c.GetAttributeCount(AttributeType.INTELLIGENCE, false), c.GetAttributeCount(AttributeType.STRENGTH, false)) * 2
+                                        )
+                                    )
+                                }
                             }
                             );
                         },
@@ -61,7 +72,7 @@ public class Attack : SpellFactory {
                             return string.Format(CRITICAL_TEXT, c.Name, t.Name, -calc.TargetResources[ResourceType.HEALTH].False);
                         },
                         sfx: (c, t, calc, o) => {
-                            Game.Instance.Sound.Play("Sounds/Attack_0");
+                            Game.Instance.Sound.Play("Sounds/Slash_0");
                             Game.Instance.Effect.CreateBloodsplat(t);
                         }
                 ),
@@ -70,14 +81,7 @@ public class Attack : SpellFactory {
                         return true;
                     },
                     calculation: (c, t, o) => {
-                        return new Calculation(
-                            targetResources: new Dictionary<ResourceType, PairedInt>() {
-                                { ResourceType.HEALTH, new PairedInt(0, -UnityEngine.Random.Range(c.GetAttributeCount(AttributeType.INTELLIGENCE, false) * 2, t.GetAttributeCount(AttributeType.STRENGTH, false) * 2)) }
-                            }
-                        );
-                    },
-                    perform: (c, t, calc, o) => {
-
+                        return new Calculation();
                     },
                     createText: (c, t, calc, o) => {
                         return string.Format(MISS_TEXT, c.Name, t.Name);
