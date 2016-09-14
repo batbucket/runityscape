@@ -23,6 +23,7 @@ public sealed class ActionGridView : MonoBehaviour {
     public const int TOTAL_BUTTON_COUNT = ROWS * COLS;
 
     HotkeyButton[] actionButtons;
+
     [SerializeField]
     GameObject actionButtonPrefab;
 
@@ -30,6 +31,14 @@ public sealed class ActionGridView : MonoBehaviour {
         set {
             foreach (HotkeyButton b in actionButtons) {
                 b.IsHotkeyEnabled = value;
+            }
+        }
+    }
+
+    public bool IsVisible {
+        set {
+            foreach (HotkeyButton b in actionButtons) {
+                b.IsVisible = value;
             }
         }
     }

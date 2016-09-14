@@ -49,7 +49,7 @@ public class TreeNode<T> {
                 return item;
             }
         }
-        return null;
+        return this;
     }
 
     public IEnumerable<T> Flatten() {

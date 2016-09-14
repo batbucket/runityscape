@@ -34,6 +34,16 @@ public class HotkeyButton : MonoBehaviour {
     [SerializeField]
     Text hotkeyText;
 
+    bool _isVisible;
+    public bool IsVisible {
+        set {
+            _isVisible = value;
+        }
+        get {
+            return _isVisible;
+        }
+    }
+
     // Use this for initialization
     void Awake() {
         activated = false;
@@ -42,12 +52,15 @@ public class HotkeyButton : MonoBehaviour {
         input.AddOnMouseDownListener(new Action<PointerEventData>(p => InputSimulator.SimulateKeyDown(Util.KeyCodeToVirtualKeyCode(Hotkey))));
         input.AddOnMouseUpListener(new Action<PointerEventData>(p => { InputSimulator.SimulateKeyUp(Util.KeyCodeToVirtualKeyCode(Hotkey)); activated = false; })); //Set activated to false to fix double button click issue
         IsHotkeyEnabled = true;
+        _isVisible = true;
     }
 
     // Update is called once per frame
     void Update() {
         ButtonAppearance();
-        CheckInputs();
+        if (_isVisible) {
+            CheckInputs();
+        }
     }
 
     public void ClearText() {
@@ -123,7 +136,7 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     void ButtonAppearance() {
-        if (text.text.Length == 0) {
+        if (text.text.Length == 0 || !IsVisible) {
             DisabledAppearance();
         } else if ((activated || mouseInBounds) && button.interactable) {
             ActiveAppearance();
@@ -145,6 +158,7 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     void DisabledAppearance() {
+        text.text = "";
         button.image.color = Color.clear;
         hotkeyText.color = Color.clear;
     }

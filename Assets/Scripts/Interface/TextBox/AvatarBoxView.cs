@@ -9,7 +9,7 @@ public class AvatarBoxView : MonoBehaviour {
     Image avatar;
 
     public void WriteText(AvatarBox a, Action callBack = null) {
-        avatar.sprite = a.Sprite;
+        avatar.sprite = Util.GetSprite(a.SpriteLoc);
         textBoxView.WriteText(a, callBack);
     }
 }

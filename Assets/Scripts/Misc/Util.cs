@@ -14,6 +14,26 @@ using System.ComponentModel;
  */
 public static class Util {
 
+    public static void SetAllColorOfChildren(GameObject parent, Color color) {
+        Image[] images = parent.GetComponentsInChildren<Image>();
+        Text[] texts = parent.GetComponentsInChildren<Text>();
+
+        foreach (Image i in images) {
+            i.color = color;
+        }
+        foreach (Text t in texts) {
+            t.color = color;
+        }
+    }
+
+    public static int Random(float mean, float variance) {
+        return (int)UnityEngine.Random.Range(mean * (1 - variance), mean * (1 + variance));
+    }
+
+    public static bool IsExactly<T>(this object obj) where T : class {
+        return obj != null && obj.GetType() == typeof(T);
+    }
+
     public static Sprite TextureToSprite(Texture2D texture) {
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
@@ -197,7 +217,11 @@ public static class Util {
     }
 
     public static T PickRandom<T>(this IEnumerable<T> source) {
-        return source.PickRandom(1).Single();
+        if (source.Count() > 0) {
+            return source.PickRandom(1).Single();
+        } else {
+            return default(T);
+        }
     }
 
     public static IEnumerable<T> PickRandom<T>(this IEnumerable<T> source, int count) {

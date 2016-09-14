@@ -3,8 +3,8 @@ using UnityEngine;
 
 public abstract class AvatarBox : TextBox {
 
-    Sprite _sprite;
-    public Sprite Sprite { get { return _sprite; } }
+    string _spriteLoc;
+    public string SpriteLoc { get { return _spriteLoc; } }
 
     public AvatarBox(string spriteLoc,
                      string text,
@@ -13,11 +13,11 @@ public abstract class AvatarBox : TextBox {
                      string soundLocation = "Sounds/Blip_0",
                      float timePerLetter = 0.5f)
                      : base(text, color, effect, soundLocation, timePerLetter) {
-        this._sprite = Util.GetSprite(spriteLoc);
+        this._spriteLoc = spriteLoc;
     }
 
     public AvatarBox(Character c, string text) : base(text, c.TextColor, TextEffect.TYPE, timePerLetter: 0.075f) {
-        this._sprite = Util.GetSprite(c.SpriteLoc);
+        this._spriteLoc = c.SpriteLoc;
     }
 
     public override void Write(GameObject avatarBoxPrefab, Action callBack) {

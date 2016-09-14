@@ -1,14 +1,10 @@
 fileFormatVersion: 2
-guid: 68a2e2741e3ddbd42a15d27d0a90e0f2
-timeCreated: 1456457166
+guid: 07a5c5ad871e20b408e32149afb5123a
+timeCreated: 1468250888
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences:
-  - hitsplatPrefab: {fileID: 163882, guid: 699815856ec9bdb4b8971c10fd300511, type: 2}
-  - minisplatPrefab: {fileID: 123790, guid: 842ea4d6193914c49b3ba39247478239, type: 2}
-  - bloodsplatPrefab: {fileID: 116900, guid: ff350f7198e809346939f295d208421a, type: 2}
-  - asrielPrefab: {fileID: 102540, guid: 5a7c26160e6231a49a24d40003993a2e, type: 2}
+  defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

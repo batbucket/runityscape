@@ -13,15 +13,15 @@ public class Lobster : ConsumableItem {
 
     public Lobster(int count = 1) : base(NAME, DESCRIPTION, count) { }
 
-    protected override Calculation GetCalculation(Character caster, Character target) {
+    protected override Calculation CreateCalculation(Character caster, Character target) {
         return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() { { ResourceType.HEALTH, new PairedInt(0, HEAL_AMOUNT) } });
     }
 
     protected override string SelfUseText(Character caster, Character target, Calculation calculation) {
-        return string.Format(USE_TEXT_SELF, caster.Name, target.Name, calculation.TargetResources[ResourceType.HEALTH].False);
+        return string.Format(USE_TEXT_SELF, caster.DisplayName, target.DisplayName, calculation.TargetResources[ResourceType.HEALTH].False);
     }
 
     protected override string OtherUseText(Character caster, Character target, Calculation calculation) {
-        return string.Format(USE_TEXT_OTHER, caster.Name, target.Name, calculation.TargetResources[ResourceType.HEALTH].False);
+        return string.Format(USE_TEXT_OTHER, caster.DisplayName, target.DisplayName, calculation.TargetResources[ResourceType.HEALTH].False);
     }
 }

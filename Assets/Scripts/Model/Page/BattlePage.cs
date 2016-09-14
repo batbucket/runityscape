@@ -12,12 +12,22 @@ public class BattlePage : Page {
     TreeNode<Selection> selectionTree;
     TreeNode<Selection> currentSelectionNode;
 
+    public Func<bool> IsVictory;
+    public Action OnVictory;
+    public Func<bool> IsMercy;
+    public Action OnMercy;
+    public Func<bool> IsDefeat;
+    public Action OnDefeat;
+
     public Selection CurrentSelection { get { return currentSelectionNode.Value; } }
 
     public const int BACK_INDEX = ActionGridView.ROWS * ActionGridView.COLS - 1;
     public const int ATTACK_INDEX = 0;
     public const int LAST_SPELL_INDEX = 1;
     public const int FAIM_OFFSET = 4;
+
+    BattleState? _battleState;
+    public BattleState? State { get { return _battleState; } set { _battleState = value; } }
 
     public BattlePage(
         string text = "",
@@ -31,7 +41,13 @@ public class BattlePage : Page {
         Action onFirstExit = null,
         Action onExit = null,
         Action onTick = null,
-        string musicLoc = null
+        string musicLoc = null,
+        Func<bool> isVictory = null,
+        Action onVictory = null,
+        Func<bool> isMercy = null,
+        Action onMercy = null,
+        Func<bool> isDefeat = null,
+        Action onDefeat = null
         )
         : base(text, tooltip, location, false, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
 
@@ -50,30 +66,88 @@ public class BattlePage : Page {
             st.AddChild(Selection.TARGET);
         }
         currentSelectionNode = selectionTree;
+
+        this.IsVictory = isVictory ?? (() => GetEnemies(mainCharacter).Count == 0); // No more enemies
+        this.OnVictory = onVictory ?? (() => { });
+
+        this.IsMercy = isMercy ?? (() => {
+            return GetAll().All(c => (c.CastSpells.Count > 0 && string.Equals(c.CastSpells.Last().SpellFactory.Name, "Spare")) || c.State == CharacterState.DEFEAT); //Everyone is defeated or sparing
+        });
+        this.OnMercy = onMercy ?? (() => { });
+
+        this.IsDefeat = isDefeat ?? (() => mainCharacter.State == CharacterState.KILLED);
+        this.OnDefeat = onDefeat ?? (() => { Game.Instance.Defeat(); });
+        this.State = BattleState.BATTLE;
     }
 
     public override void Tick() {
         base.Tick();
-        foreach (Character c in GetAll()) {
-            c.Tick(true);
-            if (c.IsControllable) { characterQueue.Enqueue(c); }
-            if (c.HasResource(ResourceType.CHARGE)) { c.Resources[ResourceType.CHARGE].IsVisible = true; }
+
+        if (IsMercy.Invoke()) {
+            State = BattleState.MERCY;
         }
 
-        /**
-         * Remove activeCharacter if they are not charged,
-         * Indicating that they've casted a spell or are under some status effect
-         */
-        if (activeCharacter == null || (activeCharacter != null && (!activeCharacter.IsCharged() || activeCharacter.IsDefeated() || activeCharacter.IsKilled()))) {
-            activeCharacter = PopAbledCharacter();
+        if (IsVictory.Invoke()) {
+            State = BattleState.VICTORY;
         }
 
-        //No one can move so clear the board
-        if (activeCharacter == null) {
-            Tooltip = "";
-            ClearActionGrid();
-        } else {
-            Display(activeCharacter);
+        if (IsDefeat.Invoke()) {
+            State = BattleState.DEFEAT;
+        }
+
+        if (_battleState == BattleState.MERCY || _battleState == BattleState.DEFEAT || _battleState == BattleState.VICTORY) {
+            foreach (Character c in GetAll()) {
+                c.OnBattleEnd();
+            }
+        }
+
+        switch (State) {
+            case BattleState.BATTLE:
+                foreach (Character c in GetAll()) {
+                    c.Tick(MainCharacter, true);
+                    if (c.IsControllable) { characterQueue.Enqueue(c); }
+                    if (c.HasResource(ResourceType.CHARGE)) { c.Resources[ResourceType.CHARGE].IsVisible = true; }
+                }
+
+                /**
+                 * Remove activeCharacter if they are not charged,
+                 * Indicating that they've casted a spell or are under some status effect
+                 */
+                if (activeCharacter == null || (activeCharacter != null && (!activeCharacter.IsCharged() || activeCharacter.State == CharacterState.DEFEAT || activeCharacter.State == CharacterState.KILLED))) {
+                    activeCharacter = PopAbledCharacter();
+                }
+
+                //No one can move so clear the board
+                if (activeCharacter == null) {
+                    Tooltip = "";
+                    ClearActionGrid();
+                }
+
+                if (activeCharacter != null) {
+                    Display(activeCharacter);
+                }
+                break;
+            case BattleState.MERCY:
+                OnMercy.Invoke();
+                Game.Instance.Sound.StopAll();
+                _battleState = null;
+                break;
+            case BattleState.VICTORY:
+                foreach (Character c in GetAllies(MainCharacter)) {
+                    c.OnVictory();
+                }
+                OnVictory.Invoke();
+                Game.Instance.Sound.StopAll();
+                _battleState = null;
+                break;
+            case BattleState.DEFEAT:
+                foreach (Character c in GetAllies(MainCharacter)) {
+                    c.OnDefeat();
+                }
+                Game.Instance.Sound.StopAll();
+                OnDefeat.Invoke();
+                _battleState = null;
+                break;
         }
     }
 
@@ -93,7 +167,7 @@ public class BattlePage : Page {
 
     void Display(Character character) {
         ClearActionGrid();
-        Tooltip = string.Format(currentSelectionNode.Value.Question, character.Name, targetedSpell == null ? "" : targetedSpell.Name);
+        Tooltip = string.Format(currentSelectionNode.Value.Question, character.DisplayName, targetedSpell == null ? "" : targetedSpell.Name);
         if (currentSelectionNode.Value == Selection.FAIM) {
             ShowSwitchButton(character);
             ActionGrid[ATTACK_INDEX] = character.Attack == null ? new Process() : CreateSpellProcess(character.Attack, character);
@@ -101,7 +175,7 @@ public class BattlePage : Page {
 
             foreach (KeyValuePair<Selection, ICollection<SpellFactory>> myPair in character.Selections) {
                 KeyValuePair<Selection, ICollection<SpellFactory>> pair = myPair;
-                ActionGrid[pair.Key.Index] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.Name),
+                ActionGrid[pair.Key.Index] = new Process(pair.Key.Name, string.Format(pair.Key.Declare, character.DisplayName),
                     () => {
                         Tooltip = "";
                         currentSelectionNode = currentSelectionNode.FindChild(pair.Key);
@@ -148,8 +222,9 @@ public class BattlePage : Page {
     Process CreateUnequipProcess(Character caster, EquippableItem item, ICollection<SpellFactory> equipment) {
         return new Process(Util.Color(item.Name, Color.yellow), item.Description, () => {
             Tooltip = "";
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.Name, item.Name), Color.white, TextEffect.FADE_IN));
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), Color.white, TextEffect.FADE_IN));
             equipment.Remove(item);
+            item.CancelBonus(caster);
         });
     }
 
@@ -164,8 +239,8 @@ public class BattlePage : Page {
     //Creates a process that targets a specific Character with a spell
     Process CreateTargetProcess(SpellFactory spell, Character caster, Character target) {
         return new Process(
-            spell.IsCastable(caster, target) ? target.Name : Util.Color(target.Name, Color.red),
-            string.Format(currentSelectionNode.Value.Declare, caster.Name, target.Name, spell.Name),
+            spell.IsCastable(caster, target) ? target.DisplayName : Util.Color(target.DisplayName, Color.red),
+            string.Format(currentSelectionNode.Value.Declare, caster.DisplayName, target.DisplayName, spell.Name),
             () => {
                 Tooltip = "";
                 spell.TryCast(caster, target);
@@ -191,7 +266,7 @@ public class BattlePage : Page {
     }
 
     void ShowSwitchButton(Character current) {
-        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current.Name),
+        this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current.DisplayName),
             () => {
                 //Quick switch if there's only one other abledCharacter to switch with
                 IList<Character> abledCharacters = GetAll().FindAll(c => !current.Equals(c) && c.IsDisplayable && c.IsCharged());
@@ -212,7 +287,7 @@ public class BattlePage : Page {
 
             //You are not allowed to switch with yourself.
             if (!current.Equals(target) && target.IsDisplayable && target.IsCharged()) {
-                ActionGrid[index++] = new Process(target.Name, string.Format("{0} will SWITCH with {1}.", current.Name, target.Name),
+                ActionGrid[index++] = new Process(target.DisplayName, string.Format("{0} will SWITCH with {1}.", current.DisplayName, target.DisplayName),
                     () => {
                         Tooltip = "";
                         activeCharacter = target;
@@ -227,12 +302,13 @@ public class BattlePage : Page {
     }
 
     void ReturnToLastSelection() {
-        Util.Assert(currentSelectionNode.Parent != null);
-        currentSelectionNode = currentSelectionNode.Parent;
+        if (currentSelectionNode.Parent != null) {
+            currentSelectionNode = currentSelectionNode.Parent;
+        }
     }
 
     void UpdateLastSpellStack(SpellFactory spell, Character caster) {
-        if (spell != caster.Attack && !(spell is EquippableItem) && spell.IsCastable(caster)) {
+        if (spell != caster.Attack && !(spell is EquippableItem)) {
             caster.SpellStack.Push(spell);
         }
         if (spell is Item && ((Item)spell).Count <= 1) {
@@ -242,37 +318,40 @@ public class BattlePage : Page {
         }
     }
 
-    // TODO FIX THIS SO IT DOESN'T RESET SELECTION IF YOU CAN'T CAST A SPELL B/C OF NO ENEMIES AND ETC.
     void DetermineTargetSelection(SpellFactory spell, Character caster) {
         Util.Assert(spell != null);
 
-        bool resetSelection = spell.IsCastable(caster);
+        bool resetSelection = false;
 
         //These TargetTypes might require target selection if there's more than 1 possible target.
         if (spell.TargetType == TargetType.SINGLE_ALLY || spell.TargetType == TargetType.SINGLE_ENEMY || spell.TargetType == TargetType.ANY) {
             switch (spell.TargetType) {
                 case TargetType.SINGLE_ALLY:
-                    DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster.Side));
+                    resetSelection = DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster, spell.IsSelfTargetable));
                     break;
                 case TargetType.SINGLE_ENEMY:
-                    DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster.Side));
+                    resetSelection = DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster));
                     break;
                 case TargetType.ANY:
-                    DetermineSingleTargetQuickCast(spell, caster, this.GetAll());
+                    resetSelection = DetermineSingleTargetQuickCast(spell, caster, this.GetAll(spell.IsSelfTargetable ? null : caster));
                     break;
             }
         } else { //These TargetTypes don't need target selection and thusly can have their results be instantly evaluated.
             switch (spell.TargetType) {
                 case TargetType.SELF:
+                    resetSelection = spell.IsCastable(caster, caster);
                     spell.TryCast(caster, caster);
                     break;
                 case TargetType.ALL_ALLY:
-                    spell.TryCast(caster, this.GetAllies(caster.Side));
+                    resetSelection = this.GetAllies(caster, spell.IsSelfTargetable).Any(c => spell.IsCastable(caster, c));
+                    spell.TryCast(caster, this.GetAllies(caster, spell.IsSelfTargetable));
                     break;
                 case TargetType.ALL_ENEMY:
-                    spell.TryCast(caster, this.GetEnemies(caster.Side));
+                    resetSelection = this.GetEnemies(caster).Any(c => spell.IsCastable(caster, c));
+                    spell.TryCast(caster, this.GetEnemies(caster));
                     break;
                 case TargetType.ALL:
+                    resetSelection = this.GetAll(spell.IsSelfTargetable ? null : caster).Any(c => spell.IsCastable(caster, c));
                     spell.TryCast(caster, this.GetAll());
                     break;
             }
@@ -283,16 +362,17 @@ public class BattlePage : Page {
         }
     }
 
-    void DetermineSingleTargetQuickCast(SpellFactory spell, Character caster, IList<Character> targets) {
-        if (spell.IsSingleTargetQuickCastable(caster, targets)) {
+    bool DetermineSingleTargetQuickCast(SpellFactory spell, Character caster, IList<Character> targets) {
+        if (spell.IsSingleTargetQuickCastable(caster, targets) && spell.IsCastable(caster, targets[0])) {
             spell.TryCast(caster, targets[0]);
-        } else {
-            if (spell.IsCastable(caster) && targets.Count > 0) {
-                targetedSpell = spell;
-                this.targets = targets;
-                currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);
-            }
+            return true;
+        } else if (spell.IsCastable(caster) && targets.Count > 1) {
+            targetedSpell = spell;
+            this.targets = targets;
+            currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);
+            return false;
         }
+        return false;
     }
 
     void SpellCastEnd(SpellFactory spell, Character caster) {

@@ -8,11 +8,11 @@ public class OneShotProcess : Process {
 
     public override Func<bool> Condition {
         get {
-            return () => !wasCalled;
+            return () => base.Condition.Invoke() && !wasCalled;
         }
     }
 
-    public OneShotProcess(string name = "", string description = "", Action action = null) : base(name, description, action) {
+    public OneShotProcess(string name = "", string description = "", Action action = null, Func<bool> condition = null) : base(name, description, action, condition) {
         this.wasCalled = false;
     }
 

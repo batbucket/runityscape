@@ -16,37 +16,33 @@ public abstract class EquippableItem : Item {
         this.bonuses = bonuses;
     }
 
-    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {
-        return new Dictionary<string, SpellComponent>() {
-            { SpellFactory.PRIMARY, new SpellComponent(
-                hit: new Result(
-                    isState: (c, t, o) => {
-                        return true;
-                    },
-                    perform: (c, t, calc, o) => {
-                        //Remove buffs of previous equipped item
-                        Equipment e = (Equipment) t.Selections[Selection.EQUIP];
-                        if (e.ContainsEquipment(EquipmentType)) {
-                            EquippableItem current = e.Get(EquipmentType);
-                            current.CancelBonus(t);
-                        }
+    public override Hit CreateHit() {
+        return new Hit(
+            isState: (c, t, o) => {
+                return true;
+            },
+            perform: (c, t, calc, o) => {
+                //Remove buffs of previous equipped item
+                Equipment e = (Equipment)t.Selections[Selection.EQUIP];
+                if (e.ContainsEquipment(EquipmentType)) {
+                    EquippableItem current = e.Get(EquipmentType);
+                    current.CancelBonus(t);
+                }
 
-                        //Add buffs of this equipped item
-                        this.ApplyBonus(t);
+                //Add buffs of this equipped item
+                this.ApplyBonus(t);
 
-                        //Item management
-                        caster.Selections[Selection.ITEM].Remove(this);
-                        target.Selections[Selection.EQUIP].Add(this);
-                    },
-                    createText: (c, t, calc, o) => {
-                        return string.Format((c == t) ? SELF_EQUIP_TEXT : OTHER_EQUIP_TEXT, c.Name, t.Name, this.Name);
-                    }
-                )
-            )}
-        };
+                //Item management
+                c.Selections[Selection.ITEM].Remove(this);
+                t.Selections[Selection.EQUIP].Add(this);
+            },
+            createText: (c, t, calc, o) => {
+                return string.Format((c == t) ? SELF_EQUIP_TEXT : OTHER_EQUIP_TEXT, c.DisplayName, t.DisplayName, this.Name);
+            }
+        );
     }
 
-    void CancelBonus(Character wielder) {
+    public void CancelBonus(Character wielder) {
         foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
             wielder.Attributes[pair.Key].Flat -= pair.Value.Flat;
             wielder.Attributes[pair.Key].Percent /= pair.Value.Percent;

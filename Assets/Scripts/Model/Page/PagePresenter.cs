@@ -25,7 +25,6 @@ public class PagePresenter {
     }
 
     public void SetPage(Page page) {
-
         this.Page.OnExit();
 
         if (string.IsNullOrEmpty(page.Music)) {
@@ -33,6 +32,7 @@ public class PagePresenter {
         } else if (string.Equals(page.Music, Page.Music)) {
             //Don't change music if both pages use same
         } else {
+            Game.Instance.Sound.StopAll();
             Game.Instance.Sound.Loop(page.Music);
         }
 
@@ -60,7 +60,20 @@ public class PagePresenter {
             inputBox = null;
         }
 
+        IList<Character> chars = page.GetAll();
+        foreach (Character c in chars) {
+            c.Buffs.Clear();
+            c.IsCharging = true;
+        }
+
+        Util.KillAllChildren(Game.Instance.LeftPortraits.gameObject);
+        Util.KillAllChildren(Game.Instance.RightPortraits.gameObject);
+        Game.Instance.LeftPortraits.CharacterViews.Clear();
+        Game.Instance.RightPortraits.CharacterViews.Clear();
+
         page.OnEnter();
+
+        Tick();
     }
 
     public void AddTextBox(TextBox t, Action callBack = null) {
@@ -69,7 +82,7 @@ public class PagePresenter {
     }
 
     void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
-        portraitHolder.AddPortraits(characters.ToArray()); //Pass in characters' Names as parameter
+        portraitHolder.AddPortraits(characters); //Pass in characters' Names as parameter
         foreach (Character c in characters) {
             c.Presenter = new CharacterPresenter(c, portraitHolder.CharacterViews[c].portraitView);
         }
@@ -82,6 +95,7 @@ public class PagePresenter {
     }
 
     public void Tick() {
+        Page.Tick();
         Game.Instance.ActionGrid.ClearAll();
         Game.Instance.ActionGrid.SetButtonAttributes(Page.ActionGrid);
         Game.Instance.Tooltip.Text = Page.Tooltip;
@@ -91,6 +105,5 @@ public class PagePresenter {
         TickCharacterPresenters(Page.LeftCharacters);
         TickCharacterPresenters(Page.RightCharacters);
         Page.InputtedString = Page.HasInputField ? inputBox.Input : "";
-        Page.Tick();
     }
 }

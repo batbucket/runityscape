@@ -31,12 +31,8 @@ public class TextBoxView : MonoBehaviour {
 
     IEnumerator TypeWriter(Text text, TextBox textBox, Action callBack) {
         text.color = textBox.Color;
-        if (textBox.Effect == TextEffect.OLD) {
-            OutlineAlpha = 0.2f;
-            outline.effectDistance = new Vector2(2, -2);
-        } else {
-            Game.Instance.Effect.Fade(gameObject, 0.25f, 0f, 1.0f);
-        }
+
+        bool skip = false;
         switch (textBox.Effect) {
             case TextEffect.OLD:
                 text.text = textBox.RawText;
@@ -73,6 +69,7 @@ public class TextBoxView : MonoBehaviour {
                     //Change to FADE_IN Mode if Space (skip) key is held
                     if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.LeftControl)) {
                         text.text = "";
+                        skip = true;
                         goto case TextEffect.FADE_IN;
                     }
                     if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {

@@ -8,12 +8,10 @@ public class Amit : PlayerCharacter {
         AddResource(new NamedResource.Skill());
         this.Attack = new Attack();
         this.Selections[Selection.SPELL].Add(new Meditate());
-        this.Selections[Selection.SPELL].Add(new Counter());
         this.Selections[Selection.ACT].Add(new Check());
         this.Selections[Selection.ITEM].Add(new Lobster(2));
         this.Selections[Selection.ITEM].Add(new Scimitar(2));
         this.Selections[Selection.MERCY].Add(new Spare());
-        this.Selections[Selection.SPELL].Add(new Decapitation());
         this.Selections[Selection.SPELL].Add(new Smite());
     }
 }

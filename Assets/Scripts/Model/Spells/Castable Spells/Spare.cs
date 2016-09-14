@@ -13,27 +13,11 @@ public class Spare : SpellFactory {
 
     public Spare() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
 
-    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {
-        return new Dictionary<string, SpellComponent>() {
-            { SpellFactory.PRIMARY, new SpellComponent(
-                hit: new Result(
-                    isState: (c, t, o) => {
-                        return true;
-                    },
-                    perform: (c, t, calc, o) => {
-                        Result.NumericPerform(c, t, calc);
-                        (new Vulnerablize()).Cast(c, c);
-                        c.IsCharging = false;
-                    },
-                    createText: (c, t, calc, o) => {
-                        return string.Format(SUCCESS_TEXT, c.Name, t.Name);
-                    },
-                    sfx: (c, t, calc, o) => {
-                        Game.Instance.Sound.Play("Sounds/Blip_0");
-                    }
-                )
-            )
+    public override Hit CreateHit() {
+        return new Hit(
+            sound: (c, t, calc, o) => {
+                return "Blip_0";
             }
-        };
+        );
     }
 }

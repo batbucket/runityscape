@@ -75,7 +75,7 @@ public abstract class Page {
             SetSide(right, true);
         }
 
-        //this.RepeatedCharacterCheck(GetAll());
+        this.RepeatedCharacterCheck(GetAll());
         this.OnFirstEnterAction = onFirstEnter ?? (() => { });
         this.OnEnterAction = onEnter ?? (() => { });
         this.OnFirstExitAction = onFirstExit ?? (() => { });
@@ -129,6 +129,19 @@ public abstract class Page {
         OnExitAction.Invoke();
     }
 
+    public void AddCharacters(Character sameSide, params Character[] chars) {
+        AddCharacters(sameSide.Side, chars);
+    }
+
+    public void AddCharacters(bool isRightSide, params Character[] chars) {
+        SetCharacterSides(chars, isRightSide);
+        IList<Character> myList = !isRightSide ? LeftCharacters : RightCharacters;
+        foreach (Character c in chars) {
+            myList.Add(c);
+        }
+        RepeatedCharacterCheck(GetAll());
+    }
+
     void SetSide(IList<Character> characters, bool isRightSide) {
         SetCharacterSides(characters, isRightSide);
         List<Character> myList = new List<Character>();
@@ -167,9 +180,11 @@ public abstract class Page {
                 int index = 0;
                 foreach (Character c in cPair.Value) {
                     if (characters.Contains(c)) {
-                        c.Name = string.Format("{0} {1}", c.Name, Util.IntToLetter(index++));
+                        c.Suffix = Util.IntToLetter(index++);
                     }
                 }
+            } else {
+                cPair.Value[0].Suffix = "";
             }
         }
     }
@@ -198,35 +213,35 @@ public abstract class Page {
         return !isRightSide ? LeftCharacters : RightCharacters;
     }
 
-    public IList<Character> GetAllies(bool side) {
-        return GetCharacters(side);
+    public IList<Character> GetAllies(Character c, bool includeSelf = true) {
+        if (includeSelf) {
+            return GetCharacters(c.Side);
+        } else {
+            return GetCharacters(c.Side).Where(chara => chara != c).ToList();
+        }
     }
 
-    public IList<Character> GetEnemies(bool side) {
-        return GetCharacters(!side);
+    public IList<Character> GetEnemies(Character c) {
+        return GetCharacters(!c.Side);
     }
 
-    public Character GetRandomAlly(bool side) {
-        return GetRandomCharacter(GetCharacters(side));
+    public Character GetRandomAlly(Character c, bool includeSelf = true) {
+        return GetAllies(c, includeSelf).PickRandom();
     }
 
-    public Character GetRandomEnemy(bool side) {
-        return GetRandomCharacter(GetCharacters(!side));
+    public Character GetRandomEnemy(Character c) {
+        return GetEnemies(c).PickRandom();
     }
 
-    public Character GetRandomCharacter() {
-        return GetRandomCharacter(GetAll());
+    public Character GetRandomCharacter(Character c = null) {
+        return GetAll(c).PickRandom();
     }
 
-    public List<Character> GetAll() {
+    public List<Character> GetAll(Character c = null) {
         List<Character> allChars = new List<Character>();
         allChars.AddRange(GetCharacters(false));
         allChars.AddRange(GetCharacters(true));
-        return allChars;
-    }
-
-    static Character GetRandomCharacter(IList<Character> characters) {
-        return characters.Any() ? characters[UnityEngine.Random.Range(0, characters.Count)] : null;
+        return c == null ? allChars : allChars.Where(chara => chara != c).ToList();
     }
 
     protected void ClearActionGrid() {
@@ -236,7 +251,7 @@ public abstract class Page {
     public virtual void Tick() {
         OnTick.Invoke();
         foreach (Character c in GetAll()) {
-            c.Tick(false);
+            c.Tick(MainCharacter, false);
         }
     }
 }

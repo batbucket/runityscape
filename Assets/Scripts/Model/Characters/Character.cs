@@ -8,13 +8,15 @@ using System;
  * Attributes and Resources
  */
 public abstract class Character : Entity, IReactable {
-    public const int CHARGE_MULTIPLIER = 35;
-    public const int CHARGE_CAP_RATIO = 60;
+    public const int CHARGE_MULTIPLIER = 1;
 
     public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
 
     string _name;
-    public string Name { get { return Util.Color(_name, TextColor); } set { _name = value; } }
+    string _suffix;
+    public string Name { set { _name = value; } get { return _name; } }
+    public string Suffix { set { _suffix = value; } }
+    public string DisplayName { get { return Util.Color(string.Format("{0}{1}", _name, string.IsNullOrEmpty(_suffix) ? "" : string.Format(" {0}", _suffix)), TextColor); } }
     public int Level { get; set; }
 
     public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
@@ -38,7 +40,20 @@ public abstract class Character : Entity, IReactable {
     public IDictionary<PerkType.Character, IList<InvokePerk>> CharacterPerks;
     public IDictionary<PerkType.React, IList<ReactPerk>> ReactPerks;
 
-    public Character(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable) : base(spriteLoc) {
+    public CharacterState State {
+        get {
+            return _state;
+        }
+        set {
+            _state = value;
+        }
+    }
+    CharacterState _state;
+
+    string _checkText;
+    public string CheckText { get { return _checkText; } }
+
+    public Character(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable, string checkText = "") : base(spriteLoc) {
         this._name = name;
         this.Level = level;
 
@@ -54,7 +69,7 @@ public abstract class Character : Entity, IReactable {
             {ResourceType.CHARGE, new NamedResource.Charge() },
         };
 
-        this.Attack = new CounterAttack();
+        this.Attack = new Attack();
         Inventory inventory = new Inventory();
         this.Selections = new SortedDictionary<Selection, ICollection<SpellFactory>>() {
             { Selection.SPELL, new HashSet<SpellFactory>() },
@@ -80,6 +95,8 @@ public abstract class Character : Entity, IReactable {
         CalculateResources();
         FillResources();
         IsCharging = true;
+        _state = CharacterState.ALIVE;
+        _checkText = checkText;
     }
 
     public void AddAttribute(Attribute attribute) {
@@ -104,16 +121,13 @@ public abstract class Character : Entity, IReactable {
 
     public bool AddToAttribute(AttributeType attributeType, bool value, float amount, bool hasMinisplat = false) {
         if (HasAttribute(attributeType) && amount != 0) {
-            if (hasMinisplat) {
-                Game.Instance.Effect.CreateMinisplat(AttributeType.SplatDisplay((int)amount), AttributeType.DetermineColor(attributeType, (int)amount), this);
-                Game.Instance.Effect.FadeEffect(this, AttributeType.DetermineColor(attributeType, (int)amount));
-            }
             Attribute attribute = Attributes[attributeType];
             if (!value) {
                 attribute.False += amount;
             } else {
                 attribute.True += (int)amount;
             }
+            CalculateResources();
             return true;
         }
         return false;
@@ -121,13 +135,6 @@ public abstract class Character : Entity, IReactable {
 
     public bool AddToResource(ResourceType resourceType, bool value, float amount, bool hasHitsplat = false) {
         if (HasResource(resourceType)) {
-            if (hasHitsplat && amount != 0) {
-                Game.Instance.Effect.CreateHitsplat(resourceType.SplatFunction((int)amount, GetResourceCount(resourceType, true)), ResourceType.DetermineColor(resourceType, (int)amount), this);
-                Game.Instance.Effect.FadeEffect(this, ResourceType.DetermineColor(resourceType, (int)amount));
-                if (resourceType == ResourceType.HEALTH && !value && amount < 0) { //Shake on negative health additions, intensity based on hit
-                    Game.Instance.Effect.ShakeEffect(this, -amount / GetResourceCount(ResourceType.HEALTH, true));
-                }
-            }
             Resource resource = Resources[resourceType];
             if (!value) {
                 resource.False += amount;
@@ -200,23 +207,28 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    public bool IsCharging { set; get; }
+    bool isCharging;
+    public bool IsCharging {
+        get {
+            return isCharging;
+        }
+        set {
+            isCharging = value;
+            Discharge();
+        }
+    }
 
-    public virtual void Tick(bool isInCombat) {
+    public virtual void Tick(Character mainCharacter, bool isInCombat) {
         CalculateResources();
         if (isInCombat) {
 
             foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
                 if (pair.Key != ResourceType.HEALTH) {
-                    pair.Value.IsVisible = !IsDefeated();
+                    pair.Value.IsVisible = State == CharacterState.ALIVE;
                 }
             }
 
-            if (isDefeated && GetResourceCount(ResourceType.HEALTH, false) > 1) {
-                isDefeated = false;
-            }
-
-            if (!IsDefeated()) {
+            if (State == CharacterState.ALIVE) {
                 Charge();
             }
             if (!IsCharged()) {
@@ -235,10 +247,19 @@ public abstract class Character : Entity, IReactable {
                         break;
                 }
             }
-            CalculateChargeRequirement(Game.Instance.MainCharacter);
+            CalculateChargeRequirement(mainCharacter);
 
-            if (IsDefeated()) { OnDefeat(); }
-            if (IsKilled()) { OnKill(); }
+            if (IsDefeated()) {
+                _state = CharacterState.KILLED;
+            } else if (IsKilled()) {
+                _state = CharacterState.DEFEAT;
+            }
+
+            if (State == CharacterState.KILLED) {
+                OnKill();
+            } else if (State == CharacterState.DEFEAT) {
+                OnDefeat();
+            }
 
             for (int i = 0; i < Buffs.Count; i++) {
                 Spell s = Buffs[i];
@@ -247,6 +268,14 @@ public abstract class Character : Entity, IReactable {
 
             Act();
         }
+    }
+
+    protected virtual bool IsDefeated() {
+        return State == CharacterState.DEFEAT && GetResourceCount(ResourceType.HEALTH, false) <= 0;
+    }
+
+    protected virtual bool IsKilled() {
+        return State == CharacterState.ALIVE && GetResourceCount(ResourceType.HEALTH, false) <= 0;
     }
 
     public override bool Equals(object obj) {
@@ -266,89 +295,73 @@ public abstract class Character : Entity, IReactable {
     }
 
     public override int GetHashCode() {
-        return Name.GetHashCode();
+        return DisplayName.GetHashCode();
     }
 
-    public void CalculateChargeRequirement(Character mainCharacter) {
-        CalculateChargeRequirement(this, mainCharacter);
+    protected static void CalculateChargeRequirement(Character current, Character main, float chargeCapRatio) {
+        int chargeNeededToAct = Math.Max(1, (int)(chargeCapRatio * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false)));
+        current.AddToResource(ResourceType.CHARGE, true, -current.GetResourceCount(ResourceType.CHARGE, true));
+        current.AddToResource(ResourceType.CHARGE, true, chargeNeededToAct);
     }
+
+    public abstract void CalculateChargeRequirement(Character main);
 
     public void AddToBuffs(Spell spell) {
         Buffs.Add(spell);
     }
 
-    static void CalculateChargeRequirement(Character current, Character main) {
-        int chargeNeededToAct = Math.Max(1, (int)(CHARGE_CAP_RATIO * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false)));
-        current.AddToResource(ResourceType.CHARGE, true, -current.GetResourceCount(ResourceType.CHARGE, true));
-        current.AddToResource(ResourceType.CHARGE, true, chargeNeededToAct);
-    }
-
     protected virtual void OnFullCharge() {
     }
 
-    protected abstract void WhileFullCharge();
+    protected virtual void WhileFullCharge() { }
 
     public abstract void Act();
 
-    public virtual void React(Spell spell, Result res, Calculation calc) {
+    public virtual void React(Spell spell) {
 
     }
 
-    public virtual void Witness(Spell spell, Result res, Calculation calc) {
+    public virtual void Witness(Spell spell) {
 
     }
 
     public virtual void OnBattleStart() {
     }
 
-    public virtual bool IsDefeated() {
-        return (isDefeated && GetResourceCount(ResourceType.HEALTH, false) == 1) || GetResourceCount(ResourceType.HEALTH, false) <= 0;
-    }
-
-    bool isDefeated = false;
+    bool defeatPosted;
     public virtual void OnDefeat(bool isSilent = false) {
-        if (isDefeated) {
+        if (defeatPosted) {
             return;
         }
+        defeatPosted = true;
         if (!isSilent) {
             Character defeater = RecievedSpells[RecievedSpells.Count - 1].Caster;
             Game.Instance.TextBoxHolder.AddTextBoxView(
                 new TextBox(
-                    string.Format("{0} was defeated by {1}.", Name, defeater.Name),
+                    string.Format("{0} was <color=red>defeated</color> by {1}.", DisplayName, defeater.DisplayName),
                     Color.white, TextEffect.FADE_IN)
                 );
-            Game.Instance.Effect.CreateHitsplat("DEFEAT", Color.white, this);
         }
-
-        Game.Instance.Effect.StopFadeEffect(this);
-        Game.Instance.Effect.ShakeEffect(this, 1f, 0.05f);
         Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
         Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
         AddToResource(ResourceType.HEALTH, false, 1, false);
         Discharge();
-        isDefeated = true;
     }
 
-    public virtual bool IsKilled() {
-        return isKilled || (IsDefeated() && GetResourceCount(ResourceType.HEALTH, false) <= 0);
-    }
-
-    bool isKilled = false;
+    bool killPosted;
     public virtual void OnKill(bool isSilent = false) {
-        if (isKilled) {
+        if (killPosted) {
             return;
         }
+        killPosted = true;
         if (!isSilent) {
             Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
             Game.Instance.TextBoxHolder.AddTextBoxView(
                 new TextBox(
-                    string.Format("{0} was slain by {1}.", Name, killer.Name),
+                    string.Format("{0} was <color=red>slain</color> by {1}.", DisplayName, killer.DisplayName),
                     Color.white, TextEffect.FADE_IN));
-            Game.Instance.Sound.Play("Sounds/Boom_6");
-            Game.Instance.Effect.CreateHitsplat("DEATH", Color.white, this);
         }
-        Game.Instance.Effect.CharacterDeath(this, 0.5f, () => Game.Instance.PagePresenter.Page.GetCharacters(this.Side).Remove(this));
-        isKilled = true;
+        this.IsTargetable = false;
     }
 
     public string AttributeDistribution {
@@ -365,5 +378,6 @@ public abstract class Character : Entity, IReactable {
     }
 
     public virtual void OnBattleEnd() {
+        AddToResource(ResourceType.SKILL, false, -GetResourceCount(ResourceType.SKILL, false));
     }
 }

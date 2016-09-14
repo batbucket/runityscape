@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,6 +29,7 @@ public abstract class PortraitView : MonoBehaviour {
         public bool isSet;
     }
     public IDictionary<int, BuffBundle> BuffViews { get; private set; }
+    public IDictionary<string, CharacterEffect> Effects { get; private set; }
 
     [SerializeField]
     Text _portraitName; //Name of the character
@@ -51,15 +53,31 @@ public abstract class PortraitView : MonoBehaviour {
     public GameObject BuffsHolder { get { return _buffsHolder; } }
     [SerializeField]
     GameObject _buffPrefab;
-    [SerializeField]
-    RectTransform _iconTransform;
-    public RectTransform IconTransform { get { return _iconTransform; } }
 
     // Use this for initialization
     void Awake() {
         ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
         AttributeViews = new SortedDictionary<AttributeType, AttributeBundle>();
         BuffViews = new SortedDictionary<int, BuffBundle>();
+        Effects = new Dictionary<string, CharacterEffect>();
+    }
+
+    public void AddEffect(CharacterEffect ce) {
+        CharacterEffect current;
+        Effects.TryGetValue(ce.ID, out current);
+        if (current != null && !current.IsDone) {
+            current.StopCoroutine();
+            current.CancelEffect();
+        }
+        ce.StartCoroutine();
+        Effects[ce.ID] = ce;
+    }
+
+    public void ClearEffects() {
+        foreach (KeyValuePair<string, CharacterEffect> pair in Effects) {
+            pair.Value.StopCoroutine();
+            pair.Value.CancelEffect();
+        }
     }
 
     protected void SetResources(ResourceType[] resourceTypes, GameObject resourcePrefab) {

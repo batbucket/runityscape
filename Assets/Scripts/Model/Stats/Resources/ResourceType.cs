@@ -15,11 +15,11 @@ public sealed class ResourceType : IComparable {
             { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a) : string.Format("{0}%", ((a * 100) / b).ToString("+#;-#")) }
         };
 
-    public static readonly IDictionary<DisplayMode, Func<int, int, string>> BAR_DISPLAY_FUNCTIONS
-        = new Dictionary<DisplayMode, Func<int, int, string>>() {
-            { DisplayMode.NONE, (a, b) =>                string.Format("", a, b) },
-            { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}/{1}", a, b) },
-            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (a * 100) / b) }
+    public static readonly IDictionary<DisplayMode, Func<float, int, string>> BAR_DISPLAY_FUNCTIONS
+        = new Dictionary<DisplayMode, Func<float, int, string>>() {
+            { DisplayMode.NONE, (a, b) =>                string.Format("", (int)a, b) },
+            { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}/{1}", (int)a, b) },
+            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) }
         };
 
     string _name;
@@ -46,8 +46,8 @@ public sealed class ResourceType : IComparable {
     Action<Attribute, Resource> _calculation;
     public Action<Attribute, Resource> Calculation { get { return _calculation; } }
 
-    Func<int, int, string> _displayFunction;
-    public Func<int, int, string> DisplayFunction { get { return _displayFunction; } } //Display actual values or percentage
+    Func<float, int, string> _displayFunction;
+    public Func<float, int, string> DisplayFunction { get { return _displayFunction; } } //Display actual values or percentage
     Func<int, int, string> _splatFunction;
     public Func<int, int, string> SplatFunction { get { return _splatFunction; } }
 
@@ -74,7 +74,7 @@ public sealed class ResourceType : IComparable {
                                                                   Color.red,
                                                                   0,
                                                                   AttributeType.VITALITY,
-                                                                  (a, r) => r.True = (int)a.False * 10);
+                                                                  (a, r) => r.True = (int)a.False * 5);
 
     public static readonly ResourceType SKILL = new ResourceType("Skill",
                                                                  "SKIL",
@@ -90,7 +90,7 @@ public sealed class ResourceType : IComparable {
                                                                 Color.magenta,
                                                                 2,
                                                                 AttributeType.INTELLIGENCE,
-                                                                (a, r) => r.True = (int)a.False * 10);
+                                                                (a, r) => r.True = (int)a.False * 5);
 
     public static readonly ResourceType CHARGE = new ResourceType("Charge",
                                                                   "CHRG",
@@ -99,6 +99,14 @@ public sealed class ResourceType : IComparable {
                                                                   Color.black,
                                                                   999,
                                                                   displayMode: DisplayMode.PERCENTAGE);
+
+    public static readonly ResourceType CORRUPTION = new ResourceType("Corruption",
+                                                                      "CRPT",
+                                                                      "Corruption level.",
+                                                                      Color.magenta,
+                                                                      new Color(50.0f / 255, 0f, 50.0f / 255),
+                                                                      3,
+                                                                      displayMode: DisplayMode.PERCENTAGE);
 
     public int CompareTo(object obj) {
         ResourceType other = (ResourceType)obj;

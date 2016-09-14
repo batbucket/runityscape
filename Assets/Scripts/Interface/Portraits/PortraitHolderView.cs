@@ -15,12 +15,12 @@ public abstract class PortraitHolderView : MonoBehaviour {
 
     public IDictionary<Character, PortraitBundle> CharacterViews { get; protected set; }
 
-    protected void AddPortraits(Character[] characters, GameObject portraitPrefab) {
+    protected void AddPortraits(IList<Character> characters, GameObject portraitPrefab) {
 
         //Set all existing isSets to false.
         List<Character> keys = new List<Character>(CharacterViews.Keys); //Can't modify Dictionary in foreach loop
         foreach (Character key in keys) {
-            CharacterViews[key] = new PortraitBundle { portraitView = CharacterViews[key].portraitView, isSet = false };
+            CharacterViews[key] = new PortraitBundle { portraitView = key.Presenter.PortraitView, isSet = false };
         }
 
         //Add or possibly replace new PortraitViews.
@@ -33,19 +33,21 @@ public abstract class PortraitHolderView : MonoBehaviour {
             } else {
                 pv = CharacterViews[c].portraitView;
             }
-            pv.PortraitName = c.Name;
+            pv.PortraitName = c.DisplayName;
             CharacterViews[c] = new PortraitBundle { portraitView = pv, isSet = true };
         }
 
         //Check if any isSets are false, if so, remove them and Destroy their gameObjects.
         //We can use same keys list as before since newly added keys cannot be false
         foreach (Character key in keys) {
-            if (!CharacterViews[key].isSet) {
-                GameObject.Destroy(CharacterViews[key].portraitView.gameObject);
+            if (CharacterViews.ContainsKey(key) && !CharacterViews[key].isSet) {
+                if (CharacterViews[key].portraitView != null) {
+                    GameObject.Destroy(CharacterViews[key].portraitView.gameObject);
+                }
                 CharacterViews.Remove(key);
             }
         }
     }
 
-    abstract public void AddPortraits(Character[] characters);
+    abstract public void AddPortraits(IList<Character> characters);
 }

@@ -19,4 +19,10 @@ public sealed class NamedResource {
             this.False = 0;
         }
     }
+
+    public sealed class Corruption : Resource {
+        public Corruption(int maxCap) : base(maxCap, ResourceType.CORRUPTION) {
+            this.False = 0;
+        }
+    }
 }

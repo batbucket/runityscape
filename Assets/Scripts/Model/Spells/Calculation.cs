@@ -14,22 +14,36 @@ public class Calculation {
     public IDictionary<ResourceType, PairedInt> _casterResources;
     public IDictionary<ResourceType, PairedInt> CasterResources { get { return _casterResources; } }
 
-    public Result Result { get; set; }
-
     public Calculation(IDictionary<AttributeType, PairedInt> targetAttributes = null,
                         IDictionary<ResourceType, PairedInt> targetResources = null,
                         IDictionary<AttributeType, PairedInt> casterAttributes = null,
                         IDictionary<ResourceType, PairedInt> casterResources = null) {
-        this._targetAttributes = targetAttributes ?? new Dictionary<AttributeType, PairedInt>();
-        this._targetResources = targetResources ?? new Dictionary<ResourceType, PairedInt>();
-        this._casterAttributes = casterAttributes ?? new Dictionary<AttributeType, PairedInt>();
-        this._casterResources = casterResources ?? new Dictionary<ResourceType, PairedInt>();
+        this._targetAttributes = targetAttributes ?? CreateBlankAttributeDictionary();
+        this._targetResources = targetResources ?? CreateBlankResourceDictionary();
+        this._casterAttributes = casterAttributes ?? CreateBlankAttributeDictionary();
+        this._casterResources = casterResources ?? CreateBlankResourceDictionary();
     }
 
     public void Clear() {
-        this._targetAttributes = new Dictionary<AttributeType, PairedInt>();
-        this._targetResources = new Dictionary<ResourceType, PairedInt>();
-        this._casterAttributes = new Dictionary<AttributeType, PairedInt>();
-        this._casterResources = new Dictionary<ResourceType, PairedInt>();
+        this._targetAttributes = CreateBlankAttributeDictionary();
+        this._targetResources = CreateBlankResourceDictionary();
+        this._casterAttributes = CreateBlankAttributeDictionary();
+        this._casterResources = CreateBlankResourceDictionary();
+    }
+
+    IDictionary<AttributeType, PairedInt> CreateBlankAttributeDictionary() {
+        IDictionary<AttributeType, PairedInt> d = new Dictionary<AttributeType, PairedInt>();
+        foreach (AttributeType at in AttributeType.ALL) {
+            d.Add(at, new PairedInt(0, 0));
+        }
+        return d;
+    }
+
+    IDictionary<ResourceType, PairedInt> CreateBlankResourceDictionary() {
+        IDictionary<ResourceType, PairedInt> d = new Dictionary<ResourceType, PairedInt>();
+        foreach (ResourceType rt in ResourceType.ALL) {
+            d.Add(rt, new PairedInt(0, 0));
+        }
+        return d;
     }
 }

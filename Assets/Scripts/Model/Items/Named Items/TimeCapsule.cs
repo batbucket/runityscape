@@ -3,17 +3,25 @@ using System.Collections;
 using System;
 
 public class TimeCapsule : ConsumableItem {
-    const string NAME = "Time Capsule";
+    const string NAME = "TimeCapsule";
     const string DESCRIPTION = "A container holding items from the past.";
+    readonly Item[] items;
 
-    public TimeCapsule(int count) : base(NAME, DESCRIPTION, count) { }
-
-    protected override void OnOnce(Character caster, SpellDetails other) {
-        caster.Selections[Selection.ITEM].Add(new OldArmor(1));
-        caster.Selections[Selection.ITEM].Add(new OldSword(1));
+    public TimeCapsule(int count) : base(NAME, DESCRIPTION, count) {
+        items = new Item[] {
+            new OldSword(1),
+            new OldArmor(1),
+            new LifePotion(1)
+        };
     }
 
-    protected override Calculation GetCalculation(Character caster, Character target) {
+    protected override void OnOnce(Character caster, SpellDetails other) {
+        foreach (Item i in items) {
+            caster.Selections[Selection.ITEM].Add(i);
+        }
+    }
+
+    protected override Calculation CreateCalculation(Character caster, Character target) {
         return new Calculation();
     }
 
@@ -22,6 +30,6 @@ public class TimeCapsule : ConsumableItem {
     }
 
     protected override string SelfUseText(Character caster, Character target, Calculation calculation) {
-        return string.Format("{0} opened the time capsule.", target.Name);
+        return string.Format("{0} opened the time capsule. <color=yellow>Old Sword</color>, <color=yellow>Old Armor</color>, and Life Potion were added to {0}'s items.", target.DisplayName);
     }
 }

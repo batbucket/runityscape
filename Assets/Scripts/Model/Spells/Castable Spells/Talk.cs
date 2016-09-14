@@ -16,20 +16,11 @@ public class Talk : SpellFactory {
         this.text = text;
     }
 
-    protected override IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other) {
-        return new Dictionary<string, SpellComponent>() {
-            { SpellFactory.PRIMARY, new SpellComponent(
-                hit: new Result(
-                    isState: (c, t, o) => {
-                        return true;
-                    },
-                    createText: (c, t, calc, o) => {
-                        return string.Format(text, c.Name, t.Name);
-                    }
-                    )
-
-                )
+    public override Hit CreateHit() {
+        return new Hit(
+            createText: (c, t, calc, o) => {
+                return string.Format(text, c.DisplayName, t.DisplayName);
             }
-        };
+        );
     }
 }

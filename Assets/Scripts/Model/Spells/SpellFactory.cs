@@ -22,6 +22,9 @@ public abstract class SpellFactory {
     public TargetType TargetType { get { return _targetType; } }
     public bool IsEnabled { get; set; }
 
+    readonly bool _isSelfTargetable;
+    public bool IsSelfTargetable { get { return _isSelfTargetable; } }
+
     /**
      * Inventory needs to be in the Character's Selections
      * Selections is an ICollection<Selection, ICollection<Spell>>
@@ -50,14 +53,16 @@ public abstract class SpellFactory {
                         string description,
                         SpellType spellType,
                         TargetType targetType,
-                        IDictionary<ResourceType, int> costs = null) {
-
+                        IDictionary<ResourceType, int> costs = null,
+                        bool isSelfTargetable = true) {
+        Util.Assert(!(!isSelfTargetable && targetType == TargetType.SELF), "Cannot be non self targetable and have target type be self!");
         this._name = name;
         this._description = description;
         this._spellType = spellType;
         this._targetType = targetType;
         this._costs = costs ?? new Dictionary<ResourceType, int>();
         this.IsEnabled = true;
+        this._isSelfTargetable = isSelfTargetable;
     }
 
     public virtual string GetNameAndInfo(Character caster) {
@@ -111,10 +116,8 @@ public abstract class SpellFactory {
         }
     }
 
-    public const string PRIMARY = "Primary_Component";
     public void Cast(Character caster, Character target, SpellDetails other = null) {
         Spell spell = new Spell(this, caster, target);
-        spell.Components = CreateComponents(caster, target, spell, other);
         caster.CastSpells.Add(spell);
         target.RecievedSpells.Add(spell);
         target.AddToBuffs(spell);
@@ -145,5 +148,20 @@ public abstract class SpellFactory {
     }
 
     protected virtual void OnOnce(Character caster, SpellDetails other) { }
-    protected abstract IDictionary<string, SpellComponent> CreateComponents(Character caster, Character target, Spell spell, SpellDetails other = null);
+
+    public abstract Hit CreateHit();
+
+    public virtual Miss CreateMiss() {
+        return new Miss(
+            sfx: (c, t, calc, o) => {
+                return new CharacterEffect[] {
+                    new HitsplatEffect(t.Presenter.PortraitView, Color.grey, "MISS")
+                };
+            }
+        );
+    }
+
+    public virtual Critical CreateCritical() {
+        return new Critical();
+    }
 }

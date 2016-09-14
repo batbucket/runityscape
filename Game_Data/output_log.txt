@@ -16,22 +16,14 @@ Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\Un
 Loading C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
 Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\InputSimulator.dll (this message is harmless)
 Loading C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\InputSimulator.dll into Unity Child Domain
-- Completed reload, in  0.037 seconds
+- Completed reload, in  0.040 seconds
 Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\System.dll (this message is harmless)
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
 <RI> Initialized touch support.
-Recursive Serialization is not supported. You can't dereference a PPtr while loading. (Constructors of C# classes may not load objects either eg. EditorGUIUtility.TextContent should be moved to OnEnable. See stacktrace.)
- 
-(Filename:  Line: 1112)
-
-Recursive Serialization is not supported. You can't dereference a PPtr while loading. (Constructors of C# classes may not load objects either eg. EditorGUIUtility.TextContent should be moved to OnEnable. See stacktrace.)
- 
-(Filename:  Line: 1112)
-
-UnloadTime: 0.459388 ms
+UnloadTime: 0.545200 ms
 Setting up 2 worker threads for Enlighten.
-  Thread -> id: 1ec8 -> priority: 1 
-  Thread -> id: 1f04 -> priority: 1 
+  Thread -> id: 248c -> priority: 1 
+  Thread -> id: 2550 -> priority: 1 
