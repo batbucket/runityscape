@@ -8,8 +8,8 @@ public class Attack : SpellFactory {
     public static readonly string DESCRIPTION = string.Format("Damage a single enemy.");
     public const SpellType SPELL_TYPE = SpellType.OFFENSE;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
-    public const string SUCCESS_TEXT = "{0} attacks {1} for <color=red>{2}</color> damage!";
-    public const string CRITICAL_TEXT = "{0} critically strikes {1} for <color=red>{2}</color> damage!";
+    public const string SUCCESS_TEXT = "{0} attacks {1}!\n{1} took <color=red>{2}</color> damage!";
+    public const string CRITICAL_TEXT = "{0} critically strikes {1}!\n{1} took <color=red>{2}</color> damage!";
     public const string MISS_TEXT = "{0} attacks {1}... But it missed!";
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     public const int SP_GAIN = 1;
@@ -89,13 +89,21 @@ public class Attack : SpellFactory {
     }
 
     public override Miss CreateMiss() {
-        return base.CreateMiss();
+        return new Miss(
+                createText: (c, t, calc, o) => {
+                    return string.Format(MISS_TEXT, c.Name, t.Name);
+                },
+                sfx: (c, t, calc, o) => {
+                    return new CharacterEffect[] {
+                        new HitsplatEffect(t.Presenter.PortraitView, Color.grey, "MISS"),
+                    };
+                }
+                );
     }
 
     private const float BASE_SHAKE = 3;
     private CharacterEffect ShakeBasedOnDamage(Character target, float damage) {
         float shakePower = BASE_SHAKE * -damage / target.GetResourceCount(ResourceType.HEALTH, true);
-        Debug.Log(shakePower);
         return new ShakeEffect(target.Presenter.PortraitView, shakePower, 0);
     }
 

@@ -25,6 +25,12 @@ public abstract class SpellFactory {
     readonly bool _isSelfTargetable;
     public bool IsSelfTargetable { get { return _isSelfTargetable; } }
 
+    private string abbreviation;
+    public string Abbreviation { get { return abbreviation; } }
+
+    private Color color;
+    public Color Color { get { return color; } }
+
     /**
      * Inventory needs to be in the Character's Selections
      * Selections is an ICollection<Selection, ICollection<Spell>>
@@ -54,7 +60,9 @@ public abstract class SpellFactory {
                         SpellType spellType,
                         TargetType targetType,
                         IDictionary<ResourceType, int> costs = null,
-                        bool isSelfTargetable = true) {
+                        bool isSelfTargetable = true,
+                        string abbreviation = "???",
+                        Color? color = null) {
         Util.Assert(!(!isSelfTargetable && targetType == TargetType.SELF), "Cannot be non self targetable and have target type be self!");
         this._name = name;
         this._description = description;
@@ -63,6 +71,8 @@ public abstract class SpellFactory {
         this._costs = costs ?? new Dictionary<ResourceType, int>();
         this.IsEnabled = true;
         this._isSelfTargetable = isSelfTargetable;
+        this.color = color ?? Color.white;
+        this.abbreviation = abbreviation;
     }
 
     public virtual string GetNameAndInfo(Character caster) {

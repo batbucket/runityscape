@@ -3,10 +3,20 @@ using UnityEngine.UI;
 
 public class BuffView : MonoBehaviour {
     [SerializeField]
-    Image _icon;
-    public Image Icon { get { return _icon; } set { _icon = value; } }
+    private Outline _outline;
 
     [SerializeField]
-    Text _text;
-    public string Text { get { return _text.text; } set { _text.text = value; } }
+    private Text _text;
+    public string Text { set { _text.text = value; } }
+
+    [SerializeField]
+    private Text _duration;
+    public string Duration { set { _duration.text = value; } }
+
+    public Color Color {
+        set {
+            _text.color = value;
+            _outline.effectColor = value;
+        }
+    }
 }

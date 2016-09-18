@@ -13,7 +13,7 @@ public class TextBoxHolderView : MonoBehaviour {
     [SerializeField]
     GameObject inputBoxPrefab;
 
-    IList<GameObject> children;
+    List<GameObject> children;
     IDictionary<TextBoxType, GameObject> textBoxes;
 
     const int TEXTBOX_LIMIT = 25;
@@ -27,11 +27,12 @@ public class TextBoxHolderView : MonoBehaviour {
         };
     }
 
-    public void AddTextBoxView(TextBox textBox, Action callBack = null) {
+    public GameObject AddTextBoxView(TextBox textBox, Action callBack = null) {
         GameObject g = Instantiate(textBoxes[textBox.Type]);
         children.Add(g);
         Util.Parent(g, gameObject);
         textBox.Write(g, callBack);
+        return g;
     }
 
     public InputBoxView AddInputBoxView() {
@@ -42,6 +43,7 @@ public class TextBoxHolderView : MonoBehaviour {
     }
 
     void Update() {
+        children.RemoveAll(item => item == null);
         if (children.Count > TEXTBOX_LIMIT) {
             Destroy(children[0]);
             children.RemoveAt(0);

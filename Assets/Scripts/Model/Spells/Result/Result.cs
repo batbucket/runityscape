@@ -4,70 +4,41 @@ using UnityEngine;
 
 public abstract class Result {
 
-    Spell _spell;
-    public Spell Spell {
-        set {
-            Util.Assert(_spell == null, "Can only set Spell once!");
-            _spell = value;
-        }
-
-        get {
-            return _spell;
-        }
-    }
-
-    public Type type { get; set; }
-    Func<Character, Character, SpellDetails, bool> _isState;
-    Func<Character, Character, SpellDetails, Calculation> _calculation;
-    Action<Character, Character, Calculation, SpellDetails> _perform;
-    Func<Character, Character, Calculation, SpellDetails, string> _createText;
-    Func<Character, Character, Calculation, SpellDetails, string> _sound;
-    Func<Character, Character, Calculation, SpellDetails, IList<CharacterEffect>> _sfx;
-
-    public Func<Character, Character, SpellDetails, bool> IsStateFunc { set { _isState = value; } }
-    public Func<Character, Character, SpellDetails, Calculation> CalculationFunc { set { _calculation = value; } }
-    public Action<Character, Character, Calculation, SpellDetails> PerformFunc { set { _perform = value; } }
-    public Func<Character, Character, Calculation, SpellDetails, string> CreateTextFunc { set { _createText = value; } }
-    public Func<Character, Character, Calculation, SpellDetails, string> SoundFunc { set { _sound = value; } }
-    public Func<Character, Character, Calculation, SpellDetails, IList<CharacterEffect>> SFXFunc { set { _sfx = value; } }
+    public Type Type { get; set; }
+    public Func<Character, Character, SpellDetails, bool> IsState;
+    public Func<Character, Character, SpellDetails, bool> IsIndefinite;
+    public Func<Character, Character, SpellDetails, float> Duration;
+    public Func<Character, Character, SpellDetails, float> TimePerTick;
+    public Func<Character, Character, SpellDetails, Calculation> Calculation;
+    public Action<Character, Character, Calculation, SpellDetails> Perform;
+    public Action<Character, Character, SpellDetails> OnStart;
+    public Action<Character, Character, SpellDetails> OnEnd;
+    public Func<Character, Character, Calculation, SpellDetails, string> CreateText;
+    public Func<Character, Character, Calculation, SpellDetails, string> Sound;
+    public Func<Character, Character, Calculation, SpellDetails, IList<CharacterEffect>> Sfx;
 
     public Result(Func<Character, Character, SpellDetails, bool> isState = null,
+              Func<Character, Character, SpellDetails, float> duration = null,
+              Func<Character, Character, SpellDetails, float> timePerTick = null,
+              Func<Character, Character, SpellDetails, bool> isIndefinite = null,
               Func<Character, Character, SpellDetails, Calculation> calculation = null,
               Action<Character, Character, Calculation, SpellDetails> perform = null,
+              Action<Character, Character, SpellDetails> onStart = null,
+              Action<Character, Character, SpellDetails> onEnd = null,
               Func<Character, Character, Calculation, SpellDetails, string> createText = null,
               Func<Character, Character, Calculation, SpellDetails, string> sound = null,
               Func<Character, Character, Calculation, SpellDetails, IList<CharacterEffect>> sfx = null) {
-        this._isState = isState ?? ((c, t, o) => { return false; });
-        this._calculation = calculation ?? ((c, t, o) => { return new Calculation(); });
-        this._perform = perform ?? ((c, t, calc, o) => { NumericPerform(c, t, calc); });
-        this._createText = createText ?? ((c, t, calc, o) => { return ""; });
-        this._sound = sound ?? ((c, t, calc, o) => { return ""; });
-        this._sfx = sfx ?? ((c, t, calc, o) => { return new CharacterEffect[0]; });
-    }
-
-    public bool IsState() {
-        return _isState(_spell.Caster, _spell.Target, _spell.Other);
-    }
-
-    public Calculation Calculation() {
-        Calculation c = _calculation(_spell.Caster, _spell.Target, _spell.Other);
-        return c;
-    }
-
-    public void Effect(Calculation calculation) {
-        _perform(_spell.Caster, _spell.Target, calculation, _spell.Other);
-    }
-
-    public IList<CharacterEffect> SFX(Calculation calculation) {
-        return _sfx(_spell.Caster, _spell.Target, calculation, _spell.Other);
-    }
-
-    public string CreateText(Calculation calculation) {
-        return _createText(_spell.Caster, _spell.Target, calculation, _spell.Other);
-    }
-
-    public string Sound(Calculation calculation) {
-        return _sound(_spell.Caster, _spell.Target, calculation, _spell.Other);
+        this.IsState = isState ?? ((c, t, o) => { return false; });
+        this.Duration = duration ?? ((c, t, o) => { return 0; });
+        this.TimePerTick = timePerTick ?? ((c, t, o) => { return 0; });
+        this.IsIndefinite = isIndefinite ?? ((c, t, o) => { return false; });
+        this.Calculation = calculation ?? ((c, t, o) => { return new Calculation(); });
+        this.Perform = perform ?? ((c, t, calc, o) => { NumericPerform(c, t, calc); });
+        this.OnStart = onStart ?? ((c, t, o) => { });
+        this.OnEnd = onStart ?? ((c, t, o) => { });
+        this.CreateText = createText ?? ((c, t, calc, o) => { return ""; });
+        this.Sound = sound ?? ((c, t, calc, o) => { return ""; });
+        this.Sfx = sfx ?? ((c, t, calc, o) => { return new CharacterEffect[0]; });
     }
 
     public static void NumericPerform(Character caster, Character target, Calculation calculation) {

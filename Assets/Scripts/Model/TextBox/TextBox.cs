@@ -29,7 +29,7 @@ public class TextBox {
     bool _isDone;
     public bool IsDone { get; set; }
 
-    void Init(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Sounds/Blip_0", float timePerLetter = 0) {
+    void Init(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Blip_0", float timePerLetter = 0) {
         this._textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
         this._rawText = text;
         this._color = color;
@@ -38,11 +38,11 @@ public class TextBox {
         this._effect = effect;
     }
 
-    public TextBox(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Sounds/Blip_0", float timePerLetter = 0) {
+    public TextBox(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Blip_0", float timePerLetter = 0) {
         Init(text, color, effect, soundLocation, timePerLetter);
     }
 
-    public TextBox(string text, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Sounds/Blip_0", float timePerLetter = 0) {
+    public TextBox(string text, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Blip_0", float timePerLetter = 0) {
         Init(text, Color.white, effect, soundLocation, timePerLetter);
     }
 

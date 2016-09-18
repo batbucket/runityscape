@@ -8,6 +8,8 @@ using UnityEngine.UI;
  * This class controls the details one sees on a Portrait prefab
  */
 public abstract class PortraitView : MonoBehaviour {
+    public CharacterPresenter Presenter;
+
     public struct ResourceBundle {
         public ResourceView resourceView;
         public bool isSet;
@@ -20,7 +22,7 @@ public abstract class PortraitView : MonoBehaviour {
 
     public struct BuffParams {
         public int id;
-        public Sprite sprite;
+        public string abbreviation;
         public Color color;
         public string duration;
     }
@@ -152,9 +154,9 @@ public abstract class PortraitView : MonoBehaviour {
             } else {
                 bv = BuffViews[b.id].buffView;
             }
-            bv.Icon.sprite = b.sprite;
-            bv.Icon.color = b.color;
-            bv.Text = b.duration;
+            bv.Text = b.abbreviation;
+            bv.Color = b.color;
+            bv.Duration = b.duration;
             BuffViews[b.id] = new BuffBundle { buffView = bv, isSet = true };
         }
 

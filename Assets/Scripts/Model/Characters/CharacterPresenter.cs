@@ -31,9 +31,16 @@ public class CharacterPresenter {
             }
         }
 
-        //Set buffs and durations
-        // TODO fix this after you get timedspells running
-        //PortraitView.SetBuffs(Character.Buffs.Where(b => b is TimedSpell).Cast<TimedSpell>().Select(b => new PortraitView.BuffParams { id = b.Spell.Id, sprite = b.Sprite, color = b.Color, duration = b.DurationText }).ToArray());
+        PortraitView
+            .SetBuffs(Character.Buffs.Where(b => b.DurationTimer > 0)
+            .Select(b =>
+            new PortraitView.BuffParams {
+                id = b.GetHashCode(),
+                abbreviation = b.SpellFactory.Abbreviation,
+                color = b.SpellFactory.Color,
+                duration = b.DurationText
+            })
+                .ToArray());
 
         this.PortraitView.Sprite = Util.GetSprite(Character.SpriteLoc);
     }

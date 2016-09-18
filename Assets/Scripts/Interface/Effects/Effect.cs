@@ -31,6 +31,8 @@ public abstract class Effect {
     }
 
     public void StopCoroutine() {
-        Game.Instance.StopCoroutine(Coroutine);
+        if (Coroutine != null) {
+            Game.Instance.StopCoroutine(Coroutine);
+        }
     }
 }

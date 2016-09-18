@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 public class Calculation {
-
     IDictionary<AttributeType, PairedInt> _targetAttributes;
     public IDictionary<AttributeType, PairedInt> TargetAttributes { get { return _targetAttributes; } }
 

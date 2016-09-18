@@ -62,12 +62,13 @@ public class TextBoxView : MonoBehaviour {
                 }
                 float timer = 0;
                 int index = 0;
+                int soundCount = 0;
                 text.text = string.Join("", currentTextArray);
                 string wrapper = "\u2007";
                 while (index < textBox.TextArray.Length) {
 
                     //Change to FADE_IN Mode if Space (skip) key is held
-                    if (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.LeftControl)) {
+                    if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.LeftControl)) {
                         text.text = "";
                         skip = true;
                         goto case TextEffect.FADE_IN;
@@ -89,7 +90,10 @@ public class TextBoxView : MonoBehaviour {
                             //Don't reset timer or make sound on spaces
                             if (!Regex.IsMatch(textBox.TextArray[index], " ")) {
                                 timer = 0;
-                                Game.Instance.Sound.Play(textBox.SoundLoc);
+                                if (--soundCount <= 0) {
+                                    soundCount = BLIP_INTERVAL;
+                                    Game.Instance.Sound.Play(textBox.SoundLoc);
+                                }
                             }
                         }
                         text.text = string.Join("", currentTextArray);
@@ -101,7 +105,6 @@ public class TextBoxView : MonoBehaviour {
         }
         textBox.IsDone = true;
         if (callBack != null) {
-            Debug.Log("here!");
             callBack.Invoke();
         }
         yield break;

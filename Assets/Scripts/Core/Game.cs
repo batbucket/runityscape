@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using UnityEngine.UI;
 
 public class Game : MonoBehaviour {
     static Game _instance;
@@ -49,126 +50,32 @@ public class Game : MonoBehaviour {
     EffectsManager _effect;
     public EffectsManager Effect { get { return _effect; } }
 
+    [SerializeField]
+    Scrollbar _scrollbar;
+    public Scrollbar Scrollbar { get { return _scrollbar; } }
+
     public PagePresenter PagePresenter { get; private set; }
     public Character MainCharacter { get; private set; }
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
-    public static string DERP = "[8:33:40 AM] lanrete: did you know that you can get to the tutorial battle from the start by just spamming Q";
 
-    IDictionary<string, Page> pages;
-    IDictionary<string, string> pageLinks;
-
-    static IDictionary<string, RightBox> FORBIDDEN_NAMES = new Dictionary<string, RightBox>() {
-        { "Alestre", new RightBox("placeholder", "Redeemer. Please do not do that.", Color.yellow) },
-    };
-
-    string _pageIdentificationNumber;
-    string PageID {
-        set {
-            Util.Assert(pages.ContainsKey(value), string.Format("Page: \"{0}\" does not exist!", value));
-            ActionGrid.IsVisible = true;
-            if (_pageIdentificationNumber != null && !pageLinks.ContainsKey(value)) {
-                pageLinks.Add(value, _pageIdentificationNumber);
-            }
-            _pageIdentificationNumber = value;
-            PagePresenter.SetPage(pages[value]);
-        }
-    }
-    Page Page {
-        get { return PagePresenter.Page; }
-    }
+    StartMenu start;
 
     void Start() {
         _instance = this;
         PagePresenter = new PagePresenter();
-        pages = new Dictionary<string, Page>();
         Time.IsEnabled = false;
-        pageLinks = new Dictionary<string, string>();
+
+        start = new StartMenu();
 
         Header.Blurb = "";
         Header.Chapter = "";
         Header.Location = "";
 
         MenuButton.Hotkey = KeyCode.None;
-        MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => { Start(); PageID = "primary"; });
+        MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => { Start(); PagePresenter.SetPage(start.Primary); });
 
-        pages["primary"] = new ReadPage(
-            tooltip: "Welcome to RunityScape.",
-            processes: new Process[] {
-                new Process("New Game", "Start a new game.", () => PageID = "newGame-Name"),
-                new Process("Load Game", "Load a saved game.", condition: () => false),
-                new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => PageID = "debug"),
-                new Process(),
-
-                new Process(),
-                new Process(),
-                new Process(),
-                new Process(),
-
-                new Process(),
-                new Process(),
-                new Process(),
-                new Process("Exit", "Exit the application.", () => Application.Quit())
-        });
-
-        CreateDebug();
-        PageID = "primary";
-    }
-
-    void CreateDebug() {
-        pages["debug"] = new ReadPage("What", "Hello world", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Steve(), new Steve() },
-            processes: new Process[] {
-                new Process("Normal TextBox", "Say Hello world",
-                    () => AddTextBox(
-                        new TextBox(DERP, Color.white, TextEffect.FADE_IN, "Blip_0", .1f))),
-                new Process("LeftBox", "Say Hello world",
-                    () => AddTextBox(
-                        new LeftBox("crying_mudkip", DERP, Color.white))),
-                new Process("RightBox", "Say Hello world",
-                    () => AddTextBox(
-                        new RightBox("crying_mudkip", DERP, Color.white))),
-                new Process("InputBox", "Type something",
-                    () => TextBoxHolder.AddInputBoxView()),
-                new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => PagePresenter.SetPage(pages["debug1"])),
-                new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { PagePresenter.SetPage(pages["debug2"]); Sound.Loop("99P"); }),
-                new Process("Shake yourself", "Literally U******E", () => { }),
-                new OneShotProcess("Test OneShotProcess", action: () => Debug.Log("ya did it!")),
-                new Process("deadm00se", "Text not displaying right.", () => AddTextBox(new RightBox("placeholder", "But this world is also inhabited by other creatures, who are not as light-touched as your kind. These abhorrent beings have begun sealing these purifiers, seeking to end my——humanity's presence here forever.", Color.white))),
-                new Process(),
-                new Process("Back", "Go back to the main menu.", () => { PagePresenter.SetPage(pages["primary"]); })
-            }
-        );
-        pages["debug1"] = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Amit(), new Steve(), new Steve() });
-        pages["debug2"] = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
-    }
-
-    public struct Event {
-        public readonly Action action;
-        public float delay;
-        public readonly Func<bool> hasEnded;
-        public readonly bool isOneShot;
-        public bool HasPlayed { get; set; }
-        public readonly TextBox textBox;
-
-        public Event(Action action, float delay = 0, bool isOneShot = true, Func<bool> endCondition = null) {
-            this.action = action;
-            this.hasEnded = endCondition ?? (() => true);
-            this.delay = delay;
-            this.isOneShot = isOneShot;
-            this.HasPlayed = false;
-            this.textBox = null;
-        }
-
-        //Special Text-Event builders
-
-        public Event(TextBox t, float delay = 1, bool isOneShot = true) {
-            this.action = () => Instance.AddTextBox(t);
-            this.delay = delay;
-            this.hasEnded = () => t.IsDone;
-            this.isOneShot = isOneShot;
-            this.HasPlayed = false;
-            this.textBox = t;
-        }
+        PagePresenter.SetPage(start.Primary);
     }
 
     public void Cutscene(params Event[] events) {
@@ -275,34 +182,13 @@ public class Game : MonoBehaviour {
         return new ReadPage(text, tooltip, location, hasInputField, MainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes);
     }
 
-    void GoToLastPage() {
-        PageID = pageLinks[_pageIdentificationNumber];
-    }
-
-    public void AddTextBox(TextBox t, Action callBack = null) {
-        PagePresenter.AddTextBox(t, callBack);
-    }
-
-    Process[] ProcessesWithBack(Process[] processes0, params Process[] processes1) {
-        Util.Assert(processes0.Length + processes1.Length < ActionGridView.TOTAL_BUTTON_COUNT - 1, "Too many processes!");
-        Process[] full = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
-        processes0.CopyTo(full, 0);
-        processes1.CopyTo(full, processes0.Length);
-        full[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Go back to the previous page.", GoToLastPage);
-        return full;
-    }
-
-    Process[] ProcessesWithBack(params Process[] processes) {
-        Util.Assert(processes.Length < ActionGridView.TOTAL_BUTTON_COUNT - 1, "Too many processes!");
-        Process[] full = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
-        processes.CopyTo(full, 0);
-        full[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Go back to the previous page.", GoToLastPage);
-        return full;
+    public GameObject AddTextBox(TextBox t, Action callBack = null) {
+        return PagePresenter.AddTextBox(t, callBack);
     }
 
     public void Defeat() {
-        Page.Tooltip = "You have died.";
-        Page.ActionGrid = new Process[] { new Process("Main Menu", "Return to the main menu.", () => { Start(); PageID = "primary"; }) };
+        PagePresenter.Page.Tooltip = "You have died.";
+        PagePresenter.Page.ActionGrid = new Process[] { new Process("Main Menu", "Return to the main menu.", () => { Start(); PagePresenter.SetPage(start.Primary); }) };
     }
 
     // Update is called once per frame

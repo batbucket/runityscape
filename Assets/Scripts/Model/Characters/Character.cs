@@ -16,7 +16,7 @@ public abstract class Character : Entity, IReactable {
     string _suffix;
     public string Name { set { _name = value; } get { return _name; } }
     public string Suffix { set { _suffix = value; } }
-    public string DisplayName { get { return Util.Color(string.Format("{0}{1}", _name, string.IsNullOrEmpty(_suffix) ? "" : string.Format(" {0}", _suffix)), TextColor); } }
+    public string DisplayName { get { return string.Format("{0}{1}", _name, string.IsNullOrEmpty(_suffix) ? "" : string.Format(" {0}", _suffix)); } }
     public int Level { get; set; }
 
     public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
@@ -150,7 +150,6 @@ public abstract class Character : Entity, IReactable {
         if (HasResource(resourceType)) {
             Resource resource;
             Resources.TryGetValue(resourceType, out resource);
-            Debug.Assert(resource != null);
             if (!value) {
                 return (int)resource.False;
             } else {
@@ -165,7 +164,6 @@ public abstract class Character : Entity, IReactable {
         if (HasAttribute(attributeType)) {
             Attribute attribute;
             Attributes.TryGetValue(attributeType, out attribute);
-            Debug.Assert(attribute != null);
             if (!value) {
                 return (int)attribute.False;
             } else {
@@ -346,6 +344,7 @@ public abstract class Character : Entity, IReactable {
         Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
         AddToResource(ResourceType.HEALTH, false, 1, false);
         Discharge();
+        Presenter.PortraitView.AddEffect(new DefeatEffect(this.Presenter.PortraitView));
     }
 
     bool killPosted;
@@ -362,6 +361,9 @@ public abstract class Character : Entity, IReactable {
                     Color.white, TextEffect.FADE_IN));
         }
         this.IsTargetable = false;
+        Buffs.Clear();
+        Presenter.PortraitView.ClearEffects();
+        Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
     }
 
     public string AttributeDistribution {

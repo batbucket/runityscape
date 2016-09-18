@@ -13,5 +13,7 @@ public class Amit : PlayerCharacter {
         this.Selections[Selection.ITEM].Add(new Scimitar(2));
         this.Selections[Selection.MERCY].Add(new Spare());
         this.Selections[Selection.SPELL].Add(new Smite());
+        this.Selections[Selection.SPELL].Add(new Poison());
+        this.Selections[Selection.SPELL].Add(new Petrify());
     }
 }
