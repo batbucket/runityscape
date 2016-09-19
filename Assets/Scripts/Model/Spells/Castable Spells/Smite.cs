@@ -18,6 +18,7 @@ public class Smite : SpellFactory {
 
     public override Hit CreateHit() {
         return new Hit(
+            isState: (c, t, o) => true,
             calculation: (c, t, o) => {
                 return new Calculation(
                    targetResources: new Dictionary<ResourceType, PairedInt>() {

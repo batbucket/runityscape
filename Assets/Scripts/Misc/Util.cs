@@ -13,6 +13,9 @@ using System.ComponentModel;
  * This class holds various helper methods that don't fit anywhere else
  */
 public static class Util {
+    public static void Log(string s) {
+        UnityEngine.Debug.Log(s);
+    }
 
     public static void SetAllColorOfChildren(GameObject parent, Color color) {
         Image[] images = parent.GetComponentsInChildren<Image>();

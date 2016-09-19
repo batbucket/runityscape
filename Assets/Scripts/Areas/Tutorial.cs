@@ -117,6 +117,7 @@ public class Tutorial : Area {
             }
             );
 
+        bool learnedSmite = false;
         Regenerator = new BattlePage(
             "Regenerator blocks the way!",
             mainCharacter: pc,
@@ -126,7 +127,14 @@ public class Tutorial : Area {
             onEnter: () => {
                 pc.Selections[Selection.MERCY].Add(new Flee(PreBridge));
                 (new Petrify()).Cast(pc, Page.GetEnemies(pc)[0]);
-                (new Regenerate()).Cast(pc, Page.GetEnemies(pc)[0]);
+            },
+            onTick: () => {
+                if (!learnedSmite && pc.Selections[Selection.EQUIP].Contains(new OldArmor(1)) && pc.Selections[Selection.EQUIP].Contains(new OldSword(1))) {
+                    learnedSmite = true;
+                    pc.Selections[Selection.SPELL].Add(new Smite());
+                    Game.AddTextBox(new TextBox(string.Format("{0} remembered a spell.", pc.DisplayName)));
+                    Game.AddTextBox(new TextBox("<color=yellow>Smite... 2 Skill... Attack to gain...</color>", TextEffect.TYPE, timePerLetter: 0.05f));
+                }
             },
             onExit: () => pc.Selections[Selection.MERCY].Remove(new Flee(PreBridge))
             );

@@ -32,7 +32,7 @@ public class CharacterPresenter {
         }
 
         PortraitView
-            .SetBuffs(Character.Buffs.Where(b => b.DurationTimer > 0)
+            .SetBuffs(Character.Buffs.Where(b => b.DurationTimer > 0 || b.IsIndefinite)
             .Select(b =>
             new PortraitView.BuffParams {
                 id = b.GetHashCode(),

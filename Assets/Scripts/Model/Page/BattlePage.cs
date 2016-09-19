@@ -80,6 +80,11 @@ public class BattlePage : Page {
         this.State = BattleState.BATTLE;
     }
 
+    public override void OnAnyEnter() {
+        base.OnAnyEnter();
+        GetAll().ForEach(c => c.OnBattleStart());
+    }
+
     public override void Tick() {
         base.Tick();
 

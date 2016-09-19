@@ -9,8 +9,6 @@ public class Petrify : SpellFactory {
         return new Hit(
             isState: (c, t, o) => true,
             isIndefinite: (c, t, o) => true,
-            duration: (c, t, o) => 20f,
-            timePerTick: (c, t, o) => 10f,
             onStart:
             (c, t, o) => t.IsCharging = false,
             onEnd:

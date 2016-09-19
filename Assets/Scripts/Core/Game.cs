@@ -193,7 +193,9 @@ public class Game : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        PagePresenter.Tick();
+        if (PagePresenter != null) {
+            PagePresenter.Tick();
+        }
     }
 
     public PortraitHolderView GetPortraitHolder(bool isRightSide) {

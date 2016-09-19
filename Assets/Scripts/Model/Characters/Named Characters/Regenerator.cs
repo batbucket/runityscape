@@ -9,7 +9,7 @@ public class Regenerator : ComputerCharacter {
     }
 
     public override void OnBattleStart() {
-
+        (new Regenerate()).Cast(this, this);
     }
 
     protected override void DecideSpell() {

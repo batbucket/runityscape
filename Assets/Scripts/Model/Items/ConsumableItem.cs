@@ -18,8 +18,13 @@ public abstract class ConsumableItem : Item {
 
     public override Hit CreateHit() {
         return new Hit(
+            isState: (c, t, o) => true,
             calculation: (c, t, o) => {
                 return CreateCalculation(c, t);
+            },
+            perform: (c, t, calc, o) => {
+                Result.NumericPerform(c, t, calc);
+                c.Selections[Selection.ITEM].Remove(this);
             },
             createText: (c, t, calc, o) => {
                 if (c == t) {

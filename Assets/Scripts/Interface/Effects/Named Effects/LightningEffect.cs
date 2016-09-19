@@ -18,7 +18,6 @@ public class LightningEffect : CharacterEffect {
     protected override IEnumerator EffectRoutine() {
         this.lightningEffect = GameObject.Instantiate<FadeAnimation>(lightningEffectPrefab);
         Util.Parent(lightningEffect.gameObject, target.gameObject);
-        while (lightningEffect != null) { }
         _isDone = true;
         yield break;
     }
