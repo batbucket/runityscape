@@ -123,7 +123,7 @@ public sealed class ResourceType : IComparable {
             return false;
         }
         ResourceType res = (ResourceType)obj;
-        return this.Name.Equals(res.Name);
+        return this == res;
     }
 
     public override int GetHashCode() {

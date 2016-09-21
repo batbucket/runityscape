@@ -23,7 +23,7 @@ public struct Event {
     public Event(TextBox t, float delay = 0.1f, bool isOneShot = true) {
         this.action = () => Game.Instance.AddTextBox(t);
         this.delay = delay;
-        this.hasEnded = () => Input.GetKeyDown(KeyCode.Space);
+        this.hasEnded = () => true;
         this.isOneShot = isOneShot;
         this.HasPlayed = false;
         this.textBox = t;

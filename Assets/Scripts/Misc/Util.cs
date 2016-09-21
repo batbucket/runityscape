@@ -13,6 +13,13 @@ using System.ComponentModel;
  * This class holds various helper methods that don't fit anywhere else
  */
 public static class Util {
+
+    public static void Swap(GameObject a, GameObject b) {
+        int ai = a.transform.GetSiblingIndex();
+        a.transform.SetSiblingIndex(b.transform.GetSiblingIndex());
+        b.transform.SetSiblingIndex(ai);
+    }
+
     public static void Log(string s) {
         UnityEngine.Debug.Log(s);
     }
@@ -62,19 +69,15 @@ public static class Util {
     }
 
     public static void SetOutlineAlpha(Outline target, float alpha) {
-        if (target != null) {
-            Color c = target.effectColor;
-            c.a = alpha;
-            target.effectColor = c;
-        }
+        Color c = target.effectColor;
+        c.a = alpha;
+        target.effectColor = c;
     }
 
     public static void SetImageAlpha(Image target, float alpha) {
-        if (target != null) {
-            Color c = target.color;
-            c.a = alpha;
-            target.color = c;
-        }
+        Color c = target.color;
+        c.a = alpha;
+        target.color = c;
     }
 
     public static void Parent(GameObject child, GameObject parent) {

@@ -91,18 +91,16 @@ public class Game : MonoBehaviour {
             ActionGrid.IsVisible = false;
             PagePresenter.Page.GetAll().ForEach(c => c.IsCharging = false);
         }
-        if (events[0].textBox != null && events[0].IsExactly<TextBox>()) {
-            events[0].delay = 0;
-        }
         foreach (Event myEvent in events) {
             Event e = myEvent;
             if (!e.isOneShot || (e.isOneShot && !e.HasPlayed)) {
+                Util.Log(e.delay + "");
                 float timer = 0;
                 while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.delay) {
                     yield return null;
                 }
                 e.action.Invoke();
-                while (!Input.GetKey(KeyCode.LeftControl) && !e.hasEnded.Invoke()) {
+                while (hideGrid && !Input.GetKey(KeyCode.LeftControl) && !Input.GetKeyDown(KeyCode.Space)) {
                     yield return null;
                 }
                 e.HasPlayed = true;

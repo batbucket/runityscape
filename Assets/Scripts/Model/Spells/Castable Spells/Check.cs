@@ -9,6 +9,9 @@ public class Check : SpellFactory {
             isState: (c, t, o) => {
                 return true;
             },
+            perform: (c, t, calc, o) => {
+                t.IsShowingBarCounts = true;
+            },
             createText: (c, t, calc, o) => {
                 return CheckText(t);
             }

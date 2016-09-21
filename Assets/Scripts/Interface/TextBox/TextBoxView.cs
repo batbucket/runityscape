@@ -16,14 +16,23 @@ public class TextBoxView : MonoBehaviour {
 
     [SerializeField]
     Image background;
-    float BackgroundAlpha { set { Util.SetImageAlpha(background, value); } }
+    float BackgroundAlpha {
+        set {
+            Util.SetImageAlpha(background, value);
+        }
+    }
 
     [SerializeField]
     Outline outline;
-    float OutlineAlpha { set { Util.SetOutlineAlpha(outline, value); } }
+    float OutlineAlpha {
+        set {
+            Util.SetOutlineAlpha(outline, value);
+        }
+    }
 
     public const int BLIP_INTERVAL = 1; //Letters needed for a sound to occur
     public const int CHARS_PER_LINE = 44; //Needed for word wrapping function
+    public const float FADE_DURATION = 0.5f;
 
     public virtual void WriteText(TextBox textBox, Action callBack = null) {
         StartCoroutine(TypeWriter(text, textBox, callBack));
@@ -107,6 +116,20 @@ public class TextBoxView : MonoBehaviour {
         if (callBack != null) {
             callBack.Invoke();
         }
-        yield break;
+
+        float duration = textBox.Duration;
+        if (duration > 0) {
+            Util.Log("countdown: " + duration);
+            while ((duration -= Time.deltaTime) > 0) {
+                yield return null;
+            }
+            float timer = 0;
+            while ((timer += Time.deltaTime) < FADE_DURATION) {
+                TextAlpha = Mathf.Lerp(1, 0, timer / FADE_DURATION);
+                BackgroundAlpha = Mathf.Lerp(1, 0, timer / FADE_DURATION);
+                yield return null;
+            }
+            Destroy(this.gameObject);
+        }
     }
 }

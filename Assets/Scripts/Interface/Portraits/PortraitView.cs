@@ -56,6 +56,8 @@ public abstract class PortraitView : MonoBehaviour {
     [SerializeField]
     GameObject _buffPrefab;
 
+    public bool IsShowingBarCounts;
+
     // Use this for initialization
     void Awake() {
         ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
@@ -94,13 +96,28 @@ public abstract class PortraitView : MonoBehaviour {
         foreach (ResourceType resourceType in resourceTypes) {
             ResourceView rv;
             if (!ResourceViews.ContainsKey(resourceType)) {
+                // Instantiate new resource prefab
                 GameObject g = (GameObject)GameObject.Instantiate(resourcePrefab);
-                Util.Parent(g, ResourcesHolder);
+                Util.Parent(g, ResourcesHolder); // Placed in back.
+
+                // Set resource prefab's details
                 rv = g.GetComponent<ResourceView>();
+                rv.Type = resourceType;
                 rv.ResourceName = resourceType.ShortName;
                 rv.ResourceColor = resourceType.FillColor;
                 rv.OverColor = resourceType.FillColor;
                 rv.UnderColor = resourceType.EmptyColor;
+
+                // Move resource prefab to appropraite location, resources are ordered.
+                ResourceView[] rvs = ResourcesHolder.GetComponentsInChildren<ResourceView>();
+                int index = rvs.Length - 1;
+
+                // Possibly working bubble sort
+                while (index - 1 >= 0 && rv.Type.CompareTo(rvs[index - 1].Type) < 0) {
+                    Util.Swap(rvs[index].gameObject, rvs[index - 1].gameObject);
+                    index--;
+                }
+
             } else {
                 rv = ResourceViews[resourceType].resourceView;
             }

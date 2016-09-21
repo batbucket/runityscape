@@ -53,6 +53,8 @@ public abstract class Character : Entity, IReactable {
     string _checkText;
     public string CheckText { get { return _checkText; } }
 
+    public bool IsShowingBarCounts;
+
     public Character(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable, string checkText = "") : base(spriteLoc) {
         this._name = name;
         this.Level = level;
@@ -336,7 +338,7 @@ public abstract class Character : Entity, IReactable {
             Character defeater = RecievedSpells[RecievedSpells.Count - 1].Caster;
             Game.Instance.TextBoxHolder.AddTextBoxView(
                 new TextBox(
-                    string.Format("{0} was <color=red>defeated</color> by {1}.", DisplayName, defeater.DisplayName),
+                    string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName, defeater.DisplayName),
                     Color.white, TextEffect.FADE_IN)
                 );
         }
@@ -357,7 +359,7 @@ public abstract class Character : Entity, IReactable {
             Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
             Game.Instance.TextBoxHolder.AddTextBoxView(
                 new TextBox(
-                    string.Format("{0} was <color=red>slain</color> by {1}.", DisplayName, killer.DisplayName),
+                    string.Format("{0} was <color=red>slain</color>.", DisplayName, killer.DisplayName),
                     Color.white, TextEffect.FADE_IN));
         }
         this.IsTargetable = false;

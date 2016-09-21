@@ -155,6 +155,7 @@ public abstract class Page {
 
     void SetCharacterSides(IList<Character> characters, bool isRightSide) {
         foreach (Character c in characters) {
+            c.IsShowingBarCounts = !isRightSide;
             c.Side = isRightSide;
         }
     }

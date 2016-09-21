@@ -7,6 +7,8 @@ using System.Collections;
  */
 public class ResourceView : MonoBehaviour {
 
+    public ResourceType Type;
+
     [SerializeField]
     Text _resourceName; //Name of the Resource. Should be only 2 letters.
     public string ResourceName { get { return _resourceName.text; } set { _resourceName.text = value; } }

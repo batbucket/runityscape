@@ -65,12 +65,6 @@ public class PagePresenter {
         Game.Instance.LeftPortraits.CharacterViews.Clear();
         Game.Instance.RightPortraits.CharacterViews.Clear();
 
-        if (page is ReadPage && page.Text.Count() > PERFECT_FIT_CHARACTER_COUNT) {
-            Game.Instance.TextBoxHolder.GetComponent<RectTransform>().pivot = new Vector2(0, 1);
-        } else {
-            Game.Instance.TextBoxHolder.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
-        }
-
         page.OnEnter();
 
         Tick();

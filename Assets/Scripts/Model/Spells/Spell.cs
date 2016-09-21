@@ -130,7 +130,7 @@ public class Spell {
         Game.Instance.Sound.Play(Result.Sound(this.Caster, this.Target, Calculation, this.Other));
         string text = Result.CreateText(this.Caster, this.Target, Calculation, this.Other);
         if (!string.IsNullOrEmpty(text)) {
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, TextEffect.FADE_IN));
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, 3f, TextEffect.FADE_IN));
         }
     }
 }

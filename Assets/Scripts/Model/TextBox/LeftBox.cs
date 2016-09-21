@@ -9,7 +9,7 @@ public class LeftBox : AvatarBox {
                    Color color,
                    TextEffect effect = TextEffect.TYPE,
                    string soundLocation = "Blip_0",
-                   float timePerLetter = 0.075f)
+                   float timePerLetter = 0.025f)
                    : base(spriteLoc, text, color, effect, soundLocation, timePerLetter) {
 
     }

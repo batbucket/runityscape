@@ -9,14 +9,14 @@ public abstract class AvatarBox : TextBox {
     public AvatarBox(string spriteLoc,
                      string text,
                      Color color,
-                     TextEffect effect = TextEffect.TYPE,
-                     string soundLocation = "Sounds/Blip_0",
-                     float timePerLetter = 0.5f)
+                     TextEffect effect,
+                     string soundLocation,
+                     float timePerLetter)
                      : base(text, color, effect, soundLocation, timePerLetter) {
         this._spriteLoc = spriteLoc;
     }
 
-    public AvatarBox(Character c, string text) : base(text, c.TextColor, TextEffect.TYPE, timePerLetter: 0.075f) {
+    public AvatarBox(Character c, string text) : base(text, c.TextColor, TextEffect.TYPE, timePerLetter: 0.025f) {
         this._spriteLoc = c.SpriteLoc;
     }
 

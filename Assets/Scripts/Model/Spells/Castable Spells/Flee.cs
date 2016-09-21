@@ -12,12 +12,13 @@ public class Flee : SpellFactory {
     public override Hit CreateHit() {
         return new Hit(
             isState: (c, t, o) => true,
-            perform: (c, t, calc, o) => Game.Instance.StartCoroutine(Escape()),
+            perform: (c, t, calc, o) => Game.Instance.StartCoroutine(Escape(c)),
             createText: (c, t, calc, o) => string.Format("{0} fled from battle!", t.DisplayName)
             );
     }
 
-    private IEnumerator Escape() {
+    private IEnumerator Escape(Character escapee) {
+        escapee.IsCharging = false;
         yield return new WaitForSeconds(0.5f);
         Game.Instance.PagePresenter.SetPage(escapePage);
     }
