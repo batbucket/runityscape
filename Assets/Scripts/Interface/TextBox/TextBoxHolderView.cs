@@ -16,7 +16,7 @@ public class TextBoxHolderView : MonoBehaviour {
     List<GameObject> children;
     IDictionary<TextBoxType, GameObject> textBoxes;
 
-    const int TEXTBOX_LIMIT = 25;
+    const int TEXTBOX_LIMIT = 100;
 
     void Awake() {
         this.children = new List<GameObject>();

@@ -33,9 +33,7 @@ public class Smite : SpellFactory {
                 return "Boom_4";
             },
             sfx: (c, t, calc, o) => {
-                return new CharacterEffect[] {
-                    new LightningEffect(t.Presenter.PortraitView)
-                };
+                return Result.AppendToStandard(c, t, calc, new LightningEffect(t.Presenter.PortraitView));
             }
         );
     }

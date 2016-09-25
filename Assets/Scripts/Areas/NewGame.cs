@@ -318,7 +318,7 @@ public class NewGame : Area {
     private ReadPage QuestionToPage(Question q) {
         return new ReadPage(
             text: q.Text,
-            musicLoc: "Portal",
+            musicLoc: "Bleeding_Out",
             processes:
                 AnswersToProcesses(q.Answers)
             );

@@ -43,7 +43,7 @@ public class ShakeEffect : CharacterEffect {
         RectTransform icon = target.Image.rectTransform;
         Vector2 originalPos = icon.localPosition;
         float currentIntensity = startIntensity;
-        while (currentIntensity > NEAR_ZERO) {
+        while (icon != null || currentIntensity > NEAR_ZERO) {
             Mathf.SmoothDamp(currentIntensity, endIntensity, ref currentIntensity, duration);
             icon.localPosition = new Vector2(originalPos.x + Mathf.Sin(UnityEngine.Random.Range(0, 5)) * currentIntensity, originalPos.y + Mathf.Sin(UnityEngine.Random.Range(0, 5)) * currentIntensity);
             yield return null;

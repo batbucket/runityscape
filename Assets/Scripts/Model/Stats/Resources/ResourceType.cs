@@ -67,14 +67,14 @@ public sealed class ResourceType : IComparable {
 
     public static readonly IList<ResourceType> ALL = new List<ResourceType>();
 
-    public static readonly ResourceType HEALTH = new ResourceType("Health",
+    public static readonly ResourceType HEALTH = new ResourceType("Life",
                                                                   "LIFE",
                                                                   "Vital state.",
                                                                   Color.green,
                                                                   Color.red,
                                                                   0,
                                                                   AttributeType.VITALITY,
-                                                                  (a, r) => r.True = (int)a.False * 5);
+                                                                  (a, r) => r.True = (int)a.False * 10);
 
     public static readonly ResourceType SKILL = new ResourceType("Skill",
                                                                  "SKIL",
@@ -90,7 +90,7 @@ public sealed class ResourceType : IComparable {
                                                                 Color.magenta,
                                                                 2,
                                                                 AttributeType.INTELLIGENCE,
-                                                                (a, r) => r.True = (int)a.False * 5);
+                                                                (a, r) => r.True = (int)a.False * 10);
 
     public static readonly ResourceType CHARGE = new ResourceType("Charge",
                                                                   "CHRG",
@@ -130,7 +130,7 @@ public sealed class ResourceType : IComparable {
         return this.Name.GetHashCode();
     }
 
-    public static Color DetermineColor(ResourceType resourceType, int amount) {
+    public static Color DetermineColor(ResourceType resourceType, float amount) {
         Color textColor = Color.clear;
         if (amount < 0) {
             textColor = resourceType.EmptyColor;

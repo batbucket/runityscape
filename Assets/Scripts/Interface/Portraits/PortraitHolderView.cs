@@ -15,6 +15,7 @@ public abstract class PortraitHolderView : MonoBehaviour {
 
     public IDictionary<Character, PortraitBundle> CharacterViews { get; protected set; }
 
+    // TODO make input a struct of only what we need
     protected void AddPortraits(IList<Character> characters, GameObject portraitPrefab) {
 
         //Set all existing isSets to false.

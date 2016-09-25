@@ -110,7 +110,7 @@ public class BattlePage : Page {
             case BattleState.BATTLE:
                 foreach (Character c in GetAll()) {
                     c.Tick(MainCharacter, true);
-                    if (c.IsControllable) { characterQueue.Enqueue(c); }
+                    if (c.IsActive) { characterQueue.Enqueue(c); }
                     if (c.HasResource(ResourceType.CHARGE)) { c.Resources[ResourceType.CHARGE].IsVisible = true; }
                 }
 
@@ -274,7 +274,7 @@ public class BattlePage : Page {
         this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current.DisplayName),
             () => {
                 //Quick switch if there's only one other abledCharacter to switch with
-                IList<Character> abledCharacters = GetAll().FindAll(c => !current.Equals(c) && c.IsDisplayable && c.IsCharged());
+                IList<Character> abledCharacters = GetAll().FindAll(c => !current.Equals(c) && c.IsControllable && c.IsCharged());
                 Tooltip = "";
                 if (abledCharacters.Count == 1) {
                     activeCharacter = abledCharacters[0];
@@ -291,7 +291,7 @@ public class BattlePage : Page {
             Character target = myTarget;
 
             //You are not allowed to switch with yourself.
-            if (!current.Equals(target) && target.IsDisplayable && target.IsCharged()) {
+            if (!current.Equals(target) && target.IsControllable && target.IsCharged()) {
                 ActionGrid[index++] = new Process(target.DisplayName, string.Format("{0} will SWITCH with {1}.", current.DisplayName, target.DisplayName),
                     () => {
                         Tooltip = "";

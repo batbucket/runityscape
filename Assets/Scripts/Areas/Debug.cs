@@ -6,6 +6,7 @@ public class Debug : Area {
     public Page Menu;
     public Page PlayerBattle;
     public Page ComputerBattle;
+    public Page BossBattle;
 
     private Page primary;
     public Debug(Page primary) {
@@ -32,11 +33,13 @@ public class Debug : Area {
                 new OneShotProcess("Test OneShotProcess"),
                 new Process("deadm00se", "Text not displaying right.", () => Game.AddTextBox(new RightBox("placeholder", "But this world is.", Color.white))),
                 new TextProcess("TextProcess", "Just TRY to spam this button", new TextBox("Hello world. Spam me.")),
+                new Process("Boss Battle", action: () => Page = BossBattle),
                 new Process("Back", "Go back to the main menu.", () => { Page = primary; })
     }
 );
 
-        this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit(), new Amit() }, right: new Character[] { new Amit(), new Steve(), new Steve() });
+        this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Lasher(), new Regenerator(), new Lasher() });
         this.ComputerBattle = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
+        this.BossBattle = new BattlePage(mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Kitsune() });
     }
 }

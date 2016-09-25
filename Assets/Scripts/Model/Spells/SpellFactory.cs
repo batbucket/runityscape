@@ -112,11 +112,13 @@ public abstract class SpellFactory {
         caster.Discharge();
     }
 
-    public void TryCast(Character caster, Character target, SpellDetails other = null) {
-        TryCast(caster, new List<Character>() { target }, other);
+    public void TryCast(Character caster, Character target, Spell other = null) {
+        if (target != null) {
+            TryCast(caster, new List<Character>() { target }, other);
+        }
     }
 
-    public void TryCast(Character caster, IList<Character> targets, SpellDetails other = null) {
+    public void TryCast(Character caster, IList<Character> targets, Spell other = null) {
         if (targets.Any(target => IsCastable(caster, target))) {
             ConsumeResources(caster);
             OnOnce(caster, other);
@@ -126,11 +128,15 @@ public abstract class SpellFactory {
         }
     }
 
-    public void Cast(Character caster, Character target, SpellDetails other = null) {
-        Spell spell = new Spell(this, caster, target);
+    public void Cast(Character caster, Character target, Spell other = null) {
+        Spell spell = new Spell(this, caster, target, other);
         caster.CastSpells.Add(spell);
         target.RecievedSpells.Add(spell);
-        target.AddToBuffs(spell);
+
+        if (!spell.IsOneShot) {
+            target.AddToBuffs(spell);
+        }
+        spell.Tick();
     }
 
     public bool IsSingleTargetQuickCastable(Character caster, IList<Character> targets) {
@@ -157,7 +163,7 @@ public abstract class SpellFactory {
         return Name.GetHashCode();
     }
 
-    protected virtual void OnOnce(Character caster, SpellDetails other) { }
+    protected virtual void OnOnce(Character caster, Spell other) { }
 
     public abstract Hit CreateHit();
 

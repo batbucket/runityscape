@@ -14,14 +14,18 @@ using System.ComponentModel;
  */
 public static class Util {
 
+    public static string Sign(float num) {
+        return num.ToString("+#;-#;0");
+    }
+
     public static void Swap(GameObject a, GameObject b) {
         int ai = a.transform.GetSiblingIndex();
         a.transform.SetSiblingIndex(b.transform.GetSiblingIndex());
         b.transform.SetSiblingIndex(ai);
     }
 
-    public static void Log(string s) {
-        UnityEngine.Debug.Log(s);
+    public static void Log(string message) {
+        UnityEngine.Debug.Log(message);
     }
 
     public static void SetAllColorOfChildren(GameObject parent, Color color) {

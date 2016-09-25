@@ -1,0 +1,32 @@
+﻿using UnityEngine;
+using System.Collections;
+using System;
+using System.Collections.Generic;
+
+public class TailSpike : SpellFactory {
+    private const int DAMAGE = -15;
+
+    public TailSpike() : base("TailSpike", "", SpellType.OFFENSE, TargetType.SINGLE_ENEMY) { }
+
+    public override Hit CreateHit() {
+        return new Hit(
+            isState: (c, t, o) => true,
+            calculation: (c, t, o) =>
+                new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() {
+                    { ResourceType.HEALTH, new PairedInt(0, DAMAGE) }
+                }),
+            perform: (c, t, calc, o) => {
+                Result.NumericPerform(c, t, calc);
+                o.Result = o.Miss;
+                o.Result.CreateText = (c2, t2, calc2, o2) => "";
+            },
+            createText: (c, t, calc, o) =>
+            string.Format(
+                "{0} attacks into {1}'s tails! The tails extend out, slicing into {0}!\n{0} took <color=red>{2}</color> counter damage!",
+                t.DisplayName,
+                c.DisplayName,
+                -calc.TargetResources[ResourceType.HEALTH].False),
+            sound: (c, t, calc, o) => "Slash_0"
+            );
+    }
+}

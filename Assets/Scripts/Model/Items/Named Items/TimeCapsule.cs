@@ -11,10 +11,11 @@ public class TimeCapsule : ConsumableItem {
         items = new Item[] {
             new OldSword(1),
             new OldArmor(1),
+            new LifePotion(3)
         };
     }
 
-    protected override void OnOnce(Character caster, SpellDetails other) {
+    protected override void OnOnce(Character caster, Spell other) {
         foreach (Item i in items) {
             caster.Selections[Selection.ITEM].Add(i);
         }
@@ -29,6 +30,6 @@ public class TimeCapsule : ConsumableItem {
     }
 
     protected override string SelfUseText(Character caster, Character target, Calculation calculation) {
-        return string.Format("{0} opened the time capsule. Old equipment has been added to {0}'s Items.\nPerhaps equipping them will help {0} remember something...", target.DisplayName);
+        return string.Format("{0} opened the time capsule.\nEquipment from the past have been added to {0}'s Items.\nPerhaps equipping them will help {0} remember something...", target.DisplayName);
     }
 }

@@ -94,7 +94,6 @@ public class Game : MonoBehaviour {
         foreach (Event myEvent in events) {
             Event e = myEvent;
             if (!e.isOneShot || (e.isOneShot && !e.HasPlayed)) {
-                Util.Log(e.delay + "");
                 float timer = 0;
                 while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.delay) {
                     yield return null;

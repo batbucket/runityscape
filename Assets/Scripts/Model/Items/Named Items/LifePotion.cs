@@ -6,10 +6,10 @@ using System.Collections.Generic;
 public class LifePotion : ConsumableItem {
 
     public const string NAME = "LifePotion";
-    public static readonly string DESCRIPTION = string.Format("Heal an ally for <color=lime>10</color> Life.", HEAL_AMOUNT);
-    public const int HEAL_AMOUNT = 5;
-    public const string USE_TEXT_SELF = "{1} uses a life potion, restoring <color=lime>{2}</color> life!";
-    public const string USE_TEXT_OTHER = "{0} uses a life potion on {1}, restoring <color=lime>{2}</color> life!";
+    public static readonly string DESCRIPTION = string.Format("Heal an ally for <color=lime>{0}</color> Life.", HEAL_AMOUNT);
+    public const int HEAL_AMOUNT = 20;
+    public const string USE_TEXT_SELF = "{1} uses a life potion!\n{1} restored <color=lime>{2}</color> life!";
+    public const string USE_TEXT_OTHER = "{0} uses a life potion on {1}!\n{1} restored <color=lime>{2}</color> life!";
 
     public LifePotion(int count = 1) : base(NAME, DESCRIPTION, count) { }
 

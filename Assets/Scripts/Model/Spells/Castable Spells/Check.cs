@@ -23,6 +23,13 @@ public class Check : SpellFactory {
         foreach (KeyValuePair<AttributeType, Attribute> pair in target.Attributes) {
             s.Add(Util.Color(string.Format("{0}/{1}", pair.Value.False, pair.Value.True), pair.Key.Color));
         }
-        return string.Format("{0} Lv {1}\n{2}{3}", target.DisplayName, target.Level, string.Join(" ", s.ToArray()), string.IsNullOrEmpty(target.CheckText) ? "" : string.Format("\n{0}", target.CheckText));
+        return string.Format(
+            "{0} Lv {1}\n{2}{3}{4}",
+            target.DisplayName,
+            target.Level,
+            string.Join(" ", s.ToArray()),
+            string.IsNullOrEmpty(target.CheckText) ? "" : string.Format("\n{0}", target.CheckText),
+            target.Selections[Selection.EQUIP].Count <= 0 ? "" : string.Format("\n{0}", target.Selections[Selection.EQUIP].ToString())
+            );
     }
 }

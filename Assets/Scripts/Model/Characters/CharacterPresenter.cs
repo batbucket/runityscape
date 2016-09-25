@@ -11,10 +11,9 @@ public class CharacterPresenter {
     }
 
     public void Tick() {
-        PortraitView.IsShowingBarCounts = Character.IsShowingBarCounts;
 
         //Attempt to set ResourceViews
-        PortraitView.SetResources(Character.Resources.Keys.Where(k => Character.Resources[k].IsVisible).ToArray());
+        PortraitView.SetResources(Character.Resources.Keys.Where(k => Character.Resources[k].IsVisible && (Character.IsShowingBarCounts || !k.Equals(ResourceType.CHARGE))).ToArray());
 
         foreach (KeyValuePair<AttributeType, Attribute> pair in Character.Attributes) {
             PortraitView.SetAttributes(pair.Key, new PortraitView.AttributeBundle { falseValue = (int)pair.Value.False, trueValue = pair.Value.True });
@@ -27,7 +26,7 @@ public class CharacterPresenter {
                 ResourceType resType = pair.Key;
                 Resource res = pair.Value;
 
-                if (PortraitView.IsShowingBarCounts) {
+                if (Character.IsShowingBarCounts) {
                     rv.Text = resType.DisplayFunction(res.False, res.True);
                 } else {
                     rv.Text = "";

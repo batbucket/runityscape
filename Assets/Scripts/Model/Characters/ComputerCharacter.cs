@@ -4,14 +4,14 @@ using System;
 using System.Collections.Generic;
 
 public abstract class ComputerCharacter : Character {
-    public const float CHARGE_CAP_RATIO = 6f;
+    public const float CHARGE_CAP_RATIO = 3f;
 
-    public const bool DISPLAYABLE = false;
+    public const bool CONTROLLABLE_CPU = false;
     readonly float maxDelay;
     protected float delay;
 
     public ComputerCharacter(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, float maxDelay, string checkText = "")
-        : base(spriteLoc, name, level, strength, intelligence, dexterity, vitality, textColor, DISPLAYABLE, checkText) {
+        : base(spriteLoc, name, level, strength, intelligence, dexterity, vitality, textColor, CONTROLLABLE_CPU, checkText) {
         this.maxDelay = maxDelay;
         this.delay = UnityEngine.Random.Range(0, maxDelay);
     }

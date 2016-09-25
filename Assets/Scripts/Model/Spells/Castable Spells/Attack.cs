@@ -24,8 +24,9 @@ public class Attack : SpellFactory {
     public Attack() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
     }
 
-    protected override void OnOnce(Character caster, SpellDetails other) {
+    protected override void OnOnce(Character caster, Spell other) {
         caster.AddToResource(ResourceType.SKILL, false, 1, true);
+        caster.Presenter.PortraitView.AddEffect(new HitsplatEffect(caster.Presenter.PortraitView, Color.yellow, "+1"));
     }
 
     private const string SOUND_LOCATION = "Slash_0";
@@ -49,12 +50,6 @@ public class Attack : SpellFactory {
             },
             sound: (c, t, calc, o) => {
                 return SOUND_LOCATION;
-            },
-            sfx: (c, t, calc, o) => {
-                return new CharacterEffect[] {
-                    ShakeBasedOnDamage(t, calc.TargetResources[ResourceType.HEALTH].False),
-                    DamageSplat(t, calc.TargetResources[ResourceType.HEALTH].False),
-                };
             }
         );
     }
@@ -79,11 +74,7 @@ public class Attack : SpellFactory {
                     return SOUND_LOCATION;
                 },
                 sfx: (c, t, calc, o) => {
-                    return new CharacterEffect[] {
-                        DamageSplat(t, calc.TargetResources[ResourceType.HEALTH].False, "!"),
-                        ShakeBasedOnDamage(t, calc.TargetResources[ResourceType.HEALTH].False),
-                        new BloodsplatEffect(t.Presenter.PortraitView),
-                    };
+                    return Result.AppendToStandard(c, t, calc, new BloodsplatEffect(t.Presenter.PortraitView));
                 }
         );
     }
@@ -99,15 +90,5 @@ public class Attack : SpellFactory {
                     };
                 }
                 );
-    }
-
-    private const float BASE_SHAKE = 3;
-    private CharacterEffect ShakeBasedOnDamage(Character target, float damage) {
-        float shakePower = BASE_SHAKE * -damage / target.GetResourceCount(ResourceType.HEALTH, true);
-        return new ShakeEffect(target.Presenter.PortraitView, shakePower, 0);
-    }
-
-    private HitsplatEffect DamageSplat(Character target, float damage, string suffix = "") {
-        return new HitsplatEffect(target.Presenter.PortraitView, Color.red, damage + suffix);
     }
 }

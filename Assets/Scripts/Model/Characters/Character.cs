@@ -25,7 +25,7 @@ public abstract class Character : Entity, IReactable {
     public IDictionary<Selection, ICollection<SpellFactory>> Selections { get; private set; }
 
     public Stack<SpellFactory> SpellStack { get; private set; }
-    public IList<Spell> Buffs { get; private set; }
+    public List<Spell> Buffs { get; private set; }
     public IList<Spell> RecievedSpells { get; private set; }
     public IList<Spell> CastSpells { get; private set; }
 
@@ -33,8 +33,8 @@ public abstract class Character : Entity, IReactable {
 
     public bool Side { get; set; }
     public bool IsTargetable { get; set; }
-    public bool IsDisplayable { get; set; }
-    public bool IsControllable { get { return this.IsDisplayable && this.IsCharged(); } }
+    public bool IsControllable { get; set; }
+    public bool IsActive { get { return this.IsControllable && this.IsCharged(); } }
     public ChargeStatus ChargeStatus { get; private set; }
 
     public IDictionary<PerkType.Character, IList<InvokePerk>> CharacterPerks;
@@ -82,7 +82,7 @@ public abstract class Character : Entity, IReactable {
         };
         this.TextColor = textColor;
         this.IsTargetable = true;
-        this.IsDisplayable = isDisplayable;
+        this.IsControllable = isDisplayable;
 
         SpellStack = new Stack<SpellFactory>();
         Buffs = new List<Spell>();
@@ -261,9 +261,10 @@ public abstract class Character : Entity, IReactable {
                 OnDefeat();
             }
 
+            Buffs.RemoveAll(s => s.IsFinished);
             for (int i = 0; i < Buffs.Count; i++) {
-                Spell s = Buffs[i];
-                s.Tick();
+                Spell buff = Buffs[i];
+                buff.Tick();
             }
 
             Act();
@@ -329,19 +330,16 @@ public abstract class Character : Entity, IReactable {
     }
 
     bool defeatPosted;
-    public virtual void OnDefeat(bool isSilent = false) {
+    public virtual void OnDefeat() {
         if (defeatPosted) {
             return;
         }
         defeatPosted = true;
-        if (!isSilent) {
-            Character defeater = RecievedSpells[RecievedSpells.Count - 1].Caster;
-            Game.Instance.TextBoxHolder.AddTextBoxView(
-                new TextBox(
-                    string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName, defeater.DisplayName),
-                    Color.white, TextEffect.FADE_IN)
-                );
-        }
+        Game.Instance.TextBoxHolder.AddTextBoxView(
+            new TextBox(
+                string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName),
+                Color.white, TextEffect.FADE_IN)
+            );
         Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
         Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
         AddToResource(ResourceType.HEALTH, false, 1, false);
@@ -350,18 +348,16 @@ public abstract class Character : Entity, IReactable {
     }
 
     bool killPosted;
-    public virtual void OnKill(bool isSilent = false) {
+    public virtual void OnKill() {
         if (killPosted) {
             return;
         }
         killPosted = true;
-        if (!isSilent) {
-            Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
-            Game.Instance.TextBoxHolder.AddTextBoxView(
-                new TextBox(
-                    string.Format("{0} was <color=red>slain</color>.", DisplayName, killer.DisplayName),
-                    Color.white, TextEffect.FADE_IN));
-        }
+        Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
+        Game.Instance.TextBoxHolder.AddTextBoxView(
+            new TextBox(
+                string.Format("{0} was <color=red>slain</color>.", DisplayName, killer.DisplayName),
+                Color.white, TextEffect.FADE_IN));
         this.IsTargetable = false;
         Buffs.Clear();
         Presenter.PortraitView.ClearEffects();
@@ -383,5 +379,26 @@ public abstract class Character : Entity, IReactable {
 
     public virtual void OnBattleEnd() {
         AddToResource(ResourceType.SKILL, false, -GetResourceCount(ResourceType.SKILL, false));
+    }
+
+    protected void Talk(string s) {
+        AvatarBox a = null;
+        if (Side) {
+            a = new RightBox(this, s);
+        } else {
+            a = new LeftBox(this, s);
+        }
+        Game.Instance.AddTextBox(a);
+    }
+
+    protected void Talk(params string[] strings) {
+        string s = strings.PickRandom();
+        AvatarBox a = null;
+        if (Side) {
+            a = new RightBox(this, s);
+        } else {
+            a = new LeftBox(this, s);
+        }
+        Game.Instance.AddTextBox(a);
     }
 }

@@ -4,18 +4,20 @@ using System;
 using System.Collections.Generic;
 
 public class Critical : Result {
-    public Critical(Func<Character, Character, SpellDetails, bool> isState = null,
-              Func<Character, Character, SpellDetails, float> duration = null,
-              Func<Character, Character, SpellDetails, float> timePerTick = null,
-              Func<Character, Character, SpellDetails, bool> isIndefinite = null,
-              Func<Character, Character, SpellDetails, Calculation> calculation = null,
-              Action<Character, Character, Calculation, SpellDetails> perform = null,
-              Action<Character, Character, SpellDetails> onStart = null,
-              Action<Character, Character, SpellDetails> onEnd = null,
-              Func<Character, Character, Calculation, SpellDetails, string> createText = null,
-              Func<Character, Character, Calculation, SpellDetails, string> sound = null,
-              Func<Character, Character, Calculation, SpellDetails, IList<CharacterEffect>> sfx = null)
-        : base(isState, duration, timePerTick, isIndefinite, calculation, perform, onStart, onEnd, createText, sound, sfx) {
+    public Critical(Func<Character, Character, Spell, bool> isState = null,
+              Func<Character, Character, Spell, float> duration = null,
+              Func<Character, Character, Spell, float> timePerTick = null,
+              Func<Character, Character, Spell, bool> isIndefinite = null,
+              Action<Spell> react = null,
+              Action<Spell> witness = null,
+              Func<Character, Character, Spell, Calculation> calculation = null,
+              Action<Character, Character, Calculation, Spell> perform = null,
+              Action<Character, Character, Spell> onStart = null,
+              Action<Character, Character, Spell> onEnd = null,
+              Func<Character, Character, Calculation, Spell, string> createText = null,
+              Func<Character, Character, Calculation, Spell, string> sound = null,
+              Func<Character, Character, Calculation, Spell, IList<CharacterEffect>> sfx = null)
+        : base(isState, duration, timePerTick, react, witness, isIndefinite, calculation, perform, onStart, onEnd, createText, sound, sfx) {
 
     }
 }

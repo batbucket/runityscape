@@ -8,7 +8,7 @@ public class Spell {
     public SpellFactory SpellFactory { get; set; }
     public Character Caster { get; set; }
     public Character Target { get; set; }
-    public SpellDetails Other { get; set; }
+    public Spell Other { get; set; }
 
     public Hit Hit { get; set; }
     public Critical Critical { get; set; }
@@ -21,7 +21,13 @@ public class Spell {
 
     private bool isFirstTick;
 
-    public Spell(SpellFactory spellFactory, Character caster, Character target, SpellDetails other = null) {
+    public bool IsOneShot {
+        get {
+            return !IsIndefinite && Duration <= 0 && TimePerTick <= 0;
+        }
+    }
+
+    public Spell(SpellFactory spellFactory, Character caster, Character target, Spell other = null) {
         this.SpellFactory = spellFactory;
 
         this.Hit = spellFactory.CreateHit();
@@ -33,6 +39,14 @@ public class Spell {
         this.Other = other;
 
         this.isFirstTick = true;
+
+        Result = DetermineResult();
+        Calculation = Result.Calculation(this.Caster, this.Target, this.Other);
+        IsIndefinite = Result.IsIndefinite(this.Caster, this.Target, this.Other);
+        Duration = Result.Duration.Invoke(this.Caster, this.Target, this.Other);
+        DurationTimer = Duration;
+        TimePerTick = Result.TimePerTick.Invoke(this.Caster, this.Target, this.Other);
+        TickTimer = TimePerTick;
     }
 
     public bool IsIndefinite;
@@ -52,34 +66,28 @@ public class Spell {
 
     public virtual void Tick() {
         if (isFirstTick) {
-            isFirstTick = false;
-            Result = DetermineResult();
-            IsIndefinite = Result.IsIndefinite(this.Caster, this.Target, this.Other);
-            Duration = Result.Duration.Invoke(this.Caster, this.Target, this.Other);
-            DurationTimer = Duration;
-            TimePerTick = Result.TimePerTick.Invoke(this.Caster, this.Target, this.Other);
-            TickTimer = TimePerTick;
-
             Result.OnStart(this.Caster, this.Target, this.Other);
 
             if (!IsIndefinite && Duration <= 0 && TimePerTick <= 0) {
                 Invoke();
-                Target.Buffs.Remove(this);
                 IsFinished = true;
                 Result.OnEnd(Caster, Target, Other);
+                isFirstTick = false;
             }
         }
 
-        if (!IsIndefinite && !IsFinished && DurationTimer <= 0) {
-            Result.OnEnd(Caster, Target, Other);
-            Target.Buffs.Remove(this);
-            IsFinished = true;
-        }
+        if (!IsFinished) {
+            if (!IsIndefinite && DurationTimer <= 0) {
+                Result.OnEnd(Caster, Target, Other);
+                IsFinished = true;
+            }
 
-        if (IsIndefinite || (DurationTimer -= Time.deltaTime) > 0) {
-            if ((TickTimer -= Time.deltaTime) <= 0) {
-                Invoke();
-                TickTimer = TimePerTick;
+            if (IsIndefinite || (DurationTimer -= Time.deltaTime) > 0) {
+                if ((TickTimer -= Time.deltaTime) <= 0) {
+                    Invoke();
+                    TickTimer = TimePerTick;
+                    isFirstTick = false;
+                }
             }
         }
     }
@@ -96,41 +104,39 @@ public class Spell {
         }
     }
 
-    public virtual void React(Spell spell) { }
-
-    public virtual void Witness(Spell spell) { }
-
     protected virtual void Invoke() {
-        Calculation = Result.Calculation(this.Caster, this.Target, this.Other);
-
-        Target.React(this);
         for (int i = 0; i < Caster.Buffs.Count; i++) {
-            Spell s = Caster.Buffs[i];
-            s.React(this);
+            Spell buff = Caster.Buffs[i];
+            buff.Result.React(this);
         }
         for (int i = 0; i < Target.Buffs.Count; i++) {
-            Spell s = Target.Buffs[i];
-            s.React(this);
+            Spell buff = Target.Buffs[i];
+            buff.Result.React(this);
         }
+        Caster.React(this);
+        Target.React(this);
 
         IList<Character> characters = Game.Instance.PagePresenter.Page.GetAll();
         for (int i = 0; i < characters.Count; i++) {
             Character c = characters[i];
             c.Witness(this);
             for (int j = 0; j < c.Buffs.Count; j++) {
-                Spell s = c.Buffs[j];
-                s.Witness(this);
+                Spell buff = c.Buffs[j];
+                buff.Result.Witness(this);
             }
         }
+
         Result.Perform(this.Caster, this.Target, Calculation, this.Other);
         IList<CharacterEffect> ce = Result.Sfx(this.Caster, this.Target, Calculation, this.Other);
         foreach (CharacterEffect sfx in ce) {
             Target.Presenter.PortraitView.AddEffect(sfx);
         }
+
         Game.Instance.Sound.Play(Result.Sound(this.Caster, this.Target, Calculation, this.Other));
         string text = Result.CreateText(this.Caster, this.Target, Calculation, this.Other);
-        if (!string.IsNullOrEmpty(text)) {
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, 3f, TextEffect.FADE_IN));
+
+        if (!string.IsNullOrEmpty(text) && isFirstTick) {
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, 6f, TextEffect.FADE_IN));
         }
     }
 }

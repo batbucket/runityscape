@@ -11,10 +11,6 @@ public class PagePresenter {
 
     InputBoxView inputBox;
 
-    /// <summary>
-    /// Number of characters it takes to make a textbox as large as possible without requiring scrolling to see every character.
-    /// </summary>
-    private const int PERFECT_FIT_CHARACTER_COUNT = 540;
     public string InputtedText {
         get {
             Util.Assert(inputBox != null, "Cannot get InputBox value from a Page without an InputBox!");

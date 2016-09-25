@@ -8,7 +8,7 @@ public class Equipment : ICollection<SpellFactory> {
     SortedDictionary<EquipmentType, EquippableItem> equipment;
     Inventory inventory;
 
-    public int Count { get { return equipment.Count; } }
+    public int Count { get { return equipment.Values.Count(c => c != null); } }
 
     public bool IsReadOnly { get { return false; } }
 
@@ -71,6 +71,10 @@ public class Equipment : ICollection<SpellFactory> {
 
     public IEnumerator<SpellFactory> GetEnumerator() {
         return equipment.Values.Select(e => (SpellFactory)e).OfType<SpellFactory>().ToList().GetEnumerator();
+    }
+
+    public override string ToString() {
+        return string.Join(" ", equipment.Values.Where(e => e != null).Select(e => e.Name).ToArray());
     }
 
     IEnumerator IEnumerable.GetEnumerator() {

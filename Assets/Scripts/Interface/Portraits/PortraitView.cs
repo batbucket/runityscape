@@ -56,8 +56,6 @@ public abstract class PortraitView : MonoBehaviour {
     [SerializeField]
     GameObject _buffPrefab;
 
-    public bool IsShowingBarCounts;
-
     // Use this for initialization
     void Awake() {
         ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
