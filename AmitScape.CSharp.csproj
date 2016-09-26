@@ -163,6 +163,7 @@
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Tutorial\Lash.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Tutorial\Petrify.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Tutorial\Regenerate.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Tutorial\SummonTent.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Tutorial\TailSpike.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Tutorial\TransferLife.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\CounterSpellFactory.cs" />

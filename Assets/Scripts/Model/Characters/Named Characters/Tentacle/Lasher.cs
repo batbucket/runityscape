@@ -10,4 +10,8 @@ public class Lasher : Tentacle {
     protected override void DecideSpell() {
         QuickCast(new Lash());
     }
+
+    public override Tentacle Summon() {
+        return new Lasher();
+    }
 }

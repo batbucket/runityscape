@@ -127,7 +127,9 @@ public abstract class PortraitView : MonoBehaviour {
         //We can use same keys list as before since newly added keys cannot be false
         foreach (ResourceType key in keys) {
             if (!ResourceViews[key].isSet) {
-                GameObject.Destroy(ResourceViews[key].resourceView.gameObject);
+                if (ResourceViews[key].resourceView != null) {
+                    GameObject.Destroy(ResourceViews[key].resourceView.gameObject);
+                }
                 ResourceViews.Remove(key);
             }
         }

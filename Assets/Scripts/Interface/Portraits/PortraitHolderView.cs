@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+using System.Linq;
 
 public abstract class PortraitHolderView : MonoBehaviour {
 
@@ -27,7 +27,7 @@ public abstract class PortraitHolderView : MonoBehaviour {
         //Add or possibly replace new PortraitViews.
         foreach (Character c in characters) {
             PortraitView pv;
-            if (!CharacterViews.ContainsKey(c)) {
+            if (!CharacterViews.ContainsKey(c) || CharacterViews[c].portraitView == null) {
                 GameObject g = (GameObject)GameObject.Instantiate(portraitPrefab);
                 Util.Parent(g, gameObject);
                 pv = g.GetComponent<PortraitView>();

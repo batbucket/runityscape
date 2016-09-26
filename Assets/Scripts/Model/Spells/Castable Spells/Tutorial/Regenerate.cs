@@ -10,7 +10,8 @@ public class Regenerate : SpellFactory {
             isState: (c, t, o) => true,
             isIndefinite: (c, t, o) => true,
             timePerTick: (c, t, o) => 0f,
-            perform: (c, t, calc, o) => t.AddToResource(ResourceType.HEALTH, false, 0.02f)
+            perform: (c, t, calc, o) => t.AddToResource(ResourceType.HEALTH, false, 0.02f),
+            sfx: (c, t, calc, o) => new CharacterEffect[0]
             );
     }
 }

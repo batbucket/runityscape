@@ -94,7 +94,10 @@ public abstract class SpellFactory {
         if (target != null && !target.IsTargetable) {
             return false;
         }
-        if (!caster.IsCharged() || !IsEnabled) {
+        if (!caster.IsCharged || !IsEnabled) {
+            return false;
+        }
+        if (!IsSelfTargetable && caster == target) {
             return false;
         }
         foreach (KeyValuePair<ResourceType, int> resourceCost in _costs) {

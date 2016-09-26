@@ -36,6 +36,7 @@ public class PagePresenter {
         }
 
         this.Page = page;
+        Page.GetAll().ForEach(c => c.BattleTimer = 0);
         Util.KillAllChildren(Game.Instance.TextBoxHolder.gameObject);
 
         if (!string.IsNullOrEmpty(page.Text)) {
@@ -72,8 +73,9 @@ public class PagePresenter {
     }
 
     void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
-        portraitHolder.AddPortraits(characters); //Pass in characters' Names as parameter
-        foreach (Character c in characters) {
+        IList<Character> targetableCharacters = characters.Where(c => c.IsTargetable).ToArray();
+        portraitHolder.AddPortraits(targetableCharacters); //Pass in characters' Names as parameter
+        foreach (Character c in targetableCharacters) {
             c.Presenter = new CharacterPresenter(c, portraitHolder.CharacterViews[c].portraitView);
             c.Presenter.PortraitView.Presenter = c.Presenter;
         }

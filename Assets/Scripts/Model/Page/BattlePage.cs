@@ -108,6 +108,7 @@ public class BattlePage : Page {
 
         switch (State) {
             case BattleState.BATTLE:
+                IList<Character> all = GetAll().Where(c => c.IsTargetable).ToArray();
                 foreach (Character c in GetAll()) {
                     c.Tick(MainCharacter, true);
                     if (c.IsActive) { characterQueue.Enqueue(c); }
@@ -118,7 +119,7 @@ public class BattlePage : Page {
                  * Remove activeCharacter if they are not charged,
                  * Indicating that they've casted a spell or are under some status effect
                  */
-                if (activeCharacter == null || (activeCharacter != null && (!activeCharacter.IsCharged() || activeCharacter.State == CharacterState.DEFEAT || activeCharacter.State == CharacterState.KILLED))) {
+                if (activeCharacter == null || (activeCharacter != null && (!activeCharacter.IsCharged || activeCharacter.State == CharacterState.DEFEAT || activeCharacter.State == CharacterState.KILLED))) {
                     activeCharacter = PopAbledCharacter();
                 }
 
@@ -163,7 +164,7 @@ public class BattlePage : Page {
     Character PopAbledCharacter() {
 
         //Remove all !IsCharged() characters from the front of the Queue
-        while (characterQueue.Count > 0 && !characterQueue.Peek().IsCharged()) {
+        while (characterQueue.Count > 0 && !characterQueue.Peek().IsCharged) {
             characterQueue.Dequeue();
         }
 
@@ -189,7 +190,7 @@ public class BattlePage : Page {
         } else {
             ShowBackButton(character);
             if (currentSelectionNode.Value == Selection.TARGET) {
-                ShowTargetsAsList(targets, character);
+                ShowTargetsAsList(targets.Where(t => t.IsTargetable).ToArray(), character);
             } else if (currentSelectionNode.Value == Selection.SWITCH) {
                 ShowSwitchMenu(character);
             } else if (currentSelectionNode.Value == Selection.EQUIP) {
@@ -274,7 +275,7 @@ public class BattlePage : Page {
         this.ActionGrid[BACK_INDEX] = new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Declare, current.DisplayName),
             () => {
                 //Quick switch if there's only one other abledCharacter to switch with
-                IList<Character> abledCharacters = GetAll().FindAll(c => !current.Equals(c) && c.IsControllable && c.IsCharged());
+                IList<Character> abledCharacters = GetAll().FindAll(c => !current.Equals(c) && c.IsControllable && c.IsCharged);
                 Tooltip = "";
                 if (abledCharacters.Count == 1) {
                     activeCharacter = abledCharacters[0];
@@ -291,7 +292,7 @@ public class BattlePage : Page {
             Character target = myTarget;
 
             //You are not allowed to switch with yourself.
-            if (!current.Equals(target) && target.IsControllable && target.IsCharged()) {
+            if (!current.Equals(target) && target.IsControllable && target.IsCharged) {
                 ActionGrid[index++] = new Process(target.DisplayName, string.Format("{0} will SWITCH with {1}.", current.DisplayName, target.DisplayName),
                     () => {
                         Tooltip = "";
@@ -332,7 +333,7 @@ public class BattlePage : Page {
         if (spell.TargetType == TargetType.SINGLE_ALLY || spell.TargetType == TargetType.SINGLE_ENEMY || spell.TargetType == TargetType.ANY) {
             switch (spell.TargetType) {
                 case TargetType.SINGLE_ALLY:
-                    resetSelection = DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster, spell.IsSelfTargetable));
+                    resetSelection = DetermineSingleTargetQuickCast(spell, caster, this.GetAllies(caster));
                     break;
                 case TargetType.SINGLE_ENEMY:
                     resetSelection = DetermineSingleTargetQuickCast(spell, caster, this.GetEnemies(caster));
@@ -348,8 +349,8 @@ public class BattlePage : Page {
                     spell.TryCast(caster, caster);
                     break;
                 case TargetType.ALL_ALLY:
-                    resetSelection = this.GetAllies(caster, spell.IsSelfTargetable).Any(c => spell.IsCastable(caster, c));
-                    spell.TryCast(caster, this.GetAllies(caster, spell.IsSelfTargetable));
+                    resetSelection = this.GetAllies(caster).Any(c => spell.IsCastable(caster, c));
+                    spell.TryCast(caster, this.GetAllies(caster));
                     break;
                 case TargetType.ALL_ENEMY:
                     resetSelection = this.GetEnemies(caster).Any(c => spell.IsCastable(caster, c));
@@ -368,10 +369,11 @@ public class BattlePage : Page {
     }
 
     bool DetermineSingleTargetQuickCast(SpellFactory spell, Character caster, IList<Character> targets) {
-        if (spell.IsSingleTargetQuickCastable(caster, targets) && spell.IsCastable(caster, targets[0])) {
-            spell.TryCast(caster, targets[0]);
+        IList<Character> targetables = targets.Where(t => t.IsTargetable).ToArray();
+        if (spell.IsSingleTargetQuickCastable(caster, targetables) && spell.IsCastable(caster, targetables[0])) {
+            spell.TryCast(caster, targetables[0]);
             return true;
-        } else if (spell.IsCastable(caster) && targets.Count > 1) {
+        } else if (spell.IsCastable(caster) && targetables.Count > 1) {
             targetedSpell = spell;
             this.targets = targets;
             currentSelectionNode = currentSelectionNode.FindChild(Selection.TARGET);

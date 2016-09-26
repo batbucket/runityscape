@@ -17,7 +17,7 @@ public abstract class ComputerCharacter : Character {
     }
 
     public override void Act() {
-        if (State == CharacterState.ALIVE && IsCharged() && (delay -= Time.deltaTime) <= 0) {
+        if (State == CharacterState.ALIVE && IsCharged && (delay -= Time.deltaTime) <= 0) {
             DecideSpell();
             delay = UnityEngine.Random.Range(0, maxDelay);
         }
@@ -39,7 +39,9 @@ public abstract class ComputerCharacter : Character {
         } else {
             switch (spell.TargetType) {
                 case TargetType.SINGLE_ALLY:
-                    spell.TryCast(this, page.GetRandomAlly(this, spell.IsSelfTargetable));
+                    Character ally = page.GetRandomAlly(this);
+                    Util.Log(ally == null ? "null" : ally.DisplayName);
+                    spell.TryCast(this, page.GetRandomAlly(this));
                     break;
                 case TargetType.SINGLE_ENEMY:
                     spell.TryCast(this, page.GetRandomEnemy(this));
@@ -48,7 +50,7 @@ public abstract class ComputerCharacter : Character {
                     spell.TryCast(this, this);
                     break;
                 case TargetType.ALL_ALLY:
-                    spell.TryCast(this, page.GetAllies(this, spell.IsSelfTargetable));
+                    spell.TryCast(this, page.GetAllies(this));
                     break;
                 case TargetType.ALL_ENEMY:
                     spell.TryCast(this, page.GetEnemies(this));

@@ -19,7 +19,7 @@ public class Regenerator : Tentacle {
              * Choose lowest health, non-regenerator ally to transfer life to.
              */
             Character target = Game.Instance.PagePresenter
-                .Page.GetAllies(this, false)
+                .Page.GetAllies(this)
                 .Where(c => !(c is Regenerator))
                 .OrderBy(c => c.GetResourceCount(ResourceType.HEALTH, false))
                 .FirstOrDefault();
@@ -28,5 +28,9 @@ public class Regenerator : Tentacle {
                 QuickCast(new TransferLife(), target);
             }
         }
+    }
+
+    public override Tentacle Summon() {
+        return new Regenerator();
     }
 }

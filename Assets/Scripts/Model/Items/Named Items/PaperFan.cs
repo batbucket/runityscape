@@ -11,7 +11,7 @@ public class PaperFan : EquippableItem {
             EquipmentType.WEAPON,
             new Dictionary<AttributeType, PairedInt>() {
                 { AttributeType.STRENGTH, new PairedInt(-Kitsune.STR + 5, 1) },
-                { AttributeType.DEXTERITY, new PairedInt(-Kitsune.VIT + 1, 1) }
+                { AttributeType.DEXTERITY, new PairedInt(-Kitsune.DEX + 2, 1) }
             }
             ) { }
 }

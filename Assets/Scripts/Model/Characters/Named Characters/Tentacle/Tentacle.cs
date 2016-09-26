@@ -13,4 +13,5 @@ public abstract class Tentacle : ComputerCharacter {
         OnKill();
     }
 
+    public abstract Tentacle Summon();
 }

@@ -32,13 +32,30 @@ public abstract class Character : Entity, IReactable {
     public Color TextColor { get; private set; }
 
     public bool Side { get; set; }
-    public bool IsTargetable { get; set; }
+
+    private bool isTargetable;
+    public bool IsTargetable {
+        get {
+            return isTargetable;
+        }
+        set {
+            isTargetable = value;
+            Discharge();
+        }
+    }
     public bool IsControllable { get; set; }
-    public bool IsActive { get { return this.IsControllable && this.IsCharged(); } }
+    public bool IsActive { get { return this.IsControllable && this.IsCharged; } }
     public ChargeStatus ChargeStatus { get; private set; }
+    public bool IsCharged {
+        get {
+            return HasResource(ResourceType.CHARGE) && (GetResourceCount(ResourceType.CHARGE, false) == GetResourceCount(ResourceType.CHARGE, true));
+        }
+    }
 
     public IDictionary<PerkType.Character, IList<InvokePerk>> CharacterPerks;
     public IDictionary<PerkType.React, IList<ReactPerk>> ReactPerks;
+
+    public float BattleTimer;
 
     public CharacterState State {
         get {
@@ -186,10 +203,6 @@ public abstract class Character : Entity, IReactable {
         AddToResource(ResourceType.CHARGE, false, -GetResourceCount(ResourceType.CHARGE, true));
     }
 
-    public bool IsCharged() {
-        return HasResource(ResourceType.CHARGE) && (GetResourceCount(ResourceType.CHARGE, false) == GetResourceCount(ResourceType.CHARGE, true));
-    }
-
     void CalculateResources() {
         foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
             pair.Value.Calculate();
@@ -222,6 +235,8 @@ public abstract class Character : Entity, IReactable {
         CalculateResources();
         if (isInCombat) {
 
+            BattleTimer += Time.deltaTime;
+
             foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
                 if (pair.Key != ResourceType.HEALTH) {
                     pair.Value.IsVisible = State == CharacterState.ALIVE;
@@ -231,7 +246,7 @@ public abstract class Character : Entity, IReactable {
             if (State == CharacterState.ALIVE) {
                 Charge();
             }
-            if (!IsCharged()) {
+            if (!IsCharged) {
                 ChargeStatus = ChargeStatus.NOT_CHARGED;
             } else {
                 switch (ChargeStatus) {
@@ -358,7 +373,6 @@ public abstract class Character : Entity, IReactable {
             new TextBox(
                 string.Format("{0} was <color=red>slain</color>.", DisplayName, killer.DisplayName),
                 Color.white, TextEffect.FADE_IN));
-        this.IsTargetable = false;
         Buffs.Clear();
         Presenter.PortraitView.ClearEffects();
         Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
@@ -389,6 +403,10 @@ public abstract class Character : Entity, IReactable {
             a = new LeftBox(this, s);
         }
         Game.Instance.AddTextBox(a);
+    }
+
+    protected void Emote(string s) {
+        Game.Instance.AddTextBox(new TextBox(s));
     }
 
     protected void Talk(params string[] strings) {

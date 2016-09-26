@@ -214,20 +214,16 @@ public abstract class Page {
         return !isRightSide ? LeftCharacters : RightCharacters;
     }
 
-    public IList<Character> GetAllies(Character c, bool includeSelf = true) {
-        if (includeSelf) {
-            return GetCharacters(c.Side);
-        } else {
-            return GetCharacters(c.Side).Where(chara => chara != c).ToList();
-        }
+    public IList<Character> GetAllies(Character c) {
+        return GetCharacters(c.Side);
     }
 
     public IList<Character> GetEnemies(Character c) {
         return GetCharacters(!c.Side);
     }
 
-    public Character GetRandomAlly(Character c, bool includeSelf = true) {
-        return GetAllies(c, includeSelf).PickRandom();
+    public Character GetRandomAlly(Character c) {
+        return GetAllies(c).PickRandom();
     }
 
     public Character GetRandomEnemy(Character c) {
