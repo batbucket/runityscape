@@ -30,6 +30,6 @@ public class TimeCapsule : ConsumableItem {
     }
 
     protected override string SelfUseText(Character caster, Character target, Calculation calculation) {
-        return string.Format("{0} opened the time capsule.\nEquipment from the past have been added to {0}'s Items.\nPerhaps equipping them will help {0} remember something...", target.DisplayName);
+        return string.Format("{0} opened the time capsule.\nOld equipment has been added to {0}'s Items.\nEquipping them may help {0} recall something...", target.DisplayName);
     }
 }

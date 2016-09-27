@@ -29,6 +29,8 @@ public class BattlePage : Page {
     BattleState? _battleState;
     public BattleState? State { get { return _battleState; } set { _battleState = value; } }
 
+    private bool isTicking;
+
     public BattlePage(
         string text = "",
         string tooltip = "",
@@ -67,7 +69,7 @@ public class BattlePage : Page {
         }
         currentSelectionNode = selectionTree;
 
-        this.IsVictory = isVictory ?? (() => GetEnemies(mainCharacter).Count == 0); // No more enemies
+        this.IsVictory = isVictory ?? (() => GetEnemies(mainCharacter).All(c => c.State == CharacterState.KILLED)); // No non-killed enemies
         this.OnVictory = onVictory ?? (() => { });
 
         this.IsMercy = isMercy ?? (() => {
@@ -78,6 +80,7 @@ public class BattlePage : Page {
         this.IsDefeat = isDefeat ?? (() => mainCharacter.State == CharacterState.KILLED);
         this.OnDefeat = onDefeat ?? (() => { Game.Instance.Defeat(); });
         this.State = BattleState.BATTLE;
+        this.isTicking = true;
     }
 
     public override void OnAnyEnter() {
@@ -86,17 +89,17 @@ public class BattlePage : Page {
     }
 
     public override void Tick() {
+        if (!isTicking) {
+            return;
+        }
+
         base.Tick();
 
         if (IsMercy.Invoke()) {
             State = BattleState.MERCY;
-        }
-
-        if (IsVictory.Invoke()) {
+        } else if (IsVictory.Invoke()) {
             State = BattleState.VICTORY;
-        }
-
-        if (IsDefeat.Invoke()) {
+        } else if (IsDefeat.Invoke()) {
             State = BattleState.DEFEAT;
         }
 
@@ -104,6 +107,7 @@ public class BattlePage : Page {
             foreach (Character c in GetAll()) {
                 c.OnBattleEnd();
             }
+            isTicking = false;
         }
 
         switch (State) {
@@ -136,7 +140,6 @@ public class BattlePage : Page {
             case BattleState.MERCY:
                 OnMercy.Invoke();
                 Game.Instance.Sound.StopAll();
-                _battleState = null;
                 break;
             case BattleState.VICTORY:
                 foreach (Character c in GetAllies(MainCharacter)) {
@@ -144,15 +147,13 @@ public class BattlePage : Page {
                 }
                 OnVictory.Invoke();
                 Game.Instance.Sound.StopAll();
-                _battleState = null;
                 break;
             case BattleState.DEFEAT:
-                foreach (Character c in GetAllies(MainCharacter)) {
-                    c.OnDefeat();
+                foreach (Character c in GetEnemies(MainCharacter)) {
+                    c.OnVictory();
                 }
                 Game.Instance.Sound.StopAll();
                 OnDefeat.Invoke();
-                _battleState = null;
                 break;
         }
     }

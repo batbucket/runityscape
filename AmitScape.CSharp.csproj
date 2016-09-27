@@ -139,9 +139,9 @@
     <Compile Include="Assets\Scripts\Model\Items\Named Items\Lobster.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\OldArmor.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\OldSword.cs" />
-    <Compile Include="Assets\Scripts\Model\Items\Named Items\PaperFan.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\Scimitar.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\TimeCapsule.cs" />
+    <Compile Include="Assets\Scripts\Model\Items\Named Items\WoodFan.cs" />
     <Compile Include="Assets\Scripts\Model\Page\BattlePage.cs" />
     <Compile Include="Assets\Scripts\Model\Page\BattleState.cs" />
     <Compile Include="Assets\Scripts\Model\Page\Page.cs" />

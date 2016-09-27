@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class Smite : SpellFactory {
     const string NAME = "Smite";
     static readonly string DESCRIPTION = string.Format("Deal <color=red>{0}</color> unresistable damage.", DAMAGE);
-    static readonly string TEXT = "{0} invokes the wrath of the heavens on {1} for <color=red>{2}</color> damage!";
+    static readonly string TEXT = "{0} invokes the wrath of heaven on {1}!\n{1} took <color=red>{2}</color> damage!";
     const SpellType SPELL_TYPE = SpellType.OFFENSE;
     const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
     static readonly IDictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>() {

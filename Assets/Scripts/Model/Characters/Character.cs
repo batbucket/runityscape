@@ -8,7 +8,7 @@ using System;
  * Attributes and Resources
  */
 public abstract class Character : Entity, IReactable {
-    public const int CHARGE_MULTIPLIER = 1;
+    public static readonly float CHARGE_MULTIPLIER = 60 * Time.deltaTime;
 
     public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
 
@@ -264,18 +264,6 @@ public abstract class Character : Entity, IReactable {
             }
             CalculateChargeRequirement(mainCharacter);
 
-            if (IsDefeated()) {
-                _state = CharacterState.KILLED;
-            } else if (IsKilled()) {
-                _state = CharacterState.DEFEAT;
-            }
-
-            if (State == CharacterState.KILLED) {
-                OnKill();
-            } else if (State == CharacterState.DEFEAT) {
-                OnDefeat();
-            }
-
             Buffs.RemoveAll(s => s.IsFinished);
             for (int i = 0; i < Buffs.Count; i++) {
                 Spell buff = Buffs[i];
@@ -286,12 +274,26 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
+    public void UpdateState() {
+        if (IsDefeated()) {
+            _state = CharacterState.DEFEAT;
+        } else if (IsKilled()) {
+            _state = CharacterState.KILLED;
+        }
+
+        if (State == CharacterState.KILLED) {
+            OnKill();
+        } else if (State == CharacterState.DEFEAT) {
+            OnDefeat();
+        }
+    }
+
     protected virtual bool IsDefeated() {
-        return State == CharacterState.DEFEAT && GetResourceCount(ResourceType.HEALTH, false) <= 0;
+        return State == CharacterState.ALIVE && GetResourceCount(ResourceType.HEALTH, false) <= 0;
     }
 
     protected virtual bool IsKilled() {
-        return State == CharacterState.ALIVE && GetResourceCount(ResourceType.HEALTH, false) <= 0;
+        return State == CharacterState.DEFEAT && GetResourceCount(ResourceType.HEALTH, false) <= 0;
     }
 
     public override bool Equals(object obj) {
@@ -393,30 +395,5 @@ public abstract class Character : Entity, IReactable {
 
     public virtual void OnBattleEnd() {
         AddToResource(ResourceType.SKILL, false, -GetResourceCount(ResourceType.SKILL, false));
-    }
-
-    protected void Talk(string s) {
-        AvatarBox a = null;
-        if (Side) {
-            a = new RightBox(this, s);
-        } else {
-            a = new LeftBox(this, s);
-        }
-        Game.Instance.AddTextBox(a);
-    }
-
-    protected void Emote(string s) {
-        Game.Instance.AddTextBox(new TextBox(s));
-    }
-
-    protected void Talk(params string[] strings) {
-        string s = strings.PickRandom();
-        AvatarBox a = null;
-        if (Side) {
-            a = new RightBox(this, s);
-        } else {
-            a = new LeftBox(this, s);
-        }
-        Game.Instance.AddTextBox(a);
     }
 }

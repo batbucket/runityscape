@@ -17,21 +17,25 @@ public class Tutorial : Area {
     public BattlePage TentaclePartyFight;
     public Page TempleHall;
     public Page TempleThrone;
+    public BattlePage KitsFight;
+    public Page KitsAftermath;
 
     public Page DungeonStart;
     public Page[] Dungeon;
 
     public PlayerCharacter pc;
     public Alestre alestre;
+    public Kitsune kits;
 
     public Tutorial(PlayerCharacter pc) {
         this.pc = pc;
         this.alestre = new Alestre();
+        this.kits = new Kitsune();
 
         Greeting = Rp(
-            text: "Pure darkness covers your surroundings, near and far. You can move your body but you cannot see it, or anything else.",
+            text: "Pure darkness covers your surroundings, near and far. You cannot sense your body, or anything but your thoughts.",
             location: "Unknown",
-            tooltip: "Press space to advance dialog.",
+            tooltip: "Press space to advance events.",
             right: new Character[] { },
             processes: new Process[] {
                                 new OneShotProcess("Call out",
@@ -39,12 +43,11 @@ public class Tutorial : Area {
                                 () => {
                                     Game.Cutscene(
                                         new Event(new LeftBox(pc, "H...hello?")),
-                                        new Event(new TextBox("A soft note hums in your ears.")),
-                                        new Event(new RightBox(alestre, string.Format("Greetings, {0}. I am {1}.", pc.Name, alestre.Name))),
-                                        new Event(new RightBox(alestre, "I am the observer assigned to this world.")),
-                                        new Event(new RightBox(alestre, "You have been granted a second chance to serve your world.")),
-                                        new Event(new RightBox(alestre, "Enter the place known as Last Temple. There you will learn your purpose.")),
-                                        new Event(new RightBox(alestre, string.Format("Now, {0}, awaken from your slumber and begin your journey...", pc.Name))),
+                                        new Event(new TextBox("A weak note hums in your ears.")),
+                                        new Event(new RightBox(alestre, "I, Alestre, resurrected you... save...")),
+                                        new Event(new RightBox(alestre, "...temple... place is corrupted...")),
+                                        new Event(new RightBox(alestre, "...agent of corruption...")),
+                                        new Event(new TextBox("A feel yourself being pulled out of the nothingness. You seem to exist now.")),
                                         new Event(() => Page = FakeCamp)
                                         );
                                 })
@@ -55,37 +58,27 @@ public class Tutorial : Area {
         CreatePreBridge();
         CreateBridge();
         CreateTempleEntrance();
-
-        TempleHall = Rp(
-            "Sample text",
-            location: "Temple - Hall",
-            processes: new Process[] {
-                        new Process("Exit", action: () => Page = TempleEntrance),
-                        new Process("Throne", action: () => Page = TempleThrone)
-            }
-            );
-
-        TempleThrone = Rp(
-            "Sample text",
-            location: "Temple - Throne",
-            processes: new Process[] {
-                new Process("Hall", action: () => Page = TempleHall),
-                new Process("Talk")
-            }
-            );
+        CreateTemple();
     }
 
     private void CreateFakeCamp() {
         FakeCamp = Rp(
             text: "You awaken in a grassy green field. "
-            + "The warm, soft grass has served as your bed. The sun glows above you."
-            + " You are on some sort of small peninsula. Two hulking metal walls as high as the sky guard the attachment to the mainland, connected by the ruins of a giant gate."
+            + "The soft grass has served as your bed. The sun glows above you."
+            + " You are on a small peninsula. Two hulking metal walls as high as the sky guard the attachment to the mainland, connected by the ruins of a giant gate."
             + " The walls curve around the field, ending where the land ends. Aside from one end, the land is surrounded by a sea of nothingness.",
             location: "Camp",
             processes: new Process[] {
                         new Process("<color=red>Explore</color>", "not implemented yet :("),
                         new Process("Places", "Visit an area you know.", () => Page = FakePlaces),
-                        new Process(),
+                        new Process("Skip to boss", "ok", () => {
+                                pc.Selections[Selection.SPELL].Add(new Smite());
+                                pc.AddResource(new NamedResource.Skill());
+                                (new OldSword(1)).Cast(pc, pc);
+                                (new OldArmor(1)).Cast(pc, pc);
+                                pc.Selections[Selection.ITEM].Add(new LifePotion(4));
+                                Page = KitsFight;
+                            }),
                         new Process(),
 
                         new Process(),
@@ -100,12 +93,17 @@ public class Tutorial : Area {
                         () => {
                             Game.Instance.AddTextBox(new TextBox(string.Format("TimeCapsule was added to {0}'s Items.", pc.Name)));
                             pc.Selections[Selection.ITEM].Add(new TimeCapsule(1));
-                        })
+                        }),
+            },
+            onEnter: () => {
+                if (kits.State == CharacterState.ALIVE) {
+                    Game.Instance.AddTextBox(new TextBox("A path of black muck cuts through the peninsula from the shattered gate to somewhere behind you. It writhes at the surface."));
+                }
             }
             );
 
         FakePlaces = Rp(
-            text: "Behind you, you can barely make out what appears to be a temple, further away on an island. A lengthy stone bridge goes in the same direction...",
+            text: "Behind you is a lengthy stone bridge. In a far away distance, you see a temple.",
             location: "Camp",
             tooltip: "Where will you go?",
             processes: new Process[] {
@@ -123,6 +121,11 @@ public class Tutorial : Area {
                 new Process(),
                 new Process(),
                 new Process("Back", "Return to the camp.", () => Page = FakeCamp)
+            },
+            onEnter: () => {
+                if (kits.State == CharacterState.ALIVE) {
+                    Game.Instance.AddTextBox(new TextBox("The trail of muck is on the bridge."));
+                }
             }
             );
     }
@@ -142,9 +145,9 @@ public class Tutorial : Area {
             onEnter:
             () => {
                 if (PreBridgeEnemies.Any(c => c.State != CharacterState.KILLED)) {
-                    Game.AddTextBox(new TextBox("A black-purple tentacle blocks the entrance to the bridge. It seems frozen in time."));
+                    Game.AddTextBox(new TextBox("A dark tentacle erupts from the muck at the entrance to the bridge."));
                 } else {
-                    Game.AddTextBox(new TextBox("The path to enter the bridge is clear."));
+                    Game.AddTextBox(new TextBox("The entrance to the bridge is clear."));
                 }
             }
             );
@@ -155,6 +158,8 @@ public class Tutorial : Area {
             location: "Bridge Entrance",
             musicLoc: "Hero Immortal",
             right: PreBridgeEnemies,
+            flee: PreBridge,
+            victory: PreBridge,
             onTick:
             () => {
                 if (!learnedSmite && pc.Selections[Selection.EQUIP].Contains(new OldArmor(1)) && pc.Selections[Selection.EQUIP].Contains(new OldSword(1))) {
@@ -171,11 +176,6 @@ public class Tutorial : Area {
                             t: new TextBox("<color=yellow>Spell Smite... Two Skill... Attack to gain...</color>", TextEffect.TYPE, timePerLetter: 0.05f), delay: 5.0f)
                         );
                 }
-            },
-            flee: PreBridge,
-            victory: PreBridge,
-            onEnter: () => {
-                (new Petrify()).Cast(pc, Page.GetEnemies(pc)[0]);
             }
             );
     }
@@ -191,8 +191,11 @@ public class Tutorial : Area {
             },
             right: bridgeEnemies,
             onEnter: () => {
+                if (kits.State == CharacterState.ALIVE) {
+                    Game.AddTextBox(new TextBox("The muck covers the entirety of the bridge path. It drips away from your boots the moment you lift up a foot."));
+                }
                 if (bridgeEnemies.Any(c => c.State != CharacterState.KILLED)) {
-                    Game.AddTextBox(new TextBox("A pure black tentacle adorned with spikes is blocking your way. It repeatedly whips in your direction. Luckily, you're too far away, for now..."));
+                    Game.AddTextBox(new TextBox("A dark tentacle adorned with spikes erupts in your way. It repeatedly lashes in your direction. You're too far away to be hit, for now..."));
                 } else {
                     Game.AddTextBox(new TextBox("The bridge path is clear."));
                 }
@@ -220,8 +223,12 @@ public class Tutorial : Area {
             },
             right: tentacleParty,
             onEnter: () => {
+                if (kits.State == CharacterState.ALIVE) {
+                    Game.AddTextBox(new TextBox("The muck trail goes to the inside of the building..."));
+                }
+
                 if (tentacleParty.All(t => t.State != CharacterState.KILLED)) {
-                    Game.AddTextBox(new TextBox("A Lasher and Regenerator block the entrance..."));
+                    Game.AddTextBox(new TextBox("A Lasher and Regenerator erupt at the entrance..."));
                 } else {
                     Game.AddTextBox(new TextBox("The temple entrance is clear."));
                 }
@@ -237,12 +244,108 @@ public class Tutorial : Area {
             );
     }
 
-    private ReadPage Rp(string text, string location, Process[] processes = null, string tooltip = "What will you do?", Character[] right = null, Action onEnter = null, Action onExit = null, Action onTick = null) {
+    private void CreateTemple() {
+        TempleHall = Rp(
+            "The hall could not be in a poorer state. The stone walls and floor are all in a state of decay."
+            + " Grasses and other plants shoot up from cracks in the once-solid stone floor."
+            + " The colored-glass windows on the walls have shattered, streaming flecks of colored light onto the ground along with sunlight."
+            + " The throne room is just up ahead, its entrance decorated by a cracked arch."
+            + " You see no other doorways.",
+            "Temple - Hall",
+            new Process[] {
+                                new Process("Exit Temple", action: () => Page = TempleEntrance),
+                                new Process("Go to Throne", action: () => Page = TempleThrone)
+            },
+            onEnter: () => {
+                Game.Instance.AddTextBox(
+                    new TextBox(
+                        "The muck trail widens the closer you go to the throne room, eventually covering the the whole floor."
+                        + " The muck is much more active here, growing up the walls."
+                        )
+                        );
+            }
+            );
+        this.kits.Name = "???";
+        TempleThrone = Rp(
+            "A throne is in a slightly better condition. The stairs begin in the middle of the room, ending at a platform with some sort of gateway.",
+            "Temple - Throne",
+            new Process[] {
+                new Process("Hall", action: () => Page = TempleHall),
+                new Process("Approach", action: () => {
+                    Game.Cutscene(
+                            new Event(new TextBox("You manage to get one step in before it turns around.")),
+                            new Event(new TextBox("Its hair matches its tail color, reaching down to its shoulders. Its skin is an ash-grey."
+                            + " Its eyes are a glowing red, with the sclera being completely black.")),
+                            new Event(new TextBox("Without a doubt, this creature is a kitsune fallen to corruption.")),
+                            new Event(() => {
+                                this.kits.Name = "C. Kitsune";
+                                Game.Instance.Sound.Loop("FantasyWav");
+                            }),
+                            new Event(new RightBox(kits, "This is the human who's going to stop me?")),
+                            new Event(new RightBox(kits, "I suppose it's better than getting <color=yellow>herself</color> corrupted, but still.")),
+                            new Event(new TextBox("Kitsune takes a deep breath.")),
+                            new Event(new RightBox(kits, "Let's get to the point.")),
+                            new Event(new TextBox("The kitsune starts walking towards you.")),
+                            new Event(new TextBox("Tentacles sprout behind you, sealing off the door!")),
+                            new Event(() => Page = KitsFight)
+                        );
+                }, condition: () => KitsFight.State != BattleState.VICTORY)
+            },
+            "What will you do?",
+            new Character[] { kits },
+            onEnter: () => {
+                if (kits.State == CharacterState.ALIVE) {
+                    Game.Instance.AddTextBox(new TextBox("The whole room is covered in muck."));
+                    Game.Instance.AddTextBox(
+                        new TextBox(
+                            "Something stands at the stairs, facing the gateway."
+                        + " An uncountable number of black tendril-like tails sprout from its back, tall enough to tower over the being's head."
+                        + " Its tails seem to be overflowing in muck, dripping onto the floor and contributing to the muck in the room."
+                        + " It wears a white robe. You can barely make out a set of fox-like ears at the top of its head."
+                        + " There's no doubt that it's 'the agent of corruption' Alestre warned you about."
+                        )
+                        );
+                }
+            }
+            );
+
+        KitsFight = Bp(
+            "You are fighting Corrupted Kitsune!",
+            "Temple - Throne",
+            musicLoc: "Flicker",
+            right: new Character[] { kits },
+            victory: null
+            );
+
+        KitsAftermath = Rp(
+            "You're winner!",
+            "Temple - Throne",
+            new Process[0]
+            );
+    }
+
+    private ReadPage Rp(
+        string text,
+        string location,
+        Process[] processes,
+        string tooltip = "What will you do?",
+        Character[] right = null,
+        Action onEnter = null,
+        Action onExit = null,
+        Action onTick = null) {
         right = right ?? new Character[0];
         return new ReadPage(text, tooltip, location, mainCharacter: pc, left: new Character[] { pc }, right: right.Where(c => c.State != CharacterState.KILLED).ToArray(), onEnter: onEnter, onExit: onExit, onTick: onTick, processes: processes);
     }
 
-    private BattlePage Bp(string text, string location, string musicLoc, Character[] right, Page flee, Page victory, Action onEnter = null, Action onTick = null) {
+    private BattlePage Bp(string text,
+        string location,
+        string musicLoc,
+        Character[] right,
+        Page flee,
+        Page victory,
+        Action onEnter =
+        null,
+        Action onTick = null) {
         return new BattlePage(
             text: text,
             location: location,
@@ -259,6 +362,31 @@ public class Tutorial : Area {
             },
             onExit: () => {
                 pc.Selections[Selection.MERCY].Remove(new Flee(flee));
+            },
+            onTick: onTick
+            );
+    }
+
+    private BattlePage Bp(string text,
+    string location,
+    string musicLoc,
+    Character[] right,
+    Page victory,
+    Action onEnter =
+    null,
+    Action onTick = null) {
+        return new BattlePage(
+            text: text,
+            location: location,
+            musicLoc: musicLoc,
+            mainCharacter: pc,
+            left: new Character[] { pc },
+            right: right,
+            onVictory: () => this.Page.ActionGrid = new Process[] { new Process("Continue", action: () => Page = victory) },
+            onEnter: () => {
+                if (onEnter != null) {
+                    onEnter.Invoke();
+                }
             },
             onTick: onTick
             );

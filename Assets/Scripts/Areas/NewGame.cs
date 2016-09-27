@@ -35,7 +35,7 @@ public class NewGame : Area {
         QuizIntro = new ReadPage(
             "Before you begin your adventure, you must answer some questions.",
             tooltip: "Are you ready?",
-            musicLoc: "Portal",
+            musicLoc: "Bleeding_Out",
             processes: new Process[] {
                 new Process("Yes", "Begin the quiz.",
                 () => {

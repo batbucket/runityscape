@@ -14,7 +14,10 @@ public class BackTurn : SpellFactory {
                 }
             },
             onStart: (c, t, o) => c.IsCharging = false,
-            onEnd: (c, t, o) => c.IsCharging = true,
+            onEnd: (c, t, o) => {
+                c.IsCharging = true;
+                Game.Instance.AddTextBox(new TextBox(string.Format("{0} is no longer turned around.", c.DisplayName)));
+            },
             perform: (c, t, calc, o) => {
 
             },

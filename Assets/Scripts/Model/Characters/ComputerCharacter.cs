@@ -29,6 +29,31 @@ public abstract class ComputerCharacter : Character {
 
     protected abstract void DecideSpell();
 
+    protected void Talk(string s) {
+        AvatarBox a = null;
+        if (Side) {
+            a = new RightBox(this, s);
+        } else {
+            a = new LeftBox(this, s);
+        }
+        Game.Instance.AddTextBox(a);
+    }
+
+    protected void Emote(string s) {
+        Game.Instance.AddTextBox(new TextBox(s));
+    }
+
+    protected void Talk(params string[] strings) {
+        string s = strings.PickRandom();
+        AvatarBox a = null;
+        if (Side) {
+            a = new RightBox(this, s);
+        } else {
+            a = new LeftBox(this, s);
+        }
+        Game.Instance.AddTextBox(a);
+    }
+
     protected void QuickCast(SpellFactory spell, Character target = null) {
         Page page = Game.Instance.PagePresenter.Page;
         if (!spell.IsCastable(this)) {
@@ -40,7 +65,6 @@ public abstract class ComputerCharacter : Character {
             switch (spell.TargetType) {
                 case TargetType.SINGLE_ALLY:
                     Character ally = page.GetRandomAlly(this);
-                    Util.Log(ally == null ? "null" : ally.DisplayName);
                     spell.TryCast(this, page.GetRandomAlly(this));
                     break;
                 case TargetType.SINGLE_ENEMY:

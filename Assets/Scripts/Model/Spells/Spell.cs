@@ -113,8 +113,6 @@ public class Spell {
             Spell buff = Target.Buffs[i];
             buff.Result.React(this);
         }
-        Caster.React(this);
-        Target.React(this);
 
         IList<Character> characters = Game.Instance.PagePresenter.Page.GetAll();
         for (int i = 0; i < characters.Count; i++) {
@@ -138,5 +136,11 @@ public class Spell {
         if (!string.IsNullOrEmpty(text) && isFirstTick) {
             Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, 6f, TextEffect.FADE_IN));
         }
+
+        Caster.UpdateState();
+        Target.UpdateState();
+
+        Caster.React(this);
+        Target.React(this);
     }
 }

@@ -4,7 +4,8 @@ using System;
 using System.Collections.Generic;
 
 public class TailSpike : SpellFactory {
-    private const int DAMAGE = -15;
+    private const int DAMAGE = 20;
+    private const float VARIANCE = .25f;
 
     public TailSpike() : base("TailSpike", "", SpellType.OFFENSE, TargetType.SINGLE_ENEMY) { }
 
@@ -13,7 +14,7 @@ public class TailSpike : SpellFactory {
             isState: (c, t, o) => true,
             calculation: (c, t, o) =>
                 new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() {
-                    { ResourceType.HEALTH, new PairedInt(0, DAMAGE) }
+                    { ResourceType.HEALTH, new PairedInt(0, -Util.Random(DAMAGE, VARIANCE)) }
                 }),
             perform: (c, t, calc, o) => {
                 Result.NumericPerform(c, t, calc);

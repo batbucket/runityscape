@@ -8,7 +8,7 @@ public class Meditate : SpellFactory {
     public const string DESCRIPTION = "Heal yourself for 50% + <color=blue>INT * 2</color> your maximum <color=lime>life</color>.";
     public const SpellType SPELL_TYPE = SpellType.BOOST;
     public const TargetType TARGET_TYPE = TargetType.SELF;
-    public static readonly string CAST_TEXT = "{0} calms their mind, restoring {1} <color=lime>life</color>!";
+    public static readonly string CAST_TEXT = "{0} calms their mind!\n{0} restored <color=lime>{1}</color> life!";
     public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>() {
         {ResourceType.SKILL, 3 }
     };
