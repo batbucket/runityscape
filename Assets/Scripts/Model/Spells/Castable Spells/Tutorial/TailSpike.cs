@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 
 public class TailSpike : SpellFactory {
-    private const int DAMAGE = 20;
-    private const float VARIANCE = .25f;
+    private const int DAMAGE = 10;
+    private const float VARIANCE = .125f;
 
     public TailSpike() : base("TailSpike", "", SpellType.OFFENSE, TargetType.SINGLE_ENEMY) { }
 
@@ -18,6 +18,7 @@ public class TailSpike : SpellFactory {
                 }),
             perform: (c, t, calc, o) => {
                 Result.NumericPerform(c, t, calc);
+                o.Calculation = new Calculation();
                 o.Result = o.Miss;
                 o.Result.CreateText = (c2, t2, calc2, o2) => "";
             },

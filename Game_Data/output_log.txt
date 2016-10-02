@@ -16,9 +16,86 @@ Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\Un
 Loading C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\UnityEngine.Networking.dll into Unity Child Domain
 Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\InputSimulator.dll (this message is harmless)
 Loading C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\InputSimulator.dll into Unity Child Domain
-- Completed reload, in  0.057 seconds
+- Completed reload, in  0.051 seconds
 Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\System.Core.dll (this message is harmless)
 Platform assembly: C:\Users\A\Documents\BitBucket\AmitScape\Game_Data\Managed\System.dll (this message is harmless)
 desktop: 1920x1080 60Hz; virtual: 1920x1080 at 0,0
 <RI> Initializing input.
 <RI> Input initialized.
+<RI> Initialized touch support.
+UnloadTime: 0.791112 ms
+s0.i0.d0.v1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s1.i0.d0.v1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s3.i0.d0.v1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s5.i0.d0.v1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s5.i0.d3.v1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s8.i0.d3.v1
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s12.i0.d3.v3
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s12.i0.d3.v7
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s0.i0.d1.v0
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s0.i1.d1.v0
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s2.i1.d1.v0
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s2.i1.d1.v2
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s2.i1.d1.v5
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s5.i1.d1.v5
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s5.i1.d1.v9
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+s5.i5.d5.v9
+ 
+(Filename: C:/buildslave/unity/build/artifacts/generated/common/runtime/UnityEngineDebugBindings.gen.cpp Line: 42)
+
+NullReferenceException
+  at (wrapper managed-to-native) UnityEngine.Transform:INTERNAL_set_localPosition (UnityEngine.Vector3&)
+  at UnityEngine.Transform.set_localPosition (Vector3 value) [0x00000] in <filename unknown>:0 
+  at ShakeEffect+<ShakeIcon>c__IteratorB.MoveNext () [0x00000] in <filename unknown>:0 
+  at UnityEngine.SetupCoroutine.InvokeMoveNext (IEnumerator enumerator, IntPtr returnValueAddress) [0x00000] in <filename unknown>:0 
+ 
+(Filename:  Line: -1)
+
+Setting up 2 worker threads for Enlighten.
+  Thread -> id: 76d4 -> priority: 1 
+  Thread -> id: 31b0 -> priority: 1 

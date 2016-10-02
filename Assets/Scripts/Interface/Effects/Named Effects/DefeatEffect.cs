@@ -9,7 +9,7 @@ public class DefeatEffect : CharacterEffect {
     }
 
     public override void CancelEffect() {
-
+        target.Image.color = Color.white;
     }
 
     protected override IEnumerator EffectRoutine() {

@@ -10,8 +10,9 @@ public class WoodFan : EquippableItem {
             count,
             EquipmentType.WEAPON,
             new Dictionary<AttributeType, PairedInt>() {
-                { AttributeType.STRENGTH, new PairedInt(-Kitsune.STR + 6, 1) },
-                { AttributeType.DEXTERITY, new PairedInt(-Kitsune.DEX + 2, 1) }
+                { AttributeType.STRENGTH, new PairedInt(-Kitsune.STR + 4, 1) },
+                { AttributeType.DEXTERITY, new PairedInt(-Kitsune.DEX + 2, 1) },
+                { AttributeType.VITALITY, new PairedInt(-Kitsune.VIT + 10, 1) }
             }
             ) { }
 }

@@ -7,8 +7,8 @@ public class Scimitar : EquippableItem {
 
     //Bonus stats go here
     static readonly IDictionary<AttributeType, PairedInt> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, PairedInt>() {
-        { AttributeType.STRENGTH, new PairedInt(3, 1) },
-        { AttributeType.DEXTERITY, new PairedInt(5, 1) }
+        { AttributeType.STRENGTH, new PairedInt(300, 1) },
+        { AttributeType.DEXTERITY, new PairedInt(100, 1) }
     };
 
     public Scimitar(int count) : base(NAME, DESCRIPTION, count, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }

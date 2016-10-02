@@ -17,7 +17,7 @@ public class Spell {
     public Result Result { get; set; }
     public Calculation Calculation { get; set; }
 
-    public bool IsFinished { get; set; }
+    public bool IsTimedOut { get; set; }
 
     private bool isFirstTick;
 
@@ -42,14 +42,17 @@ public class Spell {
 
         Result = DetermineResult();
         Calculation = Result.Calculation(this.Caster, this.Target, this.Other);
-        IsIndefinite = Result.IsIndefinite(this.Caster, this.Target, this.Other);
         Duration = Result.Duration.Invoke(this.Caster, this.Target, this.Other);
         DurationTimer = Duration;
         TimePerTick = Result.TimePerTick.Invoke(this.Caster, this.Target, this.Other);
         TickTimer = TimePerTick;
     }
 
-    public bool IsIndefinite;
+    public bool IsIndefinite {
+        get {
+            return Result.IsIndefinite(Caster, Target, this.Other);
+        }
+    }
     public float Duration;
     public float DurationTimer;
     public float TimePerTick;
@@ -67,19 +70,12 @@ public class Spell {
     public virtual void Tick() {
         if (isFirstTick) {
             Result.OnStart(this.Caster, this.Target, this.Other);
-
-            if (!IsIndefinite && Duration <= 0 && TimePerTick <= 0) {
-                Invoke();
-                IsFinished = true;
-                Result.OnEnd(Caster, Target, Other);
-                isFirstTick = false;
-            }
         }
 
-        if (!IsFinished) {
+        if (!IsTimedOut) {
             if (!IsIndefinite && DurationTimer <= 0) {
                 Result.OnEnd(Caster, Target, Other);
-                IsFinished = true;
+                IsTimedOut = true;
             }
 
             if (IsIndefinite || (DurationTimer -= Time.deltaTime) > 0) {
@@ -104,7 +100,7 @@ public class Spell {
         }
     }
 
-    protected virtual void Invoke() {
+    public virtual void Invoke() {
         for (int i = 0; i < Caster.Buffs.Count; i++) {
             Spell buff = Caster.Buffs[i];
             buff.Result.React(this);
@@ -125,6 +121,7 @@ public class Spell {
         }
 
         Result.Perform(this.Caster, this.Target, Calculation, this.Other);
+
         IList<CharacterEffect> ce = Result.Sfx(this.Caster, this.Target, Calculation, this.Other);
         foreach (CharacterEffect sfx in ce) {
             Target.Presenter.PortraitView.AddEffect(sfx);
@@ -134,11 +131,16 @@ public class Spell {
         string text = Result.CreateText(this.Caster, this.Target, Calculation, this.Other);
 
         if (!string.IsNullOrEmpty(text) && isFirstTick) {
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, 6f, TextEffect.FADE_IN));
+            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, TextEffect.FADE_IN));
         }
 
         Caster.UpdateState();
         Target.UpdateState();
+
+        for (int i = 0; i < characters.Count; i++) {
+            Character c = characters[i];
+            c.Witness(this);
+        }
 
         Caster.React(this);
         Target.React(this);

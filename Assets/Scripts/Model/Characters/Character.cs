@@ -26,6 +26,7 @@ public abstract class Character : Entity, IReactable {
 
     public Stack<SpellFactory> SpellStack { get; private set; }
     public List<Spell> Buffs { get; private set; }
+
     public IList<Spell> RecievedSpells { get; private set; }
     public IList<Spell> CastSpells { get; private set; }
 
@@ -233,6 +234,8 @@ public abstract class Character : Entity, IReactable {
 
     public virtual void Tick(Character mainCharacter, bool isInCombat) {
         CalculateResources();
+        CalculateChargeRequirement(mainCharacter);
+
         if (isInCombat) {
 
             BattleTimer += Time.deltaTime;
@@ -262,9 +265,8 @@ public abstract class Character : Entity, IReactable {
                         break;
                 }
             }
-            CalculateChargeRequirement(mainCharacter);
 
-            Buffs.RemoveAll(s => s.IsFinished);
+            Buffs.RemoveAll(s => s.IsTimedOut);
             for (int i = 0; i < Buffs.Count; i++) {
                 Spell buff = Buffs[i];
                 buff.Tick();
@@ -276,15 +278,9 @@ public abstract class Character : Entity, IReactable {
 
     public void UpdateState() {
         if (IsDefeated()) {
-            _state = CharacterState.DEFEAT;
-        } else if (IsKilled()) {
-            _state = CharacterState.KILLED;
-        }
-
-        if (State == CharacterState.KILLED) {
-            OnKill();
-        } else if (State == CharacterState.DEFEAT) {
             OnDefeat();
+        } else if (IsKilled()) {
+            OnKill();
         }
     }
 
@@ -344,36 +340,32 @@ public abstract class Character : Entity, IReactable {
     }
 
     public virtual void OnBattleStart() {
+
     }
 
-    bool defeatPosted;
     public virtual void OnDefeat() {
-        if (defeatPosted) {
+        if (_state == CharacterState.DEFEAT) {
             return;
         }
-        defeatPosted = true;
+        _state = CharacterState.DEFEAT;
         Game.Instance.TextBoxHolder.AddTextBoxView(
             new TextBox(
                 string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName),
                 Color.white, TextEffect.FADE_IN)
             );
-        Presenter.PortraitView.Image.color = new Color(1, 0.8f, 0.8f, 0.5f);
-        Util.SetTextAlpha(Presenter.PortraitView.PortraitText, 0.5f);
         AddToResource(ResourceType.HEALTH, false, 1, false);
         Discharge();
         Presenter.PortraitView.AddEffect(new DefeatEffect(this.Presenter.PortraitView));
     }
 
-    bool killPosted;
     public virtual void OnKill() {
-        if (killPosted) {
+        if (_state == CharacterState.KILLED) {
             return;
         }
-        killPosted = true;
-        Character killer = RecievedSpells[RecievedSpells.Count - 1].Caster;
+        _state = CharacterState.KILLED;
         Game.Instance.TextBoxHolder.AddTextBoxView(
             new TextBox(
-                string.Format("{0} was <color=red>slain</color>.", DisplayName, killer.DisplayName),
+                string.Format("{0} was <color=red>slain</color>.", DisplayName),
                 Color.white, TextEffect.FADE_IN));
         Buffs.Clear();
         Presenter.PortraitView.ClearEffects();

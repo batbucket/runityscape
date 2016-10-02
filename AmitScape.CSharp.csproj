@@ -154,6 +154,7 @@
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Check.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Flee.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Illusion.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Poison.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Smite.cs" />

@@ -14,6 +14,8 @@ public class Debug : Area {
     }
 
     public override void Init() {
+        OneShotProcess meme = new OneShotProcess("Test OneShotProcess", action: () => Game.AddTextBox(new TextBox("hello")));
+
         this.Menu = new ReadPage("What", "Hello world", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
                 new Process("Normal TextBox", "Say Hello world",
@@ -30,7 +32,10 @@ public class Debug : Area {
                 new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => Page = PlayerBattle),
                 new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { Page = ComputerBattle; }),
                 new Process("Shake yourself", "Literally U******E", () => { }),
-                new OneShotProcess("Test OneShotProcess"),
+                new Process("test oneshot", action: () => {
+                        meme.Play();
+                        meme.Play();
+                    }),
                 new Process("deadm00se", "Text not displaying right.", () => Game.AddTextBox(new RightBox("placeholder", "But this world is.", Color.white))),
                 new TextProcess("TextProcess", "Just TRY to spam this button", new TextBox("Hello world. Spam me.")),
                 new Process("Boss Battle", action: () => Page = BossBattle),
@@ -39,7 +44,7 @@ public class Debug : Area {
 );
 
         this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Lasher(), new Regenerator(), new Lasher() });
-        this.ComputerBattle = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() }, right: new Character[] { new Steve(), new Steve(), new Steve(), new Steve(), new Steve() });
+        this.ComputerBattle = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Kitsune() }, right: new Character[] { new Kitsune() });
         Amit a = new Amit();
         this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { a }, right: new Character[] { new Kitsune() });
     }

@@ -39,6 +39,9 @@ public class PagePresenter {
         Page.GetAll().ForEach(c => c.BattleTimer = 0);
         Util.KillAllChildren(Game.Instance.TextBoxHolder.gameObject);
 
+        Game.Instance.StopCoroutine("Timeline");
+        Game.Instance.ActionGrid.IsVisible = true;
+
         if (!string.IsNullOrEmpty(page.Text)) {
             AddTextBox(new TextBox(page.Text, TextEffect.FADE_IN, "", 0));
         }
@@ -95,8 +98,8 @@ public class PagePresenter {
         Game.Instance.Header.Location = Page.Location;
         SetCharacterPresenters(Page.LeftCharacters, Game.Instance.LeftPortraits);
         SetCharacterPresenters(Page.RightCharacters, Game.Instance.RightPortraits);
-        TickCharacterPresenters(Page.LeftCharacters);
-        TickCharacterPresenters(Page.RightCharacters);
+        TickCharacterPresenters(Page.LeftCharacters.Where(c => c.IsTargetable).ToArray());
+        TickCharacterPresenters(Page.RightCharacters.Where(c => c.IsTargetable).ToArray());
         Page.InputtedString = Page.HasInputField ? inputBox.Input : "";
     }
 }

@@ -185,7 +185,13 @@ public class Game : MonoBehaviour {
 
     public void Defeat() {
         PagePresenter.Page.Tooltip = "You have died.";
-        PagePresenter.Page.ActionGrid = new Process[] { new Process("Main Menu", "Return to the main menu.", () => { Start(); PagePresenter.SetPage(start.Primary); }) };
+        PagePresenter.Page.ActionGrid = new Process[] { new Process("Main Menu", "Return to the main menu.",
+            () => {
+                Start();
+                PagePresenter.SetPage(start.Primary);
+                StopAllCoroutines();
+                ActionGrid.IsVisible = true;
+            }) };
     }
 
     // Update is called once per frame

@@ -116,7 +116,7 @@ public abstract class SpellFactory {
     }
 
     public void TryCast(Character caster, Character target, Spell other = null) {
-        if (target != null) {
+        if (target != null && target.State != CharacterState.KILLED) {
             TryCast(caster, new List<Character>() { target }, other);
         }
     }
@@ -138,8 +138,9 @@ public abstract class SpellFactory {
 
         if (!spell.IsOneShot) {
             target.AddToBuffs(spell);
+        } else {
+            spell.Invoke();
         }
-        spell.Tick();
     }
 
     public bool IsSingleTargetQuickCastable(Character caster, IList<Character> targets) {

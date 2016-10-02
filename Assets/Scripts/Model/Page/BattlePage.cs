@@ -85,7 +85,9 @@ public class BattlePage : Page {
 
     public override void OnAnyEnter() {
         base.OnAnyEnter();
-        GetAll().ForEach(c => c.OnBattleStart());
+        GetAll().ForEach(c => {
+            c.OnBattleStart();
+        });
     }
 
     public override void Tick() {

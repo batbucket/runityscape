@@ -89,13 +89,13 @@ public class HotkeyButton : MonoBehaviour {
         hotkeyText.text = "";
     }
 
-    void OnMouseExit() {
+    void OnPointerUp() {
         activated = false;
         mouseInBounds = false;
     }
 
     //Display tooltip on mouse hovering
-    void OnMouseOver() {
+    void OnPointerDown() {
         mouseInBounds = true;
     }
 
@@ -129,7 +129,7 @@ public class HotkeyButton : MonoBehaviour {
 
             //3
             if (activated && (Input.GetKeyUp(Hotkey))) {
-                button.onClick.Invoke();
+                Process.Play();
                 activated = false;
             }
         }

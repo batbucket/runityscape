@@ -265,7 +265,8 @@ public class NewGame : Area {
                     "Choose this name.",
                     () => {
                         Page = AttAssign;
-                    })
+                    },
+                    () => ChooseName.InputtedString.Length >= 4)
             },
             onTick:
             () => {

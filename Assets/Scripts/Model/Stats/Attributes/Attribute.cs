@@ -13,8 +13,8 @@ public abstract class Attribute : PairedInt {
     public const int LESSER_CAP = 1;
     public const int GREATER_CAP = 999;
 
-    public override sealed float False { get { return (Flat + base.False) * Percent; } set { base.False = Mathf.Clamp(value, LESSER_CAP, GREATER_CAP); } }
-    public override sealed int True { get { return base.True; } set { base.True = Mathf.Clamp(value, LESSER_CAP, GREATER_CAP); } }
+    public override sealed float False { get { return Mathf.Clamp((Flat + base.False) * Percent, LESSER_CAP, GREATER_CAP); } set { base.False = value; } }
+    public override sealed int True { get { return Mathf.Clamp(base.True, LESSER_CAP, GREATER_CAP); } set { base.True = value; } }
 
     //Bonuses
     int _flat;

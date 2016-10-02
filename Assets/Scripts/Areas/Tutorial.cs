@@ -71,14 +71,7 @@ public class Tutorial : Area {
             processes: new Process[] {
                         new Process("<color=red>Explore</color>", "not implemented yet :("),
                         new Process("Places", "Visit an area you know.", () => Page = FakePlaces),
-                        new Process("Skip to boss", "ok", () => {
-                                pc.Selections[Selection.SPELL].Add(new Smite());
-                                pc.AddResource(new NamedResource.Skill());
-                                (new OldSword(1)).Cast(pc, pc);
-                                (new OldArmor(1)).Cast(pc, pc);
-                                pc.Selections[Selection.ITEM].Add(new LifePotion(4));
-                                Page = KitsFight;
-                            }),
+                        new Process(),
                         new Process(),
 
                         new Process(),
@@ -271,14 +264,14 @@ public class Tutorial : Area {
             "Temple - Throne",
             new Process[] {
                 new Process("Hall", action: () => Page = TempleHall),
-                new Process("Approach", action: () => {
+                new OneShotProcess("Approach", action: () => {
                     Game.Cutscene(
                             new Event(new TextBox("You manage to get one step in before it turns around.")),
                             new Event(new TextBox("Its hair matches its tail color, reaching down to its shoulders. Its skin is an ash-grey."
                             + " Its eyes are a glowing red, with the sclera being completely black.")),
                             new Event(new TextBox("Without a doubt, this creature is a kitsune fallen to corruption.")),
                             new Event(() => {
-                                this.kits.Name = "C. Kitsune";
+                                this.kits.Name = "Corrupt K.";
                                 Game.Instance.Sound.Loop("FantasyWav");
                             }),
                             new Event(new RightBox(kits, "This is the human who's going to stop me?")),
@@ -314,7 +307,7 @@ public class Tutorial : Area {
             "Temple - Throne",
             musicLoc: "Flicker",
             right: new Character[] { kits },
-            victory: null
+            victory: KitsAftermath
             );
 
         KitsAftermath = Rp(
@@ -374,7 +367,8 @@ public class Tutorial : Area {
     Page victory,
     Action onEnter =
     null,
-    Action onTick = null) {
+    Action onTick = null,
+    Func<bool> victoryCondition = null) {
         return new BattlePage(
             text: text,
             location: location,
@@ -382,12 +376,13 @@ public class Tutorial : Area {
             mainCharacter: pc,
             left: new Character[] { pc },
             right: right,
-            onVictory: () => this.Page.ActionGrid = new Process[] { new Process("Continue", action: () => Page = victory) },
+            isVictory: victoryCondition,
             onEnter: () => {
                 if (onEnter != null) {
                     onEnter.Invoke();
                 }
             },
+            onVictory: () => this.Page.ActionGrid = new Process[] { new Process("Continue", action: () => Page = victory) },
             onTick: onTick
             );
     }

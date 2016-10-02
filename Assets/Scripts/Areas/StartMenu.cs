@@ -20,7 +20,7 @@ public class StartMenu : Area {
             processes: new Process[] {
                         new Process("New Game", "Start a new game.", () => Page = newGame.QuizIntro),
                         new Process("Load Game", "Load a saved game.", condition: () => false),
-                        new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Page = debug.Menu),
+                        Application.isEditor ? new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Page = debug.Menu) : new Process(),
                         new Process(),
 
                         new Process(),

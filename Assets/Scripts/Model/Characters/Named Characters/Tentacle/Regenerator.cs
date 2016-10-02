@@ -5,7 +5,7 @@ using System.Linq;
 public class Regenerator : Tentacle {
 
     public Regenerator()
-        : base("Icons/tentacle", "Regenerator", 1, 0, 5, 3, 1, Color.white, 2, "A tentacle with high life regeneration that can transfer its life to allies. Unable to attack.") {
+        : base("Icons/Regen", "Regenerator", 1, 0, 5, 3, 1, Color.white, 2, "A tentacle with high life regeneration that can transfer its life to allies. Unable to attack.") {
     }
 
     public override void OnBattleStart() {
