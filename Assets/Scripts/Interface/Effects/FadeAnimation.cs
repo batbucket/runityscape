@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FadeAnimation : MonoBehaviour {
+public class FadeAnimation : PooledBehaviour {
     [SerializeField]
     private Image image;
     [SerializeField]
@@ -18,8 +19,10 @@ public class FadeAnimation : MonoBehaviour {
             Util.SetImageAlpha(image, image.color.a - fadePerTick);
             yield return null;
         }
-        Destroy(gameObject);
+        ObjectPoolManager.Instance.Return(this);
         yield break;
     }
 
+    public override void Reset() {
+    }
 }

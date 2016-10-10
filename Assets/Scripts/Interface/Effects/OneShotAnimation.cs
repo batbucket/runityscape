@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public class OneShotAnimation : MonoBehaviour {
+public class OneShotAnimation : PooledBehaviour {
+    public override void Reset() {
+    }
 
-    void Kill() {
-        Destroy(this.gameObject);
+    private void Kill() {
+        ObjectPoolManager.Instance.Return(this);
     }
 }

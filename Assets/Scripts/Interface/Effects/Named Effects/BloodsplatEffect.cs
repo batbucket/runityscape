@@ -10,13 +10,11 @@ public class BloodsplatEffect : CharacterEffect {
     public BloodsplatEffect(PortraitView target) : base(target) { }
 
     public override void CancelEffect() {
-        if (bloodsplat != null) {
-            GameObject.Destroy(bloodsplat.gameObject);
-        }
+        ObjectPoolManager.Instance.Return(bloodsplat);
     }
 
     protected override IEnumerator EffectRoutine() {
-        bloodsplat = GameObject.Instantiate<OneShotAnimation>(bloodsplatPrefab);
+        bloodsplat = ObjectPoolManager.Instance.Get(bloodsplatPrefab);
         Util.Parent(bloodsplat.gameObject, target.gameObject);
         //while (bloodsplat != null) { } //FIXME WTF THIS BREAKS THE CODE
         _isDone = true;

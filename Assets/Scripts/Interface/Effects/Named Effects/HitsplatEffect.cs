@@ -15,15 +15,13 @@ public class HitsplatEffect : CharacterEffect {
     }
 
     public override void CancelEffect() {
-        if (hitsplat != null) {
-            GameObject.Destroy(hitsplat.gameObject);
-        }
+        ObjectPoolManager.Instance.Return(hitsplat);
     }
 
     protected override IEnumerator EffectRoutine() {
-        hitsplat = GameObject.Instantiate<HitsplatView>(hitsplatPrefab);
+        hitsplat = ObjectPoolManager.Instance.Get(hitsplatPrefab);
         hitsplat.Animation(text, color);
-        Util.Parent(hitsplat.gameObject, target.Hitsplats);
+        Util.Parent(hitsplat.gameObject, target.EffectsHolder);
         //while (hitsplat != null) { }
         _isDone = true;
         yield break;

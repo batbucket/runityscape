@@ -194,20 +194,6 @@ public static class Util {
         }
     }
 
-    public static Color HexToColor(string hex) {
-        hex = hex.Replace("0x", "");//in case the string is formatted 0xFFFFFF
-        hex = hex.Replace("#", "");//in case the string is formatted #FFFFFF
-        byte a = 255;//assume fully visible unless specified in hex
-        byte r = byte.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-        byte g = byte.Parse(hex.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-        byte b = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-        //Only use alpha if the string has enough characters
-        if (hex.Length == 8) {
-            a = byte.Parse(hex.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-        }
-        return new Color(r, g, b, a);
-    }
-
     public static string Color(string s, Color c) {
         return string.Format("<color={1}>{0}</color>", s, RGBToHex(c));
     }
@@ -222,7 +208,7 @@ public static class Util {
         return (string.Format("#{0}{1}{2}{3}",
             ((int)(redValue <= 1 ? redValue * 255 : redValue)).ToString("X2"),
             ((int)(greenValue <= 1 ? greenValue * 255 : greenValue)).ToString("X2"),
-            ((int)(blueValue <= 1 ? blueValue * 255 : greenValue)).ToString("X2"),
+            ((int)(blueValue <= 1 ? blueValue * 255 : blueValue)).ToString("X2"),
             ((int)(alpha <= 1 ? alpha * 255 : alpha)).ToString("X2")));
     }
 
@@ -242,9 +228,12 @@ public static class Util {
         return source.OrderBy(x => Guid.NewGuid());
     }
 
-    public static void KillAllChildren(GameObject parent) {
-        foreach (Transform child in parent.transform) {
-            GameObject.Destroy(child.gameObject);
+    public static void ReturnAllChildren(GameObject parent) {
+        PooledBehaviour[] pbs = parent.GetComponentsInChildren<PooledBehaviour>();
+        foreach (PooledBehaviour pb in pbs) {
+            if (pb.gameObject.GetInstanceID() != parent.gameObject.GetInstanceID()) {
+                ObjectPoolManager.Instance.Return(pb);
+            }
         }
     }
 

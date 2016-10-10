@@ -2,10 +2,13 @@
 using System.Collections;
 
 public class EffectsManager : MonoBehaviour {
-    private static EffectsManager _instance;
+    private static EffectsManager instance;
     public static EffectsManager Instance {
         get {
-            return _instance;
+            if (instance == null) {
+                instance = FindObjectOfType<EffectsManager>();
+            }
+            return instance;
         }
     }
 
@@ -25,7 +28,10 @@ public class EffectsManager : MonoBehaviour {
     private OneShotAnimation bloodsplatPrefab;
     public OneShotAnimation Bloodsplat { get { return bloodsplatPrefab; } }
 
-    private void Awake() {
-        _instance = this;
+    private void Start() {
+        ObjectPoolManager.Instance.Register(hitsplatPrefab, 10);
+        ObjectPoolManager.Instance.Register(minisplatPrefab, 10);
+        ObjectPoolManager.Instance.Register(lightningPrefab, 10);
+        ObjectPoolManager.Instance.Register(bloodsplatPrefab, 10);
     }
 }

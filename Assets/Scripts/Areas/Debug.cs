@@ -15,8 +15,8 @@ public class Debug : Area {
 
     public override void Init() {
         OneShotProcess meme = new OneShotProcess("Test OneShotProcess", action: () => Game.AddTextBox(new TextBox("hello")));
-
-        this.Menu = new ReadPage("What", "Hello world", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Steve(), new Steve() },
+        Character amit = new Amit();
+        this.Menu = new ReadPage("What", "Hello world", mainCharacter: amit, left: new Character[] { amit }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
                 new Process("Normal TextBox", "Say Hello world",
                     () => Game.AddTextBox(
@@ -37,7 +37,7 @@ public class Debug : Area {
                         meme.Play();
                     }),
                 new Process("deadm00se", "Text not displaying right.", () => Game.AddTextBox(new RightBox("placeholder", "But this world is.", Color.white))),
-                new TextProcess("TextProcess", "Just TRY to spam this button", new TextBox("Hello world. Spam me.")),
+                new Process("untargetuself", "Why is this wrong", () => amit.IsTargetable = !amit.IsTargetable),
                 new Process("Boss Battle", action: () => Page = BossBattle),
                 new Process("Back", "Go back to the main menu.", () => { Page = primary; })
     }

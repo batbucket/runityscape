@@ -37,7 +37,7 @@ public class PagePresenter {
 
         this.Page = page;
         Page.GetAll().ForEach(c => c.BattleTimer = 0);
-        Util.KillAllChildren(Game.Instance.TextBoxHolder.gameObject);
+        Util.ReturnAllChildren(Game.Instance.TextBoxHolder.gameObject);
 
         Game.Instance.StopCoroutine("Timeline");
         Game.Instance.ActionGrid.IsVisible = true;
@@ -46,7 +46,7 @@ public class PagePresenter {
             AddTextBox(new TextBox(page.Text, TextEffect.FADE_IN, "", 0));
         }
 
-        Game.Instance.ActionGrid.HasHotkeysEnabled = !this.Page.HasInputField;
+        Game.Instance.ActionGrid.IsHotkeysEnabled = !this.Page.HasInputField;
         if (this.Page.HasInputField) {
             inputBox = Game.Instance.TextBoxHolder.AddInputBoxView();
             inputBox.Input = Page.InputtedString;
@@ -59,11 +59,6 @@ public class PagePresenter {
             c.Buffs.Clear();
             c.IsCharging = true;
         }
-
-        Util.KillAllChildren(Game.Instance.LeftPortraits.gameObject);
-        Util.KillAllChildren(Game.Instance.RightPortraits.gameObject);
-        Game.Instance.LeftPortraits.CharacterViews.Clear();
-        Game.Instance.RightPortraits.CharacterViews.Clear();
 
         page.OnEnter();
 

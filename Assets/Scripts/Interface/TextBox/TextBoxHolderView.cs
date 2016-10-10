@@ -5,48 +5,38 @@ using UnityEngine;
 public class TextBoxHolderView : MonoBehaviour {
 
     [SerializeField]
-    GameObject textBoxPrefab;
+    private TextBoxView textBoxPrefab;
     [SerializeField]
-    GameObject leftBoxPrefab;
+    private AvatarBoxView leftBoxPrefab;
     [SerializeField]
-    GameObject rightBoxPrefab;
+    private AvatarBoxView rightBoxPrefab;
     [SerializeField]
-    GameObject inputBoxPrefab;
+    private InputBoxView inputBoxPrefab;
 
-    List<GameObject> children;
-    IDictionary<TextBoxType, GameObject> textBoxes;
+    private IDictionary<TextBoxType, PooledBehaviour> textBoxes;
 
-    const int TEXTBOX_LIMIT = 100;
-
-    void Awake() {
-        this.children = new List<GameObject>();
-        textBoxes = new Dictionary<TextBoxType, GameObject>() {
+    private void Start() {
+        textBoxes = new Dictionary<TextBoxType, PooledBehaviour>() {
             { TextBoxType.TEXT, textBoxPrefab },
             { TextBoxType.LEFT, leftBoxPrefab },
             { TextBoxType.RIGHT, rightBoxPrefab }
         };
+
+        foreach (PooledBehaviour pb in textBoxes.Values) {
+            ObjectPoolManager.Instance.Register(pb, 100);
+        }
     }
 
     public GameObject AddTextBoxView(TextBox textBox, Action callBack = null) {
-        GameObject g = Instantiate(textBoxes[textBox.Type]);
-        children.Add(g);
-        Util.Parent(g, gameObject);
-        textBox.Write(g, callBack);
-        return g;
+        PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
+        Util.Parent(pb.gameObject, gameObject);
+        textBox.Write(pb.gameObject, callBack);
+        return pb.gameObject;
     }
 
     public InputBoxView AddInputBoxView() {
-        GameObject g = Instantiate(inputBoxPrefab);
-        children.Add(g);
-        Util.Parent(g, gameObject);
-        return g.GetComponent<InputBoxView>();
-    }
-
-    void Update() {
-        children.RemoveAll(item => item == null);
-        if (children.Count > TEXTBOX_LIMIT) {
-            Destroy(children[0]);
-            children.RemoveAt(0);
-        }
+        InputBoxView ibv = ObjectPoolManager.Instance.Get(inputBoxPrefab);
+        Util.Parent(ibv.gameObject, gameObject);
+        return ibv;
     }
 }

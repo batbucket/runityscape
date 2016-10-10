@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
-public class HitsplatView : MonoBehaviour {
+public class HitsplatView : PooledBehaviour {
 
     public void Animation(string s, Color c) {
         Text text = gameObject.GetComponent<Text>();
@@ -37,7 +38,10 @@ public class HitsplatView : MonoBehaviour {
             text.color = c;
             yield return null;
         }
-        Destroy(text.gameObject);
+        ObjectPoolManager.Instance.Return(this);
         yield break;
+    }
+
+    public override void Reset() {
     }
 }

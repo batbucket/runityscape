@@ -15,15 +15,13 @@ public class MinisplatEffect : CharacterEffect {
     }
 
     public override void CancelEffect() {
-        if (hitsplat != null) {
-            GameObject.Destroy(hitsplat.gameObject);
-        }
+        ObjectPoolManager.Instance.Return(hitsplat);
     }
 
     protected override IEnumerator EffectRoutine() {
-        hitsplat = GameObject.Instantiate<HitsplatView>(minisplatPrefab);
+        hitsplat = ObjectPoolManager.Instance.Get(minisplatPrefab);
         hitsplat.Animation(text, color);
-        Util.Parent(hitsplat.gameObject, target.Hitsplats);
+        Util.Parent(hitsplat.gameObject, target.EffectsHolder);
         while (hitsplat != null) { }
         _isDone = true;
         yield break;

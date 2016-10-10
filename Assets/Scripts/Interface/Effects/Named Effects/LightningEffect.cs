@@ -10,13 +10,11 @@ public class LightningEffect : CharacterEffect {
     public LightningEffect(PortraitView target) : base(target) { }
 
     public override void CancelEffect() {
-        if (lightningEffect != null) {
-            GameObject.Destroy(lightningEffect.gameObject);
-        }
+        ObjectPoolManager.Instance.Return(lightningEffect);
     }
 
     protected override IEnumerator EffectRoutine() {
-        this.lightningEffect = GameObject.Instantiate<FadeAnimation>(lightningEffectPrefab);
+        this.lightningEffect = ObjectPoolManager.Instance.Get(lightningEffectPrefab);
         Util.Parent(lightningEffect.gameObject, target.gameObject);
         _isDone = true;
         yield break;

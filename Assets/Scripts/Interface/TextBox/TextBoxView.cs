@@ -8,23 +8,24 @@ using System;
 /**
  * This class manages a TextBox prefab
  */
-public class TextBoxView : MonoBehaviour {
+public class TextBoxView : PooledBehaviour {
 
     [SerializeField]
-    Text text;
-    float TextAlpha { set { Util.SetTextAlpha(text, value); } }
-
+    private Text text;
     [SerializeField]
-    Image background;
-    float BackgroundAlpha {
+    private Image background;
+    [SerializeField]
+    private Outline outline;
+
+    private float TextAlpha { set { Util.SetTextAlpha(text, value); } }
+
+    private float BackgroundAlpha {
         set {
             Util.SetImageAlpha(background, value);
         }
     }
 
-    [SerializeField]
-    Outline outline;
-    float OutlineAlpha {
+    private float OutlineAlpha {
         set {
             Util.SetOutlineAlpha(outline, value);
         }
@@ -41,7 +42,6 @@ public class TextBoxView : MonoBehaviour {
     IEnumerator TypeWriter(Text text, TextBox textBox, Action callBack) {
         text.color = textBox.Color;
 
-        bool skip = false;
         switch (textBox.Effect) {
             case TextEffect.OLD:
                 text.text = textBox.RawText;
@@ -75,13 +75,6 @@ public class TextBoxView : MonoBehaviour {
                 text.text = string.Join("", currentTextArray);
                 string wrapper = "\u2007";
                 while (index < textBox.TextArray.Length) {
-
-                    //Change to FADE_IN Mode if Space (skip) key is held
-                    if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.LeftControl)) {
-                        text.text = "";
-                        skip = true;
-                        goto case TextEffect.FADE_IN;
-                    }
                     if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                         if (!taggedText[index]) {
 
@@ -128,7 +121,14 @@ public class TextBoxView : MonoBehaviour {
                 BackgroundAlpha = Mathf.Lerp(1, 0, timer / FADE_DURATION);
                 yield return null;
             }
-            Destroy(this.gameObject);
+            ObjectPoolManager.Instance.Return(this);
         }
+    }
+
+    public override void Reset() {
+        text.text = "";
+        text.color = Color.white;
+        background.color = Color.black;
+        outline.effectColor = Color.white;
     }
 }

@@ -1,22 +1,26 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
-public abstract class PortraitHolderView : MonoBehaviour {
+public class PortraitHolderView : PooledBehaviour {
+    [SerializeField]
+    private PortraitView portraitPrefab;
+
+    public IDictionary<Character, PortraitBundle> CharacterViews { get; protected set; }
 
     public struct PortraitBundle {
         public PortraitView portraitView;
         public bool isSet;
     }
 
-    protected void OnAwake() {
+    private void Start() {
         this.CharacterViews = new Dictionary<Character, PortraitBundle>();
+        ObjectPoolManager.Instance.Register(portraitPrefab, 10);
     }
 
-    public IDictionary<Character, PortraitBundle> CharacterViews { get; protected set; }
-
     // TODO make input a struct of only what we need
-    protected void AddPortraits(IList<Character> characters, GameObject portraitPrefab) {
+    public void AddPortraits(IList<Character> characters) {
 
         //Set all existing isSets to false.
         List<Character> keys = new List<Character>(CharacterViews.Keys); //Can't modify Dictionary in foreach loop
@@ -27,10 +31,9 @@ public abstract class PortraitHolderView : MonoBehaviour {
         //Add or possibly replace new PortraitViews.
         foreach (Character c in characters) {
             PortraitView pv;
-            if (!CharacterViews.ContainsKey(c) || CharacterViews[c].portraitView == null) {
-                GameObject g = (GameObject)GameObject.Instantiate(portraitPrefab);
-                Util.Parent(g, gameObject);
-                pv = g.GetComponent<PortraitView>();
+            if (!CharacterViews.ContainsKey(c)) {
+                pv = ObjectPoolManager.Instance.Get(portraitPrefab);
+                Util.Parent(pv.gameObject, gameObject);
             } else {
                 pv = CharacterViews[c].portraitView;
             }
@@ -42,13 +45,13 @@ public abstract class PortraitHolderView : MonoBehaviour {
         //We can use same keys list as before since newly added keys cannot be false
         foreach (Character key in keys) {
             if (CharacterViews.ContainsKey(key) && !CharacterViews[key].isSet) {
-                if (CharacterViews[key].portraitView != null) {
-                    GameObject.Destroy(CharacterViews[key].portraitView.gameObject);
-                }
+                ObjectPoolManager.Instance.Return(CharacterViews[key].portraitView);
                 CharacterViews.Remove(key);
             }
         }
     }
 
-    abstract public void AddPortraits(IList<Character> characters);
+    public override void Reset() {
+
+    }
 }

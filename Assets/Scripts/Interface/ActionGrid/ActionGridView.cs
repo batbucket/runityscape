@@ -22,12 +22,12 @@ public sealed class ActionGridView : MonoBehaviour {
     public const int COLS = 4;
     public const int TOTAL_BUTTON_COUNT = ROWS * COLS;
 
-    HotkeyButton[] actionButtons;
+    private HotkeyButton[] actionButtons;
 
     [SerializeField]
-    GameObject actionButtonPrefab;
+    private PooledBehaviour actionButtonPrefab;
 
-    public bool HasHotkeysEnabled {
+    public bool IsHotkeysEnabled {
         set {
             foreach (HotkeyButton b in actionButtons) {
                 b.IsHotkeyEnabled = value;
@@ -44,11 +44,13 @@ public sealed class ActionGridView : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Awake() {
+    void Start() {
+        ObjectPoolManager.Instance.Register(actionButtonPrefab, TOTAL_BUTTON_COUNT);
+
         this.actionButtons = new HotkeyButton[HOTKEYS.Length];
         for (int i = 0; i < actionButtons.Length; i++) {
-            GameObject actionButton = (GameObject)Instantiate(actionButtonPrefab);
-            Util.Parent(actionButton, gameObject);
+            PooledBehaviour actionButton = ObjectPoolManager.Instance.Get(actionButtonPrefab);
+            Util.Parent(actionButton.gameObject, gameObject);
             actionButton.GetComponent<HotkeyButton>().Hotkey = HOTKEYS[i];
             actionButtons[i] = actionButton.GetComponent<HotkeyButton>();
         }

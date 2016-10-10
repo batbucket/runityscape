@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class BuffView : MonoBehaviour {
+public class BuffView : PooledBehaviour {
     [SerializeField]
     private Outline _outline;
 
@@ -18,5 +19,11 @@ public class BuffView : MonoBehaviour {
             _text.color = value;
             _outline.effectColor = value;
         }
+    }
+
+    public override void Reset() {
+        Text = "";
+        Duration = "";
+        Color = Color.white;
     }
 }

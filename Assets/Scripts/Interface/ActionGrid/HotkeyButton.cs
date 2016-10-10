@@ -9,32 +9,32 @@ using WindowsInput;
  * This class represents a button that can be pressed with
  * the mouse and/or the keyboard
  */
-public class HotkeyButton : MonoBehaviour {
+public class HotkeyButton : PooledBehaviour {
 
-    KeyCode _hotkey;
+    private KeyCode _hotkey;
     public KeyCode Hotkey { get { return IsHotkeyEnabled ? _hotkey : KeyCode.None; } set { _hotkey = value; } } //The keyboard key that interacts with this button
 
     private Process _process;
     public Process Process { get { return _process; } set { SetProcess(value); } } //Process this button holds
 
-    bool activated;
-    bool mouseInBounds;
+    private bool activated;
+    private bool mouseInBounds;
 
-    Color INACTIVE_COLOR = Color.black;
-    Color ACTIVE_COLOR = Color.white;
+    private Color INACTIVE_COLOR = Color.black;
+    private Color ACTIVE_COLOR = Color.white;
 
     public bool IsHotkeyEnabled { get; set; }
 
     [SerializeField]
-    Button button;
+    private Button button;
     [SerializeField]
-    UIInput input;
+    private UIInput input;
     [SerializeField]
-    Text text;
+    private Text text;
     [SerializeField]
-    Text hotkeyText;
+    private Text hotkeyText;
 
-    bool _isVisible;
+    private bool _isVisible;
     public bool IsVisible {
         set {
             _isVisible = value;
@@ -45,7 +45,7 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Awake() {
+    private void Awake() {
         activated = false;
 
         //Mouse inputs can also activate action buttons under the same exact rules as if we were using a keyboard
@@ -56,18 +56,23 @@ public class HotkeyButton : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    private void Update() {
         ButtonAppearance();
         if (_isVisible) {
             CheckInputs();
         }
     }
 
+    public override void Reset() {
+        Hotkey = KeyCode.None;
+        Process = new Process();
+    }
+
     public void ClearText() {
         text.text = "";
     }
 
-    void SetProcess(Process process) {
+    private void SetProcess(Process process) {
         if (process == null || !process.Condition.Invoke()) {
             ClearProcess();
         } else {
@@ -89,13 +94,13 @@ public class HotkeyButton : MonoBehaviour {
         hotkeyText.text = "";
     }
 
-    void OnPointerUp() {
+    private void OnPointerUp() {
         activated = false;
         mouseInBounds = false;
     }
 
     //Display tooltip on mouse hovering
-    void OnPointerDown() {
+    private void OnPointerDown() {
         mouseInBounds = true;
     }
 
@@ -106,7 +111,7 @@ public class HotkeyButton : MonoBehaviour {
                 being held down will cancel the input (don't go to #3 if true)
      *    3. If the hotkey is released, it counts as a button click (do the associated action)
      */
-    void CheckInputs() {
+    private void CheckInputs() {
 
         //1
         if (Input.GetKeyDown(Hotkey) && Input.inputString.Length == 1) {
@@ -135,7 +140,7 @@ public class HotkeyButton : MonoBehaviour {
         }
     }
 
-    void ButtonAppearance() {
+    private void ButtonAppearance() {
         if (text.text.Length == 0 || !IsVisible) {
             DisabledAppearance();
         } else if ((activated || mouseInBounds) && button.interactable) {
@@ -145,19 +150,19 @@ public class HotkeyButton : MonoBehaviour {
         }
     }
 
-    void ActiveAppearance() {
+    private void ActiveAppearance() {
         button.image.color = ACTIVE_COLOR;
         text.color = INACTIVE_COLOR;
         hotkeyText.color = INACTIVE_COLOR;
     }
 
-    void InactiveAppearance() {
+    private void InactiveAppearance() {
         button.image.color = INACTIVE_COLOR;
         text.color = ACTIVE_COLOR;
         hotkeyText.color = ACTIVE_COLOR;
     }
 
-    void DisabledAppearance() {
+    private void DisabledAppearance() {
         text.text = "";
         button.image.color = Color.clear;
         hotkeyText.color = Color.clear;

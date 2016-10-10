@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,8 +8,37 @@ using UnityEngine.UI;
 /**
  * This class controls the details one sees on a Portrait prefab
  */
-public abstract class PortraitView : MonoBehaviour {
+public class PortraitView : PooledBehaviour {
     public CharacterPresenter Presenter;
+
+    public IDictionary<int, BuffBundle> BuffViews { get; private set; }
+    public IDictionary<string, CharacterEffect> Effects { get; private set; }
+
+    public string PortraitName { get { return portraitName.text; } set { portraitName.text = value; } }
+    public Text PortraitText { get { return portraitName; } }
+
+    public Image Image { get { return iconImage; } set { iconImage = value; } }
+    public Sprite Sprite { get { return iconImage.sprite; } set { iconImage.sprite = value; } }
+    public IDictionary<ResourceType, ResourceBundle> ResourceViews { get; private set; }
+    public IDictionary<AttributeType, AttributeBundle> AttributeViews { get; private set; }
+
+    public GameObject EffectsHolder { get { return effectsHolder; } }
+    public GameObject BuffsHolder { get { return buffsHolder; } }
+
+    [SerializeField]
+    private Image iconImage; //Image of the character
+    [SerializeField]
+    private Text portraitName; //Name of the character
+    [SerializeField]
+    private BuffView buffPrefab;
+    [SerializeField]
+    private ResourceView resourcePrefab;
+    [SerializeField]
+    private GameObject resourcesHolder;
+    [SerializeField]
+    private GameObject buffsHolder;
+    [SerializeField]
+    private GameObject effectsHolder;
 
     public struct ResourceBundle {
         public ResourceView resourceView;
@@ -30,38 +60,35 @@ public abstract class PortraitView : MonoBehaviour {
         public BuffView buffView;
         public bool isSet;
     }
-    public IDictionary<int, BuffBundle> BuffViews { get; private set; }
-    public IDictionary<string, CharacterEffect> Effects { get; private set; }
-
-    [SerializeField]
-    Text _portraitName; //Name of the character
-    public string PortraitName { get { return _portraitName.text; } set { _portraitName.text = value; } }
-    public Text PortraitText { get { return _portraitName; } }
-
-    [SerializeField]
-    Image _iconImage; //Image of the character
-    public Image Image { get { return _iconImage; } set { _iconImage = value; } }
-    public Sprite Sprite { get { return _iconImage.sprite; } set { _iconImage.sprite = value; } }
-    public IDictionary<ResourceType, ResourceBundle> ResourceViews { get; private set; }
-    public IDictionary<AttributeType, AttributeBundle> AttributeViews { get; private set; }
-
-    [SerializeField]
-    GameObject ResourcesHolder;
-    [SerializeField]
-    GameObject _hitsplatsHolder;
-    public GameObject Hitsplats { get { return _hitsplatsHolder; } }
-    [SerializeField]
-    GameObject _buffsHolder;
-    public GameObject BuffsHolder { get { return _buffsHolder; } }
-    [SerializeField]
-    GameObject _buffPrefab;
 
     // Use this for initialization
-    void Awake() {
+    private void Awake() {
+        ObjectPoolManager.Instance.Register(buffPrefab, 10);
+        ObjectPoolManager.Instance.Register(resourcePrefab, 4);
+
         ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
         AttributeViews = new SortedDictionary<AttributeType, AttributeBundle>();
         BuffViews = new SortedDictionary<int, BuffBundle>();
         Effects = new Dictionary<string, CharacterEffect>();
+    }
+
+    public override void Reset() {
+        PortraitName = "";
+        PortraitText.color = Color.white;
+        Image.color = Color.white;
+        ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
+        BuffView[] bvs = buffsHolder.GetComponentsInChildren<BuffView>();
+
+        for (int i = 0; i < rvs.Length; i++) {
+            ObjectPoolManager.Instance.Return(rvs[i]);
+        }
+
+        for (int i = 0; i < bvs.Length; i++) {
+            ObjectPoolManager.Instance.Return(bvs[i]);
+        }
+
+        ResourceViews.Clear();
+        BuffViews.Clear();
     }
 
     public void AddEffect(CharacterEffect ce) {
@@ -82,7 +109,7 @@ public abstract class PortraitView : MonoBehaviour {
         }
     }
 
-    protected void SetResources(ResourceType[] resourceTypes, GameObject resourcePrefab) {
+    public void SetResources(ResourceType[] resourceTypes) {
 
         //Set all existing isSets to false.
         List<ResourceType> keys = new List<ResourceType>(ResourceViews.Keys); //Can't modify Dictionary in foreach loop
@@ -95,11 +122,10 @@ public abstract class PortraitView : MonoBehaviour {
             ResourceView rv;
             if (!ResourceViews.ContainsKey(resourceType)) {
                 // Instantiate new resource prefab
-                GameObject g = (GameObject)GameObject.Instantiate(resourcePrefab);
-                Util.Parent(g, ResourcesHolder); // Placed in back.
+                rv = ObjectPoolManager.Instance.Get(resourcePrefab);
+                Util.Parent(rv.gameObject, resourcesHolder); // Placed in back.
 
                 // Set resource prefab's details
-                rv = g.GetComponent<ResourceView>();
                 rv.Type = resourceType;
                 rv.ResourceName = resourceType.ShortName;
                 rv.ResourceColor = resourceType.FillColor;
@@ -107,7 +133,7 @@ public abstract class PortraitView : MonoBehaviour {
                 rv.UnderColor = resourceType.EmptyColor;
 
                 // Move resource prefab to appropraite location, resources are ordered.
-                ResourceView[] rvs = ResourcesHolder.GetComponentsInChildren<ResourceView>();
+                ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
                 int index = rvs.Length - 1;
 
                 // Possibly working bubble sort
@@ -128,7 +154,7 @@ public abstract class PortraitView : MonoBehaviour {
         foreach (ResourceType key in keys) {
             if (!ResourceViews[key].isSet) {
                 if (ResourceViews[key].resourceView != null) {
-                    GameObject.Destroy(ResourceViews[key].resourceView.gameObject);
+                    ObjectPoolManager.Instance.Return(ResourceViews[key].resourceView);
                 }
                 ResourceViews.Remove(key);
             }
@@ -140,19 +166,13 @@ public abstract class PortraitView : MonoBehaviour {
     }
 
     //Show stats OnMouseOver
-    void OnMouseOver() {
+    private void OnMouseOver() {
         List<string> s = new List<string>();
         foreach (KeyValuePair<AttributeType, AttributeBundle> pair in AttributeViews) {
             s.Add(string.Format("{0}: {1}/{2}", pair.Key.ShortName, pair.Value.falseValue, pair.Value.trueValue));
         }
         Game.Instance.Tooltip.Text = string.Join(" ", s.ToArray());
     }
-
-    /**
-     * Has to be abstract because the resource prefab is different
-     * depending on whether it's left or right on the screen
-     */
-    abstract public void SetResources(ResourceType[] resourceTypes);
 
     public void SetBuffs(BuffParams[] buffParams) {
         //Set all existing isSets to false.
@@ -165,9 +185,8 @@ public abstract class PortraitView : MonoBehaviour {
         foreach (BuffParams b in buffParams) {
             BuffView bv;
             if (!BuffViews.ContainsKey(b.id)) {
-                GameObject g = Instantiate(_buffPrefab);
-                Util.Parent(g, BuffsHolder);
-                bv = g.GetComponent<BuffView>();
+                bv = ObjectPoolManager.Instance.Get(buffPrefab);
+                Util.Parent(bv.gameObject, BuffsHolder);
             } else {
                 bv = BuffViews[b.id].buffView;
             }
@@ -181,7 +200,7 @@ public abstract class PortraitView : MonoBehaviour {
         //We can use same keys list as before since newly added keys cannot be false
         foreach (int key in keys) {
             if (!BuffViews[key].isSet) {
-                Destroy(BuffViews[key].buffView.gameObject);
+                ObjectPoolManager.Instance.Return(BuffViews[key].buffView);
                 BuffViews.Remove(key);
             }
         }
