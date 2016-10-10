@@ -78,6 +78,7 @@ public class PortraitView : PooledBehaviour {
         Image.color = Color.white;
         ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
         BuffView[] bvs = buffsHolder.GetComponentsInChildren<BuffView>();
+        PooledBehaviour[] ces = effectsHolder.GetComponentsInChildren<PooledBehaviour>();
 
         for (int i = 0; i < rvs.Length; i++) {
             ObjectPoolManager.Instance.Return(rvs[i]);
@@ -85,6 +86,10 @@ public class PortraitView : PooledBehaviour {
 
         for (int i = 0; i < bvs.Length; i++) {
             ObjectPoolManager.Instance.Return(bvs[i]);
+        }
+
+        for (int i = 0; i < ces.Length; i++) {
+            ObjectPoolManager.Instance.Return(ces[i]);
         }
 
         ResourceViews.Clear();
@@ -163,15 +168,6 @@ public class PortraitView : PooledBehaviour {
 
     public void SetAttributes(AttributeType attribute, AttributeBundle bundle) {
         AttributeViews[attribute] = bundle;
-    }
-
-    //Show stats OnMouseOver
-    private void OnMouseOver() {
-        List<string> s = new List<string>();
-        foreach (KeyValuePair<AttributeType, AttributeBundle> pair in AttributeViews) {
-            s.Add(string.Format("{0}: {1}/{2}", pair.Key.ShortName, pair.Value.falseValue, pair.Value.trueValue));
-        }
-        Game.Instance.Tooltip.Text = string.Join(" ", s.ToArray());
     }
 
     public void SetBuffs(BuffParams[] buffParams) {

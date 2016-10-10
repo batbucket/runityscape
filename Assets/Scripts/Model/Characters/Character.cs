@@ -367,8 +367,7 @@ public abstract class Character : Entity, IReactable {
             new TextBox(
                 string.Format("{0} was <color=red>slain</color>.", DisplayName),
                 Color.white, TextEffect.FADE_IN));
-        Buffs.Clear();
-        Presenter.PortraitView.ClearEffects();
+        Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
         Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
     }
 

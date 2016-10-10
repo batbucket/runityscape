@@ -4,10 +4,17 @@ using UnityEngine.UI;
 public class TooltipManager : MonoBehaviour {
 
     [SerializeField]
-    Text tooltipText;
-    public string Text { set { tooltipText.text = value; } }
+    private Text tooltipText;
 
-    public void Clear() {
-        tooltipText.text = "";
+    public string PageText;
+    public string MouseText;
+
+    private void Update() {
+        if (PageText != null) {
+            tooltipText.text = PageText;
+        }
+        if (!string.IsNullOrEmpty(MouseText)) {
+            tooltipText.text = MouseText;
+        }
     }
 }

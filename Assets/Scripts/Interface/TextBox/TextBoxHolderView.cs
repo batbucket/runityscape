@@ -25,6 +25,7 @@ public class TextBoxHolderView : MonoBehaviour {
         foreach (PooledBehaviour pb in textBoxes.Values) {
             ObjectPoolManager.Instance.Register(pb, 100);
         }
+        ObjectPoolManager.Instance.Register(inputBoxPrefab, 1);
     }
 
     public GameObject AddTextBoxView(TextBox textBox, Action callBack = null) {

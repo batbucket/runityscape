@@ -40,7 +40,7 @@ public class PagePresenter {
         Util.ReturnAllChildren(Game.Instance.TextBoxHolder.gameObject);
 
         Game.Instance.StopCoroutine("Timeline");
-        Game.Instance.ActionGrid.IsVisible = true;
+        Game.Instance.ActionGrid.IsEnabled = true;
 
         if (!string.IsNullOrEmpty(page.Text)) {
             AddTextBox(new TextBox(page.Text, TextEffect.FADE_IN, "", 0));
@@ -59,8 +59,6 @@ public class PagePresenter {
             c.Buffs.Clear();
             c.IsCharging = true;
         }
-
-        page.OnEnter();
 
         Tick();
     }
@@ -89,7 +87,7 @@ public class PagePresenter {
         Page.Tick();
         Game.Instance.ActionGrid.ClearAll();
         Game.Instance.ActionGrid.SetButtonAttributes(Page.ActionGrid);
-        Game.Instance.Tooltip.Text = Page.Tooltip;
+        Game.Instance.Tooltip.PageText = Page.Tooltip;
         Game.Instance.Header.Location = Page.Location;
         SetCharacterPresenters(Page.LeftCharacters, Game.Instance.LeftPortraits);
         SetCharacterPresenters(Page.RightCharacters, Game.Instance.RightPortraits);

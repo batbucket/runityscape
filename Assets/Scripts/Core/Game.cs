@@ -88,7 +88,7 @@ public class Game : MonoBehaviour {
 
     IEnumerator Timeline(Event[] events, bool hideGrid) {
         if (hideGrid) {
-            ActionGrid.IsVisible = false;
+            ActionGrid.IsEnabled = false;
             PagePresenter.Page.GetAll().ForEach(c => c.IsCharging = false);
         }
         foreach (Event myEvent in events) {
@@ -106,7 +106,7 @@ public class Game : MonoBehaviour {
             }
         }
         if (hideGrid) {
-            ActionGrid.IsVisible = true;
+            ActionGrid.IsEnabled = true;
             PagePresenter.Page.GetAll().ForEach(c => c.IsCharging = true);
         }
         yield break;
@@ -118,7 +118,7 @@ public class Game : MonoBehaviour {
 
     IEnumerator Timeline(Event[][] events, bool hideGrid) {
         if (hideGrid) {
-            ActionGrid.IsVisible = false;
+            ActionGrid.IsEnabled = false;
         }
         if (events[0][0].textBox != null && events[0].IsExactly<TextBox>()) {
             events[0][0].delay = 0;
@@ -141,7 +141,7 @@ public class Game : MonoBehaviour {
             }
         }
         if (hideGrid) {
-            ActionGrid.IsVisible = true;
+            ActionGrid.IsEnabled = true;
         }
         yield break;
     }
@@ -190,7 +190,7 @@ public class Game : MonoBehaviour {
                 Start();
                 PagePresenter.SetPage(start.Primary);
                 StopAllCoroutines();
-                ActionGrid.IsVisible = true;
+                ActionGrid.IsEnabled = true;
             }) };
     }
 

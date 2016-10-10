@@ -16,7 +16,7 @@ public class NewGame : Area {
 
     private PlayerCharacter pc;
 
-    private Tutorial tutorial;
+    private Camp camp;
 
     public NewGame(Page primary) {
         this.primary = primary;
@@ -27,7 +27,7 @@ public class NewGame : Area {
 
         pc = new Hero(1, 1, 1, 1);
 
-        tutorial = new Tutorial(pc);
+        camp = new Camp(pc);
     }
 
     public override void Init() {
@@ -284,7 +284,7 @@ public class NewGame : Area {
                         pc.AddToAttribute(pair.Key, true, pair.Value);
                         pc.AddToResource(ResourceType.HEALTH, false, pc.GetResourceCount(ResourceType.HEALTH, true));
                     }
-                    Page = tutorial.Greeting;
+                    Page = camp.Hub;
                     })
             },
             onEnter:

@@ -67,10 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Areas\Area.cs" />
+    <Compile Include="Assets\Scripts\Areas\Camp.cs" />
     <Compile Include="Assets\Scripts\Areas\Debug.cs" />
     <Compile Include="Assets\Scripts\Areas\NewGame.cs" />
     <Compile Include="Assets\Scripts\Areas\StartMenu.cs" />
-    <Compile Include="Assets\Scripts\Areas\Tutorial.cs" />
+    <Compile Include="Assets\Scripts\Areas\Temple.cs" />
     <Compile Include="Assets\Scripts\Core\Event.cs" />
     <Compile Include="Assets\Scripts\Core\Game.cs" />
     <Compile Include="Assets\Scripts\Core\Process\OneShotProcess.cs" />
@@ -80,11 +81,13 @@
     <Compile Include="Assets\Scripts\Interface\Effects\CharacterEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Effect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\EffectsManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Effects\ExplosionView.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\FadeAnimation.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\HitsplatView.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\BloodsplatEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\DeathEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\DefeatEffect.cs" />
+    <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\ExplosionEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\HitsplatEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\LightningEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\MinisplatEffect.cs" />

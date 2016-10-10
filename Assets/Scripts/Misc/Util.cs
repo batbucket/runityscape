@@ -24,8 +24,11 @@ public static class Util {
         b.transform.SetSiblingIndex(ai);
     }
 
+    private const bool IS_DEBUG = false;
     public static void Log(string message) {
-        UnityEngine.Debug.Log(message);
+        if (IS_DEBUG) {
+            UnityEngine.Debug.Log(message);
+        }
     }
 
     public static void SetAllColorOfChildren(GameObject parent, Color color) {

@@ -3,11 +3,7 @@ using System.Collections;
 using System;
 using System.Linq;
 
-public class Tutorial : Area {
-    public Page Greeting;
-    public Page FakeCamp;
-    public Page FakePlaces;
-    public Page FakeStash;
+public class Temple : Area {
 
     public Page PreBridge;
     public BattlePage RegeneratorFight;
@@ -27,100 +23,18 @@ public class Tutorial : Area {
     public Alestre alestre;
     public Kitsune kits;
 
-    public Tutorial(PlayerCharacter pc) {
-        this.pc = pc;
+    public Camp camp;
+
+    public Temple(Camp camp) {
+        this.camp = camp;
+        this.pc = camp.pc;
         this.alestre = new Alestre();
         this.kits = new Kitsune();
 
-        Greeting = Rp(
-            text: "Pure darkness covers your surroundings, near and far. You cannot sense your body, or anything but your thoughts.",
-            location: "Unknown",
-            tooltip: "Press space to advance events.",
-            right: new Character[] { },
-            processes: new Process[] {
-                                new OneShotProcess("Call out",
-                                "Speak into the darkness.",
-                                () => {
-                                    Game.Cutscene(
-                                        new Event(new LeftBox(pc, "H...hello?")),
-                                        new Event(new TextBox("A weak note hums in your ears.")),
-                                        new Event(new RightBox(alestre, "I, Alestre, resurrected you... save...")),
-                                        new Event(new RightBox(alestre, "...temple... place is corrupted...")),
-                                        new Event(new RightBox(alestre, "...agent of corruption...")),
-                                        new Event(new TextBox("A feel yourself being pulled out of the nothingness. You seem to exist now.")),
-                                        new Event(() => Page = FakeCamp)
-                                        );
-                                })
-            }
-            );
-
-        CreateFakeCamp();
         CreatePreBridge();
         CreateBridge();
         CreateTempleEntrance();
         CreateTemple();
-    }
-
-    private void CreateFakeCamp() {
-        FakeCamp = Rp(
-            text: "You awaken in a grassy green field. "
-            + "The soft grass has served as your bed. The sun glows above you."
-            + " You are on a small peninsula. Two hulking metal walls as high as the sky guard the attachment to the mainland, connected by the ruins of a giant gate."
-            + " The walls curve around the field, ending where the land ends. Aside from one end, the land is surrounded by a sea of nothingness.",
-            location: "Camp",
-            processes: new Process[] {
-                        new Process("<color=red>Explore</color>", "not implemented yet :("),
-                        new Process("Places", "Visit an area you know.", () => Page = FakePlaces),
-                        new Process(),
-                        new Process(),
-
-                        new Process(),
-                        new Process(),
-                        new Process(),
-                        new Process(),
-
-                        new Process(),
-                        new Process(),
-                        new Process(),
-                        new OneShotProcess("Mysterious Box", "What is this...?",
-                        () => {
-                            Game.Instance.AddTextBox(new TextBox(string.Format("TimeCapsule was added to {0}'s Items.", pc.Name)));
-                            pc.Selections[Selection.ITEM].Add(new TimeCapsule(1));
-                        }),
-            },
-            onEnter: () => {
-                if (kits.State == CharacterState.ALIVE) {
-                    Game.Instance.AddTextBox(new TextBox("A path of black muck cuts through the peninsula from the shattered gate to somewhere behind you. It writhes at the surface."));
-                }
-            }
-            );
-
-        FakePlaces = Rp(
-            text: "Behind you is a lengthy stone bridge. In a far away distance, you see a temple.",
-            location: "Camp",
-            tooltip: "Where will you go?",
-            processes: new Process[] {
-                new Process("Temple", "Go to the temple.", () => Page = PreBridge),
-                new Process(),
-                new Process(),
-                new Process(),
-
-                new Process(),
-                new Process(),
-                new Process(),
-                new Process(),
-
-                new Process(),
-                new Process(),
-                new Process(),
-                new Process("Back", "Return to the camp.", () => Page = FakeCamp)
-            },
-            onEnter: () => {
-                if (kits.State == CharacterState.ALIVE) {
-                    Game.Instance.AddTextBox(new TextBox("The trail of muck is on the bridge."));
-                }
-            }
-            );
     }
 
     private void CreatePreBridge() {
@@ -131,7 +45,7 @@ public class Tutorial : Area {
             + " You are truly at the edge of the world.",
             location: "Bridge Entrance",
             processes: new Process[] {
-                new Process("Go back", action: () => Page = FakeCamp),
+                new Process("Go back", action: () => Page = camp.Hub),
                 new Process("Go to Bridge", action: () => Page = (RegeneratorFight.State == BattleState.VICTORY) ? Bridge : RegeneratorFight)
             },
             right: PreBridgeEnemies,

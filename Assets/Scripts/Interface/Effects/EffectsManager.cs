@@ -28,10 +28,15 @@ public class EffectsManager : MonoBehaviour {
     private OneShotAnimation bloodsplatPrefab;
     public OneShotAnimation Bloodsplat { get { return bloodsplatPrefab; } }
 
+    [SerializeField]
+    private ExplosionView explosionPrefab;
+    public ExplosionView Explosion { get { return explosionPrefab; } }
+
     private void Start() {
         ObjectPoolManager.Instance.Register(hitsplatPrefab, 10);
         ObjectPoolManager.Instance.Register(minisplatPrefab, 10);
         ObjectPoolManager.Instance.Register(lightningPrefab, 10);
         ObjectPoolManager.Instance.Register(bloodsplatPrefab, 10);
+        ObjectPoolManager.Instance.Register(explosionPrefab, 10);
     }
 }
