@@ -74,7 +74,7 @@ public class Equipment : ICollection<SpellFactory> {
     }
 
     public override string ToString() {
-        return string.Join(" ", equipment.Values.Where(e => e != null).Select(e => e.Name).ToArray());
+        return string.Join(", ", equipment.Values.Where(e => e != null).Select(e => e.Name).ToArray());
     }
 
     IEnumerator IEnumerable.GetEnumerator() {

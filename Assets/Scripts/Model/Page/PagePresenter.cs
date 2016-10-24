@@ -36,6 +36,7 @@ public class PagePresenter {
         }
 
         this.Page = page;
+        Page.OnEnter();
         Page.GetAll().ForEach(c => c.BattleTimer = 0);
         Util.ReturnAllChildren(Game.Instance.TextBoxHolder.gameObject);
 

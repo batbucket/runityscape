@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
+using Model.BattlePage;
 
 public class Game : MonoBehaviour {
     static Game _instance;
@@ -68,12 +69,10 @@ public class Game : MonoBehaviour {
 
         start = new StartMenu();
 
-        Header.Blurb = "";
-        Header.Chapter = "";
         Header.Location = "";
 
         MenuButton.Hotkey = KeyCode.None;
-        MenuButton.Process = new Process("Main Menu", "Return to the Main Menu.", () => { Start(); PagePresenter.SetPage(start.Primary); });
+        MenuButton.Buttonable = new Process("Main Menu", "Return to the Main Menu.", () => { Start(); PagePresenter.SetPage(start.Primary); });
 
         PagePresenter.SetPage(start.Primary);
     }
@@ -93,12 +92,12 @@ public class Game : MonoBehaviour {
         }
         foreach (Event myEvent in events) {
             Event e = myEvent;
-            if (!e.isOneShot || (e.isOneShot && !e.HasPlayed)) {
+            if (!e.IsOneShot || (e.IsOneShot && !e.HasPlayed)) {
                 float timer = 0;
-                while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.delay) {
+                while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.Delay) {
                     yield return null;
                 }
-                e.action.Invoke();
+                e.Action.Invoke();
                 while (hideGrid && !Input.GetKey(KeyCode.LeftControl) && !Input.GetKeyDown(KeyCode.Space)) {
                     yield return null;
                 }
@@ -120,20 +119,20 @@ public class Game : MonoBehaviour {
         if (hideGrid) {
             ActionGrid.IsEnabled = false;
         }
-        if (events[0][0].textBox != null && events[0].IsExactly<TextBox>()) {
-            events[0][0].delay = 0;
+        if (events[0][0].TextBox != null && events[0].IsExactly<TextBox>()) {
+            events[0][0].Delay = 0;
         }
         foreach (Event[] myEventGroup in events) {
             Event[] eventGroup = myEventGroup;
             foreach (Event myEvent in eventGroup) {
                 Event e = myEvent;
-                if (!e.isOneShot || (e.isOneShot && !e.HasPlayed)) {
+                if (!e.IsOneShot || (e.IsOneShot && !e.HasPlayed)) {
                     float timer = 0;
-                    while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.delay) {
+                    while (!Input.GetKey(KeyCode.LeftControl) && (timer += UnityEngine.Time.deltaTime) < e.Delay) {
                         yield return null;
                     }
-                    e.action.Invoke();
-                    while (!Input.GetKey(KeyCode.LeftControl) && !e.hasEnded.Invoke()) {
+                    e.Action.Invoke();
+                    while (!Input.GetKey(KeyCode.LeftControl) && !e.HasEnded.Invoke()) {
                         yield return null;
                     }
                     e.HasPlayed = true;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Meditate : SpellFactory {
     public const string NAME = "Meditate";
-    public const string DESCRIPTION = "Heal yourself for 50% + <color=blue>INT * 2</color> your maximum <color=lime>life</color>.";
+    public const string DESCRIPTION = "Heal yourself for 50% of your maximum <color=lime>life</color>.";
     public const SpellType SPELL_TYPE = SpellType.BOOST;
     public const TargetType TARGET_TYPE = TargetType.SELF;
     public static readonly string CAST_TEXT = "{0} calms their mind!\n{0} restored <color=lime>{1}</color> life!";
@@ -23,7 +23,7 @@ public class Meditate : SpellFactory {
             calculation: (c, t, o) => {
                 return new Calculation(
                     targetResources: new Dictionary<ResourceType, PairedInt>() {
-                    { ResourceType.HEALTH, new PairedInt(0, t.GetResourceCount(ResourceType.HEALTH, true) / 2 + t.GetAttributeCount(AttributeType.INTELLIGENCE, false) * 2) }
+                    { ResourceType.HEALTH, new PairedInt(0, t.GetResourceCount(ResourceType.HEALTH, true) / 2) }
                     });
             },
             createText: (c, t, calc, o) => {

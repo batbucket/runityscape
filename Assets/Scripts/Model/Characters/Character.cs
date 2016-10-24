@@ -17,12 +17,17 @@ public abstract class Character : Entity, IReactable {
     public string Name { set { _name = value; } get { return _name; } }
     public string Suffix { set { _suffix = value; } }
     public string DisplayName { get { return string.Format("{0}{1}", _name, string.IsNullOrEmpty(_suffix) ? "" : string.Format(" {0}", _suffix)); } }
-    public int Level { get; set; }
+    public NamedAttribute.Level Level;
 
     public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
     public IDictionary<ResourceType, Resource> Resources { get; private set; }
     public SpellFactory Attack { get; set; }
-    public IDictionary<Selection, ICollection<SpellFactory>> Selections { get; private set; }
+
+    public IList<SpellFactory> Spells;
+    public IList<SpellFactory> Actions;
+    public Inventory Items;
+    public IList<SpellFactory> Mercies;
+    public Equipment Equipment;
 
     public Stack<SpellFactory> SpellStack { get; private set; }
     public List<Spell> Buffs { get; private set; }
@@ -75,9 +80,11 @@ public abstract class Character : Entity, IReactable {
 
     public Character(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable, string checkText = "") : base(spriteLoc) {
         this._name = name;
-        this.Level = level;
+        this.Level = new NamedAttribute.Level();
+        Level.False = level;
 
         this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
+            {AttributeType.LEVEL, Level },
             {AttributeType.STRENGTH, new NamedAttribute.Strength(strength) },
             {AttributeType.INTELLIGENCE, new NamedAttribute.Intelligence(intelligence) },
             {AttributeType.DEXTERITY, new NamedAttribute.Dexterity(dexterity) },
@@ -91,13 +98,13 @@ public abstract class Character : Entity, IReactable {
 
         this.Attack = new Attack();
         Inventory inventory = new Inventory();
-        this.Selections = new SortedDictionary<Selection, ICollection<SpellFactory>>() {
-            { Selection.SPELL, new HashSet<SpellFactory>() },
-            { Selection.ACT, new HashSet<SpellFactory>() },
-            { Selection.ITEM, inventory },
-            { Selection.MERCY, new HashSet<SpellFactory>() },
-            { Selection.EQUIP, new Equipment(inventory) }
-        };
+
+        Spells = new List<SpellFactory>();
+        Actions = new List<SpellFactory>();
+        Items = new Inventory();
+        Mercies = new List<SpellFactory>();
+        Equipment = new Equipment(Items);
+
         this.TextColor = textColor;
         this.IsTargetable = true;
         this.IsControllable = isDisplayable;
@@ -106,7 +113,6 @@ public abstract class Character : Entity, IReactable {
         Buffs = new List<Spell>();
         RecievedSpells = new List<Spell>();
         CastSpells = new List<Spell>();
-
 
         PerkType.Character[] characterPerkTypes = (PerkType.Character[])Enum.GetValues(typeof(PerkType.Character));
 
@@ -210,8 +216,8 @@ public abstract class Character : Entity, IReactable {
         }
 
         //Set Skill cap to be highest skill costing Spell
-        if (Resources.ContainsKey(ResourceType.SKILL) && Selections[Selection.SPELL].Count > 0) {
-            Resources[ResourceType.SKILL].True = Mathf.Max(2, Selections[Selection.SPELL].Where(s => s.Costs.ContainsKey(ResourceType.SKILL)).Select(s => s.Costs[ResourceType.SKILL]).OrderByDescending(i => i).FirstOrDefault());
+        if (Resources.ContainsKey(ResourceType.SKILL) && Spells.Count > 0) {
+            Resources[ResourceType.SKILL].True = Mathf.Max(2, Spells.Where(s => s.Costs.ContainsKey(ResourceType.SKILL)).Select(s => s.Costs[ResourceType.SKILL]).OrderByDescending(i => i).FirstOrDefault());
         }
     }
 

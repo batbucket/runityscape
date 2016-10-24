@@ -24,7 +24,6 @@ public class SummonTent : SpellFactory {
                 for (int i = 0; i < tents.Count; i++) {
                     Tentacle s = tents[i].Summon();
                     Game.Instance.PagePresenter.Page.AddCharacters(c.Side, s);
-                    s.OnBattleStart();
                 }
                 Result.NumericPerform(c, t, calc);
             },

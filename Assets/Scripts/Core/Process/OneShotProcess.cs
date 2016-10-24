@@ -4,26 +4,19 @@ using System;
 
 public class OneShotProcess : Process {
 
-    bool wasCalled;
+    private bool wasCalled;
 
-    public override Func<bool> Condition {
-        get {
-            return () => base.Condition.Invoke() && !wasCalled;
+    public OneShotProcess(string name = "", string description = "", Action action = null, Func<bool> condition = null) : base(name, description, action, condition) { }
+
+    public override void Invoke() {
+        if (isInvokable()) {
+            base.Invoke();
+            wasCalled = true;
         }
     }
 
-    public OneShotProcess(string name = "", string description = "", Action action = null, Func<bool> condition = null) : base(name, description, action, condition) {
-        this.wasCalled = false;
-    }
-
-    public OneShotProcess(Action action) : base(null, null, action) {
-        this.wasCalled = false;
-    }
-
-    public override void Play() {
-        if (!wasCalled) {
-            this.wasCalled = true;
-            base.Play();
-        }
+    protected override bool isInvokable() {
+        return false;
+        //return base.isInvokable() && !wasCalled;
     }
 }

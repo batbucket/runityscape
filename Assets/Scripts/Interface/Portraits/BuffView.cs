@@ -4,20 +4,21 @@ using UnityEngine.UI;
 
 public class BuffView : PooledBehaviour {
     [SerializeField]
-    private Outline _outline;
-
+    private Outline outline;
     [SerializeField]
-    private Text _text;
-    public string Text { set { _text.text = value; } }
-
+    private Text text;
     [SerializeField]
-    private Text _duration;
-    public string Duration { set { _duration.text = value; } }
+    private Text duration;
+    [SerializeField]
+    private Image image;
+
+    public string Text { set { text.text = value; } }
+    public string Duration { set { duration.text = value; } }
 
     public Color Color {
         set {
-            _text.color = value;
-            _outline.effectColor = value;
+            text.color = value;
+            outline.effectColor = value;
         }
     }
 
@@ -25,5 +26,6 @@ public class BuffView : PooledBehaviour {
         Text = "";
         Duration = "";
         Color = Color.white;
+        image.color = Color.black;
     }
 }

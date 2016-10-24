@@ -18,24 +18,36 @@ public class HotkeyButton : PooledBehaviour {
     private Text text;
     [SerializeField]
     private Text hotkeyText;
+    [SerializeField]
+    private BoxCollider2D bc;
 
-    public KeyCode Hotkey { get { return IsHotkeyEnabled ? _hotkey : KeyCode.None; } set { _hotkey = value; } } //The keyboard key that interacts with this button
-    public bool IsHotkeyEnabled;
-    public Process Process {
-        get {
-            return process;
-        }
+    public KeyCode Hotkey { get { return isHotkeyEnabled ? hotkey : KeyCode.None; } set { hotkey = value; } } //The keyboard key that interacts with this button
+    public bool IsHotkeyEnabled {
         set {
-            SetProcess(value);
+            hotkeyText.text = (value && Hotkey != KeyCode.None ? Hotkey.ToString() : "");
+            this.isHotkeyEnabled = value;
         }
     }
 
-    private KeyCode _hotkey;
-    private Process process;
+    public IButtonable Buttonable {
+        set {
+            text.text = value.ButtonText;
+            tooltipText = value.TooltipText;
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(() => {
+                if (value.IsInvokable) {
+                    value.Invoke();
+                    Game.Instance.Tooltip.MouseText = "";
+                }
+            });
+        }
+    }
+
+    private bool isHotkeyEnabled;
+    private string tooltipText;
+    private KeyCode hotkey;
     private Color INACTIVE_COLOR = Color.black;
     private Color ACTIVE_COLOR = Color.white;
-
-    private bool mouseIn;
 
     public bool IsVisible {
         set {
@@ -56,38 +68,29 @@ public class HotkeyButton : PooledBehaviour {
 
     // Update is called once per frame
     private void Update() {
-        if (Input.GetKeyDown(this.Hotkey)) {
-            Process.Play();
-        }
-        if (process != null && mouseIn) {
-            Game.Instance.Tooltip.MouseText = process.Description;
+        if (isHotkeyEnabled && Input.GetKeyDown(this.Hotkey)) {
+            button.onClick.Invoke();
         }
     }
 
-    public void OnPointerEnter(BaseEventData e) {
-        mouseIn = true;
+    private void OnMouseEnter() {
+        OnMouseOver();
     }
 
-    public void OnPointerExit(BaseEventData e) {
-        mouseIn = false;
+    private void OnMouseOver() {
+        if (this.enabled) {
+            Game.Instance.Tooltip.MouseText = tooltipText;
+        } else {
+            Game.Instance.Tooltip.MouseText = "";
+        }
+    }
+
+    private void OnMouseExit() {
         Game.Instance.Tooltip.MouseText = "";
     }
 
     public override void Reset() {
         Hotkey = KeyCode.None;
-        Process = new Process();
-    }
-
-    public void ClearText() {
-        text.text = "";
-    }
-
-    private void SetProcess(Process process) {
-        button.onClick.RemoveAllListeners();
-        button.onClick.AddListener(process.Play);
-        text.text = process.Name;
-        hotkeyText.text = IsHotkeyEnabled && Hotkey != KeyCode.None ? Hotkey.ToString() : "";
-        this.process = process;
     }
 
     private void ActiveAppearance() {

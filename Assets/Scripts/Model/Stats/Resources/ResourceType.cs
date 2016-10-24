@@ -5,21 +5,23 @@ using UnityEngine;
 
 public sealed class ResourceType : IComparable {
     public enum DisplayMode {
-        NUMERIC, PERCENTAGE, NONE
+        NUMERIC, PERCENTAGE, EXP, NONE
     }
 
     public static readonly IDictionary<DisplayMode, Func<int, int, string>> SPLAT_FUNCTIONS
         = new Dictionary<DisplayMode, Func<int, int, string>>() {
             { DisplayMode.NONE,       (a, b) =>          string.Format("", a.ToString("+#;-#")) },
             { DisplayMode.NUMERIC,    (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) },
-            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a) : string.Format("{0}%", ((a * 100) / b).ToString("+#;-#")) }
+            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a) : string.Format("{0}%", ((a * 100) / b).ToString("+#;-#")) },
+            { DisplayMode.EXP,        (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) }
         };
 
     public static readonly IDictionary<DisplayMode, Func<float, int, string>> BAR_DISPLAY_FUNCTIONS
         = new Dictionary<DisplayMode, Func<float, int, string>>() {
             { DisplayMode.NONE, (a, b) =>                string.Format("", (int)a, b) },
             { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}/{1}", (int)a, b) },
-            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) }
+            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) },
+            { DisplayMode.EXP, (a, b) => a < b ? string.Format("{0}/{1}", (int)a, b) : "Level up!" }
         };
 
     string _name;
@@ -107,6 +109,16 @@ public sealed class ResourceType : IComparable {
                                                                       new Color(50.0f / 255, 0f, 50.0f / 255),
                                                                       3,
                                                                       displayMode: DisplayMode.PERCENTAGE);
+
+    public static readonly ResourceType EXPERIENCE = new ResourceType("Experience",
+                                                                "XP",
+                                                                "Needed to level up.",
+                                                                Color.white,
+                                                                Color.grey,
+                                                                998,
+                                                                AttributeType.LEVEL,
+                                                                (a, r) => r.True = (int)(1 + Mathf.Pow(2, a.False)),
+                                                                DisplayMode.EXP);
 
     public int CompareTo(object obj) {
         ResourceType other = (ResourceType)obj;

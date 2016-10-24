@@ -9,21 +9,21 @@ using UnityEngine;
  */
 public abstract class SpellFactory {
 
-    string _name;
-    public string Name { get { return _name; } }
+    string name;
+    public string Name { get { return name; } }
 
-    string _description;
-    public string Description { get { return _description; } }
+    string description;
+    public string Description { get { return description; } }
 
-    readonly SpellType _spellType;
-    public SpellType SpellType { get { return _spellType; } }
+    readonly SpellType spellType;
+    public SpellType SpellType { get { return spellType; } }
 
-    readonly TargetType _targetType;
-    public TargetType TargetType { get { return _targetType; } }
+    readonly TargetType targetType;
+    public TargetType TargetType { get { return targetType; } }
     public bool IsEnabled { get; set; }
 
-    readonly bool _isSelfTargetable;
-    public bool IsSelfTargetable { get { return _isSelfTargetable; } }
+    readonly bool isSelfTargetable;
+    public bool IsSelfTargetable { get { return isSelfTargetable; } }
 
     private string abbreviation;
     public string Abbreviation { get { return abbreviation; } }
@@ -52,8 +52,8 @@ public abstract class SpellFactory {
         }
     }
 
-    protected readonly IDictionary<ResourceType, int> _costs;
-    public IDictionary<ResourceType, int> Costs { get { return _costs; } }
+    protected readonly IDictionary<ResourceType, int> costs;
+    public IDictionary<ResourceType, int> Costs { get { return costs; } }
 
     public SpellFactory(string name,
                         string description,
@@ -64,22 +64,22 @@ public abstract class SpellFactory {
                         string abbreviation = "???",
                         Color? color = null) {
         Util.Assert(!(!isSelfTargetable && targetType == TargetType.SELF), "Cannot be non self targetable and have target type be self!");
-        this._name = name;
-        this._description = description;
-        this._spellType = spellType;
-        this._targetType = targetType;
-        this._costs = costs ?? new Dictionary<ResourceType, int>();
+        this.name = name;
+        this.description = description;
+        this.spellType = spellType;
+        this.targetType = targetType;
+        this.costs = costs ?? new Dictionary<ResourceType, int>();
         this.IsEnabled = true;
-        this._isSelfTargetable = isSelfTargetable;
+        this.isSelfTargetable = isSelfTargetable;
         this.color = color ?? Color.white;
         this.abbreviation = abbreviation;
     }
 
-    public virtual string GetNameAndInfo(Character caster) {
+    public virtual string GetNameAndCosts(Character caster) {
         StringBuilder s = new StringBuilder();
-        s.Append((IsCastable(caster) ? Name : Util.Color(Name, Color.red)) + (_costs.Count == 0 ? "" : " - "));
+        s.Append((IsCastable(caster) ? Name : Util.Color(Name, Color.red)) + (costs.Count == 0 ? "" : " - "));
         List<string> elements = new List<string>();
-        foreach (KeyValuePair<ResourceType, int> entry in _costs) {
+        foreach (KeyValuePair<ResourceType, int> entry in costs) {
             if (entry.Key != ResourceType.CHARGE) {
                 Color resourceColor = entry.Key.FillColor;
                 int cost = entry.Value;
@@ -100,8 +100,8 @@ public abstract class SpellFactory {
         if (!IsSelfTargetable && caster == target) {
             return false;
         }
-        foreach (KeyValuePair<ResourceType, int> resourceCost in _costs) {
-            if (!caster.Resources.ContainsKey(resourceCost.Key) || caster.GetResourceCount(resourceCost.Key, false) < resourceCost.Value) {
+        foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
+            if (caster.GetResourceCount(resourceCost.Key, false) < resourceCost.Value) {
                 return false;
             }
         }
@@ -109,7 +109,7 @@ public abstract class SpellFactory {
     }
 
     protected virtual void ConsumeResources(Character caster) {
-        foreach (KeyValuePair<ResourceType, int> resourceCost in _costs) {
+        foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
             caster.AddToResource(resourceCost.Key, false, -resourceCost.Value);
         }
         caster.Discharge();
@@ -179,6 +179,14 @@ public abstract class SpellFactory {
                 };
             }
         );
+    }
+
+    public string GetCosts() {
+        IList<string> s = new List<string>();
+        foreach (KeyValuePair<ResourceType, int> pair in costs) {
+            s.Add(Util.Color(string.Format("{0} {1}", pair.Value, pair.Key.Name), pair.Key.FillColor));
+        }
+        return string.Join(", ", s.ToArray());
     }
 
     public virtual Critical CreateCritical() {

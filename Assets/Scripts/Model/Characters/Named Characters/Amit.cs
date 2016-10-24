@@ -7,13 +7,13 @@ public class Amit : PlayerCharacter {
         Side = false;
         AddResource(new NamedResource.Skill());
         this.Attack = new Attack();
-        this.Selections[Selection.SPELL].Add(new Meditate());
-        this.Selections[Selection.ACT].Add(new Check());
-        this.Selections[Selection.ITEM].Add(new Lobster(2));
-        this.Selections[Selection.ITEM].Add(new Scimitar(2));
-        this.Selections[Selection.MERCY].Add(new Spare());
-        this.Selections[Selection.SPELL].Add(new Smite());
-        this.Selections[Selection.SPELL].Add(new Poison());
-        this.Selections[Selection.SPELL].Add(new Petrify());
+        this.Spells.Add(new Meditate());
+        this.Actions.Add(new Check());
+        this.Items.Add(new Lobster(2));
+        this.Items.Add(new Scimitar(2));
+        this.Mercies.Add(new Spare());
+        this.Spells.Add(new Smite());
+        this.Spells.Add(new Poison());
+        this.Spells.Add(new Petrify());
     }
 }

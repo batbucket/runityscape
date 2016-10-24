@@ -14,11 +14,22 @@ public abstract class Page {
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
 
-    IList<Process[]> actionGridHistory;
     public Process[] ActionGrid {
-        get { return actionGridHistory.Last(); }
-        set { actionGridHistory.Add(value); }
+        get {
+            return actionGrid;
+        }
+        set {
+            this.actionGrid = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
+            for (int i = 0; i < actionGrid.Length; i++) {
+                if (value != null && i < value.Length) {
+                    actionGrid[i] = value[i];
+                } else {
+                    actionGrid[i] = new Process();
+                }
+            }
+        }
     }
+    private Process[] actionGrid;
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
@@ -33,7 +44,7 @@ public abstract class Page {
     public static int idCount = 0;
     public int Id { get; private set; }
 
-    string _inputtedString;
+    private string _inputtedString;
     public string InputtedString { get { return _inputtedString; } set { _inputtedString = value; } }
 
     public Page(
@@ -42,14 +53,14 @@ public abstract class Page {
         string location = "",
         bool hasInputField = false,
         Character mainCharacter = null,
-        Character[] left = null,
-        Character[] right = null,
+        IList<Character> left = null,
+        IList<Character> right = null,
         Action onFirstEnter = null,
         Action onEnter = null,
         Action onFirstExit = null,
         Action onExit = null,
         Action onTick = null,
-        Process[] processes = null,
+        IList<Process> processes = null,
         string musicLoc = null
         ) {
 
@@ -62,14 +73,14 @@ public abstract class Page {
 
 
         //Left Characters initialization
-        if (left == null || left.Length == 0) {
+        if (left == null || left.Count == 0) {
             this.LeftCharacters = new List<Character>();
         } else {
             SetSide(left, false);
         }
 
         //Right Characters initialization
-        if (right == null || right.Length == 0) {
+        if (right == null || right.Count == 0) {
             this.RightCharacters = new List<Character>();
         } else {
             SetSide(right, true);
@@ -81,8 +92,7 @@ public abstract class Page {
         this.OnFirstExitAction = onFirstExit ?? (() => { });
         this.OnExitAction = onExit ?? (() => { });
 
-        this.actionGridHistory = new List<Process[]>();
-        this.ActionGrid = processes ?? new Process[ActionGridView.ROWS * ActionGridView.COLS];
+        this.ActionGrid = processes == null ? new Process[0] : processes.ToArray();
 
         this.OnTick = onTick ?? (() => { });
         this.Music = musicLoc;
@@ -90,10 +100,6 @@ public abstract class Page {
         this.Id = idCount++;
 
         this._inputtedString = "";
-    }
-
-    public void ResetActionGrid() {
-        actionGridHistory = new List<Process[]>() { actionGridHistory.First() };
     }
 
     public void OnEnter() {
@@ -129,6 +135,10 @@ public abstract class Page {
         OnExitAction.Invoke();
     }
 
+    protected virtual void OnAddCharacter(Character c) {
+
+    }
+
     public void AddCharacters(Character sameSide, params Character[] chars) {
         AddCharacters(sameSide.Side, chars);
     }
@@ -138,6 +148,7 @@ public abstract class Page {
         IList<Character> myList = !isRightSide ? LeftCharacters : RightCharacters;
         foreach (Character c in chars) {
             myList.Add(c);
+            OnAddCharacter(c);
         }
         RepeatedCharacterCheck(GetAll());
     }
@@ -242,7 +253,9 @@ public abstract class Page {
     }
 
     protected void ClearActionGrid() {
-        ActionGrid = new Process[ActionGridView.ROWS * ActionGridView.COLS];
+        for (int i = 0; i < ActionGrid.Length; i++) {
+            ActionGrid[i] = new Process();
+        }
     }
 
     public virtual void Tick() {

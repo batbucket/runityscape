@@ -21,15 +21,17 @@ public class Check : SpellFactory {
     private static string CheckText(Character target) {
         List<string> s = new List<string>();
         foreach (KeyValuePair<AttributeType, Attribute> pair in target.Attributes) {
-            s.Add(Util.Color(string.Format("{0}/{1}", pair.Value.False, pair.Value.True), pair.Key.Color));
+            if (pair.Key.IsAssignable) {
+                s.Add(Util.Color(string.Format("{0}/{1}", pair.Value.False, pair.Value.True), pair.Key.Color));
+            }
         }
         return string.Format(
             "{0} Lv {1}\n{2}{3}{4}",
             target.DisplayName,
-            target.Level,
+            target.Level.False,
             string.Join(" ", s.ToArray()),
             string.IsNullOrEmpty(target.CheckText) ? "" : string.Format("\n{0}", target.CheckText),
-            target.Selections[Selection.EQUIP].Count <= 0 ? "" : string.Format("\n{0}", target.Selections[Selection.EQUIP].ToString())
+            target.Equipment.Count <= 0 ? "" : string.Format("\n{0}", target.Equipment.ToString())
             );
     }
 }

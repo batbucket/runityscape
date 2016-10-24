@@ -24,6 +24,7 @@ public class Inventory : ICollection<SpellFactory> {
 
     public void Add(Item item) {
         Util.Assert(item.Count > 0, "Attempted to add an item with Count of 0!");
+        Util.Assert(!IsFull, "Attempted to add an item while Inventory was full!");
         if (IsFull) {
             return;
         } else if (!Items.Contains(item)) {
@@ -73,15 +74,6 @@ public class Inventory : ICollection<SpellFactory> {
     IEnumerator IEnumerable.GetEnumerator() {
         return Items.GetEnumerator();
     }
-
-    /**
-     * Inventory needs to be in the Character's Selections
-     * Selections is an ICollection<Selection, ICollection<Spell>>
-     * So we need to implement ICollection<Spell> in Inventory
-     * If we keep this here, we can implement ICollection<Spell>
-     * In inventory, and force the caller to only add Items to the collection.
-     * This is way better than the alternative.
-     */
 
     public void Add(SpellFactory spell) {
         Util.Assert(spell is Item);

@@ -9,7 +9,7 @@ public abstract class EquippableItem : Item {
     const string SELF_EQUIP_TEXT = "{1} equipped <color=yellow>{2}</color>!";
     const string OTHER_EQUIP_TEXT = "{0} equipped {1} with <color=yellow>{2}</color>.";
 
-    readonly IDictionary<AttributeType, PairedInt> bonuses;
+    public readonly IDictionary<AttributeType, PairedInt> bonuses;
 
     public EquippableItem(string name, string description, int count, EquipmentType equipmentType, IDictionary<AttributeType, PairedInt> bonuses) : base(name, description, count) {
         this._equipmentType = equipmentType;
@@ -23,7 +23,7 @@ public abstract class EquippableItem : Item {
             },
             perform: (c, t, calc, o) => {
                 //Remove buffs of previous equipped item
-                Equipment e = (Equipment)t.Selections[Selection.EQUIP];
+                Equipment e = t.Equipment;
                 if (e.ContainsEquipment(EquipmentType)) {
                     EquippableItem current = e.Get(EquipmentType);
                     current.CancelBonus(t);
@@ -33,8 +33,8 @@ public abstract class EquippableItem : Item {
                 this.ApplyBonus(t);
 
                 //Item management
-                c.Selections[Selection.ITEM].Remove(this);
-                t.Selections[Selection.EQUIP].Add(this);
+                c.Items.Remove(this);
+                t.Equipment.Add(this);
             },
             createText: (c, t, calc, o) => {
                 return string.Format((c == t) ? SELF_EQUIP_TEXT : OTHER_EQUIP_TEXT, c.DisplayName, t.DisplayName, this.Name);

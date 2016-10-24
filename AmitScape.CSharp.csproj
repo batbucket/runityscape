@@ -128,6 +128,8 @@
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Tentacle\Tentacle.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Selection.cs" />
+    <Compile Include="Assets\Scripts\Model\Interfaces\IButtonable.cs" />
+    <Compile Include="Assets\Scripts\Model\Interfaces\ICastable.cs" />
     <Compile Include="Assets\Scripts\Model\Interfaces\IReactable.cs" />
     <Compile Include="Assets\Scripts\Model\Items\ConsumableItem.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Equipment.cs" />
@@ -146,6 +148,7 @@
     <Compile Include="Assets\Scripts\Model\Page\BattleState.cs" />
     <Compile Include="Assets\Scripts\Model\Page\Page.cs" />
     <Compile Include="Assets\Scripts\Model\Page\PagePresenter.cs" />
+    <Compile Include="Assets\Scripts\Model\Page\PageUtil.cs" />
     <Compile Include="Assets\Scripts\Model\Page\ReadPage.cs" />
     <Compile Include="Assets\Scripts\Model\Perks\InvokePerk.cs" />
     <Compile Include="Assets\Scripts\Model\Perks\PerkType.cs" />
@@ -173,7 +176,9 @@
     <Compile Include="Assets\Scripts\Model\Spells\Result\Miss.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Result\Result.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Spell.cs" />
-    <Compile Include="Assets\Scripts\Model\Spells\SpellFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\SpellFactory\SpellFactory.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\SpellFactory\SpellSelect.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\SpellFactory\SpellTarget.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\SpellType.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\TargetType.cs" />
     <Compile Include="Assets\Scripts\Model\Stats\Attributes\Attribute.cs" />

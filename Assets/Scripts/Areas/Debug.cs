@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Model.BattlePage;
 
 public class Debug : Area {
     public Page Menu;
@@ -14,7 +15,6 @@ public class Debug : Area {
     }
 
     public override void Init() {
-        OneShotProcess meme = new OneShotProcess("Test OneShotProcess", action: () => Game.AddTextBox(new TextBox("hello")));
         Character amit = new Amit();
         this.Menu = new ReadPage("What", "Hello world", mainCharacter: amit, left: new Character[] { amit }, right: new Character[] { new Steve(), new Steve() },
             processes: new Process[] {
@@ -32,10 +32,7 @@ public class Debug : Area {
                 new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => Page = PlayerBattle),
                 new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { Page = ComputerBattle; }),
                 new Process("Shake yourself", "Literally U******E", () => { }),
-                new Process("test oneshot", action: () => {
-                        meme.Play();
-                        meme.Play();
-                    }),
+                new OneShotProcess("Test OneShotProcess", "Meme", action: () => Game.AddTextBox(new TextBox("hello"))),
                 new Process("deadm00se", "Text not displaying right.", () => Game.AddTextBox(new RightBox("placeholder", "But this world is.", Color.white))),
                 new Process("untargetuself", "Why is this wrong", () => amit.IsTargetable = !amit.IsTargetable),
                 new Process("Boss Battle", action: () => Page = BossBattle),

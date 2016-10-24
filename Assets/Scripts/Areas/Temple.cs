@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Linq;
+using Model.BattlePage;
 
 public class Temple : Area {
 
@@ -69,13 +70,13 @@ public class Temple : Area {
             victory: PreBridge,
             onTick:
             () => {
-                if (!learnedSmite && pc.Selections[Selection.EQUIP].Contains(new OldArmor(1)) && pc.Selections[Selection.EQUIP].Contains(new OldSword(1))) {
+                if (!learnedSmite && pc.Equipment.Contains(new OldArmor(1)) && pc.Equipment.Contains(new OldSword(1))) {
                     learnedSmite = true;
                     Game.Ordered(
                         new Event(
                             action: () => {
                                 pc.AddResource(new NamedResource.Skill());
-                                pc.Selections[Selection.SPELL].Add(new Smite());
+                                pc.Equipment.Add(new Smite());
                             }),
                         new Event(
                             t: new TextBox(string.Format("{0} recalled something.", pc.DisplayName))),
@@ -265,10 +266,10 @@ public class Temple : Area {
                 if (onEnter != null) {
                     onEnter.Invoke();
                 }
-                pc.Selections[Selection.MERCY].Add(new Flee(flee));
+                pc.Mercies.Add(new Flee(flee));
             },
             onExit: () => {
-                pc.Selections[Selection.MERCY].Remove(new Flee(flee));
+                pc.Mercies.Remove(new Flee(flee));
             },
             onTick: onTick
             );

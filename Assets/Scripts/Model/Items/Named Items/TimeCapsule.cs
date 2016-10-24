@@ -17,7 +17,7 @@ public class TimeCapsule : ConsumableItem {
 
     protected override void OnOnce(Character caster, Spell other) {
         foreach (Item i in items) {
-            caster.Selections[Selection.ITEM].Add(i);
+            caster.Items.Add(i);
         }
     }
 

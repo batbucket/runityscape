@@ -14,16 +14,11 @@ public class DeathEffect : CharacterEffect {
 
     protected override IEnumerator EffectRoutine() {
         target.gameObject.transform.SetParent(null);
-        Image[] images = target.GetComponentsInChildren<Image>();
         Game.Instance.Sound.Play("Boom_6");
 
         float timer = 0;
         while ((timer += Time.deltaTime) < 0.5f) {
-            foreach (Image i in images) {
-                if (i != null) {
-                    i.color = Color.Lerp(i.color, Color.clear, timer / 0.5f);
-                }
-            }
+            target.Image.color = Color.Lerp(target.Image.color, Color.clear, timer / 0.5f);
             yield return null;
         }
         yield return new WaitForSeconds(1);

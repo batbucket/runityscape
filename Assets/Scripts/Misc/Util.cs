@@ -24,7 +24,7 @@ public static class Util {
         b.transform.SetSiblingIndex(ai);
     }
 
-    private const bool IS_DEBUG = false;
+    private const bool IS_DEBUG = true;
     public static void Log(string message) {
         if (IS_DEBUG) {
             UnityEngine.Debug.Log(message);

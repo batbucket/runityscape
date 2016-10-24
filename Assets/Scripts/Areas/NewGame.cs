@@ -21,11 +21,12 @@ public class NewGame : Area {
     public NewGame(Page primary) {
         this.primary = primary;
         this.points = new Dictionary<AttributeType, int>();
-        foreach (AttributeType at in AttributeType.ALL) {
-            points.Add(at, 0);
-        }
 
         pc = new Hero(1, 1, 1, 1);
+
+        foreach (AttributeType at in pc.Attributes.Keys) {
+            points.Add(at, 0);
+        }
 
         camp = new Camp(pc);
     }
@@ -274,7 +275,7 @@ public class NewGame : Area {
             }
             );
 
-        IDictionary<AttributeType, int> bonuses = null;
+        IDictionary<AttributeType, int> bonuses = new Dictionary<AttributeType, int>();
         AttAssign = new ReadPage(
             processes: new Process[] {
                 new Process("Continue", "Start your adventure.",
@@ -340,16 +341,6 @@ public class NewGame : Area {
                         points[AttributeType.INTELLIGENCE] += a.Intel;
                         points[AttributeType.DEXTERITY] += a.Dex;
                         points[AttributeType.VITALITY] += a.Vit;
-
-                        UnityEngine.Debug.Log(
-                            string.Format(
-                                "s{0}.i{1}.d{2}.v{3}",
-                                points[AttributeType.STRENGTH],
-                                points[AttributeType.INTELLIGENCE],
-                                points[AttributeType.DEXTERITY],
-                                points[AttributeType.VITALITY]
-                                )
-                            );
 
                         if (++quizIndex < Quiz.Length) {
                             Page = Quiz[quizIndex];

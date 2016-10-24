@@ -1,4 +1,11 @@
 ﻿public sealed class NamedAttribute {
+    public class Level : Attribute {
+        public const int LEVEL_CAP = 99;
+        public Level() : base(LEVEL_CAP, AttributeType.LEVEL) {
+            this.False = 1;
+        }
+    }
+
     public class Strength : Attribute {
         public Strength(int initial) : base(initial, AttributeType.STRENGTH) { }
     }

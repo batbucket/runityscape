@@ -57,12 +57,16 @@ public sealed class ActionGridView : MonoBehaviour {
         ClearAll();
     }
 
-    public void SetButtonAttributes(params Process[] processes) {
-        Util.Assert(processes.Length <= actionButtons.Length);
+    public void SetButtonAttributes(params IButtonable[] buttonables) {
+        Util.Assert(buttonables.Length <= actionButtons.Length);
         for (int i = 0; i < actionButtons.Length; i++) {
-            if (i < processes.Length && processes[i] != null && processes[i].Condition.Invoke()) {
-                actionButtons[i].IsVisible = true;
-                actionButtons[i].Process = processes[i];
+            if (i < buttonables.Length && buttonables[i] != null) {
+                if (buttonables[i].IsInvokable || buttonables[i].IsVisibleOnDisable) {
+                    actionButtons[i].IsVisible = true;
+                    actionButtons[i].Buttonable = buttonables[i];
+                } else {
+                    actionButtons[i].IsVisible = false;
+                }
             } else {
                 actionButtons[i].IsVisible = false;
             }

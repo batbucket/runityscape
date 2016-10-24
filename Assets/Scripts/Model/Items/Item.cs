@@ -14,7 +14,7 @@ public abstract class Item : SpellFactory {
         this.Count = count;
     }
 
-    public override string GetNameAndInfo(Character caster) {
+    public override string GetNameAndCosts(Character caster) {
         string nameAndCount = string.Format("{0} x {1}", this.Name, Count);
         return IsCastable(caster) ? nameAndCount : "<color=red>" + nameAndCount + "</color>";
     }

@@ -16,10 +16,10 @@ public class StartMenu : Area {
     public override void Init() {
         Primary = new ReadPage(
             text: "Welcome to RunityScape.",
-            tooltip: "Buttons can be accessed with the keyboard characters (QWERASDFZXCV)\nor by clicking.",
+            tooltip: "Buttons can be accessed with the keyboard characters (QWERASDFZXCV) or by clicking.",
             processes: new Process[] {
-                        new Process("New Game", "Start a new game.", () => Page = newGame.QuizIntro),
-                        new Process("Load Game", "Load a saved game.", condition: () => false),
+                        new Process("New Game", "Start a new adventure.", () => Page = newGame.QuizIntro),
+                        new Process("Load Game", "Load a saved game.", playCondition: () => false),
                         Application.isEditor ? new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Page = debug.Menu) : new Process(),
                         new Process(),
 

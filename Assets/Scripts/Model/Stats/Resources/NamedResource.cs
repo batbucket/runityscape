@@ -25,4 +25,10 @@ public sealed class NamedResource {
             this.False = 0;
         }
     }
+
+    public sealed class Experience : DependentResource {
+        public Experience(NamedAttribute.Level level) : base(level, ResourceType.EXPERIENCE) {
+            this.False = 0;
+        }
+    }
 }

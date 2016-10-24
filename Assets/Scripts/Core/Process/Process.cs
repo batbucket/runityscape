@@ -1,35 +1,69 @@
 ﻿using System;
+using UnityEngine;
 
-public class Process {
+public class Process : IButtonable {
 
-    public virtual string Name { get; private set; }
-    public virtual string Description { get; private set; }
-    public virtual Action Action { get; set; }
-    public virtual Func<bool> Condition { get { return _condition; } }
+    private Func<string> name;
+    private Func<string> description;
+    private Func<string> disabledDesc;
+    private Action action;
+    private Func<bool> playCondition;
+    private bool isVisibleOnDisable;
 
-    private Func<bool> _condition;
+    public string ButtonText {
+        get {
+            return
+                Util.Color(name.Invoke(), IsInvokable ? Color.white : Color.red);
+        }
+    }
 
+    public string TooltipText {
+        get {
+            return
+                Util.Color(description.Invoke(), IsInvokable ? Color.white : Color.red);
+        }
+    }
+
+    public bool IsInvokable {
+        get {
+            return isInvokable();
+        }
+    }
+
+    public bool IsVisibleOnDisable {
+        get {
+            return isVisibleOnDisable;
+        }
+    }
 
     public Process(string name,
                    string description = "",
                    Action action = null,
-                   Func<bool> condition = null) {
-        this.Name = name;
-        this.Description = description;
-        this.Action = action ?? (() => { });
-        this._condition = condition ?? (() => { return true; });
+                   Func<bool> playCondition = null) {
+        this.name = () => name;
+        this.description = () => description;
+        this.action = action ?? (() => { });
+        this.playCondition = playCondition ?? (() => { return true; });
+        this.isVisibleOnDisable = true;
+        this.disabledDesc = () => "";
     }
 
     public Process() {
-        this.Name = "";
-        this.Description = "";
-        this.Action = null;
-        this._condition = (() => { return false; });
+        this.name = () => "";
+        this.description = () => "";
+        this.action = (() => { });
+        this.playCondition = (() => { return false; });
+        this.isVisibleOnDisable = false;
+        this.disabledDesc = () => "";
     }
 
-    public virtual void Play() {
-        if (Condition.Invoke()) {
-            Action.Invoke();
+    public virtual void Invoke() {
+        if (IsInvokable) {
+            action.Invoke();
         }
+    }
+
+    protected virtual bool isInvokable() {
+        return playCondition.Invoke();
     }
 }
