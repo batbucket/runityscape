@@ -28,7 +28,7 @@ public class TransferLife : SpellFactory {
                 "{0} transfers {1} {2} to {3}!",
                 c.DisplayName,
                 Util.Color("" + calc.TargetResources[ResourceType.HEALTH].False, Color.magenta),
-                "<color=green>life</color>",
+                "<color=lime>life</color>",
                 t.DisplayName
             ),
             sound: (c, t, calc, o) => "Zip_0",

@@ -149,20 +149,22 @@ namespace Model.BattlePage {
 
             bool isResetSelection = false;
             SpellTargetState sts = SpellTargetState.ONE_TARGET;
+            IList<Character> targetables = null;
 
             //These TargetTypes might require target selection if there's more than 1 possible target.
             if (spell.TargetType == TargetType.SINGLE_ALLY || spell.TargetType == TargetType.SINGLE_ENEMY || spell.TargetType == TargetType.ANY) {
                 switch (spell.TargetType) {
                     case TargetType.SINGLE_ALLY:
-                        sts = GetSpellTargetState(spell, caster, page.GetAllies(caster));
+                        targetables = page.GetAllies(caster).Where(t => t.IsTargetable).ToArray();
                         break;
                     case TargetType.SINGLE_ENEMY:
-                        sts = GetSpellTargetState(spell, caster, page.GetEnemies(caster));
+                        targetables = page.GetEnemies(caster).Where(t => t.IsTargetable).ToArray();
                         break;
                     case TargetType.ANY:
-                        sts = GetSpellTargetState(spell, caster, page.GetAll(spell.IsSelfTargetable ? null : caster));
+                        targetables = page.GetAll(spell.IsSelfTargetable ? null : caster).Where(t => t.IsTargetable).ToArray();
                         break;
                 }
+                sts = GetSpellTargetState(spell, caster, targetables);
             } else { //These TargetTypes don't need target selection and thusly can have their results be instantly evaluated.
                 switch (spell.TargetType) {
                     case TargetType.SELF:
@@ -189,24 +191,14 @@ namespace Model.BattlePage {
             } else {
                 switch (sts) {
                     case SpellTargetState.ONE_TARGET:
-                        switch (spell.TargetType) {
-                            case TargetType.SINGLE_ALLY:
-                                spell.TryCast(caster, page.GetAllies(caster)[0]);
-                                break;
-                            case TargetType.SINGLE_ENEMY:
-                                spell.TryCast(caster, page.GetEnemies(caster)[0]);
-                                break;
-                            case TargetType.ANY:
-                                spell.TryCast(caster, page.GetAll(caster)[0]);
-                                break;
-                        }
+                        spell.TryCast(caster, targetables[0]);
                         break;
                     case SpellTargetState.MULTIPLE_TARGETS:
                         page.targetedSpell = spell;
                         page.currentSelectionNode = page.currentSelectionNode.FindChild(Selection.TARGET);
                         switch (spell.TargetType) {
                             case TargetType.SINGLE_ALLY:
-                                page.targets = page.GetAllies(caster);
+                                page.targets = page.GetEnemies(caster);
                                 break;
                             case TargetType.SINGLE_ENEMY:
                                 page.targets = page.GetEnemies(caster);
@@ -216,6 +208,9 @@ namespace Model.BattlePage {
                                 break;
                         }
                         break;
+                    case SpellTargetState.NO_TARGETS:
+                        Util.Log("There's no targets?");
+                        break;
                 }
             }
         }
@@ -223,8 +218,7 @@ namespace Model.BattlePage {
         public enum SpellTargetState {
             ONE_TARGET, MULTIPLE_TARGETS, NO_TARGETS
         }
-        public static SpellTargetState GetSpellTargetState(SpellFactory spell, Character caster, IList<Character> targets) {
-            IList<Character> targetables = targets.Where(t => t.IsTargetable).ToArray();
+        public static SpellTargetState GetSpellTargetState(SpellFactory spell, Character caster, IList<Character> targetables) {
             if (spell.IsSingleTargetQuickCastable(caster, targetables) && spell.IsCastable(caster, targetables[0])) {
                 return SpellTargetState.ONE_TARGET;
             } else if (spell.IsCastable(caster) && targetables.Count > 1) {
