@@ -13,11 +13,14 @@ public class Camp : Area {
     public Page Explore;
     public Page Stash;
 
+    public IList<ReadPage> VisitablePlaces;
+
     public IList<Character> party;
     public PlayerCharacter pc;
 
     public Camp(PlayerCharacter pc) {
         this.party = new List<Character>();
+        this.VisitablePlaces = new List<ReadPage>();
         this.pc = pc;
         party.Add(pc);
 
@@ -29,8 +32,8 @@ public class Camp : Area {
             text: "You awaken in a grassy green field.",
             location: "Camp",
             processes: new Process[] {
-                        new Process("Explore", "Explore the world."),
-                        new Process("Places", "Visit a specific place.", () => Page = Places),
+                        new Process("Explore", "Explore the world.", () => Page = GenerateExplorePage()),
+                        new Process("Places", "Visit a specific place.", () => Page = GeneratePlacesPage()),
                         new Process(),
                         new Process(),
 
@@ -47,30 +50,38 @@ public class Camp : Area {
             onEnter: () => {
             }
             );
+    }
 
-        Places = Rp(
-            text: "Where will you go?",
-            location: "Camp",
-            tooltip: "",
-            processes: new Process[] {
-                new Process(),
-                new Process(),
-                new Process(),
-                new Process(),
+    // TODO
+    private ReadPage GenerateExplorePage() {
+        return Rp(
+           text: "Where will you explore?",
+           location: "Camp",
+           tooltip: "",
+           processes: GeneratePlacesProcesses(VisitablePlaces),
+           onEnter: () => {
+           }
+           );
+    }
 
-                new Process(),
-                new Process(),
-                new Process(),
-                new Process(),
+    private ReadPage GeneratePlacesPage() {
+        return Rp(
+           text: "Where will you go?",
+           location: "Camp",
+           tooltip: "",
+           processes: GeneratePlacesProcesses(VisitablePlaces),
+           onEnter: () => {
+           }
+           );
+    }
 
-                new Process(),
-                new Process(),
-                new Process(),
-                new Process("Back", "", () => Page = Hub)
-            },
-            onEnter: () => {
-            }
-            );
+    private IList<Process> GeneratePlacesProcesses(IList<ReadPage> places) {
+        IList<Process> processes = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
+        for (int i = 0; i < places.Count; i++) {
+            processes[i] = new Process(places[i].Location, "Visit this area.", () => Page = places[i]);
+        }
+        processes[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to Camp.", () => Page = Hub);
+        return processes;
     }
 
     private ReadPage GenerateCharactersPage() {
