@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public abstract class ConsumableItem : Item {
 
-    public ConsumableItem(string name, string description, int count) : base(name, description, count) { }
+    public ConsumableItem(string name, string description) : base(name, description) { }
 
     protected abstract string SelfUseText(Character caster, Character target, Calculation calculation);
     protected abstract string OtherUseText(Character caster, Character target, Calculation calculation);

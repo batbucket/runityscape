@@ -7,21 +7,29 @@ using Model.BattlePage;
 
 public class Camp : Area {
     public Page Hub;
-    public Page Places;
-    public Page Character;
-    public Page Inventory;
-    public Page Explore;
-    public Page Stash;
 
     public IList<ReadPage> VisitablePlaces;
+    public IList<PageGenerator> ExplorablePlaces;
 
-    public IList<Character> party;
+    public List<Character> party;
     public PlayerCharacter pc;
+    public Inventory PartyItems;
 
     public Camp(PlayerCharacter pc) {
         this.party = new List<Character>();
         this.VisitablePlaces = new List<ReadPage>();
+        this.ExplorablePlaces = new List<PageGenerator>();
+        ExplorablePlaces.Add(
+            Pg("Ruins", "The dilapidated remains of some civilization.",
+                new Encounter(
+                    () => Bp("Ruins", new Regenerator()), () => 1),
+                new Encounter(
+                    () => Bp("Ruins", new Lasher()), () => 1)
+            ));
         this.pc = pc;
+        this.PartyItems = pc.Items;
+        PartyItems.Add(new LifePotion());
+        PartyItems.Add(new OldSword());
         party.Add(pc);
 
         CreateCamp();
@@ -39,7 +47,7 @@ public class Camp : Area {
 
                         new Process("Character", "View information about a party character.", () => Page = GenerateCharactersPage()),
                         new Process(),
-                        new Process("Inventory", "Manage items and equipment."),
+                        new Process("Items", "Manage items.", () => Page = GenerateItemManagementPage()),
                         new Process("+Exp", "Boosted", () => pc.AddToResource(ResourceType.EXPERIENCE, false, 3)),
 
                         new Process(),
@@ -52,16 +60,22 @@ public class Camp : Area {
             );
     }
 
-    // TODO
     private ReadPage GenerateExplorePage() {
         return Rp(
            text: "Where will you explore?",
            location: "Camp",
            tooltip: "",
-           processes: GeneratePlacesProcesses(VisitablePlaces),
-           onEnter: () => {
-           }
+           processes: GenerateExploreButtons(ExplorablePlaces)
            );
+    }
+
+    private IList<IButtonable> GenerateExploreButtons(IList<PageGenerator> exploreablePlaces) {
+        IButtonable[] buttonable = new IButtonable[ActionGridView.TOTAL_BUTTON_COUNT];
+        for (int i = 0; i < exploreablePlaces.Count; i++) {
+            buttonable[i] = exploreablePlaces[i];
+        }
+        buttonable[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to Camp.", () => Page = Hub);
+        return buttonable;
     }
 
     private ReadPage GeneratePlacesPage() {
@@ -75,13 +89,13 @@ public class Camp : Area {
            );
     }
 
-    private IList<Process> GeneratePlacesProcesses(IList<ReadPage> places) {
-        IList<Process> processes = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
+    private IList<IButtonable> GeneratePlacesProcesses(IList<ReadPage> places) {
+        IButtonable[] buttonable = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
         for (int i = 0; i < places.Count; i++) {
-            processes[i] = new Process(places[i].Location, "Visit this area.", () => Page = places[i]);
+            buttonable[i] = new Process(places[i].Location, "Visit this area.", () => Page = places[i]);
         }
-        processes[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to Camp.", () => Page = Hub);
-        return processes;
+        buttonable[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to Camp.", () => Page = Hub);
+        return buttonable;
     }
 
     private ReadPage GenerateCharactersPage() {
@@ -103,9 +117,10 @@ public class Camp : Area {
     private ReadPage GenerateCharacterPage(Character c) {
         return new ReadPage(
             StatText(c),
+            location: c.DisplayName,
             mainCharacter: c,
             left: new Character[] { c },
-            processes: new Process[] {
+            buttonables: new Process[] {
                 new Process(
                     c.GetResourceCount(ResourceType.EXPERIENCE, false) < c.GetResourceCount(ResourceType.EXPERIENCE, true) ?
                     string.Format("{0}/{1} XP", c.GetResourceCount(ResourceType.EXPERIENCE, false), c.GetResourceCount(ResourceType.EXPERIENCE, true))
@@ -134,7 +149,6 @@ public class Camp : Area {
             }
             );
     }
-
 
     private static string StatText(Character target) {
         List<string> a = new List<string>();
@@ -167,17 +181,17 @@ public class Camp : Area {
         new ReadPage(
             "Select a perk.",
             "",
-            "Camp",
+            string.Format("{0}'s Level {1} → Level {2}", c.DisplayName, c.Level.False - 1, c.Level.False),
             mainCharacter: pc,
             left: new Character[] { c },
             right: new Character[] { },
-            processes:
+            buttonables:
             new Process[] {
-                        new Process("None", action: () => Page = GenerateCharacterPage(c))
+                new Process("None", action: () => Page = GenerateCharacterPage(c))
             }
             );
 
-        IList<Process> attributes = new List<Process>();
+        IList<IButtonable> attributes = new List<IButtonable>();
         foreach (KeyValuePair<AttributeType, Attribute> myPair in c.Attributes) {
             KeyValuePair<AttributeType, Attribute> pair = myPair;
             if (pair.Key.IsAssignable) {
@@ -198,29 +212,34 @@ public class Camp : Area {
             new ReadPage(
                 "Select an attribute to increase.",
                 "",
-                "Camp",
+                string.Format("{0}'s Level {1} → Level {2}", c.DisplayName, c.Level.False - 1, c.Level.False),
                 false,
                 mainCharacter: pc,
                 left: new Character[] { c },
                 right: new Character[] { },
-                processes: attributes
+                buttonables: attributes
                 );
 
         return attributeAssign;
     }
 
-    private ReadPage GenerateInventoryPage() {
+    private ReadPage GenerateItemManagementPage() {
         Process[] processes = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
         int index = 0;
         foreach (Character myC in party) {
             Character c = myC;
-            processes[index++] = new Process(c.DisplayName, "", () => Page = GenerateCharacterEquipPage(c));
+            processes[index++] = new Process(c.DisplayName, string.Format("View and unequip {0}'s equipment.", c.DisplayName), () => Page = GenerateCharacterEquipPage(c));
         }
 
-        processes[ActionGridView.TOTAL_BUTTON_COUNT - 2] = new Process("Inventory", "Manage items in inventory.");
+        processes[ActionGridView.TOTAL_BUTTON_COUNT - 2] = new Process("Inventory", "Use items in inventory.", () => Page = GenerateInventoryPage(PartyItems));
         processes[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to camp.", () => Page = Hub);
 
-        return null;
+        return Rp(
+            "",
+            "Item and Equipment Manager",
+            processes,
+            "Unequip a specific character's items, or use items in inventory."
+            );
     }
 
     private ReadPage GenerateCharacterEquipPage(Character c) {
@@ -228,34 +247,87 @@ public class Camp : Area {
         int index = 0;
         foreach (EquippableItem myE in c.Equipment) {
             EquippableItem e = myE;
-            processes[index++] = CreateUnequipProcess(c, e);
+            processes[index++] = e != null ? CreateUnequipProcess(c, e) : new Process();
         }
-        processes[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to camp.", () => Page = Inventory);
+        processes[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to camp.", () => Page = GenerateItemManagementPage());
 
         return new ReadPage(
-            string.Format("View and unequip equipment from {0}.", c.DisplayName),
             "",
-            "Camp",
+            string.Format("View and unequip equipment from {0}.", c.DisplayName),
+            string.Format("{0}'s Equipment", c.DisplayName),
             mainCharacter: pc,
             left: new Character[] { c },
-            processes: processes
+            buttonables: processes
             );
     }
 
+
     private Process CreateUnequipProcess(Character caster, EquippableItem item) {
-        return new Process(Util.Color(item.Name, Color.yellow), item.Description, () => {
+        Process p = new Process(Util.Color(item.Name, Color.yellow), item.Description, () => {
             Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), Color.white, TextEffect.FADE_IN));
-            caster.Equipment.Remove(item);
-            item.CancelBonus(caster);
+            item.UnequipItemInSlot(caster);
+            Page = GenerateCharacterEquipPage(caster);
         });
+        return p;
     }
 
+    private ReadPage GenerateInventoryPage(Inventory items) {
+        return Rp(
+            "",
+            "Inventory",
+            GenerateInventoryProcesses(items),
+            "Use and equip items on particular characters."
+            );
+    }
 
+    private IList<IButtonable> GenerateInventoryProcesses(Inventory items) {
+        IButtonable[] itemButtons = new IButtonable[ActionGridView.TOTAL_BUTTON_COUNT];
+        int index = 0;
+        foreach (Item myI in items) {
+            Item i = myI;
+            itemButtons[index++] = (new Process(string.Format("{0}", i.Name), i.Description, () => Page = GenerateUseItemOnCharacterPage(i)));
+        }
+        itemButtons[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to Item and Equipment Manager", () => Page = GenerateItemManagementPage());
+        return itemButtons;
+    }
+
+    private ReadPage GenerateUseItemOnCharacterPage(Item item) {
+        return Rp(
+            "",
+            "Items",
+            GenerateUseItemProcesses(item, party),
+            string.Format("Who will use {0}?\n{1}", item.Name, item.Description)
+            );
+    }
+
+    private IList<IButtonable> GenerateUseItemProcesses(Item item, IList<Character> characters) {
+        IButtonable[] useButtons = new IButtonable[ActionGridView.TOTAL_BUTTON_COUNT];
+        int index = 0;
+        foreach (Character myC in party) {
+            Character c = myC;
+            useButtons[index++] = (new Process(c.DisplayName, string.Format("{0} will use {1}.\n{2}", c.DisplayName, item.Name, item.Description),
+                () => {
+                    item.Cast(c, c);
+                    Page = GenerateInventoryPage(PartyItems);
+                }
+                ));
+        }
+        useButtons[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Use a different item.", () => Page = GenerateInventoryPage(PartyItems));
+        return useButtons;
+    }
+
+    private PageGenerator Pg(
+        string name,
+        string description,
+        params Encounter[] encounters
+        ) {
+        return new PageGenerator(p => { Page = p; }, name, description, encounters);
+    }
 
     private ReadPage Rp(
     string text,
     string location,
-    IList<Process> processes,
+    IList<IButtonable> processes,
     string tooltip = "",
     IList<Character> right = null,
     Action onEnter = null,
@@ -272,15 +344,15 @@ public class Camp : Area {
             onEnter: onEnter,
             onExit: onExit,
             onTick: onTick,
-            processes: processes);
+            buttonables: processes);
     }
 
     private BattlePage Bp(string text,
     string location,
     string musicLoc,
     IList<Character> right,
-    Page flee,
-    Page victory,
+    Page victory = null,
+    Page flee = null,
     Action onEnter = null,
     Action onTick = null) {
         return new BattlePage(
@@ -295,13 +367,32 @@ public class Camp : Area {
                 if (onEnter != null) {
                     onEnter.Invoke();
                 }
-                pc.Mercies.Add(new Flee(flee));
+                party.ForEach(c => c.Mercies.Add(new Flee(flee)));
             },
             onExit: () => {
-                pc.Mercies.Remove(new Flee(flee));
+                party.ForEach(c => c.Mercies.Remove(new Flee(flee)));
             },
             onTick: onTick
             );
+    }
+
+    private BattlePage Bp(
+    string location,
+    params Character[] right) {
+        return new BattlePage(
+            text: "",
+            location: location,
+            musicLoc: "Hero Immortal",
+            mainCharacter: pc,
+            left: party,
+            right: right,
+            onVictory: () => this.Page.ActionGrid = new Process[] { new Process("Continue", action: () => Page = Hub) },
+            onEnter: () => {
+                party.ForEach(c => c.Mercies.Add(new Flee(Hub)));
+            },
+            onExit: () => {
+                party.ForEach(c => c.Mercies.Remove(new Flee(Hub)));
+            });
     }
 
     private BattlePage Bp(string text,

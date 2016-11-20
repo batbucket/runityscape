@@ -11,9 +11,10 @@ public abstract class ComputerCharacter : Character {
     protected float delay;
 
     public ComputerCharacter(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, float maxDelay, string checkText = "")
-        : base(spriteLoc, name, level, strength, intelligence, dexterity, vitality, textColor, CONTROLLABLE_CPU, checkText) {
+        : base(new Inventory(), spriteLoc, name, level, strength, intelligence, dexterity, vitality, textColor, CONTROLLABLE_CPU, checkText) {
         this.maxDelay = maxDelay;
         this.delay = UnityEngine.Random.Range(0, maxDelay);
+        Items = new Inventory();
     }
 
     public override void Act() {

@@ -2,8 +2,8 @@
 using System.Collections;
 
 public class Hero : PlayerCharacter {
-    public Hero(int strength, int intelligence, int dexterity, int vitality)
-        : base("placeholder", "", 1, strength, intelligence, dexterity, vitality, Color.white) {
+    public Hero(Inventory items, int strength, int intelligence, int dexterity, int vitality)
+        : base(items, "placeholder", "", 1, strength, intelligence, dexterity, vitality, Color.white) {
         this.Attack = new Attack();
         this.AddResource(new NamedResource.Experience(Level));
         this.Actions.Add(new Check());

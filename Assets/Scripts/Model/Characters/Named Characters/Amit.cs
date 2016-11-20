@@ -9,8 +9,9 @@ public class Amit : PlayerCharacter {
         this.Attack = new Attack();
         this.Spells.Add(new Meditate());
         this.Actions.Add(new Check());
-        this.Items.Add(new Lobster(2));
-        this.Items.Add(new Scimitar(2));
+        this.Items.Add(new Lobster());
+        this.Items.Add(new Lobster());
+        this.Items.Add(new Scimitar());
         this.Mercies.Add(new Spare());
         this.Spells.Add(new Smite());
         this.Spells.Add(new Poison());

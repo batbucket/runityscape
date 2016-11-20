@@ -14,12 +14,12 @@ public abstract class Page {
     public IList<Character> LeftCharacters { get; private set; }
     public IList<Character> RightCharacters { get; private set; }
 
-    public Process[] ActionGrid {
+    public IButtonable[] ActionGrid {
         get {
             return actionGrid;
         }
         set {
-            this.actionGrid = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
+            this.actionGrid = new IButtonable[ActionGridView.TOTAL_BUTTON_COUNT];
             for (int i = 0; i < actionGrid.Length; i++) {
                 if (value != null && i < value.Length) {
                     actionGrid[i] = value[i];
@@ -29,7 +29,7 @@ public abstract class Page {
             }
         }
     }
-    private Process[] actionGrid;
+    private IButtonable[] actionGrid;
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
@@ -60,7 +60,7 @@ public abstract class Page {
         Action onFirstExit = null,
         Action onExit = null,
         Action onTick = null,
-        IList<Process> processes = null,
+        IList<IButtonable> buttonables = null,
         string musicLoc = null
         ) {
 
@@ -92,7 +92,7 @@ public abstract class Page {
         this.OnFirstExitAction = onFirstExit ?? (() => { });
         this.OnExitAction = onExit ?? (() => { });
 
-        this.ActionGrid = processes == null ? new Process[0] : processes.ToArray();
+        this.ActionGrid = buttonables == null ? new IButtonable[0] : buttonables.ToArray();
 
         this.OnTick = onTick ?? (() => { });
         this.Music = musicLoc;

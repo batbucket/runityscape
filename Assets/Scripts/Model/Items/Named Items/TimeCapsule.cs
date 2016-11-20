@@ -7,11 +7,13 @@ public class TimeCapsule : ConsumableItem {
     const string DESCRIPTION = "A container holding items from the past.";
     readonly Item[] items;
 
-    public TimeCapsule(int count) : base(NAME, DESCRIPTION, count) {
+    public TimeCapsule(int count) : base(NAME, DESCRIPTION) {
         items = new Item[] {
-            new OldSword(1),
-            new OldArmor(1),
-            new LifePotion(3)
+            new OldSword(),
+            new OldArmor(),
+            new LifePotion(),
+            new LifePotion(),
+            new LifePotion()
         };
     }
 

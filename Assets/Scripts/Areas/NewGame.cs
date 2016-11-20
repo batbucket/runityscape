@@ -22,7 +22,7 @@ public class NewGame : Area {
         this.primary = primary;
         this.points = new Dictionary<AttributeType, int>();
 
-        pc = new Hero(1, 1, 1, 1);
+        pc = new Hero(new Inventory(), 1, 1, 1, 1);
 
         foreach (AttributeType at in pc.Attributes.Keys) {
             points.Add(at, 0);
@@ -37,7 +37,7 @@ public class NewGame : Area {
             "Before you begin your adventure, you must answer some questions.",
             tooltip: "Are you ready?",
             musicLoc: "Bleeding_Out",
-            processes: new Process[] {
+            buttonables: new Process[] {
                 new Process("Yes", "Begin the quiz.",
                 () => {
                     Page = Quiz[0];
@@ -260,7 +260,7 @@ public class NewGame : Area {
         ChooseName = new ReadPage(
             text: "What is your name?",
             hasInputField: true,
-            processes: new Process[] {
+            buttonables: new Process[] {
                 new Process(
                     "Confirm",
                     "Choose this name.",
@@ -277,7 +277,7 @@ public class NewGame : Area {
 
         IDictionary<AttributeType, int> bonuses = new Dictionary<AttributeType, int>();
         AttAssign = new ReadPage(
-            processes: new Process[] {
+            buttonables: new Process[] {
                 new Process("Continue", "Start your adventure.",
                 () => {
                     foreach(KeyValuePair<AttributeType, int> pair in bonuses) {
@@ -321,7 +321,7 @@ public class NewGame : Area {
         return new ReadPage(
             text: q.Text,
             musicLoc: "Bleeding_Out",
-            processes:
+            buttonables:
                 AnswersToProcesses(q.Answers)
             );
     }

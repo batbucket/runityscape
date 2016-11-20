@@ -11,7 +11,7 @@ public abstract class EquippableItem : Item {
 
     public readonly IDictionary<AttributeType, PairedInt> bonuses;
 
-    public EquippableItem(string name, string description, int count, EquipmentType equipmentType, IDictionary<AttributeType, PairedInt> bonuses) : base(name, description, count) {
+    public EquippableItem(string name, string description, EquipmentType equipmentType, IDictionary<AttributeType, PairedInt> bonuses) : base(name, description) {
         this._equipmentType = equipmentType;
         this.bonuses = bonuses;
     }
@@ -22,19 +22,7 @@ public abstract class EquippableItem : Item {
                 return true;
             },
             perform: (c, t, calc, o) => {
-                //Remove buffs of previous equipped item
-                Equipment e = t.Equipment;
-                if (e.ContainsEquipment(EquipmentType)) {
-                    EquippableItem current = e.Get(EquipmentType);
-                    current.CancelBonus(t);
-                }
-
-                //Add buffs of this equipped item
-                this.ApplyBonus(t);
-
-                //Item management
-                c.Items.Remove(this);
-                t.Equipment.Add(this);
+                Equip(t);
             },
             createText: (c, t, calc, o) => {
                 return string.Format((c == t) ? SELF_EQUIP_TEXT : OTHER_EQUIP_TEXT, c.DisplayName, t.DisplayName, this.Name);
@@ -42,14 +30,38 @@ public abstract class EquippableItem : Item {
         );
     }
 
-    public void CancelBonus(Character wielder) {
+    public void Equip(Character c) {
+        //Remove buffs of previous equipped item
+        Equipment e = c.Equipment;
+        if (e.ContainsEquipment(EquipmentType)) {
+            UnequipItemInSlot(c);
+        }
+
+        //Add buffs of this equipped item
+        this.ApplyBonus(c);
+
+        //Item management
+        c.Items.Remove(this);
+        c.Equipment.Add(this);
+    }
+
+    public void UnequipItemInSlot(Character c) {
+        EquippableItem current = c.Equipment.Get(EquipmentType);
+        if (current != null) {
+            current.CancelBonus(c);
+            c.Items.Add(this);
+            c.Equipment.Remove(this);
+        }
+    }
+
+    private void CancelBonus(Character wielder) {
         foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
             wielder.Attributes[pair.Key].Flat -= pair.Value.Flat;
             wielder.Attributes[pair.Key].Percent /= pair.Value.Percent;
         }
     }
 
-    void ApplyBonus(Character wielder) {
+    private void ApplyBonus(Character wielder) {
         foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
             wielder.Attributes[pair.Key].Flat += pair.Value.Flat;
             wielder.Attributes[pair.Key].Percent *= pair.Value.Percent;

@@ -13,5 +13,5 @@ public class OldSword : EquippableItem {
         { AttributeType.DEXTERITY, new PairedInt(2, 1) }
     };
 
-    public OldSword(int count) : base(NAME, DESCRIPTION, count, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
+    public OldSword() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
 }

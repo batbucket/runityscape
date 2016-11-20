@@ -11,7 +11,7 @@ public class Lobster : ConsumableItem {
     public const string USE_TEXT_SELF = "* {1} ate a Lobster, restoring {2} life!";
     public const string USE_TEXT_OTHER = "* {0} fed a Lobster to {1}, restoring {2} life!";
 
-    public Lobster(int count = 1) : base(NAME, DESCRIPTION, count) { }
+    public Lobster() : base(NAME, DESCRIPTION) { }
 
     protected override Calculation CreateCalculation(Character caster, Character target) {
         return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() { { ResourceType.HEALTH, new PairedInt(0, HEAL_AMOUNT) } });

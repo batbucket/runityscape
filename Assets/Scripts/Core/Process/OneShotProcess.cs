@@ -16,7 +16,6 @@ public class OneShotProcess : Process {
     }
 
     protected override bool isInvokable() {
-        return false;
-        //return base.isInvokable() && !wasCalled;
+        return base.isInvokable() && !wasCalled;
     }
 }

@@ -69,7 +69,9 @@
     <Compile Include="Assets\Scripts\Areas\Area.cs" />
     <Compile Include="Assets\Scripts\Areas\Camp.cs" />
     <Compile Include="Assets\Scripts\Areas\Debug.cs" />
+    <Compile Include="Assets\Scripts\Areas\Encounter.cs" />
     <Compile Include="Assets\Scripts\Areas\NewGame.cs" />
+    <Compile Include="Assets\Scripts\Areas\PageGenerator.cs" />
     <Compile Include="Assets\Scripts\Areas\StartMenu.cs" />
     <Compile Include="Assets\Scripts\Areas\Temple.cs" />
     <Compile Include="Assets\Scripts\Core\Event.cs" />

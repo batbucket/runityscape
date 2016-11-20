@@ -78,7 +78,7 @@ public abstract class Character : Entity, IReactable {
 
     public bool IsShowingBarCounts;
 
-    public Character(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable, string checkText = "") : base(spriteLoc) {
+    public Character(Inventory items, string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable, string checkText = "") : base(spriteLoc) {
         this._name = name;
         this.Level = new NamedAttribute.Level();
         Level.False = level;
@@ -97,13 +97,12 @@ public abstract class Character : Entity, IReactable {
         };
 
         this.Attack = new Attack();
-        Inventory inventory = new Inventory();
 
         Spells = new List<SpellFactory>();
         Actions = new List<SpellFactory>();
-        Items = new Inventory();
+        Items = items;
         Mercies = new List<SpellFactory>();
-        Equipment = new Equipment(Items);
+        Equipment = new Equipment(items);
 
         this.TextColor = textColor;
         this.IsTargetable = true;

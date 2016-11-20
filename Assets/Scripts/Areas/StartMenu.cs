@@ -17,7 +17,7 @@ public class StartMenu : Area {
         Primary = new ReadPage(
             text: "Welcome to RunityScape.",
             tooltip: "Buttons can be accessed with the keyboard characters (QWERASDFZXCV) or by clicking.",
-            processes: new Process[] {
+            buttonables: new Process[] {
                         new Process("New Game", "Start a new adventure.", () => Page = newGame.QuizIntro),
                         new Process("Load Game", "Load a saved game.", playCondition: () => false),
                         Application.isEditor ? new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Page = debug.Menu) : new Process(),

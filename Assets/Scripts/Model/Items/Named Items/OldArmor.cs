@@ -12,5 +12,5 @@ public class OldArmor : EquippableItem {
         { AttributeType.VITALITY, new PairedInt(2, 1) }
     };
 
-    public OldArmor(int count) : base(NAME, DESCRIPTION, count, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
+    public OldArmor() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
 }

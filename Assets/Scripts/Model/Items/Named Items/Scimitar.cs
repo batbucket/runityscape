@@ -11,5 +11,5 @@ public class Scimitar : EquippableItem {
         { AttributeType.DEXTERITY, new PairedInt(100, 1) }
     };
 
-    public Scimitar(int count) : base(NAME, DESCRIPTION, count, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
+    public Scimitar() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
 }

@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class WoodFan : EquippableItem {
-    public WoodFan(int count)
+    public WoodFan()
         : base(
             "Wood Fan",
             "Drastically reduces stats.",
-            count,
             EquipmentType.WEAPON,
             new Dictionary<AttributeType, PairedInt>() {
                 { AttributeType.STRENGTH, new PairedInt(-Kitsune.STR + 4, 1) },

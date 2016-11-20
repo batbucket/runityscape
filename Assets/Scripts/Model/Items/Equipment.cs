@@ -1,19 +1,18 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-public class Equipment : ICollection<SpellFactory> {
-    SortedDictionary<EquipmentType, EquippableItem> equipment;
-    Inventory inventory;
+public class Equipment : ICollection<EquippableItem> {
+    private SortedDictionary<EquipmentType, EquippableItem> equipment;
 
     public int Count { get { return equipment.Values.Count(c => c != null); } }
 
     public bool IsReadOnly { get { return false; } }
 
     public Equipment(Inventory inventory) {
-        this.inventory = inventory;
         equipment = new SortedDictionary<EquipmentType, EquippableItem>() {
             { EquipmentType.WEAPON, null },
             { EquipmentType.OFFHAND, null},
@@ -30,16 +29,7 @@ public class Equipment : ICollection<SpellFactory> {
         return equipment[equipmentType] != null;
     }
 
-    public void Add(SpellFactory myItem) {
-        Util.Assert(myItem is EquippableItem);
-        EquippableItem item = (EquippableItem)myItem;
-
-        ConstructorInfo ctor = item.GetType().GetConstructor(new[] { typeof(int) });
-        EquippableItem equip = (EquippableItem)ctor.Invoke(new object[] { 1 });
-        EquippableItem unequip = equipment[equip.EquipmentType];
-        if (unequip != null) {
-            inventory.Add(unequip);
-        }
+    public void Add(EquippableItem equip) {
         equipment[equip.EquipmentType] = equip;
     }
 
@@ -47,21 +37,13 @@ public class Equipment : ICollection<SpellFactory> {
         equipment.Clear();
     }
 
-    public bool Contains(SpellFactory item) {
-        Util.Assert(item is EquippableItem);
-        return equipment.ContainsValue((EquippableItem)item);
+    public bool Contains(EquippableItem equip) {
+        return equipment.ContainsValue(equip);
     }
 
-    public void CopyTo(SpellFactory[] array, int arrayIndex) {
-        equipment.Values.Cast<SpellFactory>().ToArray().CopyTo(array, arrayIndex);
-    }
-
-    public bool Remove(SpellFactory item) {
-        Util.Assert(item is EquippableItem);
-        EquippableItem equip = (EquippableItem)item;
+    public bool Remove(EquippableItem equip) {
         EquippableItem unequip = equipment[equip.EquipmentType];
         if (equip.Equals(unequip)) {
-            inventory.Add(unequip);
             equipment[equip.EquipmentType] = null;
             return true;
         } else {
@@ -69,12 +51,16 @@ public class Equipment : ICollection<SpellFactory> {
         }
     }
 
-    public IEnumerator<SpellFactory> GetEnumerator() {
-        return equipment.Values.Select(e => (SpellFactory)e).OfType<SpellFactory>().ToList().GetEnumerator();
-    }
-
     public override string ToString() {
         return string.Join(", ", equipment.Values.Where(e => e != null).Select(e => e.Name).ToArray());
+    }
+
+    public void CopyTo(EquippableItem[] array, int arrayIndex) {
+        equipment.Values.CopyTo(array, arrayIndex);
+    }
+
+    public IEnumerator<EquippableItem> GetEnumerator() {
+        return equipment.Values.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator() {

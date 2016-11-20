@@ -19,10 +19,10 @@ public class ReadPage : Page {
         Action onFirstExit = null,
         Action onExit = null,
         Action onTick = null,
-        IList<Process> processes = null,
+        IList<IButtonable> buttonables = null,
         string musicLoc = null
         )
-        : base(text, tooltip, location, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, processes, musicLoc) {
+        : base(text, tooltip, location, hasInputField, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, buttonables, musicLoc) {
     }
 
     public override void Tick() {

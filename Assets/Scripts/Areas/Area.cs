@@ -18,7 +18,7 @@ public abstract class Area {
     /// <summary>
     /// Property for setting the current Page.
     /// </summary>
-    protected Page Page {
+    public Page Page {
         get {
             return Game.Instance.PagePresenter.Page;
         }

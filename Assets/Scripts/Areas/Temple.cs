@@ -70,13 +70,13 @@ public class Temple : Area {
             victory: PreBridge,
             onTick:
             () => {
-                if (!learnedSmite && pc.Equipment.Contains(new OldArmor(1)) && pc.Equipment.Contains(new OldSword(1))) {
+                if (!learnedSmite && pc.Equipment.Contains(new OldArmor()) && pc.Equipment.Contains(new OldSword())) {
                     learnedSmite = true;
                     Game.Ordered(
                         new Event(
                             action: () => {
                                 pc.AddResource(new NamedResource.Skill());
-                                pc.Equipment.Add(new Smite());
+                                pc.Spells.Add(new Smite());
                             }),
                         new Event(
                             t: new TextBox(string.Format("{0} recalled something.", pc.DisplayName))),
@@ -242,7 +242,7 @@ public class Temple : Area {
         Action onExit = null,
         Action onTick = null) {
         right = right ?? new Character[0];
-        return new ReadPage(text, tooltip, location, mainCharacter: pc, left: new Character[] { pc }, right: right.Where(c => c.State != CharacterState.KILLED).ToArray(), onEnter: onEnter, onExit: onExit, onTick: onTick, processes: processes);
+        return new ReadPage(text, tooltip, location, mainCharacter: pc, left: new Character[] { pc }, right: right.Where(c => c.State != CharacterState.KILLED).ToArray(), onEnter: onEnter, onExit: onExit, onTick: onTick, buttonables: processes);
     }
 
     private BattlePage Bp(string text,

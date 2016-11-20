@@ -11,7 +11,7 @@ public class LifePotion : ConsumableItem {
     public const string USE_TEXT_SELF = "{1} uses a life potion!\n{1} restored <color=lime>{2}</color> life!";
     public const string USE_TEXT_OTHER = "{0} uses a life potion on {1}!\n{1} restored <color=lime>{2}</color> life!";
 
-    public LifePotion(int count = 1) : base(NAME, DESCRIPTION, count) { }
+    public LifePotion() : base(NAME, DESCRIPTION) { }
 
     protected override Calculation CreateCalculation(Character caster, Character target) {
         return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() { { ResourceType.HEALTH, new PairedInt(0, HEAL_AMOUNT) } });

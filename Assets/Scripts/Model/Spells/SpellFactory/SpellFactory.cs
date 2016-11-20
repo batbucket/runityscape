@@ -31,27 +31,6 @@ public abstract class SpellFactory {
     private Color color;
     public Color Color { get { return color; } }
 
-    /**
-     * Inventory needs to be in the Character's Selections
-     * Selections is an ICollection<Selection, ICollection<Spell>>
-     * So we need to implement ICollection<Spell> in Inventory
-     * The only field that differentiates a Spell from an Item
-     * Is the Count field.
-     * If we keep this here, we can implement ICollection<Spell>
-     * In inventory, and force the caller to only add Items to the collection.
-     * This is way better than the alternative.
-     */
-    private int _count;
-    public int Count {
-        get {
-            return _count;
-        }
-        set {
-            Util.Assert(value >= 0);
-            _count = value;
-        }
-    }
-
     protected readonly IDictionary<ResourceType, int> costs;
     public IDictionary<ResourceType, int> Costs { get { return costs; } }
 

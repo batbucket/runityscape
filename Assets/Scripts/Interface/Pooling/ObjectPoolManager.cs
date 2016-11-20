@@ -19,7 +19,7 @@ public class ObjectPoolManager : MonoBehaviour {
     }
 
     public void Register(PooledBehaviour prefab, int count) {
-        Util.Log(string.Format("Registering {0} of {1}.", count, prefab.gameObject.name));
+        //Util.Log(string.Format("Registering {0} of {1}.", count, prefab.gameObject.name));
         if (!pools.ContainsKey(prefab.gameObject.name)) {
             pools.Add(prefab.name, new Stack<PooledBehaviour>());
         }
@@ -39,11 +39,11 @@ public class ObjectPoolManager : MonoBehaviour {
             );
         PooledBehaviour pb = null;
         if (pools[script.gameObject.name].Count == 0) {
-            Util.Log(string.Format("Pool ran out of {0}. Instantiating...", script.gameObject.name));
+            //Util.Log(string.Format("Pool ran out of {0}. Instantiating...", script.gameObject.name));
             pb = (Instantiate(script.gameObject)).GetComponent<PooledBehaviour>();
             pb.gameObject.name = script.gameObject.name;
         } else {
-            Util.Log(string.Format("Getting {0} from a pool of {1}.", script.gameObject.name, pools[script.gameObject.name].Count));
+            //Util.Log(string.Format("Getting {0} from a pool of {1}.", script.gameObject.name, pools[script.gameObject.name].Count));
             pb = pools[script.gameObject.name].Pop();
         }
         pb.gameObject.SetActive(true);

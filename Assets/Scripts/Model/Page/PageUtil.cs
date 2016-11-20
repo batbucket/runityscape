@@ -19,7 +19,9 @@ namespace Model.BattlePage {
             IList<Process> processes = new List<Process>();
             foreach (EquippableItem myEquip in current.Equipment) {
                 EquippableItem equip = myEquip;
-                processes.Add(CreateUnequipProcess(current, equip, current.Equipment));
+                if (equip != null) {
+                    processes.Add(CreateUnequipProcess(current, equip, current.Equipment));
+                }
             }
             foreach (Item i in current.Items) {
                 if (i is EquippableItem) {
@@ -30,17 +32,16 @@ namespace Model.BattlePage {
             return processes;
         }
 
-        public static Process CreateUnequipProcess(Character caster, EquippableItem item, ICollection<SpellFactory> equipment) {
+        public static Process CreateUnequipProcess(Character caster, EquippableItem item, ICollection<EquippableItem> equipment) {
             return new Process(
                 Util.Color(string.Format("{0}{1}", item.Name, "(E)"), Color.yellow),
                 string.Format("{0} > {1} > {2}\n{3}", caster.DisplayName, "UNEQUIP", item.Name, item.Description), () => {
                     Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), Color.white, TextEffect.FADE_IN));
-                    equipment.Remove(item);
-                    item.CancelBonus(caster);
+                    item.UnequipItemInSlot(caster);
                 });
         }
 
-        public static IList<Process> CreateSpellList(BattlePage page, ICollection<SpellFactory> spells, Character caster) {
+        public static IList<Process> CreateSpellList<T>(BattlePage page, ICollection<T> spells, Character caster) where T : SpellFactory {
             IList<Process> processes = new List<Process>();
             foreach (SpellFactory mySpell in spells) {
                 SpellFactory spell = mySpell;
@@ -123,7 +124,7 @@ namespace Model.BattlePage {
             if (spell != caster.Attack && !(spell is EquippableItem)) {
                 caster.SpellStack.Push(spell);
             }
-            if (spell is Item && ((Item)spell).Count <= 1) {
+            if (spell is Item) {
                 while (caster.SpellStack.Count > 0 && spell.Equals(caster.SpellStack.Peek())) {
                     caster.SpellStack.Pop();
                 }
