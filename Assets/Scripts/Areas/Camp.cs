@@ -399,7 +399,10 @@ public class Camp : Area {
             mainCharacter: pc,
             left: party,
             right: right,
-            onVictory: () => this.Page.ActionGrid = new Process[] { new Process("Continue", action: () => Page = Hub) },
+            onVictory: () => {
+                this.Page.ActionGrid = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
+                this.Page.ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Return to Camp", action: () => Page = Hub);
+            },
             onEnter: () => {
                 party.ForEach(c => c.Mercies.Add(new Flee(Hub)));
             },

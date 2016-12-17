@@ -119,6 +119,7 @@ namespace Model.BattlePage {
             }
 
             if (_battleState == BattleState.MERCY || _battleState == BattleState.DEFEAT || _battleState == BattleState.VICTORY) {
+                this.Tooltip = "";
                 foreach (Character c in GetAll()) {
                     c.OnBattleEnd();
                 }

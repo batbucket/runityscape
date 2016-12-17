@@ -25,6 +25,8 @@ public class Attack : SpellFactory {
     private bool canCrit;
 
     public Attack(bool canMiss = true, bool canCrit = true) : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
+        this.canMiss = canMiss;
+        this.canCrit = canCrit;
     }
 
     protected override void OnOnce(Character caster, Spell other) {
