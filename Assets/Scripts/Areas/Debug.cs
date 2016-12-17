@@ -43,6 +43,6 @@ public class Debug : Area {
         this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Lasher(), new Regenerator(), new Lasher() });
         this.ComputerBattle = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Kitsune() }, right: new Character[] { new Kitsune() });
         Amit a = new Amit();
-        this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { a }, right: new Character[] { new Kitsune() });
+        this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { new Regenerator(), a, new Regenerator() }, right: new Character[] { new Kitsune() });
     }
 }

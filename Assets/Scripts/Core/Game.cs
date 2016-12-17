@@ -12,47 +12,47 @@ public class Game : MonoBehaviour {
     public static Game Instance { get { return _instance; } }
 
     [SerializeField]
-    TimeView _time;
+    private TimeView _time;
     public TimeView Time { get { return _time; } }
 
     [SerializeField]
-    HeaderView _header;
+    private HeaderView _header;
     public HeaderView Header { get { return _header; } }
 
     [SerializeField]
-    TextBoxHolderView _textBoxHolder;
+    private TextBoxHolderView _textBoxHolder;
     public TextBoxHolderView TextBoxHolder { get { return _textBoxHolder; } }
 
     [SerializeField]
-    PortraitHolderView _leftPortraits;
+    private PortraitHolderView _leftPortraits;
     public PortraitHolderView LeftPortraits { get { return _leftPortraits; } }
 
     [SerializeField]
-    PortraitHolderView _rightPortraits;
+    private PortraitHolderView _rightPortraits;
     public PortraitHolderView RightPortraits { get { return _rightPortraits; } }
 
     [SerializeField]
-    ActionGridView _actionGrid;
+    private ActionGridView _actionGrid;
     public ActionGridView ActionGrid { get { return _actionGrid; } }
 
     [SerializeField]
-    TooltipManager _tooltip;
+    private TooltipManager _tooltip;
     public TooltipManager Tooltip { get { return _tooltip; } }
 
     [SerializeField]
-    SoundView _sound;
+    private SoundView _sound;
     public SoundView Sound { get { return _sound; } }
 
     [SerializeField]
-    HotkeyButton _menuButton;
+    private HotkeyButton _menuButton;
     public HotkeyButton MenuButton { get { return _menuButton; } }
 
     [SerializeField]
-    EffectsManager _effect;
+    private EffectsManager _effect;
     public EffectsManager Effect { get { return _effect; } }
 
     [SerializeField]
-    Scrollbar _scrollbar;
+    private Scrollbar _scrollbar;
     public Scrollbar Scrollbar { get { return _scrollbar; } }
 
     public PagePresenter PagePresenter { get; private set; }

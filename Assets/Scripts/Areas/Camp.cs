@@ -15,6 +15,10 @@ public class Camp : Area {
     public PlayerCharacter pc;
     public Inventory PartyItems;
 
+    private int days;
+    private int hours;
+    private const int NEW_DAY_HOURS = 5;
+
     public Camp(PlayerCharacter pc) {
         this.party = new List<Character>();
         this.VisitablePlaces = new List<ReadPage>();
@@ -26,13 +30,15 @@ public class Camp : Area {
                 new Encounter(
                     () => Bp("Ruins", new Lasher()), () => 1)
             ));
+
         this.pc = pc;
         this.PartyItems = pc.Items;
-        PartyItems.Add(new LifePotion());
-        PartyItems.Add(new OldSword());
         party.Add(pc);
 
         CreateCamp();
+
+        this.days = 0;
+        this.hours = NEW_DAY_HOURS;
     }
 
     private void CreateCamp() {
@@ -52,10 +58,17 @@ public class Camp : Area {
 
                         new Process(),
                         new Process(),
-                        new Process("Rest", "Take a short rest."),
-                        new Process("Sleep", "End the day.")
+                        new Process("Rest", "Take a short rest.", () => {
+                            Game.Time.Time = --hours;
+                        }, () => hours > 0),
+                        new Process("Sleep", "End the day.", () => {
+                            Game.Time.Day = ++days;
+                            hours = NEW_DAY_HOURS;
+                            Game.Time.Time = hours;
+                        })
             },
             onEnter: () => {
+                Game.Time.IsEnabled = true;
             }
             );
     }

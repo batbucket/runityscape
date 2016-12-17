@@ -9,8 +9,8 @@ using System.Collections;
 public class TimeView : MonoBehaviour {
 
     [SerializeField]
-    Text _day;
-    string Day { set { _day.text = value; } }
+    private Text _day;
+    public int Day { set { _day.text = string.Format("Day {0}", value); } }
     public bool IsDayEnabled {
         set {
             _day.enabled = value;
@@ -18,8 +18,8 @@ public class TimeView : MonoBehaviour {
     }
 
     [SerializeField]
-    Text _time;
-    string Time { set { _time.text = value; } }
+    private Text _time;
+    public int Time { set { _time.text = string.Format("{0} light hours", value); } }
     public bool IsTimeEnabled {
         set {
             _time.enabled = value;

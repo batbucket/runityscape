@@ -199,7 +199,7 @@ namespace Model.BattlePage {
                         page.currentSelectionNode = page.currentSelectionNode.FindChild(Selection.TARGET);
                         switch (spell.TargetType) {
                             case TargetType.SINGLE_ALLY:
-                                page.targets = page.GetEnemies(caster);
+                                page.targets = page.GetAllies(caster);
                                 break;
                             case TargetType.SINGLE_ENEMY:
                                 page.targets = page.GetEnemies(caster);

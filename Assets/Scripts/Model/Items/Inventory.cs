@@ -12,6 +12,7 @@ public class Inventory : ICollection<Item> {
     public const int CAPACITY = 11;
 
     public List<Item> Items { get; private set; }
+    public int money;
     public bool IsFull { get { return Count >= CAPACITY; } }
     public bool IsReadOnly { get { return false; } }
     public bool IsEnabled { get; set; }
