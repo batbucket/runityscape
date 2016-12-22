@@ -18,13 +18,13 @@ public sealed class Selection : IComparable {
     public static readonly Selection SPELL = new Selection(Type.SPELL, "Spell", "SPELL");
     public static readonly Selection ACT = new Selection(Type.ACTION, "Action", "ACTION");
     public static readonly Selection ITEM = new Selection(Type.ITEM, "Item", "ITEM");
-    public static readonly Selection MERCY = new Selection(Type.MERCY, "Mercy", "MERCY");
+    public static readonly Selection FLEE = new Selection(Type.FLEE, "Flee", "FLEE");
     public static readonly Selection EQUIP = new Selection(Type.EQUIP, "Equip", "EQUIPMENT");
     public static readonly Selection TARGET = new Selection(Type.TARGET, "Target", "TARGET");
     public static readonly Selection SWITCH = new Selection(Type.SWITCH, "Switch", "SWITCH");
 
     public enum Type {
-        FAIM, SPELL, ACTION, ITEM, MERCY, TARGET, SWITCH, EQUIP
+        FAIM, SPELL, ACTION, ITEM, FLEE, TARGET, SWITCH, EQUIP
     }
 
     public int CompareTo(object obj) {

@@ -10,7 +10,7 @@ public class WoodFan : EquippableItem {
             EquipmentType.WEAPON,
             new Dictionary<AttributeType, PairedInt>() {
                 { AttributeType.STRENGTH, new PairedInt(-Kitsune.STR + 4, 1) },
-                { AttributeType.DEXTERITY, new PairedInt(-Kitsune.DEX + 2, 1) },
+                { AttributeType.AGILITY, new PairedInt(-Kitsune.DEX + 2, 1) },
                 { AttributeType.VITALITY, new PairedInt(-Kitsune.VIT + 10, 1) }
             }
             ) { }

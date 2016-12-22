@@ -1,3 +1,3 @@
 ﻿public enum BattleState {
-    BATTLE, VICTORY, DEFEAT, MERCY
+    PRE_BATTLE, BATTLE, VICTORY, DEFEAT, POST_BATTLE
 }

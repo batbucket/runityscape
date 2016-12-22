@@ -2,7 +2,6 @@
 using System.Collections;
 using System;
 using System.Linq;
-using Model.BattlePage;
 
 public class Temple : Area {
 
@@ -53,9 +52,9 @@ public class Temple : Area {
             onEnter:
             () => {
                 if (PreBridgeEnemies.Any(c => c.State != CharacterState.KILLED)) {
-                    Game.AddTextBox(new TextBox("A dark tentacle erupts from the muck at the entrance to the bridge."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("A dark tentacle erupts from the muck at the entrance to the bridge."));
                 } else {
-                    Game.AddTextBox(new TextBox("The entrance to the bridge is clear."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("The entrance to the bridge is clear."));
                 }
             }
             );
@@ -100,12 +99,12 @@ public class Temple : Area {
             right: bridgeEnemies,
             onEnter: () => {
                 if (kits.State == CharacterState.ALIVE) {
-                    Game.AddTextBox(new TextBox("The muck covers the entirety of the bridge path. It drips away from your boots the moment you lift up a foot."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("The muck covers the entirety of the bridge path. It drips away from your boots the moment you lift up a foot."));
                 }
                 if (bridgeEnemies.Any(c => c.State != CharacterState.KILLED)) {
-                    Game.AddTextBox(new TextBox("A dark tentacle adorned with spikes erupts in your way. It repeatedly lashes in your direction. You're too far away to be hit, for now..."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("A dark tentacle adorned with spikes erupts in your way. It repeatedly lashes in your direction. You're too far away to be hit, for now..."));
                 } else {
-                    Game.AddTextBox(new TextBox("The bridge path is clear."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("The bridge path is clear."));
                 }
             }
             );
@@ -132,13 +131,13 @@ public class Temple : Area {
             right: tentacleParty,
             onEnter: () => {
                 if (kits.State == CharacterState.ALIVE) {
-                    Game.AddTextBox(new TextBox("The muck trail goes to the inside of the building..."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("The muck trail goes to the inside of the building..."));
                 }
 
                 if (tentacleParty.All(t => t.State != CharacterState.KILLED)) {
-                    Game.AddTextBox(new TextBox("A Lasher and Regenerator erupt at the entrance..."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("A Lasher and Regenerator erupt at the entrance..."));
                 } else {
-                    Game.AddTextBox(new TextBox("The temple entrance is clear."));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("The temple entrance is clear."));
                 }
             }
             );
@@ -165,7 +164,7 @@ public class Temple : Area {
                                 new Process("Go to Throne", action: () => Page = TempleThrone)
             },
             onEnter: () => {
-                Game.Instance.AddTextBox(
+                Game.Instance.TextBoxes.AddTextBox(
                     new TextBox(
                         "The muck trail widens the closer you go to the throne room, eventually covering the the whole floor."
                         + " The muck is much more active here, growing up the walls."
@@ -203,8 +202,8 @@ public class Temple : Area {
             new Character[] { kits },
             onEnter: () => {
                 if (kits.State == CharacterState.ALIVE) {
-                    Game.Instance.AddTextBox(new TextBox("The whole room is covered in muck."));
-                    Game.Instance.AddTextBox(
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("The whole room is covered in muck."));
+                    Game.Instance.TextBoxes.AddTextBox(
                         new TextBox(
                             "Something stands at the stairs, facing the gateway."
                         + " An uncountable number of black tendril-like tails sprout from its back, tall enough to tower over the being's head."
@@ -261,7 +260,7 @@ public class Temple : Area {
             mainCharacter: pc,
             left: new Character[] { pc },
             right: right,
-            onVictory: () => this.Page.ActionGrid = new Process[] { new Process("Continue", action: () => Page = victory) },
+            victory: victory,
             onEnter: () => {
                 if (onEnter != null) {
                     onEnter.Invoke();
@@ -297,7 +296,7 @@ public class Temple : Area {
                     onEnter.Invoke();
                 }
             },
-            onVictory: () => this.Page.ActionGrid = new Process[] { new Process("Continue", action: () => Page = victory) },
+            victory: victory,
             onTick: onTick
             );
     }

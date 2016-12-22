@@ -87,7 +87,7 @@ public abstract class Character : Entity, IReactable {
             {AttributeType.LEVEL, Level },
             {AttributeType.STRENGTH, new NamedAttribute.Strength(strength) },
             {AttributeType.INTELLIGENCE, new NamedAttribute.Intelligence(intelligence) },
-            {AttributeType.DEXTERITY, new NamedAttribute.Dexterity(dexterity) },
+            {AttributeType.AGILITY, new NamedAttribute.Agility(dexterity) },
             {AttributeType.VITALITY, new NamedAttribute.Vitality(vitality) }
         };
 
@@ -318,7 +318,7 @@ public abstract class Character : Entity, IReactable {
     }
 
     protected static void CalculateChargeRequirement(Character current, Character main, float chargeCapRatio) {
-        int chargeNeededToAct = Math.Max(1, (int)(chargeCapRatio * ((float)(main.GetAttributeCount(AttributeType.DEXTERITY, false))) / current.GetAttributeCount(AttributeType.DEXTERITY, false)));
+        int chargeNeededToAct = Math.Max(1, (int)(chargeCapRatio * ((float)(main.GetAttributeCount(AttributeType.AGILITY, false))) / current.GetAttributeCount(AttributeType.AGILITY, false)));
         current.AddToResource(ResourceType.CHARGE, true, -current.GetResourceCount(ResourceType.CHARGE, true));
         current.AddToResource(ResourceType.CHARGE, true, chargeNeededToAct);
     }
@@ -353,7 +353,7 @@ public abstract class Character : Entity, IReactable {
             return;
         }
         _state = CharacterState.DEFEAT;
-        Game.Instance.TextBoxHolder.AddTextBoxView(
+        Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName),
                 Color.white, TextEffect.FADE_IN)
@@ -368,7 +368,7 @@ public abstract class Character : Entity, IReactable {
             return;
         }
         _state = CharacterState.KILLED;
-        Game.Instance.TextBoxHolder.AddTextBoxView(
+        Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} was <color=red>slain</color>.", DisplayName),
                 Color.white, TextEffect.FADE_IN));

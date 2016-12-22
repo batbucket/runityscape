@@ -6,10 +6,16 @@ using System;
 using System.Reflection;
 
 public class PagePresenter {
-    public Page Page { get; set; }
-    public IList<CharacterPresenter> CharacterPresenters { get; private set; }
 
-    InputBoxView inputBox;
+    public Page Page {
+        set {
+            SetPage(value);
+        }
+
+        get {
+            return page;
+        }
+    }
 
     public string InputtedText {
         get {
@@ -18,24 +24,59 @@ public class PagePresenter {
         }
     }
 
-    public PagePresenter() {
-        this.Page = new ReadPage();
-        this.CharacterPresenters = new List<CharacterPresenter>();
+    private Page page;
+
+    private TextBoxHolderView textBoxHolder;
+    private ActionGridView actionGrid;
+    private PortraitHolderView left;
+    private PortraitHolderView right;
+    private HeaderView header;
+    private TooltipView tooltip;
+    private SoundView sound;
+
+    private IList<CharacterPresenter> characterPresenters;
+
+    private InputBoxView inputBox;
+
+    public PagePresenter(ReadPage initial, TextBoxHolderView textBoxHolder, ActionGridView actionGrid, PortraitHolderView left, PortraitHolderView right, HeaderView header, TooltipView tooltip, SoundView sound) {
+        this.textBoxHolder = textBoxHolder;
+        this.actionGrid = actionGrid;
+        this.left = left;
+        this.right = right;
+        this.header = header;
+        this.tooltip = tooltip;
+        this.sound = sound;
+        this.characterPresenters = new List<CharacterPresenter>();
+        page = new ReadPage();
+        this.Page = initial; // Called last because we need the views
     }
 
-    public void SetPage(Page page) {
+    public void Tick() {
+        Page.Tick();
+        actionGrid.ClearAll();
+        actionGrid.SetButtonAttributes(Page.ActionGrid);
+        tooltip.PageText = Page.Tooltip;
+        header.Location = Page.Location;
+        SetCharacterPresenters(Page.LeftCharacters, left);
+        SetCharacterPresenters(Page.RightCharacters, right);
+        TickCharacterPresenters(Page.LeftCharacters.Where(c => c.IsTargetable).ToArray());
+        TickCharacterPresenters(Page.RightCharacters.Where(c => c.IsTargetable).ToArray());
+        Page.InputtedString = Page.HasInputField ? inputBox.Input : "";
+    }
+
+    private void SetPage(Page page) {
         this.Page.OnExit();
 
         if (string.IsNullOrEmpty(page.Music)) {
-            Game.Instance.Sound.StopAll();
+            sound.StopAll();
         } else if (string.Equals(page.Music, Page.Music)) {
             //Don't change music if both pages use same
         } else {
-            Game.Instance.Sound.StopAll();
-            Game.Instance.Sound.Loop(page.Music);
+            sound.StopAll();
+            sound.Loop(page.Music);
         }
 
-        this.Page = page;
+        this.page = page;
         IList<Character> chars = page.GetAll();
         foreach (Character c in chars) {
             c.Buffs.Clear();
@@ -43,18 +84,18 @@ public class PagePresenter {
         }
         Page.OnEnter();
         Page.GetAll().ForEach(c => c.BattleTimer = 0);
-        Util.ReturnAllChildren(Game.Instance.TextBoxHolder.gameObject);
+        Util.ReturnAllChildren(textBoxHolder.gameObject);
 
         Game.Instance.StopCoroutine("Timeline");
-        Game.Instance.ActionGrid.IsEnabled = true;
+        actionGrid.IsEnabled = true;
 
         if (!string.IsNullOrEmpty(page.Text)) {
             AddTextBox(new TextBox(page.Text, TextEffect.FADE_IN, "", 0));
         }
 
-        Game.Instance.ActionGrid.IsHotkeysEnabled = !this.Page.HasInputField;
+        actionGrid.IsHotkeysEnabled = !this.Page.HasInputField;
         if (this.Page.HasInputField) {
-            inputBox = Game.Instance.TextBoxHolder.AddInputBoxView();
+            inputBox = textBoxHolder.AddInputBox();
             inputBox.Input = Page.InputtedString;
         } else {
             inputBox = null;
@@ -64,11 +105,11 @@ public class PagePresenter {
     }
 
     public GameObject AddTextBox(TextBox t, Action callBack = null) {
-        Game.Instance.TextBoxHolder.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
-        return Game.Instance.TextBoxHolder.AddTextBoxView(t, callBack);
+        textBoxHolder.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
+        return textBoxHolder.AddTextBox(t, callBack);
     }
 
-    void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
+    private void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
         IList<Character> targetableCharacters = characters.Where(c => c.IsTargetable).ToArray();
         portraitHolder.AddPortraits(targetableCharacters); //Pass in characters' Names as parameter
         foreach (Character c in targetableCharacters) {
@@ -77,22 +118,9 @@ public class PagePresenter {
         }
     }
 
-    void TickCharacterPresenters(IList<Character> characters) {
+    private void TickCharacterPresenters(IList<Character> characters) {
         foreach (Character c in characters) {
             c.Presenter.Tick();
         }
-    }
-
-    public void Tick() {
-        Page.Tick();
-        Game.Instance.ActionGrid.ClearAll();
-        Game.Instance.ActionGrid.SetButtonAttributes(Page.ActionGrid);
-        Game.Instance.Tooltip.PageText = Page.Tooltip;
-        Game.Instance.Header.Location = Page.Location;
-        SetCharacterPresenters(Page.LeftCharacters, Game.Instance.LeftPortraits);
-        SetCharacterPresenters(Page.RightCharacters, Game.Instance.RightPortraits);
-        TickCharacterPresenters(Page.LeftCharacters.Where(c => c.IsTargetable).ToArray());
-        TickCharacterPresenters(Page.RightCharacters.Where(c => c.IsTargetable).ToArray());
-        Page.InputtedString = Page.HasInputField ? inputBox.Input : "";
     }
 }

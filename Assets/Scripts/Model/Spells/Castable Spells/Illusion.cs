@@ -22,7 +22,7 @@ public class Illusion : SpellFactory {
             onStart: (c, t, o) => {
                 t.AddToAttribute(AttributeType.STRENGTH, false, -t.GetAttributeCount(AttributeType.STRENGTH, false) + str);
                 t.AddToAttribute(AttributeType.INTELLIGENCE, false, -t.GetAttributeCount(AttributeType.INTELLIGENCE, false) + intel);
-                t.AddToAttribute(AttributeType.DEXTERITY, false, -t.GetAttributeCount(AttributeType.DEXTERITY, false) + dex);
+                t.AddToAttribute(AttributeType.AGILITY, false, -t.GetAttributeCount(AttributeType.AGILITY, false) + dex);
                 t.AddToAttribute(AttributeType.VITALITY, false, -t.GetAttributeCount(AttributeType.VITALITY, false) + vit);
             },
             onEnd: (c, t, o) => {
@@ -30,9 +30,9 @@ public class Illusion : SpellFactory {
                 t.Presenter.PortraitView.ClearEffects();
                 t.AddToAttribute(AttributeType.STRENGTH, false, t.GetAttributeCount(AttributeType.STRENGTH, true) - str);
                 t.AddToAttribute(AttributeType.INTELLIGENCE, false, t.GetAttributeCount(AttributeType.INTELLIGENCE, true) - intel);
-                t.AddToAttribute(AttributeType.DEXTERITY, false, t.GetAttributeCount(AttributeType.DEXTERITY, true) - dex);
+                t.AddToAttribute(AttributeType.AGILITY, false, t.GetAttributeCount(AttributeType.AGILITY, true) - dex);
                 t.AddToAttribute(AttributeType.VITALITY, false, t.GetAttributeCount(AttributeType.VITALITY, true) - vit);
-                Game.Instance.AddTextBox(new TextBox(string.Format("{0}'s illusion was shattered!", t.DisplayName)));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0}'s illusion was shattered!", t.DisplayName)));
                 t.AddToResource(ResourceType.HEALTH, false, t.GetResourceCount(ResourceType.HEALTH, true) - t.GetResourceCount(ResourceType.HEALTH, false));
                 t.AddToResource(ResourceType.CHARGE, false, t.GetResourceCount(ResourceType.CHARGE, true));
             },

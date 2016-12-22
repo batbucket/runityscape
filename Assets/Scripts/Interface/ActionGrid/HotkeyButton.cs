@@ -73,10 +73,6 @@ public class HotkeyButton : PooledBehaviour {
         }
     }
 
-    private void OnMouseEnter() {
-        OnMouseOver();
-    }
-
     private void OnMouseOver() {
         if (this.enabled) {
             Game.Instance.Tooltip.MouseText = tooltipText;

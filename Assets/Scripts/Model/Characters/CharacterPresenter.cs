@@ -40,7 +40,9 @@ public class CharacterPresenter {
             .Select(b =>
             new PortraitView.BuffParams {
                 id = b.GetHashCode(),
+                name = b.SpellFactory.Name,
                 abbreviation = b.SpellFactory.Abbreviation,
+                description = b.SpellFactory.Description,
                 color = b.SpellFactory.Color,
                 duration = b.DurationText
             })

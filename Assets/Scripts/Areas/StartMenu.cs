@@ -3,18 +3,18 @@ using System.Collections;
 using System;
 
 public class StartMenu : Area {
-    public Page Primary;
+    public ReadPage MainMenu;
 
     private NewGame newGame;
     private Debug debug;
 
     public StartMenu() {
-        this.newGame = new NewGame(Primary);
-        this.debug = new Debug(Primary);
+        this.newGame = new NewGame(MainMenu);
+        this.debug = new Debug(MainMenu);
     }
 
     public override void Init() {
-        Primary = new ReadPage(
+        MainMenu = new ReadPage(
             text: "Welcome to RunityScape.",
             tooltip: "Buttons can be accessed with the keyboard characters (QWERASDFZXCV) or by clicking.",
             buttonables: new Process[] {

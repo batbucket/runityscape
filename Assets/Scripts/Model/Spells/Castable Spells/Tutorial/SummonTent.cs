@@ -23,7 +23,7 @@ public class SummonTent : SpellFactory {
             perform: (c, t, calc, o) => {
                 for (int i = 0; i < tents.Count; i++) {
                     Tentacle s = tents[i].Summon();
-                    Game.Instance.PagePresenter.Page.AddCharacters(c.Side, s);
+                    Game.Instance.CurrentPage.AddCharacters(c.Side, s);
                 }
                 Result.NumericPerform(c, t, calc);
             },

@@ -12,8 +12,16 @@ public class BuffView : PooledBehaviour {
     [SerializeField]
     private Image image;
 
+    private string tooltip;
+
     public string Text { set { text.text = value; } }
     public string Duration { set { duration.text = value; } }
+
+    public string Tooltip {
+        set {
+            tooltip = value;
+        }
+    }
 
     public Color Color {
         set {
@@ -27,5 +35,13 @@ public class BuffView : PooledBehaviour {
         Duration = "";
         Color = Color.white;
         image.color = Color.black;
+    }
+
+    private void OnMouseOver() {
+        Game.Instance.Tooltip.MouseText = tooltip;
+    }
+
+    private void OnMouseExit() {
+        Game.Instance.Tooltip.MouseText = "";
     }
 }

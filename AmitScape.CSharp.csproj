@@ -109,7 +109,7 @@
     <Compile Include="Assets\Scripts\Interface\TextBox\InputBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxView.cs" />
-    <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipManager.cs" />
+    <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipView.cs" />
     <Compile Include="Assets\Scripts\Misc\TreeNode.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
     <Compile Include="Assets\Scripts\Misc\Util.cs" />
@@ -128,6 +128,7 @@
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Tentacle\Lasher.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Tentacle\Regenerator.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Tentacle\Tentacle.cs" />
+    <Compile Include="Assets\Scripts\Model\Characters\Party.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Selection.cs" />
     <Compile Include="Assets\Scripts\Model\Interfaces\IButtonable.cs" />

@@ -9,20 +9,26 @@ using System.Collections;
 public class TimeView : MonoBehaviour {
 
     [SerializeField]
-    private Text _day;
-    public int Day { set { _day.text = string.Format("Day {0}", value); } }
-    public bool IsDayEnabled {
+    private Text day;
+    [SerializeField]
+    private Text time;
+
+    public int Day {
         set {
-            _day.enabled = value;
+            day.text = string.Format("Day {0}", value);
         }
     }
 
-    [SerializeField]
-    private Text _time;
-    public int Time { set { _time.text = string.Format("{0} light hours", value); } }
+    public string Time { set { time.text = string.Format("{0}", value); } }
     public bool IsTimeEnabled {
         set {
-            _time.enabled = value;
+            time.enabled = value;
+        }
+    }
+
+    public bool IsDayEnabled {
+        set {
+            day.enabled = value;
         }
     }
 

@@ -16,8 +16,23 @@ public abstract class Resource : PairedInt {
     public const int LESSER_CAP = 0;
     public const int GREATER_CAP = 99999;
 
-    public override float False { get { return Mathf.Clamp(base.False, LESSER_CAP, True); } set { base.False = value; } }
-    public override int True { get { return Mathf.Clamp(base.True, LESSER_CAP, GREATER_CAP); } set { base.True = value; } }
+    public override float False {
+        get {
+            return Mathf.Clamp(base.False, LESSER_CAP, True);
+        }
+        set {
+            base.False = value;
+        }
+    }
+
+    public override int True {
+        get {
+            return Mathf.Clamp(base.True, LESSER_CAP, GREATER_CAP);
+        }
+        set {
+            base.True = value;
+        }
+    }
 
     public Resource(int initial, ResourceType type) : base(initial) {
         this._type = type;

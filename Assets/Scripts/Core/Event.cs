@@ -60,7 +60,7 @@ public struct Event {
     /// <param name="delay">Time in seconds before the textbox will pop up.</param>
     /// <param name="isOneShot">True if this event can only occur once.</param>
     public Event(TextBox t, float delay = 0.1f, bool isOneShot = true) {
-        this.Action = () => Game.Instance.AddTextBox(t);
+        this.Action = () => Game.Instance.TextBoxes.AddTextBox(t);
         this.Delay = delay;
         this.HasEnded = () => true;
         this.IsOneShot = isOneShot;

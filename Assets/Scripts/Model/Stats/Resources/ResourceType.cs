@@ -20,8 +20,7 @@ public sealed class ResourceType : IComparable {
         = new Dictionary<DisplayMode, Func<float, int, string>>() {
             { DisplayMode.NONE, (a, b) =>                string.Format("", (int)a, b) },
             { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}/{1}", (int)a, b) },
-            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) },
-            { DisplayMode.EXP, (a, b) => a < b ? string.Format("{0}/{1}", (int)a, b) : "Level up!" }
+            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) }
         };
 
     string _name;
@@ -80,7 +79,7 @@ public sealed class ResourceType : IComparable {
 
     public static readonly ResourceType SKILL = new ResourceType("Skill",
                                                                  "SKIL",
-                                                                 "Replenished on Basic Attacks,",
+                                                                 "Replenished on Attacks.",
                                                                  Color.yellow,
                                                                  new Color(51.0f / 255, 51.0f / 255, 0),
                                                                  1);
@@ -111,14 +110,13 @@ public sealed class ResourceType : IComparable {
                                                                       displayMode: DisplayMode.PERCENTAGE);
 
     public static readonly ResourceType EXPERIENCE = new ResourceType("Experience",
-                                                                "XP",
+                                                                "EXP",
                                                                 "Needed to level up.",
                                                                 Color.white,
                                                                 Color.grey,
                                                                 998,
                                                                 AttributeType.LEVEL,
-                                                                (a, r) => r.True = (int)(1 + Mathf.Pow(2, a.False)),
-                                                                DisplayMode.EXP);
+                                                                (a, r) => r.True = (int)(1 + Mathf.Pow(2, a.False)));
 
     public int CompareTo(object obj) {
         ResourceType other = (ResourceType)obj;

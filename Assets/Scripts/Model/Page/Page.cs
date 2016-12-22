@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public abstract class Page {
+public abstract class Page : IButtonable {
 
     public string Text { get; protected set; }
     public string Tooltip { get; set; }
@@ -46,6 +46,30 @@ public abstract class Page {
 
     private string _inputtedString;
     public string InputtedString { get { return _inputtedString; } set { _inputtedString = value; } }
+
+    string IButtonable.ButtonText {
+        get {
+            return Location;
+        }
+    }
+
+    string IButtonable.TooltipText {
+        get {
+            return string.Format("Go to {0}.", Location);
+        }
+    }
+
+    bool IButtonable.IsInvokable {
+        get {
+            return true;
+        }
+    }
+
+    bool IButtonable.IsVisibleOnDisable {
+        get {
+            return true;
+        }
+    }
 
     public Page(
         string text = "",
@@ -263,5 +287,9 @@ public abstract class Page {
         foreach (Character c in GetAll()) {
             c.Tick(MainCharacter, false);
         }
+    }
+
+    void IButtonable.Invoke() {
+        // TODO
     }
 }

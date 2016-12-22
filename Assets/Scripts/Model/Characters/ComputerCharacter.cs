@@ -36,11 +36,11 @@ public abstract class ComputerCharacter : Character {
         } else {
             a = new LeftBox(this, s);
         }
-        Game.Instance.AddTextBox(a);
+        Game.Instance.TextBoxes.AddTextBox(a);
     }
 
     protected void Emote(string s) {
-        Game.Instance.AddTextBox(new TextBox(s));
+        Game.Instance.TextBoxes.AddTextBox(new TextBox(s));
     }
 
     protected void Talk(params string[] strings) {
@@ -51,11 +51,11 @@ public abstract class ComputerCharacter : Character {
         } else {
             a = new LeftBox(this, s);
         }
-        Game.Instance.AddTextBox(a);
+        Game.Instance.TextBoxes.AddTextBox(a);
     }
 
     protected void QuickCast(SpellFactory spell, Character target = null) {
-        Page page = Game.Instance.PagePresenter.Page;
+        Page page = Game.Instance.CurrentPage;
         if (!spell.IsCastable(this)) {
             return;
         }

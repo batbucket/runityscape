@@ -54,7 +54,7 @@ public class Kitsune : ComputerCharacter {
     public override void OnBattleStart() {
         AddToAttribute(AttributeType.STRENGTH, false, -GetAttributeCount(AttributeType.STRENGTH, false) + F_STR);
         AddToAttribute(AttributeType.INTELLIGENCE, false, -GetAttributeCount(AttributeType.INTELLIGENCE, false) + F_INT);
-        AddToAttribute(AttributeType.DEXTERITY, false, -GetAttributeCount(AttributeType.DEXTERITY, false) + F_DEX);
+        AddToAttribute(AttributeType.AGILITY, false, -GetAttributeCount(AttributeType.AGILITY, false) + F_DEX);
         AddToAttribute(AttributeType.VITALITY, false, -GetAttributeCount(AttributeType.VITALITY, false) + F_VIT);
     }
 
@@ -63,9 +63,9 @@ public class Kitsune : ComputerCharacter {
         Presenter.PortraitView.ClearEffects();
         AddToAttribute(AttributeType.STRENGTH, false, GetAttributeCount(AttributeType.STRENGTH, true) - F_STR);
         AddToAttribute(AttributeType.INTELLIGENCE, false, GetAttributeCount(AttributeType.INTELLIGENCE, true) - F_INT);
-        AddToAttribute(AttributeType.DEXTERITY, false, GetAttributeCount(AttributeType.DEXTERITY, true) - F_DEX);
+        AddToAttribute(AttributeType.AGILITY, false, GetAttributeCount(AttributeType.AGILITY, true) - F_DEX);
         AddToAttribute(AttributeType.VITALITY, false, GetAttributeCount(AttributeType.VITALITY, true) - F_VIT);
-        Game.Instance.AddTextBox(new TextBox(string.Format("{0}'s illusion was shattered!", DisplayName)));
+        Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0}'s illusion was shattered!", DisplayName)));
         AddToResource(ResourceType.HEALTH, false, GetResourceCount(ResourceType.HEALTH, true) - GetResourceCount(ResourceType.HEALTH, false));
         AddToResource(ResourceType.CHARGE, false, GetResourceCount(ResourceType.CHARGE, true));
         fakeDefeated = true;
@@ -83,7 +83,7 @@ public class Kitsune : ComputerCharacter {
                 break;
             case S.SUMMON:
                 nextBackTime += Time.deltaTime;
-                if (!Game.Instance.PagePresenter.Page.GetAllies(this).Any(c => c is Tentacle)) {
+                if (!Game.Instance.CurrentPage.GetAllies(this).Any(c => c is Tentacle)) {
                     s = null;
                     Game.Instance.Ordered(
                         new Event(() => this.IsTargetable = true),

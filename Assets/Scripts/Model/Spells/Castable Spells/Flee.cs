@@ -20,6 +20,6 @@ public class Flee : SpellFactory {
     private IEnumerator Escape(Character escapee) {
         escapee.IsCharging = false;
         yield return new WaitForSeconds(0.5f);
-        Game.Instance.PagePresenter.SetPage(escapePage);
+        Game.Instance.CurrentPage = escapePage;
     }
 }

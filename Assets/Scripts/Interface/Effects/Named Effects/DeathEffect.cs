@@ -23,6 +23,6 @@ public class DeathEffect : CharacterEffect {
         }
         yield return new WaitForSeconds(1);
         this.Target.Presenter.Character.IsTargetable = false;
-        Game.Instance.PagePresenter.Page.GetCharacters(target.Presenter.Character.Side).Remove(target.Presenter.Character);
+        Game.Instance.CurrentPage.GetCharacters(target.Presenter.Character.Side).Remove(target.Presenter.Character);
     }
 }

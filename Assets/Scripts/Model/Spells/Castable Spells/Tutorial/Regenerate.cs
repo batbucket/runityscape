@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 public class Regenerate : SpellFactory {
-    public Regenerate() : base("Regenerate", "", SpellType.OFFENSE, TargetType.SINGLE_ENEMY, abbreviation: "REG", color: Color.green, isSelfTargetable: true) { }
+    public Regenerate() : base("Regenerate", "Recover health over time.", SpellType.OFFENSE, TargetType.SINGLE_ENEMY, abbreviation: "REG", color: Color.green, isSelfTargetable: true) { }
 
     public override Hit CreateHit() {
         return new Hit(

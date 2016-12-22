@@ -19,6 +19,8 @@ public class ResourceView : PooledBehaviour {
     [SerializeField]
     private Text text; //Text on bar that describes the amount in some way
 
+    private string tooltip;
+
     public string ResourceName { get { return resourceName.text; } set { resourceName.text = value; } }
     public Color ResourceColor { get { return resourceName.color; } set { resourceName.color = value; } }
 
@@ -26,6 +28,12 @@ public class ResourceView : PooledBehaviour {
     public Color OverColor { get { return overBar.color; } set { overBar.color = value; } }
 
     public string Text { get { return text.text; } set { text.text = value; } }
+
+    public string Tooltip {
+        set {
+            tooltip = value;
+        }
+    }
 
     /// <summary>
     /// Scale should be in the range [0, 1]
@@ -59,5 +67,13 @@ public class ResourceView : PooledBehaviour {
             v.x = Mathf.Clamp(a / b, 0, 1);
         }
         overBar.gameObject.GetComponent<RectTransform>().localScale = v;
+    }
+
+    private void OnMouseOver() {
+        Game.Instance.Tooltip.MouseText = tooltip;
+    }
+
+    private void OnMouseExit() {
+        Game.Instance.Tooltip.MouseText = "";
     }
 }

@@ -52,7 +52,9 @@ public class PortraitView : PooledBehaviour {
 
     public struct BuffParams {
         public int id;
+        public string name;
         public string abbreviation;
+        public string description;
         public Color color;
         public string duration;
     }
@@ -131,6 +133,7 @@ public class PortraitView : PooledBehaviour {
                 Util.Parent(rv.gameObject, resourcesHolder); // Placed in back.
 
                 // Set resource prefab's details
+                rv.Tooltip = string.Format("{0} - {1}", resourceType.Name, resourceType.Description);
                 rv.Type = resourceType;
                 rv.ResourceName = resourceType.ShortName;
                 rv.ResourceColor = resourceType.FillColor;
@@ -186,6 +189,8 @@ public class PortraitView : PooledBehaviour {
             } else {
                 bv = BuffViews[b.id].buffView;
             }
+
+            bv.Tooltip = string.Format("{0} - {1}", b.name, b.description);
             bv.Text = b.abbreviation;
             bv.Color = b.color;
             bv.Duration = b.duration;

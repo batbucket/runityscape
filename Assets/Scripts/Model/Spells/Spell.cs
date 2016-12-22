@@ -110,7 +110,7 @@ public class Spell {
             buff.Result.React(this);
         }
 
-        IList<Character> characters = Game.Instance.PagePresenter.Page.GetAll();
+        IList<Character> characters = Game.Instance.CurrentPage.GetAll();
         for (int i = 0; i < characters.Count; i++) {
             Character c = characters[i];
             c.Witness(this);
@@ -131,7 +131,7 @@ public class Spell {
         string text = Result.CreateText(this.Caster, this.Target, Calculation, this.Other);
 
         if (!string.IsNullOrEmpty(text) && isFirstTick) {
-            Game.Instance.TextBoxHolder.AddTextBoxView(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, TextEffect.FADE_IN));
+            Game.Instance.TextBoxes.AddTextBox(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), Color.white, TextEffect.FADE_IN));
         }
 
         Caster.UpdateState();

@@ -14,8 +14,8 @@
         public Intelligence(int initial) : base(initial, AttributeType.INTELLIGENCE) { }
     }
 
-    public class Dexterity : Attribute {
-        public Dexterity(int initial) : base(initial, AttributeType.DEXTERITY) { }
+    public class Agility : Attribute {
+        public Agility(int initial) : base(initial, AttributeType.AGILITY) { }
     }
 
     public class Vitality : Attribute {

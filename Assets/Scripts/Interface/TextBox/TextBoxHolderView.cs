@@ -15,6 +15,19 @@ public class TextBoxHolderView : MonoBehaviour {
 
     private IDictionary<TextBoxType, PooledBehaviour> textBoxes;
 
+    public GameObject AddTextBox(TextBox textBox, Action callBack = null) {
+        PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
+        Util.Parent(pb.gameObject, gameObject);
+        textBox.Write(pb.gameObject, callBack);
+        return pb.gameObject;
+    }
+
+    public InputBoxView AddInputBox() {
+        InputBoxView ibv = ObjectPoolManager.Instance.Get(inputBoxPrefab);
+        Util.Parent(ibv.gameObject, gameObject);
+        return ibv;
+    }
+
     private void Start() {
         textBoxes = new Dictionary<TextBoxType, PooledBehaviour>() {
             { TextBoxType.TEXT, textBoxPrefab },
@@ -26,18 +39,5 @@ public class TextBoxHolderView : MonoBehaviour {
             ObjectPoolManager.Instance.Register(pb, 100);
         }
         ObjectPoolManager.Instance.Register(inputBoxPrefab, 1);
-    }
-
-    public GameObject AddTextBoxView(TextBox textBox, Action callBack = null) {
-        PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
-        Util.Parent(pb.gameObject, gameObject);
-        textBox.Write(pb.gameObject, callBack);
-        return pb.gameObject;
-    }
-
-    public InputBoxView AddInputBoxView() {
-        InputBoxView ibv = ObjectPoolManager.Instance.Get(inputBoxPrefab);
-        Util.Parent(ibv.gameObject, gameObject);
-        return ibv;
     }
 }
