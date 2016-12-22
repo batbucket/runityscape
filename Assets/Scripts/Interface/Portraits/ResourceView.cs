@@ -69,6 +69,10 @@ public class ResourceView : PooledBehaviour {
         overBar.gameObject.GetComponent<RectTransform>().localScale = v;
     }
 
+    private void OnMouseEnter() {
+        Game.Instance.Tooltip.MouseText = tooltip;
+    }
+
     private void OnMouseOver() {
         Game.Instance.Tooltip.MouseText = tooltip;
     }
