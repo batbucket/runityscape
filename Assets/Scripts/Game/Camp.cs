@@ -15,8 +15,7 @@ public class Camp : Area {
     public Inventory PartyItems;
 
     private int days;
-    private int hours;
-    private const int NEW_DAY_HOURS = 5;
+    public TimeType time;
 
     public Camp(PlayerCharacter pc) {
         this.party = new Party(pc);
@@ -36,12 +35,14 @@ public class Camp : Area {
         CreateCamp();
 
         this.days = 0;
-        this.hours = NEW_DAY_HOURS;
+        this.time = TimeType.DAWN;
+        Game.Instance.Time.Time = Util.Color(time.Name, time.Color);
+        Game.Instance.Time.Day = days;
     }
 
     private void CreateCamp() {
         Hub = PageUtil.Rp(
-            text: "You awaken in a grassy green field.",
+            text: "",
             location: "Camp",
             party: party,
             processes: new Process[] {
@@ -57,17 +58,28 @@ public class Camp : Area {
 
                         new Process(),
                         new Process(),
-                        new Process("Rest", "Take a short rest.", () => {
-                            Game.Instance.Time.Time = "" + --hours;
-                        }, () => hours > 0),
+                        new Process("Rest", "Rest until the next part of the day.", () => {
+                            time = time.Next;
+                            Game.Instance.Time.Time = Util.Color(time.Name, time.Color);
+
+                            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party rests.", time.Name.ToLower())));
+                            Game.Instance.TextBoxes.AddTextBox(new TextBox(time.Description));
+                        }),
                         new Process("Sleep", "End the day.", () => {
-                            Game.Instance.Time.Day = ++days;
-                            hours = NEW_DAY_HOURS;
-                            Game.Instance.Time.Time = "" + hours;
+                            time = TimeType.DAWN;
+                            days++;
+                            Game.Instance.Time.Time = Util.Color(time.Name, time.Color);
+                            Game.Instance.Time.Day = days;
+
+                            Game.Instance.CurrentPage = Hub;
+
+                            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party sleeps.", days)));
+                            Game.Instance.TextBoxes.AddTextBox(new TextBox(time.Description));
                         })
             },
             onEnter: () => {
                 Game.Instance.Time.IsTimeEnabled = true;
+                Game.Instance.Time.IsDayEnabled = true;
             }
             );
     }

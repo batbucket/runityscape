@@ -131,7 +131,7 @@ public class Spell {
         string text = Result.CreateText(this.Caster, this.Target, Calculation, this.Other);
 
         if (!string.IsNullOrEmpty(text) && isFirstTick) {
-            Game.Instance.TextBoxes.AddTextBox(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other), TextEffect.FADE_IN));
+            Game.Instance.TextBoxes.AddTextBox(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other)));
         }
 
         Caster.UpdateState();

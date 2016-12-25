@@ -32,7 +32,7 @@ public class Illusion : SpellFactory {
                 t.AddToAttribute(AttributeType.INTELLIGENCE, false, t.GetAttributeCount(AttributeType.INTELLIGENCE, true) - intel);
                 t.AddToAttribute(AttributeType.AGILITY, false, t.GetAttributeCount(AttributeType.AGILITY, true) - dex);
                 t.AddToAttribute(AttributeType.VITALITY, false, t.GetAttributeCount(AttributeType.VITALITY, true) - vit);
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0}'s illusion was shattered!", t.DisplayName), TextEffect.FADE_IN));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0}'s illusion was shattered!", t.DisplayName)));
                 t.AddToResource(ResourceType.HEALTH, false, t.GetResourceCount(ResourceType.HEALTH, true) - t.GetResourceCount(ResourceType.HEALTH, false));
                 t.AddToResource(ResourceType.CHARGE, false, t.GetResourceCount(ResourceType.CHARGE, true));
             },

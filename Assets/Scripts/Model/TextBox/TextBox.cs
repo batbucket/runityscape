@@ -29,7 +29,7 @@ public class TextBox {
     bool _isDone;
     public bool IsDone { get; set; }
 
-    private TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
+    protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
         this.textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
         this.rawText = text;
         this.color = color;
@@ -38,7 +38,7 @@ public class TextBox {
         this.effect = effect;
     }
 
-    public TextBox(string text, TextEffect effect) : this(text, Color.white, effect, "Blip_0", 0) { }
+    public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) { }
 
     public virtual void Write(GameObject textBoxPrefab, Action callBack) {
         textBoxPrefab.GetComponent<TextBoxView>().WriteText(this, callBack);

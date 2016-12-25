@@ -142,7 +142,7 @@ public class BattlePage : Page {
                 foreach (Character c in allies) {
                     c.OnVictory();
                 }
-                Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!", TextEffect.FADE_IN));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!"));
                 ActionGrid = new IButtonable[] { new Process("Continue", "", () => Game.Instance.CurrentPage = Victory) };
                 Game.Instance.Sound.StopAll();
                 State = BattleState.POST_BATTLE;
@@ -152,7 +152,7 @@ public class BattlePage : Page {
                 foreach (Character c in enemies) {
                     c.OnVictory();
                 }
-                Game.Instance.TextBoxes.AddTextBox(new TextBox("Defeat!", TextEffect.FADE_IN));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox("Defeat!"));
                 Game.Instance.Sound.StopAll();
                 ActionGrid = new IButtonable[] { new Process("Continue", "", () => Game.Instance.CurrentPage = Defeat) };
                 State = BattleState.POST_BATTLE;
@@ -266,7 +266,7 @@ public class BattlePage : Page {
         return new Process(
             Util.Color(string.Format("{0}{1}", item.Name, "(E)"), Color.yellow),
             string.Format("{0} > {1} > {2}\n{3}", caster.DisplayName, "UNEQUIP", item.Name, item.Description), () => {
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), TextEffect.FADE_IN));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name)));
                 item.UnequipItemInSlot(caster);
             });
     }

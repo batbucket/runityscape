@@ -11,7 +11,7 @@ public abstract class AvatarBox : TextBox {
                      Color color,
                      string soundLocation,
                      float timePerLetter)
-                     : base(text, TextEffect.TYPE) {
+                     : base(text, color, TextEffect.TYPE, "Blip_0", 0) {
         this._spriteLoc = spriteLoc;
     }
 

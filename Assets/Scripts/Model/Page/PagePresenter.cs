@@ -89,7 +89,7 @@ public class PagePresenter {
         actionGrid.IsEnabled = true;
 
         if (!string.IsNullOrEmpty(page.Text)) {
-            AddTextBox(new TextBox(page.Text, TextEffect.FADE_IN));
+            AddTextBox(new TextBox(page.Text));
         }
 
         actionGrid.IsHotkeysEnabled = !this.Page.HasInputField;

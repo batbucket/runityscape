@@ -66,17 +66,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Areas\Area.cs" />
-    <Compile Include="Assets\Scripts\Areas\Camp.cs" />
-    <Compile Include="Assets\Scripts\Areas\Debug.cs" />
-    <Compile Include="Assets\Scripts\Areas\Encounter.cs" />
-    <Compile Include="Assets\Scripts\Areas\NewGame.cs" />
-    <Compile Include="Assets\Scripts\Areas\PageGenerator.cs" />
-    <Compile Include="Assets\Scripts\Areas\StartMenu.cs" />
     <Compile Include="Assets\Scripts\Core\Events\Event.cs" />
     <Compile Include="Assets\Scripts\Core\Game.cs" />
     <Compile Include="Assets\Scripts\Core\Process\OneShotProcess.cs" />
     <Compile Include="Assets\Scripts\Core\Process\Process.cs" />
+    <Compile Include="Assets\Scripts\Game\Area.cs" />
+    <Compile Include="Assets\Scripts\Game\Camp.cs" />
+    <Compile Include="Assets\Scripts\Game\Debug.cs" />
+    <Compile Include="Assets\Scripts\Game\Encounter.cs" />
+    <Compile Include="Assets\Scripts\Game\NewGame.cs" />
+    <Compile Include="Assets\Scripts\Game\PageGenerator.cs" />
+    <Compile Include="Assets\Scripts\Game\StartMenu.cs" />
+    <Compile Include="Assets\Scripts\Game\TimeType.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridView.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\HotkeyButton.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\CharacterEffect.cs" />

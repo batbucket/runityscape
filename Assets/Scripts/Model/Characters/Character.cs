@@ -290,7 +290,7 @@ public abstract class Character : Entity, IReactable {
     }
 
     protected void Emote(string s) {
-        Game.Instance.TextBoxes.AddTextBox(new TextBox(s, TextEffect.FADE_IN));
+        Game.Instance.TextBoxes.AddTextBox(new TextBox(s));
     }
 
     public void UpdateState() {
@@ -367,9 +367,8 @@ public abstract class Character : Entity, IReactable {
         _state = CharacterState.DEFEAT;
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
-                string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName),
-                TextEffect.FADE_IN)
-            );
+                string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName)
+            ));
         AddToResource(ResourceType.HEALTH, false, 1, false);
         Discharge();
         Presenter.PortraitView.AddEffect(new DefeatEffect(this.Presenter.PortraitView));
@@ -382,8 +381,8 @@ public abstract class Character : Entity, IReactable {
         _state = CharacterState.KILLED;
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
-                string.Format("{0} was <color=red>slain</color>.", DisplayName),
-                TextEffect.FADE_IN));
+                string.Format("{0} was <color=red>slain</color>.", DisplayName)
+                ));
         Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
         Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
     }
