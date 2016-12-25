@@ -6,12 +6,7 @@ public class RightBox : AvatarBox {
 
     public RightBox(string spriteLoc,
                    string text,
-                   Color color,
-                   TextEffect effect = TextEffect.TYPE,
-                   string soundLocation = "Blip_0",
-                   float timePerLetter = 0.075f)
-                   : base(spriteLoc, text, color, effect, soundLocation, timePerLetter) {
+                   Color color)
+                   : base(spriteLoc, text, color, "Blip_0", 0f) {
     }
-
-    public RightBox(Character c, string text) : base(c, text) { }
 }

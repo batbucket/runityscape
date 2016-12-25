@@ -5,14 +5,14 @@ using System.Linq;
 public class Regenerator : Tentacle {
 
     public Regenerator()
-        : base("Icons/tentacle", "Regenerator", 1, 0, 5, 3, 1, Color.white, 2, "A tentacle with high life regeneration that can transfer its life to allies. Unable to attack.") {
-    }
-
-    public override void OnBattleStart() {
-        (new Regenerate()).Cast(this, this);
+        : base("Icons/tentacle", "Regenerator", 1, 0, 5, 3, 1, Color.white, 2, "A tentacle that can regenerate its life and transfer life to allies. Unable to attack.") {
     }
 
     protected override void DecideSpell() {
+        if (!Buffs.Any(b => b.SpellFactory.Name == "Regenerate")) {
+            QuickCast(new Regenerate());
+        }
+
         if (GetResourceCount(ResourceType.HEALTH, false) > 1) {
 
             /**

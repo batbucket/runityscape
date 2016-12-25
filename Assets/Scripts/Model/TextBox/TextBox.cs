@@ -8,55 +8,37 @@ using System;
 public class TextBox {
     public virtual TextBoxType Type { get { return TextBoxType.TEXT; } }
 
-    string[] _textArray;
-    public string[] TextArray { get { return _textArray; } }
+    string[] textArray;
+    public string[] TextArray { get { return textArray; } }
 
-    string _rawText;
-    public string RawText { get { return _rawText; } }
+    string rawText;
+    public string RawText { get { return rawText; } }
 
-    Color _color;
-    public Color Color { get { return _color; } set { _color = value; } }
+    Color color;
+    public Color Color { get { return color; } set { color = value; } }
 
-    float _timePerLetter;
-    public float TimePerLetter { get { return _timePerLetter; } }
+    float timePerLetter;
+    public float TimePerLetter { get { return timePerLetter; } }
 
-    string _soundLoc;
-    public string SoundLoc { get { return _soundLoc; } }
+    string soundLoc;
+    public string SoundLoc { get { return soundLoc; } }
 
-    TextEffect _effect;
-    public TextEffect Effect { get { return _effect; } set { _effect = value; } }
+    TextEffect effect;
+    public TextEffect Effect { get { return effect; } set { effect = value; } }
 
     bool _isDone;
     public bool IsDone { get; set; }
 
-    private float duration;
-    public float Duration { get { return duration; } }
-
-    void Init(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Blip_0", float timePerLetter = 0, float duration = -1) {
-        this._textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
-        this._rawText = text;
-        this._color = color;
-        this._timePerLetter = timePerLetter;
-        this._soundLoc = soundLocation;
-        this._effect = effect;
-        this.duration = duration;
+    private TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
+        this.textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
+        this.rawText = text;
+        this.color = color;
+        this.timePerLetter = timePerLetter;
+        this.soundLoc = soundLocation;
+        this.effect = effect;
     }
 
-    public TextBox(string text, Color color, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Blip_0", float timePerLetter = 0) {
-        Init(text, color, effect, soundLocation, timePerLetter);
-    }
-
-    public TextBox(string text, Color color, float duration, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Blip_0", float timePerLetter = 0) {
-        Init(text, color, effect, soundLocation, timePerLetter, duration);
-    }
-
-    public TextBox(string text, TextEffect effect = TextEffect.FADE_IN, string soundLocation = "Blip_0", float timePerLetter = 0) {
-        Init(text, Color.white, effect, soundLocation, timePerLetter);
-    }
-
-    public TextBox(string text, float duration) {
-        Init(text, Color.white);
-    }
+    public TextBox(string text, TextEffect effect) : this(text, Color.white, effect, "Blip_0", 0) { }
 
     public virtual void Write(GameObject textBoxPrefab, Action callBack) {
         textBoxPrefab.GetComponent<TextBoxView>().WriteText(this, callBack);

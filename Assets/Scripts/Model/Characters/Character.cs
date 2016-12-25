@@ -46,7 +46,6 @@ public abstract class Character : Entity, IReactable {
         }
         set {
             isTargetable = value;
-            Discharge();
         }
     }
     public bool IsControllable { get; set; }
@@ -54,7 +53,7 @@ public abstract class Character : Entity, IReactable {
     public ChargeStatus ChargeStatus { get; private set; }
     public bool IsCharged {
         get {
-            return HasResource(ResourceType.CHARGE) && (GetResourceCount(ResourceType.CHARGE, false) == GetResourceCount(ResourceType.CHARGE, true));
+            return IsCharging && HasResource(ResourceType.CHARGE) && (GetResourceCount(ResourceType.CHARGE, false) == GetResourceCount(ResourceType.CHARGE, true));
         }
     }
 
@@ -237,48 +236,61 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    public virtual void Tick(Character mainCharacter, bool isInCombat) {
+    public void UpdateStats(Character mainCharacter) {
         CalculateResources();
         CalculateChargeRequirement(mainCharacter);
+    }
 
-        if (isInCombat) {
+    public void Tick() {
+        BattleTimer += Time.deltaTime;
 
-            BattleTimer += Time.deltaTime;
-
-            foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
-                if (pair.Key != ResourceType.HEALTH) {
-                    pair.Value.IsVisible = State == CharacterState.ALIVE;
-                }
+        foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
+            if (pair.Key != ResourceType.HEALTH) {
+                pair.Value.IsVisible = State == CharacterState.ALIVE;
             }
-
-            if (State == CharacterState.ALIVE) {
-                Charge();
-            }
-            if (!IsCharged) {
-                ChargeStatus = ChargeStatus.NOT_CHARGED;
-            } else {
-                switch (ChargeStatus) {
-                    case ChargeStatus.NOT_CHARGED:
-                        ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;
-                        break;
-                    case ChargeStatus.HIT_FULL_CHARGE:
-                        OnFullCharge();
-                        ChargeStatus = ChargeStatus.FULL_CHARGE;
-                        break;
-                    case ChargeStatus.FULL_CHARGE:
-                        WhileFullCharge();
-                        break;
-                }
-            }
-
-            Buffs.RemoveAll(s => s.IsTimedOut);
-            for (int i = 0; i < Buffs.Count; i++) {
-                Spell buff = Buffs[i];
-                buff.Tick();
-            }
-
-            Act();
         }
+
+        if (State == CharacterState.ALIVE) {
+            Charge();
+        }
+        if (!IsCharged) {
+            ChargeStatus = ChargeStatus.NOT_CHARGED;
+        } else {
+            switch (ChargeStatus) {
+                case ChargeStatus.NOT_CHARGED:
+                    ChargeStatus = ChargeStatus.HIT_FULL_CHARGE;
+                    break;
+                case ChargeStatus.HIT_FULL_CHARGE:
+                    OnFullCharge();
+                    ChargeStatus = ChargeStatus.FULL_CHARGE;
+                    break;
+                case ChargeStatus.FULL_CHARGE:
+                    WhileFullCharge();
+                    break;
+            }
+        }
+
+        Buffs.RemoveAll(s => s.IsTimedOut);
+        for (int i = 0; i < Buffs.Count; i++) {
+            Spell buff = Buffs[i];
+            buff.Tick();
+        }
+
+        Act();
+    }
+
+    protected void Talk(string s) {
+        AvatarBox a = null;
+        if (Side) {
+            a = new RightBox(SpriteLoc, s, TextColor);
+        } else {
+            a = new RightBox(SpriteLoc, s, TextColor);
+        }
+        Game.Instance.TextBoxes.AddTextBox(a);
+    }
+
+    protected void Emote(string s) {
+        Game.Instance.TextBoxes.AddTextBox(new TextBox(s, TextEffect.FADE_IN));
     }
 
     public void UpdateState() {
@@ -356,7 +368,7 @@ public abstract class Character : Entity, IReactable {
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName),
-                Color.white, TextEffect.FADE_IN)
+                TextEffect.FADE_IN)
             );
         AddToResource(ResourceType.HEALTH, false, 1, false);
         Discharge();
@@ -371,7 +383,7 @@ public abstract class Character : Entity, IReactable {
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} was <color=red>slain</color>.", DisplayName),
-                Color.white, TextEffect.FADE_IN));
+                TextEffect.FADE_IN));
         Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
         Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
     }
@@ -391,5 +403,12 @@ public abstract class Character : Entity, IReactable {
 
     public virtual void OnBattleEnd() {
         AddToResource(ResourceType.SKILL, false, -GetResourceCount(ResourceType.SKILL, false));
+    }
+
+    public void CancelBuffs() {
+        for (int i = 0; i < Buffs.Count; i++) {
+            Buffs[i].Cancel();
+        }
+        Buffs.Clear();
     }
 }

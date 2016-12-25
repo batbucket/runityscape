@@ -59,8 +59,4 @@ public class ObjectPoolManager : MonoBehaviour {
         pools[pb.gameObject.name].Push(pb);
         Util.Parent(pb.gameObject, this.gameObject);
     }
-
-    private void Foo() {
-        GameObject.Destroy(this.gameObject);
-    }
 }

@@ -105,23 +105,10 @@ public class TextBoxView : PooledBehaviour {
                 }
                 break;
         }
+
         textBox.IsDone = true;
         if (callBack != null) {
             callBack.Invoke();
-        }
-
-        float duration = textBox.Duration;
-        if (duration > 0) {
-            while ((duration -= Time.deltaTime) > 0) {
-                yield return null;
-            }
-            float timer = 0;
-            while ((timer += Time.deltaTime) < FADE_DURATION) {
-                TextAlpha = Mathf.Lerp(1, 0, timer / FADE_DURATION);
-                BackgroundAlpha = Mathf.Lerp(1, 0, timer / FADE_DURATION);
-                yield return null;
-            }
-            ObjectPoolManager.Instance.Return(this);
         }
     }
 

@@ -308,10 +308,10 @@ public class NewGame : Area {
                 string attributeText = string.Join("\n", bonuses.Select(b => string.Format("{0}: {1} + {2}", b.Key.Name, pc.GetAttributeCount(b.Key, true), b.Value)).ToArray());
 
                 Game.Instance.TextBoxes.AddTextBox(
-                    new TextBox(string.Format("{0}'s starting attributes are:\n{1}", pc.Name, attributeText))
+                    new TextBox(string.Format("{0}'s starting attributes are:\n{1}", pc.Name, attributeText), TextEffect.TYPE)
                     );
                 Game.Instance.TextBoxes.AddTextBox(
-                    new TextBox(string.Join("\n", AttributeType.ALL.Select(a => string.Format("{0}: {1}", a.Name, a.ShortDescription)).ToArray()))
+                    new TextBox(string.Join("\n", AttributeType.ALL.Select(a => string.Format("{0}: {1}", a.Name, a.ShortDescription)).ToArray()), TextEffect.TYPE)
                     );
             }
             );

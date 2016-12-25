@@ -214,7 +214,7 @@ public static class PageUtil {
 
     public static Process CreateUnequipProcess(Character caster, EquippableItem item, Party party, Inventory items, Page hub) {
         Process p = new Process(Util.Color(item.Name, Color.yellow), item.Description, () => {
-            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), Color.white, TextEffect.FADE_IN));
+            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), TextEffect.FADE_IN));
             item.UnequipItemInSlot(caster);
             Game.Instance.CurrentPage = GenerateCharacterEquipPage(caster, party, items, hub);
         });

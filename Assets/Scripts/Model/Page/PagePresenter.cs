@@ -79,7 +79,6 @@ public class PagePresenter {
         this.page = page;
         IList<Character> chars = page.GetAll();
         foreach (Character c in chars) {
-            c.Buffs.Clear();
             c.IsCharging = true;
         }
         Page.OnEnter();
@@ -90,7 +89,7 @@ public class PagePresenter {
         actionGrid.IsEnabled = true;
 
         if (!string.IsNullOrEmpty(page.Text)) {
-            AddTextBox(new TextBox(page.Text, TextEffect.FADE_IN, "", 0));
+            AddTextBox(new TextBox(page.Text, TextEffect.FADE_IN));
         }
 
         actionGrid.IsHotkeysEnabled = !this.Page.HasInputField;

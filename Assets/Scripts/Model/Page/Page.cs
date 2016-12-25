@@ -285,7 +285,7 @@ public abstract class Page : IButtonable {
     public virtual void Tick() {
         OnTick.Invoke();
         foreach (Character c in GetAll()) {
-            c.Tick(MainCharacter, false);
+            c.UpdateStats(MainCharacter);
         }
     }
 

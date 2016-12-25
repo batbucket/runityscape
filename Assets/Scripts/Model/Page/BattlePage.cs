@@ -91,9 +91,9 @@ public class BattlePage : Page {
     }
 
     public override void Tick() {
-        if (IsVictory.Invoke()) {
+        if (State == BattleState.BATTLE && IsVictory.Invoke()) {
             State = BattleState.VICTORY;
-        } else if (IsDefeat.Invoke()) {
+        } else if (State == BattleState.BATTLE && IsDefeat.Invoke()) {
             State = BattleState.DEFEAT;
         }
 
@@ -112,7 +112,8 @@ public class BattlePage : Page {
                 base.Tick();
                 IList<Character> all = GetAll().Where(c => c.IsTargetable).ToArray();
                 foreach (Character c in GetAll()) {
-                    c.Tick(MainCharacter, true);
+                    c.UpdateStats(MainCharacter);
+                    c.Tick();
                     if (c.IsActive) { characterQueue.Enqueue(c); }
                     if (c.HasResource(ResourceType.CHARGE)) { c.Resources[ResourceType.CHARGE].IsVisible = true; }
                 }
@@ -137,22 +138,26 @@ public class BattlePage : Page {
                 }
                 break;
             case BattleState.VICTORY:
-                foreach (Character c in GetAllies(MainCharacter)) {
+                IList<Character> allies = GetAllies(MainCharacter);
+                foreach (Character c in allies) {
                     c.OnVictory();
                 }
-                Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!"));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!", TextEffect.FADE_IN));
                 ActionGrid = new IButtonable[] { new Process("Continue", "", () => Game.Instance.CurrentPage = Victory) };
                 Game.Instance.Sound.StopAll();
                 State = BattleState.POST_BATTLE;
                 break;
             case BattleState.DEFEAT:
-                foreach (Character c in GetEnemies(MainCharacter)) {
+                IList<Character> enemies = GetEnemies(MainCharacter);
+                foreach (Character c in enemies) {
                     c.OnVictory();
                 }
-                Game.Instance.TextBoxes.AddTextBox(new TextBox("Defeat!"));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox("Defeat!", TextEffect.FADE_IN));
                 Game.Instance.Sound.StopAll();
                 ActionGrid = new IButtonable[] { new Process("Continue", "", () => Game.Instance.CurrentPage = Defeat) };
                 State = BattleState.POST_BATTLE;
+                break;
+            case BattleState.POST_BATTLE:
                 break;
         }
     }
@@ -261,7 +266,7 @@ public class BattlePage : Page {
         return new Process(
             Util.Color(string.Format("{0}{1}", item.Name, "(E)"), Color.yellow),
             string.Format("{0} > {1} > {2}\n{3}", caster.DisplayName, "UNEQUIP", item.Name, item.Description), () => {
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), Color.white, TextEffect.FADE_IN));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.", caster.DisplayName, item.Name), TextEffect.FADE_IN));
                 item.UnequipItemInSlot(caster);
             });
     }

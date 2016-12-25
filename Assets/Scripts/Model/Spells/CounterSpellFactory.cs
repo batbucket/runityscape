@@ -19,6 +19,9 @@ public abstract class CounterSpellFactory : SpellFactory {
         if (!IsEnabled) {
             return false;
         }
+        if (!caster.Spells.Contains(this)) {
+            return false;
+        }
         foreach (KeyValuePair<ResourceType, int> resourceCost in costs) {
             if (!caster.Resources.ContainsKey(resourceCost.Key) || caster.GetResourceCount(resourceCost.Key, false) < resourceCost.Value) {
                 return false;

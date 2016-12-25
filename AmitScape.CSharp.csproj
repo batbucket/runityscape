@@ -73,8 +73,7 @@
     <Compile Include="Assets\Scripts\Areas\NewGame.cs" />
     <Compile Include="Assets\Scripts\Areas\PageGenerator.cs" />
     <Compile Include="Assets\Scripts\Areas\StartMenu.cs" />
-    <Compile Include="Assets\Scripts\Areas\Temple.cs" />
-    <Compile Include="Assets\Scripts\Core\Event.cs" />
+    <Compile Include="Assets\Scripts\Core\Events\Event.cs" />
     <Compile Include="Assets\Scripts\Core\Game.cs" />
     <Compile Include="Assets\Scripts\Core\Process\OneShotProcess.cs" />
     <Compile Include="Assets\Scripts\Core\Process\Process.cs" />
@@ -109,6 +108,7 @@
     <Compile Include="Assets\Scripts\Interface\TextBox\InputBoxView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxHolderView.cs" />
     <Compile Include="Assets\Scripts\Interface\TextBox\TextBoxView.cs" />
+    <Compile Include="Assets\Scripts\Interface\Title\TitleView.cs" />
     <Compile Include="Assets\Scripts\Interface\Tooltip\TooltipView.cs" />
     <Compile Include="Assets\Scripts\Misc\TreeNode.cs" />
     <Compile Include="Assets\Scripts\Misc\UIInput.cs" />
@@ -123,7 +123,6 @@
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Alestre.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Amit.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Hero.cs" />
-    <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Kitsune.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Steve.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Tentacle\Lasher.cs" />
     <Compile Include="Assets\Scripts\Model\Characters\Named Characters\Tentacle\Regenerator.cs" />
@@ -146,7 +145,6 @@
     <Compile Include="Assets\Scripts\Model\Items\Named Items\OldSword.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\Scimitar.cs" />
     <Compile Include="Assets\Scripts\Model\Items\Named Items\TimeCapsule.cs" />
-    <Compile Include="Assets\Scripts\Model\Items\Named Items\WoodFan.cs" />
     <Compile Include="Assets\Scripts\Model\Page\BattlePage.cs" />
     <Compile Include="Assets\Scripts\Model\Page\BattleState.cs" />
     <Compile Include="Assets\Scripts\Model\Page\Page.cs" />

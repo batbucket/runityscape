@@ -29,31 +29,6 @@ public abstract class ComputerCharacter : Character {
 
     protected abstract void DecideSpell();
 
-    protected void Talk(string s) {
-        AvatarBox a = null;
-        if (Side) {
-            a = new RightBox(this, s);
-        } else {
-            a = new LeftBox(this, s);
-        }
-        Game.Instance.TextBoxes.AddTextBox(a);
-    }
-
-    protected void Emote(string s) {
-        Game.Instance.TextBoxes.AddTextBox(new TextBox(s));
-    }
-
-    protected void Talk(params string[] strings) {
-        string s = strings.PickRandom();
-        AvatarBox a = null;
-        if (Side) {
-            a = new RightBox(this, s);
-        } else {
-            a = new LeftBox(this, s);
-        }
-        Game.Instance.TextBoxes.AddTextBox(a);
-    }
-
     protected void QuickCast(SpellFactory spell, Character target = null) {
         Page page = Game.Instance.CurrentPage;
         if (!spell.IsCastable(this)) {
