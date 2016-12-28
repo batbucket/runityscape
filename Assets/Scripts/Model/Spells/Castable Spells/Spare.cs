@@ -9,9 +9,8 @@ public class Spare : SpellFactory {
     public const SpellType SPELL_TYPE = SpellType.MERCY;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
     public const string SUCCESS_TEXT = "{0} is sparing {1}.";
-    public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
 
-    public Spare() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
+    public Spare() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE) { }
 
     public override Hit CreateHit() {
         return new Hit(

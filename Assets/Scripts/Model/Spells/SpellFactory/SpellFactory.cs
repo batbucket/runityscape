@@ -38,20 +38,48 @@ public abstract class SpellFactory {
                         string description,
                         SpellType spellType,
                         TargetType targetType,
-                        IDictionary<ResourceType, int> costs = null,
+                        Cost[] costs = null,
                         bool isSelfTargetable = true,
                         string abbreviation = "???",
                         Color? color = null) {
-        Util.Assert(!(!isSelfTargetable && targetType == TargetType.SELF), "Cannot be non self targetable and have target type be self!");
         this.name = name;
         this.description = description;
         this.spellType = spellType;
         this.targetType = targetType;
-        this.costs = costs ?? new Dictionary<ResourceType, int>();
+        this.costs = new Dictionary<ResourceType, int>();
+        if (costs != null) {
+            foreach (Cost c in costs) {
+                this.costs.Add(new KeyValuePair<ResourceType, int>(c.resource, c.amount));
+            }
+        }
         this.IsEnabled = true;
         this.isSelfTargetable = isSelfTargetable;
         this.color = color ?? Color.white;
         this.abbreviation = abbreviation;
+        Util.Assert(!(!isSelfTargetable && targetType == TargetType.SELF), "Cannot be non self targetable and have target type be self!");
+    }
+
+    public SpellFactory(
+                    SpellType spellType,
+                    TargetType targetType,
+                    string name,
+                    string description,
+                    params Cost[] costs) {
+        this.name = name;
+        this.description = description;
+        this.spellType = spellType;
+        this.targetType = targetType;
+        this.costs = new Dictionary<ResourceType, int>();
+        if (costs != null) {
+            foreach (Cost c in costs) {
+                this.costs.Add(new KeyValuePair<ResourceType, int>(c.resource, c.amount));
+            }
+        }
+        this.IsEnabled = true;
+        this.isSelfTargetable = true;
+        this.color = Color.white;
+        this.abbreviation = "???";
+        Util.Assert(!(!isSelfTargetable && targetType == TargetType.SELF), "Cannot be non self targetable and have target type be self!");
     }
 
     public virtual string GetNameAndCosts(Character caster) {
@@ -69,7 +97,7 @@ public abstract class SpellFactory {
         return s.ToString();
     }
 
-    public virtual bool IsCastable(Character caster, Character target = null) {
+    public bool IsCastable(Character caster, Character target = null) {
         if (target != null && !target.IsTargetable) {
             return false;
         }
@@ -84,6 +112,10 @@ public abstract class SpellFactory {
                 return false;
             }
         }
+        return target == null || Castable(caster, target);
+    }
+
+    protected virtual bool Castable(Character caster, Character target) {
         return true;
     }
 

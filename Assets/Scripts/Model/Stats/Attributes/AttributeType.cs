@@ -69,6 +69,7 @@ public sealed class AttributeType : IComparable {
                                                                       3);
 
     public static readonly AttributeType[] COMBAT_ATTRIBUTES = new AttributeType[] { STRENGTH, INTELLIGENCE, AGILITY, VITALITY };
+    public static readonly AttributeType[] RESTORED_ATTRIBUTES = new AttributeType[] { STRENGTH, INTELLIGENCE, AGILITY, VITALITY };
 
     public int CompareTo(object obj) {
         AttributeType other = (AttributeType)obj;

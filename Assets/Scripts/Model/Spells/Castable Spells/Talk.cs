@@ -8,11 +8,10 @@ public class Talk : SpellFactory {
     public static readonly string DESCRIPTION = string.Format("Attempt to talk to a foe.");
     public const SpellType SPELL_TYPE = SpellType.ACT;
     public const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
-    public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
 
     string text;
 
-    public Talk(string text) : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
+    public Talk(string text) : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE) {
         this.text = text;
     }
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 public class Check : SpellFactory {
-    public Check() : base("Check", "Check the attributes of a target.", SpellType.ACT, TargetType.ANY) { }
+    public Check() : base("Check", "Check the attributes of a target.", SpellType.ACT, TargetType.ANY, null) { }
 
     public override Hit CreateHit() {
         return new Hit(

@@ -71,8 +71,9 @@ public class Camp : ReadPage {
         Game.Instance.Time.IsDayEnabled = true;
     }
 
+    private const float REST_RESTORE_PERCENT = 0.4f;
     private Process Rest() {
-        return new Process("Rest", "Rest until the next part of the day.", () => {
+        return new Process("Rest", "Rest until the next part of the day.\nRestores some stats by ", () => {
             time = time.Next;
             Game.Instance.Time.Time = Util.Color(time.Name, time.Color);
 
@@ -81,8 +82,9 @@ public class Camp : ReadPage {
         });
     }
 
+    private const float SLEEP_RESTORE_PERCENT = 1f;
     private Process Sleep() {
-        return new Process("Sleep", "End the day.", () => {
+        return new Process("Sleep", "End the day.\nFully restores some stats.", () => {
             time = TimeType.DAWN;
             days++;
             Game.Instance.Time.Time = Util.Color(time.Name, time.Color);

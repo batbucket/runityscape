@@ -9,7 +9,7 @@ public class NewGamePage : ReadPage {
         "What is your name?",
         "Name Selection",
         true) {
-        PlayerCharacter hero = new Hero(new Inventory(), 1, 1, 1, 1);
+        PlayerCharacter hero = new Hero(new Inventory());
         MainCharacter = hero;
         AddCharacters(false, hero);
         OnTickAction = () => {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public abstract class Result {
 
@@ -90,7 +91,7 @@ public abstract class Result {
 
     private const float BASE_SHAKE = 3;
     public static ShakeEffect ShakeBasedOnDamage(Character target, Calculation c) {
-        float damage = c.TargetResources[ResourceType.HEALTH].False;
+        float damage = Mathf.Max(c.TargetResources[ResourceType.HEALTH].False, 0);
         float shakePower = BASE_SHAKE * damage / target.GetResourceCount(ResourceType.HEALTH, true);
         return new ShakeEffect(target.Presenter.PortraitView, shakePower, 0);
     }

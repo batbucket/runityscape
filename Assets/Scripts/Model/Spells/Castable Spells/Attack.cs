@@ -11,7 +11,6 @@ public class Attack : SpellFactory {
     public const string SUCCESS_TEXT = "{0} attacks {1}!\n{1} took <color=red>{2}</color> damage!";
     public const string CRITICAL_TEXT = "{0} critically strikes {1}!\n{1} took <color=red>{2}</color> damage!";
     public const string MISS_TEXT = "{0} attacks {1}... But it missed!";
-    public static readonly Dictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>();
     public const int SP_GAIN = 1;
 
     const float VARIANCE = 0.25f;
@@ -24,14 +23,16 @@ public class Attack : SpellFactory {
     private bool canMiss;
     private bool canCrit;
 
-    public Attack(bool canMiss = true, bool canCrit = true) : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) {
+    public Attack(bool canMiss = true, bool canCrit = true) : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE) {
         this.canMiss = canMiss;
         this.canCrit = canCrit;
     }
 
     protected override void OnOnce(Character caster, Spell other) {
-        caster.AddToResource(ResourceType.SKILL, false, 1, true);
-        caster.Presenter.PortraitView.AddEffect(new HitsplatEffect(caster.Presenter.PortraitView, Color.yellow, "+1"));
+        if (caster.HasResource(ResourceType.SKILL)) {
+            caster.AddToResource(ResourceType.SKILL, false, SP_GAIN, true);
+            caster.Presenter.PortraitView.AddEffect(new HitsplatEffect(caster.Presenter.PortraitView, Color.yellow, "+1"));
+        }
     }
 
     private const string SOUND_LOCATION = "Slash_0";

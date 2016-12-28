@@ -19,9 +19,6 @@ public class PortraitView : PooledBehaviour {
 
     public Image Image {
         get {
-            if (iconImage.color == Color.clear) {
-                Util.Log("affect after clear: ");
-            }
             return iconImage;
         }
         set {

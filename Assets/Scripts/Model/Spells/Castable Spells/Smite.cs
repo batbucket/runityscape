@@ -9,12 +9,9 @@ public class Smite : SpellFactory {
     static readonly string TEXT = "{0} invokes the wrath of heaven on {1}!\n{1} took <color=red>{2}</color> damage!";
     const SpellType SPELL_TYPE = SpellType.OFFENSE;
     const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;
-    static readonly IDictionary<ResourceType, int> COSTS = new Dictionary<ResourceType, int>() {
-        { ResourceType.SKILL, 2 }
-    };
     public const int DAMAGE = 10;
 
-    public Smite() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
+    public Smite() : base(SPELL_TYPE, TARGET_TYPE, NAME, DESCRIPTION, new Cost(ResourceType.SKILL, 2)) { }
 
     public override Hit CreateHit() {
         return new Hit(

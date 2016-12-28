@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 
 public class Amit : PlayerCharacter {
-    public Amit() : base("crying_mudkip", "Amit", 0, 4, 5, 2, 5, Color.white) {
+    public Amit() : base(new Displays { Loc = "crying_mudkip", Name = "Amit", Color = Color.white, Check = "Yourself" }, new Attributes { Lvl = 2, Str = 5, Agi = 5, Int = 5, Vit = 5 }) {
         Side = false;
         AddResource(new NamedResource.Skill());
         this.Attack = new Attack();

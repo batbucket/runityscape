@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 
 public class SummonTent : SpellFactory {
-    private IList<Tentacle> tents;
+    private IList<Mimic> tents;
 
-    public SummonTent(IList<Tentacle> tents) : base("SummonTent", "Summon tentacles", SpellType.OFFENSE, TargetType.SELF) {
+    public SummonTent(IList<Mimic> tents) : base("SummonTent", "Summon tentacles", SpellType.OFFENSE, TargetType.SELF) {
         this.tents = tents;
     }
 
@@ -22,7 +22,7 @@ public class SummonTent : SpellFactory {
             },
             perform: (c, t, calc, o) => {
                 for (int i = 0; i < tents.Count; i++) {
-                    Tentacle s = tents[i].Summon();
+                    Mimic s = tents[i].Summon();
                     Game.Instance.CurrentPage.AddCharacters(c.Side, s);
                 }
                 Result.NumericPerform(c, t, calc);

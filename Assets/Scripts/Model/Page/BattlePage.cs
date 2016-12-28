@@ -101,6 +101,7 @@ public class BattlePage : Page {
     protected override void OnAnyEnter() {
         base.OnAnyEnter();
         GetAll().ForEach(c => {
+            c.UpdateStats(MainCharacter);
             c.OnBattleStart();
         });
     }

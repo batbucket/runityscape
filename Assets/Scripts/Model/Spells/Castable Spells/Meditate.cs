@@ -13,7 +13,7 @@ public class Meditate : SpellFactory {
         {ResourceType.SKILL, 3 }
     };
 
-    public Meditate() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE, COSTS) { }
+    public Meditate() : base(SPELL_TYPE, TARGET_TYPE, NAME, DESCRIPTION, new Cost(ResourceType.SKILL, 3)) { }
 
     public override Hit CreateHit() {
         return new Hit(

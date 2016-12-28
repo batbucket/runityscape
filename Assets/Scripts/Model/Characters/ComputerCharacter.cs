@@ -9,14 +9,14 @@ public abstract class ComputerCharacter : Character {
     readonly float maxDelay;
     protected float delay;
 
-    public ComputerCharacter(string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, float maxDelay, string checkText = "")
-        : base(new Inventory(), spriteLoc, name, level, strength, intelligence, dexterity, vitality, textColor, CONTROLLABLE_CPU, checkText) {
+    public ComputerCharacter(Displays displays, Attributes attributes, float maxDelay)
+        : base(CONTROLLABLE_CPU, new Inventory(), displays, attributes) {
         this.maxDelay = maxDelay;
         this.delay = UnityEngine.Random.Range(0, maxDelay);
         Items = new Inventory();
     }
 
-    public override void Act() {
+    protected override void Act() {
         if (State == CharacterState.NORMAL && IsCharged && (delay -= Time.deltaTime) <= 0) {
             DecideSpell();
             delay = UnityEngine.Random.Range(0, maxDelay);

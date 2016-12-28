@@ -12,11 +12,10 @@ public abstract class Character : Entity, IReactable {
 
     public CharacterPresenter Presenter { get; set; } //Assigned by PagePresenter
 
-    string _name;
-    string _suffix;
-    public string Name { set { _name = value; } get { return _name; } }
-    public string Suffix { set { _suffix = value; } }
-    public string DisplayName { get { return string.Format("{0}{1}", _name, string.IsNullOrEmpty(_suffix) ? "" : string.Format(" {0}", _suffix)); } }
+    public string Name;
+    string suffix;
+    public string Suffix { set { suffix = value; } }
+    public string DisplayName { get { return string.Format("{0}{1}", Name, string.IsNullOrEmpty(suffix) ? "" : string.Format(" {0}", suffix)); } }
     public NamedAttribute.Level Level;
 
     public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
@@ -72,22 +71,31 @@ public abstract class Character : Entity, IReactable {
     }
     CharacterState state;
 
-    string _checkText;
-    public string CheckText { get { return _checkText; } }
+    protected string checkText;
+    public string CheckText { get { return checkText; } }
 
     public bool IsShowingBarCounts;
 
-    public Character(Inventory items, string spriteLoc, string name, int level, int strength, int intelligence, int dexterity, int vitality, Color textColor, bool isDisplayable, string checkText = "") : base(spriteLoc) {
-        this._name = name;
+    public Displays Displays {
+        set {
+            this.Name = value.Name;
+            this.SpriteLoc = value.Loc;
+            this.checkText = value.Check;
+            this.TextColor = value.Color;
+        }
+    }
+
+    public Character(bool isControllable, Inventory items, Displays displays, Attributes attributes) : base(displays.Loc) {
+        this.Name = displays.Name;
         this.Level = new NamedAttribute.Level();
-        Level.False = level;
+        Level.False = attributes.Lvl;
 
         this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
             {AttributeType.LEVEL, Level },
-            {AttributeType.STRENGTH, new NamedAttribute.Strength(strength) },
-            {AttributeType.INTELLIGENCE, new NamedAttribute.Intelligence(intelligence) },
-            {AttributeType.AGILITY, new NamedAttribute.Agility(dexterity) },
-            {AttributeType.VITALITY, new NamedAttribute.Vitality(vitality) }
+            {AttributeType.STRENGTH, new NamedAttribute.Strength(attributes.Str) },
+            {AttributeType.INTELLIGENCE, new NamedAttribute.Intelligence(attributes.Int) },
+            {AttributeType.AGILITY, new NamedAttribute.Agility(attributes.Agi) },
+            {AttributeType.VITALITY, new NamedAttribute.Vitality(attributes.Vit) }
         };
 
         this.Resources = new SortedDictionary<ResourceType, Resource>() {
@@ -103,9 +111,9 @@ public abstract class Character : Entity, IReactable {
         Mercies = new List<SpellFactory>();
         Equipment = new Equipment(items);
 
-        this.TextColor = textColor;
+        this.TextColor = displays.Color;
         this.IsTargetable = true;
-        this.IsControllable = isDisplayable;
+        this.IsControllable = isControllable;
 
         SpellStack = new Stack<SpellFactory>();
         Buffs = new List<Spell>();
@@ -120,7 +128,7 @@ public abstract class Character : Entity, IReactable {
         FillResources();
         IsCharging = true;
         state = CharacterState.NORMAL;
-        _checkText = checkText;
+        this.checkText = displays.Check;
     }
 
     public void AddAttribute(Attribute attribute) {
@@ -348,7 +356,7 @@ public abstract class Character : Entity, IReactable {
 
     protected virtual void WhileFullCharge() { }
 
-    public abstract void Act();
+    protected abstract void Act();
 
     public virtual void React(Spell spell) {
 

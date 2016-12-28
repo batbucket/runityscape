@@ -46,7 +46,7 @@ public class CharacterEquipsPage : ReadPage {
     }
 
     private Process CreateEquipProcess(EquipmentType type) {
-        return new Process(Util.Color(string.Format("NO {0}", type.ToString()), Color.grey), "Equip an item of this type.", () => ActionGrid = CreateEquipProcesses(type));
+        return new Process(Util.Color(string.Format("NO {0}", type.ToString()), Color.grey), string.Format("Equip an item of {0} type.", type.ToString()), () => ActionGrid = CreateEquipProcesses(type));
     }
 
     private Process[] CreateEquipProcesses(EquipmentType type) {

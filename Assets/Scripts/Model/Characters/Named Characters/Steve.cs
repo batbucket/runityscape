@@ -3,7 +3,7 @@ using System.Linq;
 
 public class Steve : ComputerCharacter {
 
-    public Steve() : base("laughing_shinx", "Steve", 0, 10, 2, 5, 5, Color.red, 4) {
+    public Steve() : base(new Displays() { Loc = "laughing_shinx", Name = "Steve", Color = Color.white, Check = "Hello world" }, new Attributes() { Lvl = 5, Str = 1, Int = 1, Agi = 1, Vit = 1 }, 3) {
         AddResource(new NamedResource.Skill());
     }
 

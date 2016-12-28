@@ -75,7 +75,7 @@ public sealed class ResourceType : IComparable {
                                                                   Color.red,
                                                                   0,
                                                                   AttributeType.VITALITY,
-                                                                  (a, r) => r.True = (int)a.False * 10);
+                                                                  (a, r) => r.True = (int)a.False * 5);
 
     public static readonly ResourceType SKILL = new ResourceType("Skill",
                                                                  "SKIL",
@@ -91,7 +91,7 @@ public sealed class ResourceType : IComparable {
                                                                 Color.magenta,
                                                                 2,
                                                                 AttributeType.INTELLIGENCE,
-                                                                (a, r) => r.True = (int)a.False * 10);
+                                                                (a, r) => r.True = (int)a.False * 5);
 
     public static readonly ResourceType CHARGE = new ResourceType("Charge",
                                                                   "CHRG",
@@ -117,6 +117,8 @@ public sealed class ResourceType : IComparable {
                                                                 998,
                                                                 AttributeType.LEVEL,
                                                                 (a, r) => r.True = (int)(1 + Mathf.Pow(2, a.False)));
+
+    public static readonly ResourceType[] RESTORED_RESOURCES = new ResourceType[] { HEALTH, MANA };
 
     public int CompareTo(object obj) {
         ResourceType other = (ResourceType)obj;
