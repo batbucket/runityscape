@@ -26,7 +26,6 @@ public sealed class AttributeType : IComparable {
     }
 
     public static readonly IList<AttributeType> ALL = new List<AttributeType>();
-    public static readonly AttributeType[] COMBAT_ATTRIBUTES = new AttributeType[] { STRENGTH, INTELLIGENCE, AGILITY, VITALITY };
 
     public static readonly AttributeType LEVEL = new AttributeType("Level",
                                                                       "Lvl",
@@ -68,6 +67,8 @@ public sealed class AttributeType : IComparable {
                                                                       "Increases Life.",
                                                                       Color.yellow,
                                                                       3);
+
+    public static readonly AttributeType[] COMBAT_ATTRIBUTES = new AttributeType[] { STRENGTH, INTELLIGENCE, AGILITY, VITALITY };
 
     public int CompareTo(object obj) {
         AttributeType other = (AttributeType)obj;

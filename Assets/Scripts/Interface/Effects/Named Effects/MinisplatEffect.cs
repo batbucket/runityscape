@@ -23,7 +23,7 @@ public class MinisplatEffect : CharacterEffect {
         hitsplat.Animation(text, color);
         Util.Parent(hitsplat.gameObject, target.EffectsHolder);
         while (hitsplat != null) { }
-        _isDone = true;
+        isDone = true;
         yield break;
     }
 }

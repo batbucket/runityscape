@@ -17,7 +17,17 @@ public class PortraitView : PooledBehaviour {
     public string PortraitName { get { return portraitName.text; } set { portraitName.text = value; } }
     public Text PortraitText { get { return portraitName; } }
 
-    public Image Image { get { return iconImage; } set { iconImage = value; } }
+    public Image Image {
+        get {
+            if (iconImage.color == Color.clear) {
+                Util.Log("affect after clear: ");
+            }
+            return iconImage;
+        }
+        set {
+            iconImage = value;
+        }
+    }
     public Sprite Sprite { get { return iconImage.sprite; } set { iconImage.sprite = value; } }
     public IDictionary<ResourceType, ResourceBundle> ResourceViews { get; private set; }
     public IDictionary<AttributeType, AttributeBundle> AttributeViews { get; private set; }
@@ -78,6 +88,7 @@ public class PortraitView : PooledBehaviour {
         PortraitName = "";
         PortraitText.color = Color.white;
         Image.color = Color.white;
+        Image.enabled = true;
         ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
         BuffView[] bvs = buffsHolder.GetComponentsInChildren<BuffView>();
         PooledBehaviour[] ces = effectsHolder.GetComponentsInChildren<PooledBehaviour>();

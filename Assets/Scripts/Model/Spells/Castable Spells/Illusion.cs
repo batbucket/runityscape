@@ -18,7 +18,7 @@ public class Illusion : SpellFactory {
     public override Hit CreateHit() {
         return new Hit(
             isState: (c, t, o) => true,
-            isIndefinite: (c, t, o) => t.State == CharacterState.ALIVE || t.State == CharacterState.DEFEAT,
+            isIndefinite: (c, t, o) => t.State == CharacterState.NORMAL || t.State == CharacterState.DEFEAT,
             onStart: (c, t, o) => {
                 t.AddToAttribute(AttributeType.STRENGTH, false, -t.GetAttributeCount(AttributeType.STRENGTH, false) + str);
                 t.AddToAttribute(AttributeType.INTELLIGENCE, false, -t.GetAttributeCount(AttributeType.INTELLIGENCE, false) + intel);
@@ -26,7 +26,7 @@ public class Illusion : SpellFactory {
                 t.AddToAttribute(AttributeType.VITALITY, false, -t.GetAttributeCount(AttributeType.VITALITY, false) + vit);
             },
             onEnd: (c, t, o) => {
-                t.State = CharacterState.ALIVE;
+                t.State = CharacterState.NORMAL;
                 t.Presenter.PortraitView.ClearEffects();
                 t.AddToAttribute(AttributeType.STRENGTH, false, t.GetAttributeCount(AttributeType.STRENGTH, true) - str);
                 t.AddToAttribute(AttributeType.INTELLIGENCE, false, t.GetAttributeCount(AttributeType.INTELLIGENCE, true) - intel);

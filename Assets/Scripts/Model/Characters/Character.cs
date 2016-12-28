@@ -64,13 +64,13 @@ public abstract class Character : Entity, IReactable {
 
     public CharacterState State {
         get {
-            return _state;
+            return state;
         }
         set {
-            _state = value;
+            state = value;
         }
     }
-    CharacterState _state;
+    CharacterState state;
 
     string _checkText;
     public string CheckText { get { return _checkText; } }
@@ -119,7 +119,7 @@ public abstract class Character : Entity, IReactable {
         CalculateResources();
         FillResources();
         IsCharging = true;
-        _state = CharacterState.ALIVE;
+        state = CharacterState.NORMAL;
         _checkText = checkText;
     }
 
@@ -246,11 +246,11 @@ public abstract class Character : Entity, IReactable {
 
         foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
             if (pair.Key != ResourceType.HEALTH) {
-                pair.Value.IsVisible = State == CharacterState.ALIVE;
+                pair.Value.IsVisible = State == CharacterState.NORMAL;
             }
         }
 
-        if (State == CharacterState.ALIVE) {
+        if (State == CharacterState.NORMAL) {
             Charge();
         }
         if (!IsCharged) {
@@ -296,13 +296,15 @@ public abstract class Character : Entity, IReactable {
     public void UpdateState() {
         if (IsDefeated()) {
             OnDefeat();
+            state = CharacterState.DEFEAT;
         } else if (IsKilled()) {
             OnKill();
+            state = CharacterState.KILLED;
         }
     }
 
     protected virtual bool IsDefeated() {
-        return State == CharacterState.ALIVE && GetResourceCount(ResourceType.HEALTH, false) <= 0;
+        return State == CharacterState.NORMAL && GetResourceCount(ResourceType.HEALTH, false) <= 0;
     }
 
     protected virtual bool IsKilled() {
@@ -361,30 +363,21 @@ public abstract class Character : Entity, IReactable {
     }
 
     public virtual void OnDefeat() {
-        if (_state == CharacterState.DEFEAT) {
-            return;
-        }
-        _state = CharacterState.DEFEAT;
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName)
             ));
         AddToResource(ResourceType.HEALTH, false, 1, false);
-        Discharge();
-        Presenter.PortraitView.AddEffect(new DefeatEffect(this.Presenter.PortraitView));
+        (new Defeated()).Cast(this, this);
     }
 
     public virtual void OnKill() {
-        if (_state == CharacterState.KILLED) {
-            return;
-        }
-        _state = CharacterState.KILLED;
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} was <color=red>slain</color>.", DisplayName)
                 ));
-        Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
         Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
+        Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
     }
 
     public string AttributeDistribution {

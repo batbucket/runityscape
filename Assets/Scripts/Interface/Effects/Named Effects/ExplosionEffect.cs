@@ -18,11 +18,13 @@ public class ExplosionEffect : CharacterEffect {
     protected override IEnumerator EffectRoutine() {
         ev = ObjectPoolManager.Instance.Get(explosionPrefab);
         Util.Parent(ev.gameObject, target.EffectsHolder);
+        ev.transform.localPosition = target.Image.transform.localPosition;
+        ev.transform.parent = null;
         ev.Play();
         while (!ev.IsDone) {
             yield return null;
         }
-        _isDone = true;
+        isDone = true;
         ObjectPoolManager.Instance.Return(ev);
         yield break;
     }

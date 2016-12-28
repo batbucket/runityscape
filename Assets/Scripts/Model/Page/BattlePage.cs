@@ -35,7 +35,6 @@ public class BattlePage : Page {
 
     public BattlePage(
         string text = "",
-        string tooltip = "",
         string location = "",
         Character mainCharacter = null,
         IList<Character> left = null,
@@ -51,7 +50,7 @@ public class BattlePage : Page {
         Func<bool> isDefeat = null,
         Page defeat = null
         )
-        : base(text, tooltip, location, false, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
+        : base(text, "", location, false, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
 
         characterQueue = new Queue<Character>();
 
@@ -78,19 +77,35 @@ public class BattlePage : Page {
         this.State = BattleState.PRE_BATTLE;
     }
 
+    public BattlePage(
+    Party party,
+    Page victory,
+    Page defeat,
+    string musicLoc,
+    string location,
+    string text,
+    params Character[] enemies) : this(text, location, party.Main, party.Members, enemies, null, null, null, null, null, musicLoc, null, victory, null, defeat) {
+        // If the party ever changes, update the side main is on
+        OnTickAction += () => {
+            MainCharacter = party.Main;
+            IList<Character> addSide = (party.Main.Side ? RightCharacters : LeftCharacters);
+            addSide = party;
+        };
+    }
+
     protected override void OnAddCharacter(Character c) {
         base.OnAddCharacter(c);
         c.OnBattleStart();
     }
 
-    public override void OnAnyEnter() {
+    protected override void OnAnyEnter() {
         base.OnAnyEnter();
         GetAll().ForEach(c => {
             c.OnBattleStart();
         });
     }
 
-    public override void Tick() {
+    protected override void OnTick() {
         if (State == BattleState.BATTLE && IsVictory.Invoke()) {
             State = BattleState.VICTORY;
         } else if (State == BattleState.BATTLE && IsDefeat.Invoke()) {
@@ -109,7 +124,6 @@ public class BattlePage : Page {
                 ActionGrid = new IButtonable[] { new Process("Engage", "", () => State = BattleState.BATTLE) };
                 break;
             case BattleState.BATTLE:
-                base.Tick();
                 IList<Character> all = GetAll().Where(c => c.IsTargetable).ToArray();
                 foreach (Character c in GetAll()) {
                     c.UpdateStats(MainCharacter);

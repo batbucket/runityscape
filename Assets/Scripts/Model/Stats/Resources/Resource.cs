@@ -16,9 +16,11 @@ public abstract class Resource : PairedInt {
     public const int LESSER_CAP = 0;
     public const int GREATER_CAP = 99999;
 
+    private readonly bool isFalseCappedAtTrue;
+
     public override float False {
         get {
-            return Mathf.Clamp(base.False, LESSER_CAP, True);
+            return Mathf.Clamp(base.False, LESSER_CAP, isFalseCappedAtTrue ? True : GREATER_CAP);
         }
         set {
             base.False = value;
@@ -34,15 +36,13 @@ public abstract class Resource : PairedInt {
         }
     }
 
-    public Resource(int initial, ResourceType type) : base(initial) {
+    public Resource(int trueValue, int falseValue, ResourceType type, bool isFalseCappedAtTrue) : base(trueValue, falseValue) {
         this._type = type;
         this.IsVisible = true;
+        this.isFalseCappedAtTrue = isFalseCappedAtTrue;
     }
 
-    public Resource(int trueValue, int falseValue, ResourceType type) : base(trueValue, falseValue) {
-        this._type = type;
-        this.IsVisible = true;
-    }
+    public Resource(int initial, ResourceType type, bool isFalseCappedAtTrue) : this(initial, initial, type, isFalseCappedAtTrue) { }
 
     public virtual void Calculate() { }
 }

@@ -16,7 +16,7 @@ public class LightningEffect : CharacterEffect {
     protected override IEnumerator EffectRoutine() {
         this.lightningEffect = ObjectPoolManager.Instance.Get(lightningEffectPrefab);
         Util.Parent(lightningEffect.gameObject, target.gameObject);
-        _isDone = true;
+        isDone = true;
         yield break;
     }
 }

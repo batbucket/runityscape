@@ -4,10 +4,10 @@ using System.Collections;
 public abstract class Effect {
     protected static EffectsManager effects = EffectsManager.Instance;
 
-    protected bool _isDone;
+    protected bool isDone;
     public bool IsDone {
         get {
-            return _isDone;
+            return isDone;
         }
     }
 

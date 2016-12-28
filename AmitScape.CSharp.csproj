@@ -72,9 +72,20 @@
     <Compile Include="Assets\Scripts\Core\Process\Process.cs" />
     <Compile Include="Assets\Scripts\Game\Area.cs" />
     <Compile Include="Assets\Scripts\Game\Camp.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\CampOptionPage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\CharacterEquipsPage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\CharacterStatsPage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\CharactersPage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\ExplorePage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\InventoryPage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\ItemManagePage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\LevelUpPage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\NewGamePage.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\PageActions.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\PageUtil.cs" />
+    <Compile Include="Assets\Scripts\Game\CampPages\PlacesPage.cs" />
     <Compile Include="Assets\Scripts\Game\Debug.cs" />
     <Compile Include="Assets\Scripts\Game\Encounter.cs" />
-    <Compile Include="Assets\Scripts\Game\NewGame.cs" />
     <Compile Include="Assets\Scripts\Game\PageGenerator.cs" />
     <Compile Include="Assets\Scripts\Game\StartMenu.cs" />
     <Compile Include="Assets\Scripts\Game\TimeType.cs" />
@@ -150,7 +161,6 @@
     <Compile Include="Assets\Scripts\Model\Page\BattleState.cs" />
     <Compile Include="Assets\Scripts\Model\Page\Page.cs" />
     <Compile Include="Assets\Scripts\Model\Page\PagePresenter.cs" />
-    <Compile Include="Assets\Scripts\Model\Page\PageUtil.cs" />
     <Compile Include="Assets\Scripts\Model\Page\ReadPage.cs" />
     <Compile Include="Assets\Scripts\Model\Perks\InvokePerk.cs" />
     <Compile Include="Assets\Scripts\Model\Perks\PerkType.cs" />
@@ -158,6 +168,7 @@
     <Compile Include="Assets\Scripts\Model\Spells\Calculation.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Attack.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Check.cs" />
+    <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Defeated.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Flee.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Illusion.cs" />
     <Compile Include="Assets\Scripts\Model\Spells\Castable Spells\Meditate.cs" />

@@ -6,14 +6,14 @@ using System.Reflection;
 using UnityEngine;
 
 public class Equipment : ICollection<EquippableItem> {
-    private SortedDictionary<EquipmentType, EquippableItem> equipment;
+    public SortedDictionary<EquipmentType, EquippableItem> EquipD;
 
-    public int Count { get { return equipment.Values.Count(c => c != null); } }
+    public int Count { get { return EquipD.Values.Count(c => c != null); } }
 
     public bool IsReadOnly { get { return false; } }
 
     public Equipment(Inventory inventory) {
-        equipment = new SortedDictionary<EquipmentType, EquippableItem>() {
+        EquipD = new SortedDictionary<EquipmentType, EquippableItem>() {
             { EquipmentType.WEAPON, null },
             { EquipmentType.OFFHAND, null},
             { EquipmentType.ARMOR, null},
@@ -22,29 +22,29 @@ public class Equipment : ICollection<EquippableItem> {
     }
 
     public EquippableItem Get(EquipmentType equipmentType) {
-        return equipment[equipmentType];
+        return EquipD[equipmentType];
     }
 
     public bool ContainsEquipment(EquipmentType equipmentType) {
-        return equipment[equipmentType] != null;
+        return EquipD[equipmentType] != null;
     }
 
     public void Add(EquippableItem equip) {
-        equipment[equip.EquipmentType] = equip;
+        EquipD[equip.EquipmentType] = equip;
     }
 
     public void Clear() {
-        equipment.Clear();
+        EquipD.Clear();
     }
 
     public bool Contains(EquippableItem equip) {
-        return equipment.ContainsValue(equip);
+        return EquipD.ContainsValue(equip);
     }
 
     public bool Remove(EquippableItem equip) {
-        EquippableItem unequip = equipment[equip.EquipmentType];
+        EquippableItem unequip = EquipD[equip.EquipmentType];
         if (equip.Equals(unequip)) {
-            equipment[equip.EquipmentType] = null;
+            EquipD[equip.EquipmentType] = null;
             return true;
         } else {
             return false;
@@ -52,18 +52,18 @@ public class Equipment : ICollection<EquippableItem> {
     }
 
     public override string ToString() {
-        return string.Join(", ", equipment.Values.Where(e => e != null).Select(e => e.Name).ToArray());
+        return string.Join(", ", EquipD.Values.Where(e => e != null).Select(e => e.Name).ToArray());
     }
 
     public void CopyTo(EquippableItem[] array, int arrayIndex) {
-        equipment.Values.CopyTo(array, arrayIndex);
+        EquipD.Values.CopyTo(array, arrayIndex);
     }
 
     public IEnumerator<EquippableItem> GetEnumerator() {
-        return equipment.Values.GetEnumerator();
+        return EquipD.Values.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator() {
-        return equipment.Values.GetEnumerator();
+        return EquipD.Values.GetEnumerator();
     }
 }

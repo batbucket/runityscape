@@ -8,7 +8,7 @@ public class ExplosionView : PooledBehaviour {
 
     public bool IsDone {
         get {
-            return ps.time >= ps.startLifetime;
+            return !ps.IsAlive();
         }
     }
 

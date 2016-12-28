@@ -8,7 +8,7 @@ public class Regenerate : SpellFactory {
     public override Hit CreateHit() {
         return new Hit(
             isState: (c, t, o) => true,
-            isIndefinite: (c, t, o) => true,
+            isIndefinite: (c, t, o) => t.State == CharacterState.NORMAL,
             timePerTick: (c, t, o) => 0f,
             perform: (c, t, calc, o) => t.AddToResource(ResourceType.HEALTH, false, 0.05f),
             createText: (c, t, calc, o) => string.Format("{0} is regenerating life.", c.DisplayName),

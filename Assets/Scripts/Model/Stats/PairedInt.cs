@@ -12,8 +12,8 @@ public class PairedInt {
     public virtual int True { get { return _true; } set { _true = value; } }
 
     //Alternate naming scheme
-    public virtual float Percent { get { return False; } set { False = value; } }
-    public virtual int Flat { get { return True; } set { True = value; } }
+    public virtual float PercentBonus { get { return False; } set { False = value; } }
+    public virtual int FlatBonus { get { return True; } set { True = value; } }
 
     public PairedInt(int initial) {
         Set(initial);

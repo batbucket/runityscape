@@ -2,14 +2,16 @@
 using System.Collections;
 using System;
 
-public struct Encounter {
+public class Encounter {
     public Func<Page> page;
     public Func<float> weight;
-    public Func<bool> overrideCondition;
+    public bool IsOverride;
+    public bool IsDisabled;
 
-    public Encounter(Func<Page> page, Func<float> weight, Func<bool> overrideCondition = null) {
+    public Encounter(Func<Page> page, Func<float> weight) {
         this.page = page;
         this.weight = weight;
-        this.overrideCondition = overrideCondition ?? (() => { return false; });
+        this.IsOverride = false;
+        this.IsDisabled = false;
     }
 }

@@ -40,6 +40,7 @@ public class ShakeEffect : CharacterEffect {
 
     private const float NEAR_ZERO = 0.0001f;
     IEnumerator ShakeIcon(PortraitView target, float duration, float startIntensity, float endIntensity) {
+        yield return new WaitForSeconds(0.01f);
         RectTransform icon = target.Image.rectTransform;
         Vector2 originalPos = icon.localPosition;
         float currentIntensity = startIntensity;

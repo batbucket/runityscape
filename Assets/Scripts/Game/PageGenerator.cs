@@ -4,16 +4,19 @@ using System;
 using System.Collections.Generic;
 
 public class PageGenerator : IButtonable {
-    private Action<Page> pageSetFunc;
+    public IList<Encounter> Encounters {
+        get {
+            return encounters;
+        }
+    }
+
     private string name;
     private string description;
     private IList<Encounter> encounters;
 
-    public PageGenerator(Action<Page> pageSetFunc,
-                         string name,
+    public PageGenerator(string name,
                          string description,
                          params Encounter[] encounters) {
-        this.pageSetFunc = pageSetFunc;
         this.name = name;
         this.description = description;
         this.encounters = new List<Encounter>();
@@ -55,14 +58,22 @@ public class PageGenerator : IButtonable {
     }
 
     public void Invoke() {
-        float totalSum = 0;
+        IList<Encounter> enabledEncounts = new List<Encounter>();
+
+        // Add enabled encounters into pool
+        foreach (Encounter e in encounters) {
+            if (!e.IsDisabled) {
+                enabledEncounts.Add(e);
+            }
+        }
 
         // Sum up weights
+        float totalSum = 0;
         foreach (Encounter e in encounters) {
 
             // If any encounter's override condition is true, set page to that encounter.
-            if (e.overrideCondition.Invoke()) {
-                pageSetFunc.Invoke(e.page.Invoke());
+            if (e.IsOverride && !e.IsDisabled) {
+                Game.Instance.CurrentPage = e.page.Invoke();
                 return;
             }
 
@@ -76,7 +87,7 @@ public class PageGenerator : IButtonable {
             cumulSum += e.weight.Invoke();
 
             if (random <= cumulSum) {
-                pageSetFunc.Invoke(e.page.Invoke());
+                Game.Instance.CurrentPage = e.page.Invoke();
                 return;
             }
         }

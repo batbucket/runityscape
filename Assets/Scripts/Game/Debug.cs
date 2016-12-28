@@ -26,8 +26,8 @@ public class Debug : Area {
                 new Process("RightBox", "Say Hello world",
                     () => Game.Instance.TextBoxes.AddTextBox(
                         new RightBox("crying_mudkip", "im ethan bradberry", Color.white))),
-                new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => Page = PlayerBattle),
-                new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { Page = ComputerBattle; }),
+                new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => Game.Instance.CurrentPage = PlayerBattle),
+                new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { Game.Instance.CurrentPage = ComputerBattle; }),
                 new Process("Shake yourself", "Literally U******E", () => { }),
                 new OneShotProcess("Test OneShotProcess", "Meme", action: () => Game.Instance.TextBoxes.AddTextBox(new TextBox("hello"))),
                 new Process("deadm00se", "Text not displaying right.", () => Game.Instance.TextBoxes.AddTextBox(new RightBox("placeholder", "But this world is.", Color.white))),
@@ -42,7 +42,7 @@ public class Debug : Area {
                         );
                 }),
                 new Process("BossTransition", action: () => Game.Instance.Title.Play("fox-head", "Hello World")),
-                new Process("Back", "Go back to the main menu.", () => { Page = primary; })
+                new Process("Back", "Go back to the main menu.", () => { Game.Instance.CurrentPage = primary; })
     }
 );
 

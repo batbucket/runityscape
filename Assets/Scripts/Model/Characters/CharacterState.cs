@@ -1,5 +1,6 @@
 ﻿public enum CharacterState {
-    ALIVE,
+    NORMAL,
     DEFEAT,
-    KILLED
+    KILLED,
+    DEAD
 }

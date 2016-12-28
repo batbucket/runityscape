@@ -17,7 +17,7 @@ public abstract class ComputerCharacter : Character {
     }
 
     public override void Act() {
-        if (State == CharacterState.ALIVE && IsCharged && (delay -= Time.deltaTime) <= 0) {
+        if (State == CharacterState.NORMAL && IsCharged && (delay -= Time.deltaTime) <= 0) {
             DecideSpell();
             delay = UnityEngine.Random.Range(0, maxDelay);
         }

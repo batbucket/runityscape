@@ -17,7 +17,7 @@ public class BloodsplatEffect : CharacterEffect {
         bloodsplat = ObjectPoolManager.Instance.Get(bloodsplatPrefab);
         Util.Parent(bloodsplat.gameObject, target.gameObject);
         //while (bloodsplat != null) { } //FIXME WTF THIS BREAKS THE CODE
-        _isDone = true;
+        isDone = true;
         yield break;
     }
 }

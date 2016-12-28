@@ -11,8 +11,8 @@ public abstract class Page : IButtonable {
     public string Location { get; set; }
     public bool HasInputField { get; set; }
     public Character MainCharacter { get; protected set; }
-    public IList<Character> LeftCharacters { get; private set; }
-    public IList<Character> RightCharacters { get; private set; }
+    public IList<Character> LeftCharacters { get; protected set; }
+    public IList<Character> RightCharacters { get; protected set; }
 
     public IButtonable[] ActionGrid {
         get {
@@ -29,13 +29,15 @@ public abstract class Page : IButtonable {
             }
         }
     }
+    protected Stack<IButtonable[]> gridStack;
+
     private IButtonable[] actionGrid;
 
     public Action OnFirstEnterAction { get; protected set; }
     public Action OnEnterAction { get; protected set; }
     public Action OnFirstExitAction { get; protected set; }
     public Action OnExitAction { get; protected set; }
-    public Action OnTick { get; protected set; }
+    public Action OnTickAction { get; protected set; }
 
     public bool HasEnteredBefore { get; protected set; }
     public bool HasExitedBefore { get; protected set; }
@@ -118,7 +120,7 @@ public abstract class Page : IButtonable {
 
         this.ActionGrid = buttonables == null ? new IButtonable[0] : buttonables.ToArray();
 
-        this.OnTick = onTick ?? (() => { });
+        this.OnTickAction = onTick ?? (() => { });
         this.Music = musicLoc;
 
         this.Id = idCount++;
@@ -126,42 +128,36 @@ public abstract class Page : IButtonable {
         this._inputtedString = "";
     }
 
-    public void OnEnter() {
+    public void Enter() {
         if (!HasEnteredBefore) {
             HasEnteredBefore = true;
             OnFirstEnter();
+            OnFirstEnterAction.Invoke();
         }
         OnAnyEnter();
-    }
-
-    public virtual void OnFirstEnter() {
-        OnFirstEnterAction.Invoke();
-    }
-
-    public virtual void OnAnyEnter() {
         OnEnterAction.Invoke();
-        GetAll().Where(c => c.HasResource(ResourceType.CHARGE)).ToList().ForEach(c => c.Resources[ResourceType.CHARGE].IsVisible = false);
     }
 
-    public void OnExit() {
+    protected virtual void OnFirstEnter() { }
+
+    protected virtual void OnAnyEnter() { }
+
+    public void Exit() {
         if (!HasExitedBefore) {
             HasExitedBefore = true;
             OnFirstExit();
+            OnFirstExitAction.Invoke();
         }
+        OnAnyExit();
         OnExitAction.Invoke();
-    }
-
-    public virtual void OnFirstExit() {
-        OnFirstExitAction.Invoke();
-    }
-
-    public virtual void OnAnyExit() {
-        OnExitAction.Invoke();
-    }
-
-    protected virtual void OnAddCharacter(Character c) {
 
     }
+
+    protected virtual void OnFirstExit() { }
+
+    protected virtual void OnAnyExit() { }
+
+    protected virtual void OnAddCharacter(Character c) { }
 
     public void AddCharacters(Character sameSide, params Character[] chars) {
         AddCharacters(sameSide.Side, chars);
@@ -282,14 +278,19 @@ public abstract class Page : IButtonable {
         }
     }
 
-    public virtual void Tick() {
-        OnTick.Invoke();
+    public void Tick() {
+        OnTickAction.Invoke();
+        OnTick();
         foreach (Character c in GetAll()) {
             c.UpdateStats(MainCharacter);
         }
     }
 
+    protected virtual void OnTick() {
+
+    }
+
     void IButtonable.Invoke() {
-        // TODO
+        Game.Instance.CurrentPage = this;
     }
 }

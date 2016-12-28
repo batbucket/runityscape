@@ -1,3 +1,3 @@
 ﻿public enum SpellType {
-    OFFENSE, DEFENSE, BOOST, ACT, MERCY
+    OFFENSE, DEFENSE, BOOST, ACT, MERCY, OTHER
 }

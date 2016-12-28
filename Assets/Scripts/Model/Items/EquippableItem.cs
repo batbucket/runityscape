@@ -56,15 +56,15 @@ public abstract class EquippableItem : Item {
 
     private void CancelBonus(Character wielder) {
         foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
-            wielder.Attributes[pair.Key].Flat -= pair.Value.Flat;
-            wielder.Attributes[pair.Key].Percent /= pair.Value.Percent;
+            wielder.Attributes[pair.Key].FlatBonus -= pair.Value.FlatBonus;
+            wielder.Attributes[pair.Key].PercentBonus /= pair.Value.PercentBonus;
         }
     }
 
     private void ApplyBonus(Character wielder) {
         foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
-            wielder.Attributes[pair.Key].Flat += pair.Value.Flat;
-            wielder.Attributes[pair.Key].Percent *= pair.Value.Percent;
+            wielder.Attributes[pair.Key].FlatBonus += pair.Value.FlatBonus;
+            wielder.Attributes[pair.Key].PercentBonus *= pair.Value.PercentBonus;
         }
     }
 }

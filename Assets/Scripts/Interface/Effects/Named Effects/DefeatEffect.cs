@@ -13,9 +13,8 @@ public class DefeatEffect : CharacterEffect {
     }
 
     protected override IEnumerator EffectRoutine() {
-        yield return new WaitForSeconds(.75f);
         target.Image.color = new Color(100f / 255f, 60f / 255f, 60f / 255f);
-        target.AddEffect(new ShakeEffect(target, 0.05f, 0.05f));
+        this.isDone = true;
         yield break;
     }
 }

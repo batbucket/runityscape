@@ -65,7 +65,7 @@ public class PagePresenter {
     }
 
     private void SetPage(Page page) {
-        this.Page.OnExit();
+        this.Page.Exit();
 
         if (string.IsNullOrEmpty(page.Music)) {
             sound.StopAll();
@@ -81,7 +81,6 @@ public class PagePresenter {
         foreach (Character c in chars) {
             c.IsCharging = true;
         }
-        Page.OnEnter();
         Page.GetAll().ForEach(c => c.BattleTimer = 0);
         Util.ReturnAllChildren(textBoxHolder.gameObject);
 
@@ -100,6 +99,7 @@ public class PagePresenter {
             inputBox = null;
         }
 
+        page.Enter();
         Tick();
     }
 

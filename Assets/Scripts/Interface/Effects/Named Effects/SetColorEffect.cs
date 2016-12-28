@@ -37,6 +37,7 @@ public class SetColorEffect : CharacterEffect {
         foreach (Text t in texts) {
             t.color = initial;
         }
+        this.isDone = true;
         yield break;
     }
 }

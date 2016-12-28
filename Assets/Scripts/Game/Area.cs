@@ -6,24 +6,6 @@ using System.Collections;
 /// </summary>
 public abstract class Area {
 
-    /// <summary>
-    /// Reference to the Game class.
-    /// </summary>
-    protected Game Game {
-        get {
-            return Game.Instance;
-        }
-    }
-
-    /// <summary>
-    /// Property for setting the current Page.
-    /// </summary>
-    public Page Page {
-        set {
-            Game.Instance.CurrentPage = value;
-        }
-    }
-
     public Area() {
         Init();
     }
