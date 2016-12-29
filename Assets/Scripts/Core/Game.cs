@@ -49,6 +49,12 @@ public class Game : MonoBehaviour {
         }
     }
 
+    public GoldView Gold {
+        get {
+            return gold;
+        }
+    }
+
     [SerializeField]
     private TimeView time;
     [SerializeField]
@@ -72,6 +78,8 @@ public class Game : MonoBehaviour {
     [SerializeField]
     private TitleView title;
     private PagePresenter pagePresenter;
+    [SerializeField]
+    private GoldView gold;
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
 

@@ -38,17 +38,13 @@ public abstract class Character : Entity, IReactable {
 
     public bool Side { get; set; }
 
-    private bool isTargetable;
     public bool IsTargetable {
         get {
-            return isTargetable;
-        }
-        set {
-            isTargetable = value;
+            return State == CharacterState.NORMAL || State == CharacterState.DEFEAT;
         }
     }
-    public bool IsControllable { get; set; }
-    public bool IsActive { get { return this.IsControllable && this.IsCharged; } }
+    private bool isPlayerControllable;
+    public bool IsCommandable { get { return this.isPlayerControllable && this.IsCharged; } }
     public ChargeStatus ChargeStatus { get; private set; }
     public bool IsCharged {
         get {
@@ -85,6 +81,9 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
+    public abstract int ExperienceGiven { get; }
+    public abstract int GoldGiven { get; }
+
     public Character(bool isControllable, Inventory items, Displays displays, Attributes attributes) : base(displays.Loc) {
         this.Name = displays.Name;
         this.Level = new NamedAttribute.Level();
@@ -112,8 +111,7 @@ public abstract class Character : Entity, IReactable {
         Equipment = new Equipment(items);
 
         this.TextColor = displays.Color;
-        this.IsTargetable = true;
-        this.IsControllable = isControllable;
+        this.isPlayerControllable = isControllable;
 
         SpellStack = new Stack<SpellFactory>();
         Buffs = new List<Spell>();
@@ -244,20 +242,16 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    public void UpdateStats(Character mainCharacter) {
+    public void Tick() {
         CalculateResources();
-        CalculateChargeRequirement(mainCharacter);
+
     }
 
-    public void Tick() {
+    public void BattleTick(Character main) {
         BattleTimer += Time.deltaTime;
-
-        foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
-            if (pair.Key != ResourceType.HEALTH) {
-                pair.Value.IsVisible = State == CharacterState.NORMAL;
-            }
+        if (main != null) {
+            CalculateChargeRequirement(main);
         }
-
         if (State == CharacterState.NORMAL) {
             Charge();
         }
@@ -277,13 +271,11 @@ public abstract class Character : Entity, IReactable {
                     break;
             }
         }
-
         Buffs.RemoveAll(s => s.IsTimedOut);
         for (int i = 0; i < Buffs.Count; i++) {
             Spell buff = Buffs[i];
             buff.Tick();
         }
-
         Act();
     }
 
@@ -304,10 +296,8 @@ public abstract class Character : Entity, IReactable {
     public void UpdateState() {
         if (IsDefeated()) {
             OnDefeat();
-            state = CharacterState.DEFEAT;
         } else if (IsKilled()) {
             OnKill();
-            state = CharacterState.KILLED;
         }
     }
 
@@ -371,6 +361,7 @@ public abstract class Character : Entity, IReactable {
     }
 
     public virtual void OnDefeat() {
+        this.state = CharacterState.DEFEAT;
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName)
@@ -380,10 +371,12 @@ public abstract class Character : Entity, IReactable {
     }
 
     public virtual void OnKill() {
+        this.state = CharacterState.KILLED;
         Game.Instance.TextBoxes.AddTextBox(
             new TextBox(
                 string.Format("{0} was <color=red>slain</color>.", DisplayName)
                 ));
+
         Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
         Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
     }
@@ -399,6 +392,7 @@ public abstract class Character : Entity, IReactable {
     }
 
     public virtual void OnVictory() {
+
     }
 
     public virtual void OnBattleEnd() {

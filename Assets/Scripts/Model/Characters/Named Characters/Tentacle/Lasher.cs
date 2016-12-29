@@ -3,13 +3,25 @@ using System.Collections;
 using System;
 
 public class Lasher : Mimic {
+    public override int ExperienceGiven {
+        get {
+            return 3;
+        }
+    }
+
+    public override int GoldGiven {
+        get {
+            return Util.Range(1, 10);
+        }
+    }
+
     public Lasher()
         : base(
             new Displays {
                 Loc = "Icons/spiked-tentacle",
                 Name = "Lasher",
                 Color = Color.white,
-                Check = "A tentacle optimized for combat."
+                Check = "A tentacle optimized for combat. Many have tried to weaponize these creatures, only to realize that they are at best, abysmal whips."
             },
             new Displays {
                 Loc = "Icons/gladius",

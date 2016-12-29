@@ -11,14 +11,13 @@ public class ReadPage : Page {
         string tooltip = "",
         string location = "",
         bool hasInputField = false,
-        Character mainCharacter = null,
         IList<Character> left = null,
         IList<Character> right = null,
         PageActions pageActions = new PageActions() { },
         IList<IButtonable> buttonables = null,
         string musicLoc = null
         )
-        : base(text, tooltip, location, hasInputField, mainCharacter, left, right, pageActions.onFirstEnter, pageActions.onEnter, pageActions.onFirstExit, pageActions.onExit, pageActions.onTick, buttonables, musicLoc) {
+        : base(text, tooltip, location, hasInputField, left, right, pageActions.onFirstEnter, pageActions.onEnter, pageActions.onFirstExit, pageActions.onExit, pageActions.onTick, buttonables, musicLoc) {
     }
 
     public ReadPage(
@@ -38,14 +37,7 @@ public class ReadPage : Page {
     string location,
     IList<IButtonable> buttonables,
     PageActions pageActions,
-    IList<Character> right = null) : this(text, tooltip, location, false, party.Main, party.Members, right, pageActions, buttonables, musicLoc) {
-
-        // If the party ever changes, update the side main is on
-        OnTickAction += () => {
-            MainCharacter = party.Main;
-            IList<Character> addSide = (party.Main.Side ? RightCharacters : LeftCharacters);
-            addSide = party;
-        };
+    IList<Character> right = null) : this(text, tooltip, location, false, party.Members, right, pageActions, buttonables, musicLoc) {
     }
 
     protected override void OnTick() {

@@ -17,7 +17,7 @@ public abstract class Mimic : ComputerCharacter {
 
     protected override void Act() {
         base.Act();
-        if (((float)GetResourceCount(ResourceType.HEALTH, false) / GetResourceCount(ResourceType.HEALTH, true)) <= TRANSFORM_LIFE_PERCENT && !isTransformed) {
+        if (((float)GetResourceCount(ResourceType.HEALTH, false) / GetResourceCount(ResourceType.HEALTH, true)) <= TRANSFORM_LIFE_PERCENT && !isTransformed && State == CharacterState.NORMAL) {
             Transform();
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} sheds its disguise!", DisplayName)));
         }
@@ -32,6 +32,7 @@ public abstract class Mimic : ComputerCharacter {
 
     public override void OnDefeat() {
         base.OnKill();
+        this.State = CharacterState.KILLED;
     }
 
     public abstract Mimic Summon();

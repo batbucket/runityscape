@@ -15,7 +15,7 @@ public class Debug : Area {
 
     public override void Init() {
         Character amit = new Amit();
-        this.Menu = new ReadPage("What", "Hello world", mainCharacter: amit, left: new Character[] { amit }, right: new Character[] { new Steve(), new Steve() },
+        this.Menu = new ReadPage("What", "Hello world", left: new Character[] { amit }, right: new Character[] { new Steve(), new Steve() },
             buttonables: new Process[] {
                 new Process("Normal TextBox", "Say Hello world",
                     () => Game.Instance.TextBoxes.AddTextBox(
@@ -31,7 +31,6 @@ public class Debug : Area {
                 new Process("Shake yourself", "Literally U******E", () => { }),
                 new OneShotProcess("Test OneShotProcess", "Meme", action: () => Game.Instance.TextBoxes.AddTextBox(new TextBox("hello"))),
                 new Process("deadm00se", "Text not displaying right.", () => Game.Instance.TextBoxes.AddTextBox(new RightBox("placeholder", "But this world is.", Color.white))),
-                new Process("untargetuself", "Why is this wrong", () => amit.IsTargetable = !amit.IsTargetable),
                 new Process("Cutscene Test", action: () => {
                     Game.Instance.Cutscene(
                          false,

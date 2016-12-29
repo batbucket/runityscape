@@ -42,6 +42,7 @@ public class TitleView : MonoBehaviour {
             alpha = Mathf.Lerp(1, 0, timer / FADE_TIME);
             yield return null;
         }
+        alpha = 0;
         this.IsDone = true;
     }
 }

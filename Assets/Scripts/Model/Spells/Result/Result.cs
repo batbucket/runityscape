@@ -91,7 +91,7 @@ public abstract class Result {
 
     private const float BASE_SHAKE = 3;
     public static ShakeEffect ShakeBasedOnDamage(Character target, Calculation c) {
-        float damage = Mathf.Max(c.TargetResources[ResourceType.HEALTH].False, 0);
+        float damage = Mathf.Min(c.TargetResources[ResourceType.HEALTH].False, 0);
         float shakePower = BASE_SHAKE * damage / target.GetResourceCount(ResourceType.HEALTH, true);
         return new ShakeEffect(target.Presenter.PortraitView, shakePower, 0);
     }

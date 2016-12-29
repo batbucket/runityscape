@@ -8,7 +8,6 @@ public class LevelUpPage : ReadPage {
         "Select an additional attribute to increase.",
         "",
         false,
-        c,
         new Character[] { c }) {
 
         OnEnterAction = () => {

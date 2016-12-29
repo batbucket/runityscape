@@ -1,8 +1,20 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System;
 
 public class Regenerator : Mimic {
+    public override int ExperienceGiven {
+        get {
+            return 10;
+        }
+    }
+
+    public override int GoldGiven {
+        get {
+            return Util.Range(10, 20);
+        }
+    }
 
     public Regenerator()
         : base(
@@ -10,16 +22,16 @@ public class Regenerator : Mimic {
                 Loc = "Icons/tentacle",
                 Name = "Regenerator",
                 Color = Color.white,
-                Check = "A non-combatative tentacle with high life regeneration. Can transfer its life to allies."
+                Check = "A non-combatative tentacle with high life regeneration and can transfer its life to allies. Known as a \"regenerador\" in other languages."
             },
             new Displays {
                 Loc = "Icons/hospital-cross",
                 Name = "Bishop?",
                 Color = Color.white,
-                Check = "A non-combatative magic user with healing spells. Rumor has it that a bishop can sprint for long periods of time, but only in ordinal directions."
+                Check = "A non-combatative magic user with healing spells. Rumor has it that a bishop can run extremely quickly, but only in ordinal directions."
             },
             new Attributes {
-                Lvl = 1,
+                Lvl = 2,
                 Str = 1,
                 Int = 2,
                 Agi = 1,
@@ -46,7 +58,7 @@ public class Regenerator : Mimic {
                  */
                 Character target = Game.Instance
                     .CurrentPage.GetAllies(this)
-                    .Where(c => !(c is Regenerator))
+                    .Where(c => !(c is Regenerator) && c.State == CharacterState.NORMAL)
                     .OrderBy(c => c.GetResourceCount(ResourceType.HEALTH, false))
                     .FirstOrDefault();
 
@@ -60,6 +72,7 @@ public class Regenerator : Mimic {
              */
             Character target = Game.Instance
                 .CurrentPage.GetAllies(this)
+                .Where(c => c.State == CharacterState.NORMAL)
                 .OrderBy(c => c.GetResourceCount(ResourceType.HEALTH, false))
                 .FirstOrDefault();
             QuickCast(new Heal(), target);

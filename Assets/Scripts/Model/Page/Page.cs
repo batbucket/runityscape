@@ -10,7 +10,6 @@ public abstract class Page : IButtonable {
     public string Tooltip { get; set; }
     public string Location { get; set; }
     public bool HasInputField { get; set; }
-    public Character MainCharacter { get; protected set; }
     public IList<Character> LeftCharacters { get; protected set; }
     public IList<Character> RightCharacters { get; protected set; }
 
@@ -78,7 +77,6 @@ public abstract class Page : IButtonable {
         string tooltip = "",
         string location = "",
         bool hasInputField = false,
-        Character mainCharacter = null,
         IList<Character> left = null,
         IList<Character> right = null,
         Action onFirstEnter = null,
@@ -92,7 +90,6 @@ public abstract class Page : IButtonable {
 
         this.Text = text;
         this.Tooltip = tooltip;
-        this.MainCharacter = mainCharacter;
         this.HasInputField = hasInputField;
 
         this.Location = location;
@@ -281,8 +278,9 @@ public abstract class Page : IButtonable {
     public void Tick() {
         OnTickAction.Invoke();
         OnTick();
-        foreach (Character c in GetAll()) {
-            c.UpdateStats(MainCharacter);
+        IList<Character> all = GetAll();
+        foreach (Character c in all) {
+            c.Tick();
         }
     }
 

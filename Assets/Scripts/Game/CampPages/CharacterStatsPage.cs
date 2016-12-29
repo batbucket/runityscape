@@ -7,7 +7,6 @@ public class CharacterStatsPage : ReadPage {
         "",
         c.DisplayName,
         false,
-        c,
         new Character[] { c }) {
 
         OnEnterAction = () => {
@@ -38,7 +37,7 @@ public class CharacterStatsPage : ReadPage {
             }
         }
         return string.Format(
-            "Level {1} {0}\n{2}{3}{4}",
+            "Level {1} {0}\n{2}{3}{4}\n{5}",
             target.DisplayName,
             target.Level.False,
             string.IsNullOrEmpty(target.CheckText) ? "" : string.Format("\n{0}", target.CheckText),

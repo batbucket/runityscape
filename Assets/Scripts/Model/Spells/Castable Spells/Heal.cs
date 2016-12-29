@@ -8,7 +8,7 @@ public class Heal : SpellFactory {
             isState: (c, t, o) => true,
             calculation: (c, t, o) => new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() { { ResourceType.HEALTH, new PairedInt(0, 2) } }),
             sound: (c, t, calc, o) => "Zip_0",
-            createText: (c, t, calc, o) => string.Format("{0} heals {1} for {2} life.", c.DisplayName, t.DisplayName, calc.TargetResources[ResourceType.HEALTH].False)
+            createText: (c, t, calc, o) => string.Format("{0} heals {1} for {2} life.", c.DisplayName, t.DisplayName, Util.Color(calc.TargetResources[ResourceType.HEALTH].False + "", ResourceType.HEALTH.FillColor))
             );
     }
 

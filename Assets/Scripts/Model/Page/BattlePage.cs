@@ -33,6 +33,8 @@ public class BattlePage : Page {
 
     public BattleState State;
 
+    private Character mainCharacter;
+
     public BattlePage(
         string text = "",
         string location = "",
@@ -50,8 +52,8 @@ public class BattlePage : Page {
         Func<bool> isDefeat = null,
         Page defeat = null
         )
-        : base(text, "", location, false, mainCharacter, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
-
+        : base(text, "", location, false, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
+        this.mainCharacter = mainCharacter;
         characterQueue = new Queue<Character>();
 
         /**
@@ -85,12 +87,7 @@ public class BattlePage : Page {
     string location,
     string text,
     params Character[] enemies) : this(text, location, party.Main, party.Members, enemies, null, null, null, null, null, musicLoc, null, victory, null, defeat) {
-        // If the party ever changes, update the side main is on
-        OnTickAction += () => {
-            MainCharacter = party.Main;
-            IList<Character> addSide = (party.Main.Side ? RightCharacters : LeftCharacters);
-            addSide = party;
-        };
+
     }
 
     protected override void OnAddCharacter(Character c) {
@@ -101,7 +98,6 @@ public class BattlePage : Page {
     protected override void OnAnyEnter() {
         base.OnAnyEnter();
         GetAll().ForEach(c => {
-            c.UpdateStats(MainCharacter);
             c.OnBattleStart();
         });
     }
@@ -126,11 +122,10 @@ public class BattlePage : Page {
                 break;
             case BattleState.BATTLE:
                 IList<Character> all = GetAll().Where(c => c.IsTargetable).ToArray();
-                foreach (Character c in GetAll()) {
-                    c.UpdateStats(MainCharacter);
-                    c.Tick();
-                    if (c.IsActive) { characterQueue.Enqueue(c); }
+                foreach (Character c in all) {
+                    if (c.IsCommandable) { characterQueue.Enqueue(c); }
                     if (c.HasResource(ResourceType.CHARGE)) { c.Resources[ResourceType.CHARGE].IsVisible = true; }
+                    c.BattleTick(mainCharacter);
                 }
 
                 /**
@@ -153,17 +148,27 @@ public class BattlePage : Page {
                 }
                 break;
             case BattleState.VICTORY:
-                IList<Character> allies = GetAllies(MainCharacter);
+                IList<Character> allies = GetAllies(mainCharacter);
+                int expSum = GetEnemies(mainCharacter).Sum(c => c.ExperienceGiven);
                 foreach (Character c in allies) {
                     c.OnVictory();
+                    if (expSum > 0 && c.HasResource(ResourceType.EXPERIENCE)) {
+                        Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} gained {1} experience.", c.DisplayName, expSum)));
+                        Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} has enough experience to level up.", c.DisplayName)));
+                        c.AddToResource(ResourceType.EXPERIENCE, false, expSum);
+                    }
                 }
+                int goldSum = GetEnemies(mainCharacter).Sum(c => c.GoldGiven);
+                mainCharacter.Items.Gold += goldSum;
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("<color=yellow>{0}</color> gold was added to the inventory.", goldSum)));
+
                 Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!"));
                 ActionGrid = new IButtonable[] { new Process("Continue", "", () => Game.Instance.CurrentPage = Victory) };
                 Game.Instance.Sound.StopAll();
                 State = BattleState.POST_BATTLE;
                 break;
             case BattleState.DEFEAT:
-                IList<Character> enemies = GetEnemies(MainCharacter);
+                IList<Character> enemies = GetEnemies(mainCharacter);
                 foreach (Character c in enemies) {
                     c.OnVictory();
                 }
@@ -331,7 +336,7 @@ public class BattlePage : Page {
         return new Process(Selection.SWITCH.Name, string.Format(Selection.SWITCH.Text, current.DisplayName),
             () => {
                 //Quick switch if there's only one other abledCharacter to switch with
-                IList<Character> abledCharacters = page.GetAll().FindAll(c => !current.Equals(c) && c.IsControllable && c.IsCharged);
+                IList<Character> abledCharacters = page.GetAll().FindAll(c => !current.Equals(c) && c.IsCommandable);
                 if (abledCharacters.Count == 1) {
                     page.activeCharacter = abledCharacters[0];
                     page.currentSelectionNode = page.selectionRoot;
@@ -347,7 +352,7 @@ public class BattlePage : Page {
             Character target = myTarget;
 
             //You are not allowed to switch with yourself.
-            if (!current.Equals(target) && target.IsControllable && target.IsCharged) {
+            if (!current.Equals(target) && target.IsCommandable) {
                 processes.Add(
                     new Process(
                         target.DisplayName,

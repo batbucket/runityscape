@@ -24,8 +24,8 @@ public class HotkeyButton : PooledBehaviour {
     public KeyCode Hotkey { get { return isHotkeyEnabled ? hotkey : KeyCode.None; } set { hotkey = value; } } //The keyboard key that interacts with this button
     public bool IsHotkeyEnabled {
         set {
-            hotkeyText.text = (value && Hotkey != KeyCode.None ? Hotkey.ToString() : "");
             this.isHotkeyEnabled = value;
+            hotkeyText.text = (value && Hotkey != KeyCode.None ? Hotkey.ToString() : "");
         }
     }
 

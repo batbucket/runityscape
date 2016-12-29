@@ -15,10 +15,6 @@ public class DeathEffect : CharacterEffect {
     protected override IEnumerator EffectRoutine() {
         Game.Instance.Sound.Play("Boom_6");
         target.Image.color = Color.clear;
-        //target.Image.enabled = false;
-        //yield return new WaitForSeconds(1);
-        this.Target.Presenter.Character.IsTargetable = false;
-        Game.Instance.CurrentPage.GetCharacters(target.Presenter.Character.Side).Remove(target.Presenter.Character);
         this.isDone = true;
         yield break;
     }

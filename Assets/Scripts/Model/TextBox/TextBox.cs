@@ -26,7 +26,6 @@ public class TextBox {
     TextEffect effect;
     public TextEffect Effect { get { return effect; } set { effect = value; } }
 
-    bool _isDone;
     public bool IsDone { get; set; }
 
     protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {

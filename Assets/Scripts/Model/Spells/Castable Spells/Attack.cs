@@ -17,9 +17,6 @@ public class Attack : SpellFactory {
     const float CRIT_RATIO = 2f;
     const int MIN_DAMAGE = 1;
 
-    [SerializeField]
-    Sprite bleedIcon;
-
     private bool canMiss;
     private bool canCrit;
 

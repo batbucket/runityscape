@@ -6,7 +6,6 @@ public class ShakeEffect : CharacterEffect {
     private Vector3 originalPosition;
 
     private float duration;
-    private bool isIndefinite;
     private float startIntensityPercentage;
     private float endIntensityPercentage;
 
@@ -18,12 +17,10 @@ public class ShakeEffect : CharacterEffect {
 
     public ShakeEffect(PortraitView target, float duration, float startIntensityPercentage, float endIntensityPercentage) : base(target) {
         this.duration = duration;
-        this.isIndefinite = false;
         Init(target, startIntensityPercentage, endIntensityPercentage);
     }
 
     public ShakeEffect(PortraitView target, float startIntensityPercentage, float endIntensityPercentage) : base(target) {
-        this.isIndefinite = true;
         Init(target, startIntensityPercentage, endIntensityPercentage);
     }
 

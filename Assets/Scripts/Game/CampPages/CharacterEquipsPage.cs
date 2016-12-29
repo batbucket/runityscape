@@ -12,7 +12,6 @@ public class CharacterEquipsPage : ReadPage {
         string.Format(""),
         string.Format("{0}'s Equipment", c.DisplayName),
         false,
-        c,
         new Character[] { c }) {
 
         this.back = back;

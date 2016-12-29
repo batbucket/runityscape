@@ -12,7 +12,6 @@ public class InventoryPage : ReadPage {
         "",
         string.Format("Inventory"),
         false,
-        p.Main,
         p.Members) {
         this.back = back;
         this.p = p;

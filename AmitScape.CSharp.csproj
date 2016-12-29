@@ -87,6 +87,7 @@
     <Compile Include="Assets\Scripts\Game\Debug.cs" />
     <Compile Include="Assets\Scripts\Game\Encounter.cs" />
     <Compile Include="Assets\Scripts\Game\PageGenerator.cs" />
+    <Compile Include="Assets\Scripts\Game\SaveLoad\CharacterList.cs" />
     <Compile Include="Assets\Scripts\Game\StartMenu.cs" />
     <Compile Include="Assets\Scripts\Game\TimeType.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridView.cs" />
@@ -107,6 +108,7 @@
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\SetColorEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\Named Effects\ShakeEffect.cs" />
     <Compile Include="Assets\Scripts\Interface\Effects\OneShotAnimation.cs" />
+    <Compile Include="Assets\Scripts\Interface\Other\GoldView.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\HeaderView.cs" />
     <Compile Include="Assets\Scripts\Interface\Other\TimeView.cs" />
     <Compile Include="Assets\Scripts\Interface\Pooling\ObjectPoolManager.cs" />
