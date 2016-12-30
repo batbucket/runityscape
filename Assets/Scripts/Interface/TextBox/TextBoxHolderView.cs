@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,6 +21,20 @@ public class TextBoxHolderView : MonoBehaviour {
         Util.Parent(pb.gameObject, gameObject);
         textBox.Write(pb.gameObject, callBack);
         return pb.gameObject;
+    }
+
+    public void AddTextBoxes(IList<TextBox> textBoxes) {
+        StartCoroutine(MultiWrite(textBoxes));
+    }
+
+    private IEnumerator MultiWrite(IList<TextBox> textBoxes) {
+        for (int i = 0; i < textBoxes.Count; i++) {
+            TextBox t = textBoxes[i];
+            AddTextBox(t);
+            while (!t.IsDone) {
+                yield return null;
+            }
+        }
     }
 
     public InputBoxView AddInputBox() {

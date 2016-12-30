@@ -52,9 +52,6 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    public IDictionary<PerkType.Character, IList<InvokePerk>> CharacterPerks;
-    public IDictionary<PerkType.React, IList<ReactPerk>> ReactPerks;
-
     public float BattleTimer;
 
     public CharacterState State {
@@ -134,6 +131,7 @@ public abstract class Character : Entity, IReactable {
     }
 
     public void AddResource(Resource resource) {
+        resource.Calculate();
         this.Resources.Add(resource.Type, resource);
     }
 
@@ -244,10 +242,13 @@ public abstract class Character : Entity, IReactable {
 
     public void Tick() {
         CalculateResources();
-
+        OnTick();
     }
 
+    protected virtual void OnTick() { }
+
     public void BattleTick(Character main) {
+        UpdateState();
         BattleTimer += Time.deltaTime;
         if (main != null) {
             CalculateChargeRequirement(main);
@@ -279,18 +280,19 @@ public abstract class Character : Entity, IReactable {
         Act();
     }
 
-    protected void Talk(string s) {
+    public TextBox Talk(params string[] s) {
         AvatarBox a = null;
+        string sel = s.PickRandom(1).First();
         if (Side) {
-            a = new RightBox(SpriteLoc, s, TextColor);
+            a = new RightBox(SpriteLoc, sel, TextColor);
         } else {
-            a = new RightBox(SpriteLoc, s, TextColor);
+            a = new RightBox(SpriteLoc, sel, TextColor);
         }
-        Game.Instance.TextBoxes.AddTextBox(a);
+        return a;
     }
 
-    protected void Emote(string s) {
-        Game.Instance.TextBoxes.AddTextBox(new TextBox(s));
+    public TextBox Emote(string s) {
+        return new TextBox(string.Format(s, this.DisplayName));
     }
 
     public void UpdateState() {
@@ -326,7 +328,7 @@ public abstract class Character : Entity, IReactable {
     }
 
     public override int GetHashCode() {
-        return DisplayName.GetHashCode();
+        return this.GetType().ToString().GetHashCode();
     }
 
     protected static void CalculateChargeRequirement(Character current, Character main, float chargeCapRatio) {

@@ -10,7 +10,7 @@ public class Camp : ReadPage {
     public PlayerCharacter pc;
     public Inventory PartyItems;
 
-    private int days;
+    public int days;
     public TimeType time;
 
     public ExplorePage explore;
@@ -18,6 +18,8 @@ public class Camp : ReadPage {
 
     public CharactersPage character;
     public ItemManagePage itemMan;
+
+    public Flags Flags;
 
     public Camp(PlayerCharacter pc)
         : base(
@@ -27,30 +29,32 @@ public class Camp : ReadPage {
             false
             ) {
         this.party = new Party(pc);
+        this.Flags = new Flags();
 
         this.pc = pc;
         this.PartyItems = pc.Items;
-        Game.Instance.Gold.Inventory = PartyItems;
 
         OnFirstEnterAction += () => {
             CreateCamp();
         };
         OnEnterAction += () => {
+            Game.Instance.Other.Camp = this;
             foreach (Character c in party) {
-                c.State = CharacterState.DEFEAT;
+                if (c.State == CharacterState.KILLED) {
+                    c.AddToResource(ResourceType.HEALTH, false, 1);
+                }
+                c.State = CharacterState.NORMAL;
             }
         };
 
         this.days = 0;
         this.time = TimeType.DAWN;
-        Game.Instance.Time.Time = Util.Color(time.Name, time.Color);
-        Game.Instance.Time.Day = days;
     }
 
     private void CreateCamp() {
 
-        this.explore = new ExplorePage(this, party);
-        this.places = new PlacesPage(this, party);
+        this.explore = new ExplorePage(Flags, this, party);
+        this.places = new PlacesPage(Flags, this, party);
 
         this.character = new CharactersPage(this, party);
         this.itemMan = new ItemManagePage(this, party);
@@ -81,7 +85,6 @@ public class Camp : ReadPage {
         return new Process("Rest", "Rest until the next part of the day.", () => {
             RestoreResources(REST_RESTORE_PERCENT);
             time = time.Next;
-            Game.Instance.Time.Time = Util.Color(time.Name, time.Color);
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party rests.")));
         }, () => time != TimeType.NIGHT);
     }
@@ -92,10 +95,8 @@ public class Camp : ReadPage {
             RestoreResources(SLEEP_RESTORE_PERCENT);
             time = TimeType.DAWN;
             days++;
-            Game.Instance.Time.Time = Util.Color(time.Name, time.Color);
-            Game.Instance.Time.Day = days;
-            Game.Instance.CurrentPage = this;
 
+            Game.Instance.CurrentPage = this;
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party sleeps.")));
         });
     }

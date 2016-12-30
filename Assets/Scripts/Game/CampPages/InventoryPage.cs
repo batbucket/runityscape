@@ -46,7 +46,7 @@ public class InventoryPage : ReadPage {
                 }
                 ));
         }
-        useButtons[ActionGridView.TOTAL_BUTTON_COUNT - 4] = new Process("Toss", string.Format("Throw {0} away.", item.Name),
+        useButtons[ActionGridView.TOTAL_BUTTON_COUNT - 2] = new Process("Toss", string.Format("Throw {0} away.", item.Name),
         () => {
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("Threw away {0}.", item.Name)));
             p.Main.Items.Remove(item);

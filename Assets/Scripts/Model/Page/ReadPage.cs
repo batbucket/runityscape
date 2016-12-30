@@ -40,6 +40,21 @@ public class ReadPage : Page {
     IList<Character> right = null) : this(text, tooltip, location, false, party.Members, right, pageActions, buttonables, musicLoc) {
     }
 
+    public ReadPage(
+        Party party,
+        string text,
+        string location,
+        IButtonable oneShot
+        ) : this(party, "", text, "", location, new IButtonable[] { oneShot }, null) { }
+
+    public ReadPage(
+    Party party,
+    string text,
+    string location,
+    Action a,
+    IButtonable oneShot
+    ) : this(party, "", text, "", location, new IButtonable[] { oneShot }, new PageActions { onEnter = a }) { }
+
     protected override void OnTick() {
 
     }

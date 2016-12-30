@@ -16,6 +16,9 @@ public abstract class AvatarBox : TextBox {
     }
 
     public override void Write(GameObject avatarBoxPrefab, Action callBack) {
+        if (skip) {
+            this.Effect = TextEffect.FADE_IN;
+        }
         avatarBoxPrefab.GetComponent<AvatarBoxView>().WriteText(this, callBack);
     }
 }

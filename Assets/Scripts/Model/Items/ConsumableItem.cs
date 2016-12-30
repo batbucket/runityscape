@@ -16,6 +16,9 @@ public abstract class ConsumableItem : Item {
 
     protected abstract Calculation CreateCalculation(Character caster, Character target);
 
+    protected virtual void OnPerform(Character caster, Character target) { }
+
+
     public override Hit CreateHit() {
         return new Hit(
             isState: (c, t, o) => true,
@@ -25,6 +28,7 @@ public abstract class ConsumableItem : Item {
             perform: (c, t, calc, o) => {
                 Result.NumericPerform(c, t, calc);
                 c.Items.Remove(this);
+                OnPerform(c, t);
             },
             createText: (c, t, calc, o) => {
                 if (c == t) {

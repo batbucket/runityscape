@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Smite : SpellFactory {
     const string NAME = "Smite";
-    static readonly string DESCRIPTION = string.Format("Deal <color=red>{0}</color> unresistable damage.", DAMAGE);
+    public static readonly string DESCRIPTION = string.Format("Deal <color=red>{0}</color> unresistable damage.", DAMAGE);
     static readonly string TEXT = "{0} invokes the wrath of heaven on {1}!\n{1} took <color=red>{2}</color> damage!";
     const SpellType SPELL_TYPE = SpellType.OFFENSE;
     const TargetType TARGET_TYPE = TargetType.SINGLE_ENEMY;

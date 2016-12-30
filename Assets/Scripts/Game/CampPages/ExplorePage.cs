@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
 
 public class ExplorePage : CampOptionPage {
-    public IList<PageGenerator> Explores;
+    private const int DISCOVERED_TEMPLE = 0;
 
-    public ExplorePage(Page camp, Party party) : base(camp, party, "Where will you explore?", "Explore") {
-        Explores = new PageGenerator[ActionGridView.TOTAL_BUTTON_COUNT - 1];
+    public ExplorePage(Flags flags, Page camp, Party party) : base(camp, party, "Where will you explore?", "Explore") {
 
         OnEnterAction = () => {
-            int index = 0;
-            foreach (PageGenerator pg in Explores) {
-                ActionGrid[index++] = pg;
-            }
+            ActionGrid[0] = new Ruins(flags, camp, party);
 
             ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = camp;
         };

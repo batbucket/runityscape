@@ -269,7 +269,7 @@ public abstract class Page : IButtonable {
         return c == null ? allChars : allChars.Where(chara => chara != c).ToList();
     }
 
-    protected void ClearActionGrid() {
+    public void ClearActionGrid() {
         for (int i = 0; i < ActionGrid.Length; i++) {
             ActionGrid[i] = new Process();
         }

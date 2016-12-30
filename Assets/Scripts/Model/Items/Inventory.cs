@@ -18,9 +18,16 @@ public class Inventory : ICollection<Item> {
     public bool IsEnabled { get; set; }
     public int Count { get { return Items.Count; } }
 
+    public string SizeText {
+        get {
+            return string.Format("Inventory size: {0}/{1}.", Count, CAPACITY);
+        }
+    }
+
     public Inventory() {
         Items = new List<Item>();
         IsEnabled = true;
+        this.Gold = 100;
     }
 
     public void Add(Item item) {

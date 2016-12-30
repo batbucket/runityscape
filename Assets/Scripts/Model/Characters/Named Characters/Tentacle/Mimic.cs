@@ -28,6 +28,7 @@ public abstract class Mimic : ComputerCharacter {
         this.SpriteLoc = real.Loc;
         this.Name = real.Name;
         this.checkText = real.Check;
+        Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
     }
 
     public override void OnDefeat() {

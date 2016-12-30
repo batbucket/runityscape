@@ -9,4 +9,9 @@ public class RightBox : AvatarBox {
                    Color color)
                    : base(spriteLoc, text, color, "Blip_0", 0f) {
     }
+
+    public RightBox(string spriteLoc,
+               string text)
+               : base(spriteLoc, text, Color.white, "Blip_0", 0f) {
+    }
 }

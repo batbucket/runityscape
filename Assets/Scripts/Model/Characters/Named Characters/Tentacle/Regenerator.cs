@@ -6,13 +6,13 @@ using System;
 public class Regenerator : Mimic {
     public override int ExperienceGiven {
         get {
-            return 10;
+            return 5;
         }
     }
 
     public override int GoldGiven {
         get {
-            return Util.Range(10, 20);
+            return Util.Range(1, 10);
         }
     }
 
@@ -22,11 +22,11 @@ public class Regenerator : Mimic {
                 Loc = "Icons/tentacle",
                 Name = "Regenerator",
                 Color = Color.white,
-                Check = "A non-combatative tentacle with high life regeneration and can transfer its life to allies. Known as a \"regenerador\" in other languages."
+                Check = "A non-combatative tentacle with high life regeneration that can transfer its life to allies. Known as a \"regenerador\" in other languages."
             },
             new Displays {
                 Loc = "Icons/hospital-cross",
-                Name = "Bishop?",
+                Name = "Bishop",
                 Color = Color.white,
                 Check = "A non-combatative magic user with healing spells. Rumor has it that a bishop can run extremely quickly, but only in ordinal directions."
             },
@@ -38,11 +38,6 @@ public class Regenerator : Mimic {
                 Vit = 2
             }
             ) {
-        AddResource(new NamedResource.Mana((NamedAttribute.Intelligence)Attributes[AttributeType.INTELLIGENCE]));
-    }
-
-    public override void OnBattleStart() {
-        AddToResource(ResourceType.MANA, false, GetResourceCount(ResourceType.MANA, true));
     }
 
     protected override void DecideSpell() {

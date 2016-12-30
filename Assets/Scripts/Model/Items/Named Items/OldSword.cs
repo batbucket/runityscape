@@ -10,7 +10,7 @@ public class OldSword : EquippableItem {
     //Bonus stats go here
     static readonly IDictionary<AttributeType, PairedInt> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, PairedInt>() {
         { AttributeType.STRENGTH, new PairedInt(2, 1) },
-        { AttributeType.AGILITY, new PairedInt(2, 1) }
+        { AttributeType.AGILITY, new PairedInt(1, 1) }
     };
 
     public OldSword() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }

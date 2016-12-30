@@ -86,6 +86,7 @@ public class PortraitView : PooledBehaviour {
         PortraitText.color = Color.white;
         Image.color = Color.white;
         Image.enabled = true;
+
         ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
         BuffView[] bvs = buffsHolder.GetComponentsInChildren<BuffView>();
         PooledBehaviour[] ces = effectsHolder.GetComponentsInChildren<PooledBehaviour>();

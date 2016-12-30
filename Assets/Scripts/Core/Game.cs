@@ -55,6 +55,8 @@ public class Game : MonoBehaviour {
         }
     }
 
+    public OtherPresenter Other;
+
     [SerializeField]
     private TimeView time;
     [SerializeField]
@@ -88,21 +90,31 @@ public class Game : MonoBehaviour {
     void Start() {
         instance = this;
 
-        time.IsEnabled = false;
-
         start = new StartMenu();
 
         header.Location = "Main Menu";
-
         pagePresenter = new PagePresenter(start.MainMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
+        Other = new OtherPresenter(gold, time);
     }
 
     public void Cutscene(bool isGridVisible, params Event[] events) {
         StartCoroutine(Timeline(events, isGridVisible));
     }
 
+    public void Cutscene(bool isGridVisible, Event[] event0, params Event[] events1) {
+        Event[] all = new Event[event0.Length + events1.Length];
+        for (int i = 0; i < event0.Length; i++) {
+            all[i] = event0[i];
+        }
+        for (int i = event0.Length; i < event0.Length + events1.Length; i++) {
+            all[i] = events1[i - event0.Length];
+        }
+        StartCoroutine(Timeline(all, isGridVisible));
+    }
+
     private IEnumerator Timeline(Event[] events, bool isGridVisible) {
         IButtonable[] savedGrid = new IButtonable[0];
+        bool skip = false;
         if (!isGridVisible) {
             savedGrid = CurrentPage.ActionGrid;
             CurrentPage.ActionGrid = null;
@@ -112,16 +124,29 @@ public class Game : MonoBehaviour {
             Event e = events[i];
             float timer = 0;
 
-            while ((timer += UnityEngine.Time.deltaTime) < e.Delay) {
+            while (!skip && (timer += UnityEngine.Time.deltaTime) < e.Delay) {
                 yield return null;
+            }
+            if (skip && e.SkipEvent != null) {
+                e.SkipEvent.Invoke();
             }
             e.Action.Invoke();
-            while (!e.HasEnded.Invoke()) {
+            while (!skip && !e.HasEnded.Invoke()) {
                 yield return null;
             }
-            if (!isGridVisible && i < events.Length - 1) {
+
+            if (!skip && e.RequiresUserAdvance && !isGridVisible && i < events.Length - 1) {
                 bool isAdvanced = false;
-                CurrentPage.ActionGrid = new IButtonable[] { new Process("→", "", () => isAdvanced = true) };
+                CurrentPage.ActionGrid = new IButtonable[] {
+                    new Process("→", "", () => isAdvanced = true),
+                    null,
+                    null,
+                    new Process("Skip All", "Skip all events in this series.", () =>
+                    {
+                        isAdvanced = true;
+                        skip = true;
+                    }),
+                };
                 while (!isAdvanced) {
                     yield return null;
                 }
@@ -132,12 +157,14 @@ public class Game : MonoBehaviour {
             CurrentPage.ActionGrid = savedGrid;
             pagePresenter.Page.GetAll().ForEach(c => c.IsCharging = true);
         }
-        yield break;
     }
 
     void Update() {
         if (pagePresenter != null) {
             pagePresenter.Tick();
+        }
+        if (Other != null) {
+            Other.Tick();
         }
     }
 }

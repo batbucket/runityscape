@@ -10,11 +10,13 @@ public class PageGenerator : IButtonable {
         }
     }
 
+    private readonly int[] flags;
     private string name;
     private string description;
-    private IList<Encounter> encounters;
+    protected IList<Encounter> encounters;
 
-    public PageGenerator(string name,
+    public PageGenerator(
+                         string name,
                          string description,
                          params Encounter[] encounters) {
         this.name = name;
@@ -22,6 +24,8 @@ public class PageGenerator : IButtonable {
         this.encounters = new List<Encounter>();
         this.AddEncounters(encounters);
     }
+
+    public PageGenerator(string name, string description) : this(name, description, new Encounter[0]) { }
 
     public void AddEncounter(Encounter encounter) {
         this.encounters.Add(encounter);
@@ -62,21 +66,12 @@ public class PageGenerator : IButtonable {
 
         // Add enabled encounters into pool
         foreach (Encounter e in encounters) {
-            if (!e.IsDisabled) {
-                enabledEncounts.Add(e);
-            }
+            enabledEncounts.Add(e);
         }
 
         // Sum up weights
         float totalSum = 0;
         foreach (Encounter e in encounters) {
-
-            // If any encounter's override condition is true, set page to that encounter.
-            if (e.IsOverride && !e.IsDisabled) {
-                Game.Instance.CurrentPage = e.page.Invoke();
-                return;
-            }
-
             totalSum += e.weight.Invoke();
         }
 

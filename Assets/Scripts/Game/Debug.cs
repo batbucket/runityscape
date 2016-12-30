@@ -15,7 +15,7 @@ public class Debug : Area {
 
     public override void Init() {
         Character amit = new Amit();
-        this.Menu = new ReadPage("What", "Hello world", left: new Character[] { amit }, right: new Character[] { new Steve(), new Steve() },
+        this.Menu = new ReadPage("What", "Hello world", left: new Character[] { new Amit() }, right: new Character[] { new Steve(), new Steve() },
             buttonables: new Process[] {
                 new Process("Normal TextBox", "Say Hello world",
                     () => Game.Instance.TextBoxes.AddTextBox(

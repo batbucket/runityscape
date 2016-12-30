@@ -1,15 +1,12 @@
 ﻿using System.Collections.Generic;
 
 public class PlacesPage : CampOptionPage {
-    public IList<Page> Places;
 
-    public PlacesPage(Page back, Party party) : base(back, party, "Where will you go?", "Places") {
-        Places = new Page[ActionGridView.TOTAL_BUTTON_COUNT - 1];
+    public PlacesPage(Flags flags, Page back, Party party) : base(back, party, "Where will you go?", "Places") {
 
         OnEnterAction = () => {
-            int index = 0;
-            foreach (Page p in Places) {
-                ActionGrid[index++] = p;
+            if (flags.Bools[Flag.DISCOVERED_TEMPLE]) {
+                ActionGrid[0] = new ReadPage("Temple Placeholder");
             }
 
             ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = back;

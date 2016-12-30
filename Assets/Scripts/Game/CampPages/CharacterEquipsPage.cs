@@ -38,7 +38,7 @@ public class CharacterEquipsPage : ReadPage {
         Process p = new Process(Util.Color(item.Name, c.Items.IsFull ? Color.red : Color.yellow), item.Description, () => {
             item.UnequipItemInSlot(c);
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.\n{2}", c.DisplayName, item.Name, item.Description)));
-            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("Inventory size: {0}/{1}", c.Items.Count, Inventory.CAPACITY)));
+            Game.Instance.TextBoxes.AddTextBox(new TextBox(c.Items.SizeText));
             DisplayEquipped();
         }, () => !c.Items.IsFull);
         return p;
@@ -61,7 +61,7 @@ public class CharacterEquipsPage : ReadPage {
                     e.Equip(c);
                     DisplayEquipped();
                     Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} equipped <color=yellow>{1}</color>.\n{2}", c.DisplayName, e.Name, e.Description)));
-                    Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("Inventory size: {0}/{1}", c.Items.Count, Inventory.CAPACITY)));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox(c.Items.SizeText));
                 }
             );
         }

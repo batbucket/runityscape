@@ -93,12 +93,21 @@ public class BattlePage : Page {
     protected override void OnAddCharacter(Character c) {
         base.OnAddCharacter(c);
         c.OnBattleStart();
+        c.Mercies.Add(new Flee(Defeat));
     }
 
     protected override void OnAnyEnter() {
         base.OnAnyEnter();
         GetAll().ForEach(c => {
             c.OnBattleStart();
+            c.Mercies.Add(new Flee(Defeat));
+        });
+    }
+
+    protected override void OnAnyExit() {
+        GetAll().ForEach(c => {
+            c.OnBattleStart();
+            c.Mercies.Remove(new Flee(Defeat));
         });
     }
 
@@ -118,7 +127,7 @@ public class BattlePage : Page {
 
         switch (State) {
             case BattleState.PRE_BATTLE:
-                ActionGrid = new IButtonable[] { new Process("Engage", "", () => State = BattleState.BATTLE) };
+                ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Engage", "", () => State = BattleState.BATTLE);
                 break;
             case BattleState.BATTLE:
                 IList<Character> all = GetAll().Where(c => c.IsTargetable).ToArray();
@@ -163,9 +172,9 @@ public class BattlePage : Page {
                 Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("<color=yellow>{0}</color> gold was added to the inventory.", goldSum)));
 
                 Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!"));
-                ActionGrid = new IButtonable[] { new Process("Continue", "", () => Game.Instance.CurrentPage = Victory) };
+
                 Game.Instance.Sound.StopAll();
-                State = BattleState.POST_BATTLE;
+                State = BattleState.POST_VICTORY;
                 break;
             case BattleState.DEFEAT:
                 IList<Character> enemies = GetEnemies(mainCharacter);
@@ -174,10 +183,16 @@ public class BattlePage : Page {
                 }
                 Game.Instance.TextBoxes.AddTextBox(new TextBox("Defeat!"));
                 Game.Instance.Sound.StopAll();
-                ActionGrid = new IButtonable[] { new Process("Continue", "", () => Game.Instance.CurrentPage = Defeat) };
-                State = BattleState.POST_BATTLE;
+
+                State = BattleState.POST_DEFEAT;
                 break;
-            case BattleState.POST_BATTLE:
+            case BattleState.POST_VICTORY:
+                ActionGrid = new IButtonable[0];
+                ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Continue", "", () => Game.Instance.CurrentPage = Victory);
+                break;
+            case BattleState.POST_DEFEAT:
+                ActionGrid = new IButtonable[0];
+                ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Continue", "", () => Game.Instance.CurrentPage = Defeat);
                 break;
         }
     }

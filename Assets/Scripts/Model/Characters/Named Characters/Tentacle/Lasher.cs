@@ -25,7 +25,7 @@ public class Lasher : Mimic {
             },
             new Displays {
                 Loc = "Icons/gladius",
-                Name = "Knight?",
+                Name = "Knight",
                 Color = Color.white,
                 Check = "A knight in shining white armor, sans horse. Rumored to have an eccentric and suboptimal walking style."
             },

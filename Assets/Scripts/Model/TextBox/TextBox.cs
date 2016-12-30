@@ -28,6 +28,9 @@ public class TextBox {
 
     public bool IsDone { get; set; }
 
+    protected bool skip;
+
+
     protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
         this.textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
         this.rawText = text;
@@ -40,6 +43,13 @@ public class TextBox {
     public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) { }
 
     public virtual void Write(GameObject textBoxPrefab, Action callBack) {
+        if (skip) {
+            this.effect = TextEffect.FADE_IN;
+        }
         textBoxPrefab.GetComponent<TextBoxView>().WriteText(this, callBack);
+    }
+
+    public void Skip() {
+        skip = true;
     }
 }

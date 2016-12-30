@@ -33,6 +33,7 @@ public class PortraitHolderView : PooledBehaviour {
             PortraitView pv;
             if (!CharacterViews.ContainsKey(c)) {
                 pv = ObjectPoolManager.Instance.Get(portraitPrefab);
+                pv.ClearEffects();
                 Util.Parent(pv.gameObject, gameObject);
             } else {
                 pv = CharacterViews[c].portraitView;

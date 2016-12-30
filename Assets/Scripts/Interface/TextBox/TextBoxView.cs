@@ -9,6 +9,7 @@ using System;
  * This class manages a TextBox prefab
  */
 public class TextBoxView : PooledBehaviour {
+    public bool IsSkip;
 
     [SerializeField]
     private Text text;
@@ -47,6 +48,7 @@ public class TextBoxView : PooledBehaviour {
                 text.text = textBox.RawText;
                 break;
             case TextEffect.FADE_IN:
+            skipLoc:
                 text.text = textBox.RawText;
                 Color color = text.color;
                 color.a = 0;
@@ -75,6 +77,9 @@ public class TextBoxView : PooledBehaviour {
                 text.text = string.Join("", currentTextArray);
                 string wrapper = "\u2007";
                 while (index < textBox.TextArray.Length) {
+                    if (IsSkip) {
+                        goto skipLoc;
+                    }
                     if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                         if (!taggedText[index]) {
 

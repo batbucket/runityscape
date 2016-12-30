@@ -11,7 +11,7 @@ public abstract class EquippableItem : Item {
 
     public readonly IDictionary<AttributeType, PairedInt> bonuses;
 
-    public EquippableItem(string name, string description, EquipmentType equipmentType, IDictionary<AttributeType, PairedInt> bonuses) : base(name, description) {
+    public EquippableItem(string name, string description, EquipmentType equipmentType, IDictionary<AttributeType, PairedInt> bonuses) : base(name, string.Format("{0} ({1})", description, BonusText(bonuses))) {
         this._equipmentType = equipmentType;
         this.bonuses = bonuses;
     }
@@ -52,6 +52,16 @@ public abstract class EquippableItem : Item {
             c.Items.Add(this);
             c.Equipment.Remove(this);
         }
+    }
+
+
+    private static string BonusText(IDictionary<AttributeType, PairedInt> bonuses) {
+        List<string> list = new List<string>();
+        foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
+            int bonus = pair.Value.FlatBonus;
+            list.Add(string.Format("{0}{1} {2}", bonus >= 0 ? "+" : "-", bonus, pair.Key.ShortName));
+        }
+        return string.Join(",", list.ToArray());
     }
 
     private void CancelBonus(Character wielder) {

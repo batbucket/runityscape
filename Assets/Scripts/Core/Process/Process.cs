@@ -39,12 +39,13 @@ public class Process : IButtonable {
     public Process(string name,
                    string description = "",
                    Action action = null,
-                   Func<bool> playCondition = null) {
+                   Func<bool> playCondition = null,
+                   bool isVisibleOnDisable = true) {
         this.name = () => name;
         this.description = () => description;
         this.action = action ?? (() => { });
         this.playCondition = playCondition ?? (() => { return true; });
-        this.isVisibleOnDisable = true;
+        this.isVisibleOnDisable = isVisibleOnDisable;
         this.disabledDesc = () => "";
     }
 
