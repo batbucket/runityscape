@@ -19,6 +19,7 @@ public class TextBoxHolderView : MonoBehaviour {
     public GameObject AddTextBox(TextBox textBox, Action callBack = null) {
         PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
         Util.Parent(pb.gameObject, gameObject);
+        pb.transform.SetAsLastSibling();
         textBox.Write(pb.gameObject, callBack);
         return pb.gameObject;
     }

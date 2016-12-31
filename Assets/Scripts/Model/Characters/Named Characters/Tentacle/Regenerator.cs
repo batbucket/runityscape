@@ -4,17 +4,6 @@ using System.Linq;
 using System;
 
 public class Regenerator : Mimic {
-    public override int ExperienceGiven {
-        get {
-            return 5;
-        }
-    }
-
-    public override int GoldGiven {
-        get {
-            return Util.Range(1, 10);
-        }
-    }
 
     public Regenerator()
         : base(
@@ -38,6 +27,7 @@ public class Regenerator : Mimic {
                 Vit = 2
             }
             ) {
+        AddResource(new NamedResource.DeathExperience(5));
     }
 
     protected override void DecideSpell() {

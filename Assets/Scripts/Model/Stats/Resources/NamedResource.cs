@@ -31,4 +31,10 @@ public sealed class NamedResource {
             this.False = 0;
         }
     }
+
+    public sealed class DeathExperience : Resource {
+        public DeathExperience(int amount) : base(0, amount, ResourceType.DEATH_EXP, false) {
+            this.IsVisible = false;
+        }
+    }
 }

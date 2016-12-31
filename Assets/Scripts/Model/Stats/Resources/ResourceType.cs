@@ -13,14 +13,14 @@ public sealed class ResourceType : IComparable {
             { DisplayMode.NONE,       (a, b) =>          string.Format("", a.ToString("+#;-#")) },
             { DisplayMode.NUMERIC,    (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) },
             { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a) : string.Format("{0}%", ((a * 100) / b).ToString("+#;-#")) },
-            { DisplayMode.EXP,        (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) }
+            { DisplayMode.EXP,        (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) },
         };
 
     public static readonly IDictionary<DisplayMode, Func<float, int, string>> BAR_DISPLAY_FUNCTIONS
         = new Dictionary<DisplayMode, Func<float, int, string>>() {
             { DisplayMode.NONE, (a, b) =>                string.Format("", (int)a, b) },
             { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}/{1}", (int)a, b) },
-            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) }
+            { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) },
         };
 
     string _name;
@@ -117,6 +117,15 @@ public sealed class ResourceType : IComparable {
                                                                 998,
                                                                 AttributeType.LEVEL,
                                                                 (a, r) => r.True = (int)(1 + Mathf.Pow(2, a.False)));
+
+    public static readonly ResourceType DEATH_EXP = new ResourceType("Experience",
+                                                                "EXP",
+                                                                "Needed to level up.",
+                                                                Color.white,
+                                                                Color.grey,
+                                                                998,
+                                                                displayMode: DisplayMode.NONE
+                                                                );
 
     public static readonly ResourceType[] RESTORED_RESOURCES = new ResourceType[] { HEALTH, MANA };
 

@@ -5,5 +5,7 @@
     public const int SHOPKEEPER_MENTIONED_MURDER = 3;
     public const int SHOPKEEPER_MENTIONED_SISTER = 4;
     public const int SHOPKEEPER_MENTIONED_KEEPER = 5;
-    public const int ATTACKED_SHOPKEEPER = 6;
+    public const int SHOPKEEPER_BOUGHT_SOMETHING = 6;
+    public const int SHOPKEEPER_FRIENDS = 7;
+    public const int ATTACKED_SHOPKEEPER = 9;
 }

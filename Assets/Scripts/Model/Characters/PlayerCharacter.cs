@@ -6,18 +6,6 @@ public abstract class PlayerCharacter : Character {
 
     public const bool DISPLAYABLE = true;
 
-    public override int ExperienceGiven {
-        get {
-            return 0;
-        }
-    }
-
-    public override int GoldGiven {
-        get {
-            return 0;
-        }
-    }
-
     // Debug Constructor
     public PlayerCharacter(Displays displays, Attributes attributes)
         : base(DISPLAYABLE, new Inventory(), displays, attributes) {

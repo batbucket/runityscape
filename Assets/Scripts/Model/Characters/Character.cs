@@ -78,9 +78,6 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    public abstract int ExperienceGiven { get; }
-    public abstract int GoldGiven { get; }
-
     public Character(bool isControllable, Inventory items, Displays displays, Attributes attributes) : base(displays.Loc) {
         this.Name = displays.Name;
         this.Level = new NamedAttribute.Level();
@@ -381,6 +378,7 @@ public abstract class Character : Entity, IReactable {
 
         Presenter.PortraitView.AddEffect(new DeathEffect(this.Presenter.PortraitView));
         Presenter.PortraitView.AddEffect(new ExplosionEffect(this.Presenter.PortraitView));
+        CancelBuffs();
     }
 
     public string AttributeDistribution {

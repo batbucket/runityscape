@@ -52,7 +52,13 @@ public class Ruins : PageGenerator {
         encounters.Add(
                 new Encounter(
                     () => new Shop(flags, camp, party),
-                    () => 10.30f)
+                    () => flags.Bools[Flag.ATTACKED_SHOPKEEPER] ? 0 : 0.30f)
+            );
+
+        encounters.Add(
+            new Encounter(
+                () => new BattlePage(party, camp, camp, "", "Ruins", "You come across Maple. She doesn't look too happy.", new Shopkeeper(flags)),
+                () => flags.Bools[Flag.ATTACKED_SHOPKEEPER] ? 0.15f : 0)
             );
     }
 }

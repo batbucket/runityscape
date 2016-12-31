@@ -27,7 +27,6 @@ public class Inventory : ICollection<Item> {
     public Inventory() {
         Items = new List<Item>();
         IsEnabled = true;
-        this.Gold = 100;
     }
 
     public void Add(Item item) {

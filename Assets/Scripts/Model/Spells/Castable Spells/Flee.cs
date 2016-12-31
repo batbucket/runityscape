@@ -1,12 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
+using System.Linq;
 
 public class Flee : SpellFactory {
 
     private Page escapePage;
     public Flee(Page escapePage) : base("Flee", "Escape from battle.", SpellType.MERCY, TargetType.SELF) {
         this.escapePage = escapePage;
+    }
+
+    protected override bool Castable(Character caster, Character target) {
+        return !Game.Instance.CurrentPage.GetEnemies(caster).Any(c => c.State == CharacterState.DEFEAT);
     }
 
     public override Hit CreateHit() {

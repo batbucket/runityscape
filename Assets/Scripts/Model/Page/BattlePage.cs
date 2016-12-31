@@ -158,7 +158,7 @@ public class BattlePage : Page {
                 break;
             case BattleState.VICTORY:
                 IList<Character> allies = GetAllies(mainCharacter);
-                int expSum = GetEnemies(mainCharacter).Sum(c => c.ExperienceGiven);
+                int expSum = GetEnemies(mainCharacter).Sum(c => c.GetResourceCount(ResourceType.DEATH_EXP, false));
                 foreach (Character c in allies) {
                     c.OnVictory();
                     if (expSum > 0 && c.HasResource(ResourceType.EXPERIENCE)) {
@@ -167,7 +167,7 @@ public class BattlePage : Page {
                         c.AddToResource(ResourceType.EXPERIENCE, false, expSum);
                     }
                 }
-                int goldSum = GetEnemies(mainCharacter).Sum(c => c.GoldGiven);
+                int goldSum = GetEnemies(mainCharacter).Sum(c => c.Items.Gold);
                 mainCharacter.Items.Gold += goldSum;
                 Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("<color=yellow>{0}</color> gold was added to the inventory.", goldSum)));
 

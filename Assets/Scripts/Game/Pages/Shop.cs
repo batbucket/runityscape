@@ -14,6 +14,7 @@ public class Shop : ReadPage {
         this.camp = camp;
         this.party = party;
         AddCharacters(true, shopkeep);
+        flags.Bools[Flag.SHOPKEEPER_FRIENDS] = true;
         OnEnterAction += () => {
             Choose();
             if (!flags.Bools[Flag.SHOPKEEPER_GAVE_NAME]) {
@@ -21,6 +22,13 @@ public class Shop : ReadPage {
                     ">You come across a woman in white desert clothing, complete with a loose hood. She seems to have no issues carrying what appears to be a massive backpack full of goods behind her despite being a head shorter than you.>From the opening in her hood you see she has brown hair, eyes, and skin. There is no doubt she spends a lot of time in the desert./Hey, are you gonna stare at me all day or are you gonna buy--/Oh, you're a new face around these parts, huh? I haven't seen you before./Actually, I think you're the first person I've seen in these parts./Ever./The name's Maple. Professional fruit dealer of the plateau./Don't want fruit? I also have non-fruit things on sale. Like a book, and other junk./Get your goods today at Maple's wandering emporium of fruit and non-fruit goods."),
                     new Event(() => flags.Bools[Flag.SHOPKEEPER_GAVE_NAME] = true)
                     );
+            } else if (!flags.Bools[Flag.SHOPKEEPER_FRIENDS]
+            && flags.Bools[Flag.SHOPKEEPER_MENTIONED_KEEPER]
+            && flags.Bools[Flag.SHOPKEEPER_BOUGHT_SOMETHING]) {
+                Game.Instance.Cutscene(true,
+                Event.LongTalk(shopkeep,
+                "/You know, I've been thinking./You've been a good friend of mine, you know that?/You've bought my wares, and you've listened to me blabber about random things./I'd give you a discount, but I can't."),
+                new Event(() => flags.Bools[Flag.SHOPKEEPER_FRIENDS] = true));
             } else {
                 Game.Instance.Cutscene(true,
                     new Event(shopkeep.Talk(
@@ -62,6 +70,7 @@ public class Shop : ReadPage {
             string.Format("{0} - {1}g", i.Name, cost),
             string.Format("{0} - {1}<color=yellow>g</color>\n{2}", i.Name, cost, i.Description),
             () => {
+                flags.Bools[Flag.SHOPKEEPER_BOUGHT_SOMETHING] = true;
                 inven.Gold -= cost;
                 inven.Add(i);
                 Game.Instance.TextBoxes.AddTextBox(
@@ -118,12 +127,12 @@ public class Shop : ReadPage {
 
         ActionGrid[3] = new Process("Why is your Tome of Smite so expensive?", "", () =>
         Game.Instance.Cutscene(false, Event.LongTalk(shopkeep,
-        "/I've only got a few of those./They don't grow on trees, ya know./And I have just the feeling that they're high in demand./Some call it price gouging./I call it a good way to make some serious money.")));
+        "/I've only got one in stock./These books have to be smuggled out of a maximum security library./Hence the pricing.")));
 
         ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "", () => Choose());
     }
 
     private void Fight() {
-
+        Game.Instance.CurrentPage = new BattlePage(party, camp, camp, "", "Ruins", "", new Shopkeeper(flags));
     }
 }

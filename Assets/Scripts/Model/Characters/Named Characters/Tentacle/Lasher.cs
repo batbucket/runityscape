@@ -3,17 +3,6 @@ using System.Collections;
 using System;
 
 public class Lasher : Mimic {
-    public override int ExperienceGiven {
-        get {
-            return 3;
-        }
-    }
-
-    public override int GoldGiven {
-        get {
-            return Util.Range(1, 10);
-        }
-    }
 
     public Lasher()
         : base(

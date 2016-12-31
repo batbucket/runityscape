@@ -43,6 +43,9 @@ public class Camp : ReadPage {
                 if (c.State == CharacterState.KILLED) {
                     c.AddToResource(ResourceType.HEALTH, false, 1);
                 }
+                if (c.State == CharacterState.DEFEAT) {
+                    c.CancelBuffs();
+                }
                 c.State = CharacterState.NORMAL;
             }
         };
