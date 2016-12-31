@@ -35,6 +35,8 @@ public class BattlePage : Page {
 
     private Character mainCharacter;
 
+    private LootPage loot;
+
     public BattlePage(
         string text = "",
         string location = "",
@@ -169,11 +171,14 @@ public class BattlePage : Page {
                 }
                 int goldSum = GetEnemies(mainCharacter).Sum(c => c.Items.Gold);
                 mainCharacter.Items.Gold += goldSum;
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("<color=yellow>{0}</color> gold was added to the inventory.", goldSum)));
+                if (goldSum > 0) {
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("<color=yellow>{0}</color> gold was added to the inventory.", goldSum)));
+                }
 
                 Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!"));
 
                 Game.Instance.Sound.StopAll();
+                loot = new LootPage(this, new Party(mainCharacter, GetAllies(mainCharacter)), GetEnemies(mainCharacter));
                 State = BattleState.POST_VICTORY;
                 break;
             case BattleState.DEFEAT:
@@ -188,6 +193,10 @@ public class BattlePage : Page {
                 break;
             case BattleState.POST_VICTORY:
                 ActionGrid = new IButtonable[0];
+                if (loot.HasLoot) {
+                    ActionGrid[0] = loot;
+                }
+                ActionGrid[1] = new ItemManagePage(this, new Party(mainCharacter, GetAllies(mainCharacter)));
                 ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Continue", "", () => Game.Instance.CurrentPage = Victory);
                 break;
             case BattleState.POST_DEFEAT:

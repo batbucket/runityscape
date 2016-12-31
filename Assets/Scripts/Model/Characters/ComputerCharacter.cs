@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 
 public abstract class ComputerCharacter : Character {
-    public const float CHARGE_CAP_RATIO = 3f;
     public const bool CONTROLLABLE_CPU = false;
     readonly float maxDelay;
     protected float delay;
@@ -21,10 +20,6 @@ public abstract class ComputerCharacter : Character {
             DecideSpell();
             delay = UnityEngine.Random.Range(0, maxDelay);
         }
-    }
-
-    public override void CalculateChargeRequirement(Character main) {
-        CalculateChargeRequirement(this, main, CHARGE_CAP_RATIO);
     }
 
     protected abstract void DecideSpell();

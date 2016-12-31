@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public class Shop : ReadPage {
+public class ShopPage : ReadPage {
     private Flags flags;
     private Shopkeeper shopkeep;
     private Page camp;
@@ -8,7 +8,7 @@ public class Shop : ReadPage {
     private IList<Process> talks;
 
 
-    public Shop(Flags flags, Page camp, Party party) : base(party, "", "", "", "Ruins", null, new PageActions { }) {
+    public ShopPage(Flags flags, Page camp, Party party) : base(party, "", "", "", "Ruins", null, new PageActions { }) {
         this.flags = flags;
         this.shopkeep = new Shopkeeper(flags);
         this.camp = camp;

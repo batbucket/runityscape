@@ -16,10 +16,6 @@ public abstract class PlayerCharacter : Character {
         : base(DISPLAYABLE, inventory, displays, attributes) {
     }
 
-    public override void CalculateChargeRequirement(Character main) {
-        CalculateChargeRequirement(this, main, CHARGE_CAP_RATIO);
-    }
-
     protected override void Act() {
 
     }

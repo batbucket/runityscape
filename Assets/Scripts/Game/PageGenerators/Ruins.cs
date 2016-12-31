@@ -51,7 +51,7 @@ public class Ruins : PageGenerator {
 
         encounters.Add(
                 new Encounter(
-                    () => new Shop(flags, camp, party),
+                    () => new ShopPage(flags, camp, party),
                     () => flags.Bools[Flag.ATTACKED_SHOPKEEPER] ? 0 : 0.30f)
             );
 

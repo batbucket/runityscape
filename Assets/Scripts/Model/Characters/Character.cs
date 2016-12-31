@@ -334,7 +334,10 @@ public abstract class Character : Entity, IReactable {
         current.AddToResource(ResourceType.CHARGE, true, chargeNeededToAct);
     }
 
-    public abstract void CalculateChargeRequirement(Character main);
+    public const float CHARGE_CAP_RATIO = 2f;
+    private void CalculateChargeRequirement(Character main) {
+        CalculateChargeRequirement(this, main, CHARGE_CAP_RATIO);
+    }
 
     public void AddToBuffs(Spell spell) {
         Buffs.Add(spell);

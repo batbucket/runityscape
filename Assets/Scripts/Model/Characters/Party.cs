@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Party : IList<Character> {
-    public PlayerCharacter Main;
+    public Character Main;
     public IList<Character> Members; // PC also counts as a member
 
     public int Count {
@@ -29,6 +29,17 @@ public class Party : IList<Character> {
     }
 
     public Party(PlayerCharacter pc, params Character[] followers) {
+        this.Main = pc;
+
+        this.Members = new List<Character>();
+        Members.Add(pc);
+        foreach (Character c in followers) {
+            Members.Add(c);
+        }
+    }
+
+
+    public Party(Character pc, IList<Character> followers) {
         this.Main = pc;
 
         this.Members = new List<Character>();

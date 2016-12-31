@@ -42,10 +42,10 @@ public class Debug : Area {
                 }),
                 new Process("BossTransition", action: () => Game.Instance.Title.Play("fox-head", "Hello World")),
                 new Process("Back", "Go back to the main menu.", () => { Game.Instance.CurrentPage = primary; })
-    }
-);
-
-        this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: new Amit(), left: new Character[] { new Amit() }, right: new Character[] { new Lasher(), new Regenerator(), new Lasher() });
+            }
+        );
+        Amit amity = new Amit();
+        this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: amity, left: new Character[] { amity }, right: new Character[] { new Lasher(), new Regenerator(), new Lasher() });
         this.ComputerBattle = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Amit() }, right: new Character[] { new Lasher() });
         Amit a = new Amit();
         this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { new Regenerator(), a, new Regenerator() }, right: new Character[] { new Lasher() });

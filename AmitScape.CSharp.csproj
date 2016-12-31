@@ -90,7 +90,8 @@
     <Compile Include="Assets\Scripts\Game\Flags.cs" />
     <Compile Include="Assets\Scripts\Game\PageGenerator.cs" />
     <Compile Include="Assets\Scripts\Game\PageGenerators\Ruins.cs" />
-    <Compile Include="Assets\Scripts\Game\Pages\Shop.cs" />
+    <Compile Include="Assets\Scripts\Game\Pages\LootPage.cs" />
+    <Compile Include="Assets\Scripts\Game\Pages\ShopPage.cs" />
     <Compile Include="Assets\Scripts\Game\StartMenu.cs" />
     <Compile Include="Assets\Scripts\Game\TimeType.cs" />
     <Compile Include="Assets\Scripts\Interface\ActionGrid\ActionGridView.cs" />
