@@ -8,25 +8,24 @@ public class Camp : ReadPage {
 
     public int Gold {
         get {
-            return inventory.Gold;
+            return Party.Inventory.Gold;
         }
     }
 
     public int Time {
         get {
-            return flags.Ints[Flag.TIME];
+            return Flags.Ints[Flag.TIME];
         }
     }
 
     public int Day {
         get {
-            return flags.Ints[Flag.DAYS];
+            return Flags.Ints[Flag.DAYS];
         }
     }
 
-    private Party party;
-    private PlayerCharacter pc;
-    private Inventory inventory;
+    public Party Party;
+    public EventFlags Flags;
 
     private ExplorePage explore;
     private PlacesPage places;
@@ -34,26 +33,21 @@ public class Camp : ReadPage {
     private CharactersPage character;
     private ItemManagePage itemMan;
 
-    private Flags flags;
-
     private bool IsNight {
         get {
-            return flags.Ints[Flag.TIME] == TimeType.NIGHT.Index;
+            return Flags.Ints[Flag.TIME] == TimeType.NIGHT.Index;
         }
     }
 
-    public Camp(PlayerCharacter pc)
+    public Camp(Party party, EventFlags flags)
         : base(
             "",
             "",
             "Camp",
             false
             ) {
-        this.party = new Party(pc);
-        this.flags = new Flags();
-
-        this.pc = pc;
-        this.inventory = pc.Inventory;
+        this.Party = party;
+        this.Flags = flags;
 
         OnFirstEnterAction += () => {
             CreateCamp();
@@ -61,11 +55,9 @@ public class Camp : ReadPage {
         OnEnterAction += () => {
             Game.Instance.Other.Camp = this;
             foreach (Character c in party) {
+                c.CancelBuffs();
                 if (c.State == CharacterState.KILLED) {
                     c.AddToResource(ResourceType.HEALTH, false, 1);
-                }
-                if (c.State == CharacterState.DEFEAT) {
-                    c.CancelBuffs();
                 }
                 c.State = CharacterState.NORMAL;
             }
@@ -77,11 +69,11 @@ public class Camp : ReadPage {
 
     private void CreateCamp() {
 
-        this.explore = new ExplorePage(flags, this, party);
-        this.places = new PlacesPage(flags, this, party);
+        this.explore = new ExplorePage(Flags, this, Party);
+        this.places = new PlacesPage(Flags, this, Party);
 
-        this.character = new CharactersPage(this, party);
-        this.itemMan = new ItemManagePage(this, party);
+        this.character = new CharactersPage(this, Party);
+        this.itemMan = new ItemManagePage(this, Party);
 
         this.ActionGrid = new IButtonable[] {
                 new Process("Explore", "Explore a location.", () => Game.Instance.CurrentPage = explore,
@@ -99,9 +91,9 @@ public class Camp : ReadPage {
                 null,
                 null,
                 null,
-                null
+                new Process("Save & Exit", "", () => Game.Instance.CurrentPage = new SavePage(this))
         };
-        this.LeftCharacters = party.Members;
+        this.LeftCharacters = Party.Members;
         Game.Instance.Time.IsTimeEnabled = true;
         Game.Instance.Time.IsDayEnabled = true;
     }
@@ -110,7 +102,7 @@ public class Camp : ReadPage {
     private Process Rest() {
         return new Process("Rest", "Rest until the next part of the day.", () => {
             RestoreResources(REST_RESTORE_PERCENT);
-            flags.Ints[Flag.TIME]++;
+            Flags.Ints[Flag.TIME]++;
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party rests.")));
         }, () => !IsNight);
     }
@@ -120,11 +112,11 @@ public class Camp : ReadPage {
     private Process Sleep() {
         return new Process("Sleep", "End the day.", () => {
             RestoreResources(SLEEP_RESTORE_PERCENT);
-            flags.Ints[Flag.TIME] = 0;
+            Flags.Ints[Flag.TIME] = 0;
 
             // Overflow guard against sleep spammers
-            if (flags.Ints[Flag.DAYS] < int.MaxValue) {
-                flags.Ints[Flag.DAYS]++;
+            if (Flags.Ints[Flag.DAYS] < int.MaxValue) {
+                Flags.Ints[Flag.DAYS]++;
             }
 
             Game.Instance.CurrentPage = this;
@@ -133,7 +125,7 @@ public class Camp : ReadPage {
     }
 
     private void RestoreResources(float percent) {
-        foreach (Character c in party.Members) {
+        foreach (Character c in Party.Members) {
             c.CancelBuffs();
             foreach (ResourceType r in ResourceType.RESTORED_RESOURCES) {
                 float missing = c.GetResourceCount(r, true) - c.GetResourceCount(r, false);

@@ -4,9 +4,9 @@ using System;
 
 public class Shopkeeper : ComputerCharacter {
     private const string NAME = "Maple";
-    private Flags flags;
+    private EventFlags flags;
 
-    public Shopkeeper(Flags flags) : base(new Displays { Loc = "Icons/cowled", Color = Color.yellow, Name = "???", Check = "Checked!" }, new Attributes { Lvl = 3, Str = 2, Int = 2, Agi = 2, Vit = 3 }) {
+    public Shopkeeper(EventFlags flags) : base(new Displays { Loc = "Icons/cowled", Color = Color.yellow, Name = "???", Check = "Checked!" }, new Attributes { Lvl = 3, Str = 2, Int = 2, Agi = 2, Vit = 3 }) {
         this.flags = flags;
     }
 

@@ -466,7 +466,7 @@ public class BattlePage : Page {
 
         if (isResetSelection) {
             SpellCastEnd(spell, caster, page);
-        } else {
+        } else if (targetables != null && targetables.Count > 0) {
             switch (sts) {
                 case SpellTargetState.ONE_TARGET:
                     spell.TryCast(caster, targetables[0]);

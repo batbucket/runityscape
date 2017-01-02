@@ -1,11 +1,18 @@
-﻿public struct ResourceSave {
-    public bool IsDependent {
-        get {
-            return string.IsNullOrEmpty(DependentAttribute);
-        }
+﻿using System;
+
+public struct ResourceSave : IRestorable<Resource> {
+    public PairedValueSave Paired;
+    public string Type;
+
+    public ResourceSave(Resource r) {
+        Paired = new PairedValueSave(r.True, r.False);
+        Type = Util.GetClassName(r);
     }
 
-    public PairedValueSave Paired;
-    public string ResourceName;
-    public string DependentAttribute;
+    public Resource Restore() {
+        Resource r = Util.StringToObject<Resource>(Type);
+        r.True = Paired.True;
+        r.False = Paired.False;
+        return r;
+    }
 }

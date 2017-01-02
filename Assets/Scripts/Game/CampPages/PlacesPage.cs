@@ -2,7 +2,7 @@
 
 public class PlacesPage : CampOptionPage {
 
-    public PlacesPage(Flags flags, Page back, Party party) : base(back, party, "Where will you go?", "Places") {
+    public PlacesPage(EventFlags flags, Page back, Party party) : base(back, party, "Where will you go?", "Places") {
 
         OnEnterAction = () => {
             if (flags.Bools[Flag.DISCOVERED_TEMPLE]) {

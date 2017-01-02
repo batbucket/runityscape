@@ -4,7 +4,7 @@ using System.Collections;
 public class Ruins : PageGenerator {
     private const string BATTLE_MUSIC = "Hero Immortal";
 
-    public Ruins(Flags flags, Page camp, Party party) : base("Ruins", "The ruins of some fallen civilization bordering the edge of the world.") {
+    public Ruins(EventFlags flags, Page camp, Party party) : base("Ruins", "The ruins of some fallen civilization bordering the edge of the world.") {
 
         encounters.Add(
             new Encounter(

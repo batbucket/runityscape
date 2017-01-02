@@ -17,6 +17,9 @@ public class TextBoxHolderView : MonoBehaviour {
     private IDictionary<TextBoxType, PooledBehaviour> textBoxes;
 
     public GameObject AddTextBox(TextBox textBox, Action callBack = null) {
+        if (string.IsNullOrEmpty(textBox.RawText)) {
+            return null;
+        }
         PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
         Util.Parent(pb.gameObject, gameObject);
         pb.transform.SetAsLastSibling();

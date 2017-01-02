@@ -14,7 +14,7 @@ public class LootPage : ReadPage {
 
     public LootPage(BattlePage back, Party looters, IList<Character> defeated) : base(looters, "", "", "", "Looting", null, null) {
         this.back = back;
-        this.inventory = looters.Main.Inventory;
+        this.inventory = looters.Inventory;
         this.loot = ExtractLoot(defeated);
         OnTickAction += () => {
             this.ClearActionGrid();

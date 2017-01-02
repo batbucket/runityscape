@@ -98,6 +98,9 @@ public abstract class SpellFactory {
     }
 
     public bool IsCastable(Character caster, Character target = null) {
+        if (targetType == TargetType.SELF) {
+            target = caster;
+        }
         if (target != null && !target.IsTargetable) {
             return false;
         }

@@ -22,8 +22,8 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
-    public IDictionary<ResourceType, Resource> Resources { get; private set; }
+    public IDictionary<AttributeType, Attribute> Attributes;
+    public IDictionary<ResourceType, Resource> Resources;
     public SpellFactory Attack { get; set; }
 
     public IList<SpellFactory> Spells;
@@ -32,15 +32,15 @@ public abstract class Character : Entity, IReactable {
     public IList<SpellFactory> Mercies;
     public Equipment Equipment;
 
-    public Stack<SpellFactory> SpellStack { get; private set; }
-    public List<Spell> Buffs { get; private set; }
+    public Stack<SpellFactory> SpellStack;
+    public List<Spell> Buffs;
 
-    public IList<Spell> RecievedSpells { get; private set; }
-    public IList<Spell> CastSpells { get; private set; }
+    public IList<Spell> RecievedSpells;
+    public IList<Spell> CastSpells;
 
-    public Color TextColor { get; private set; }
+    public Color TextColor;
 
-    public bool Side { get; set; }
+    public bool Side;
 
     public bool IsTargetable {
         get {

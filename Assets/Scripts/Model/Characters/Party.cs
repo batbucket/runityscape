@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class Party : IList<Character> {
     public Character Main;
     public IList<Character> Members; // PC also counts as a member
+    public Inventory Inventory;
 
     public int Count {
         get {
@@ -28,24 +29,16 @@ public class Party : IList<Character> {
         }
     }
 
-    public Party(PlayerCharacter pc, params Character[] followers) {
-        this.Main = pc;
-
-        this.Members = new List<Character>();
-        Members.Add(pc);
-        foreach (Character c in followers) {
-            Members.Add(c);
-        }
-    }
-
+    public Party(Character pc) : this(pc, new Character[0]) { }
 
     public Party(Character pc, IList<Character> followers) {
         this.Main = pc;
+        this.Inventory = pc.Inventory;
 
         this.Members = new List<Character>();
         Members.Add(pc);
         foreach (Character c in followers) {
-            Members.Add(c);
+            this.Add(c);
         }
     }
 
@@ -54,6 +47,7 @@ public class Party : IList<Character> {
     }
 
     public void Insert(int index, Character item) {
+        item.Inventory = this.Inventory;
         Members.Insert(index, item);
     }
 
@@ -62,6 +56,7 @@ public class Party : IList<Character> {
     }
 
     public void Add(Character item) {
+        item.Inventory = this.Inventory;
         Members.Add(item);
     }
 

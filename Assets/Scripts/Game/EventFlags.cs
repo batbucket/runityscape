@@ -1,4 +1,4 @@
-﻿public class Flags {
+﻿public class EventFlags {
 
     private int[] ints;
     private bool[] bools;
@@ -15,12 +15,12 @@
         }
     }
 
-    public Flags() {
+    public EventFlags() {
         this.ints = new int[1000];
         this.bools = new bool[1000];
     }
 
-    public Flags(int[] ints, bool[] bools) {
+    public EventFlags(int[] ints, bool[] bools) {
         this.ints = ints;
         this.bools = bools;
     }

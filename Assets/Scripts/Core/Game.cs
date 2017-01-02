@@ -85,15 +85,15 @@ public class Game : MonoBehaviour {
 
     public const float NORMAL_TEXT_SPEED = 0.001f;
 
-    StartMenu start;
+    public StartMenu StartMenu;
 
     void Start() {
         instance = this;
 
-        start = new StartMenu();
+        StartMenu = new StartMenu();
 
         header.Location = "Main Menu";
-        pagePresenter = new PagePresenter(start.MainMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
+        pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
         Other = new OtherPresenter(gold, time);
     }
 

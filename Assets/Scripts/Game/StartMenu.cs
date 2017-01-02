@@ -2,35 +2,21 @@
 using System.Collections;
 using System;
 
-public class StartMenu : Area {
-    public ReadPage MainMenu;
-
+public class StartMenu : ReadPage {
     private Debug debug;
 
-    public StartMenu() {
-
-        this.debug = new Debug(MainMenu);
-    }
-
-    public override void Init() {
-        MainMenu = new ReadPage(
+    public StartMenu() : base(
             text: "Welcome to RunityScape.",
             tooltip: "Buttons can be accessed with the keyboard characters (QWERASDFZXCV) or by clicking.",
-            buttonables: new Process[] {
-                        new Process("New Game", "Start a new adventure.", () => Game.Instance.CurrentPage = new NewGamePage(MainMenu)),
-                        new Process("Load Game", "Load a saved game.", playCondition: () => false),
-                        Application.isEditor ? new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Game.Instance.CurrentPage = debug.Menu) : new Process(),
-                        new Process(),
+            buttonables: new Process[0]) {
 
-                        new Process(),
-                        new Process(),
-                        new Process(),
-                        new Process(),
+        this.debug = new Debug(this);
+        ActionGrid[0] = new Process("New Game", "Start a new adventure.", () => Game.Instance.CurrentPage = new NewGamePage(this));
+        ActionGrid[1] = new Process("Load Game", "Load a saved game.", () => Game.Instance.CurrentPage = new LoadPage());
 
-                        new Process(),
-                        new Process(),
-                        new Process(),
-                        new Process("Exit", "Exit the application.", () => Application.Quit())
-        });
+        if (Application.isEditor) {
+            ActionGrid[2] = new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Game.Instance.CurrentPage = debug.Menu);
+        }
+        ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Exit", "Exit the application.", () => Application.Quit());
     }
 }

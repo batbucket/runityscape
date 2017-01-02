@@ -25,7 +25,7 @@ public class InventoryPage : ReadPage {
         Tooltip = string.Format("Select an item to use on a unit or toss.");
         IButtonable[] itemButtons = new IButtonable[ActionGridView.TOTAL_BUTTON_COUNT];
         int index = 0;
-        foreach (Item myI in p.Main.Inventory) {
+        foreach (Item myI in p.Inventory) {
             Item i = myI;
             itemButtons[index++] = (new Process(string.Format("{0}", i.Name), i.Description, () => GenerateUseItemProcesses(i)));
         }
@@ -49,7 +49,7 @@ public class InventoryPage : ReadPage {
         useButtons[ActionGridView.TOTAL_BUTTON_COUNT - 2] = new Process("Toss", string.Format("Throw {0} away.", item.Name),
         () => {
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("Threw away {0}.", item.Name)));
-            p.Main.Inventory.Remove(item);
+            p.Inventory.Remove(item);
             GenerateInventoryProcesses();
 
         });

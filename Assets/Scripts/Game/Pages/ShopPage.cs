@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 
 public class ShopPage : ReadPage {
-    private Flags flags;
+    private EventFlags flags;
     private Shopkeeper shopkeep;
     private Page camp;
     private Party party;
     private IList<Process> talks;
 
 
-    public ShopPage(Flags flags, Page camp, Party party) : base(party, "", "", "", "Ruins", null, new PageActions { }) {
+    public ShopPage(EventFlags flags, Page camp, Party party) : base(party, "", "", "", "Ruins", null, new PageActions { }) {
         this.flags = flags;
         this.shopkeep = new Shopkeeper(flags);
         this.camp = camp;
@@ -65,7 +65,7 @@ public class ShopPage : ReadPage {
     }
 
     private Process BuyItem(Item i, int cost) {
-        Inventory inven = party.Main.Inventory;
+        Inventory inven = party.Inventory;
         return new Process(
             string.Format("{0} - {1}g", i.Name, cost),
             string.Format("{0} - {1}<color=yellow>g</color>\n{2}", i.Name, cost, i.Description),
@@ -75,7 +75,7 @@ public class ShopPage : ReadPage {
                 inven.Add(i);
                 Game.Instance.TextBoxes.AddTextBox(
                     new TextBox(
-                        string.Format("{0} was purchased for {1}<color=yellow>g</color>.\n{2}", i.Name, cost, party.Main.Inventory.SizeText)
+                        string.Format("{0} was purchased for {1}<color=yellow>g</color>.\n{2}", i.Name, cost, party.Inventory.SizeText)
                         )
                         );
             },

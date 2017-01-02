@@ -19,4 +19,8 @@ public abstract class Attribute : PairedInt {
     public Attribute(int initial, AttributeType type) : base(initial) {
         this._type = type;
     }
+
+    public Attribute(AttributeType type) : base(Attribute.LESSER_CAP) {
+        this._type = type;
+    }
 }
