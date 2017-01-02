@@ -16,7 +16,11 @@ public abstract class Character : Entity, IReactable {
     string suffix;
     public string Suffix { set { suffix = value; } }
     public string DisplayName { get { return string.Format("{0}{1}", Name, string.IsNullOrEmpty(suffix) ? "" : string.Format(" {0}", suffix)); } }
-    public NamedAttribute.Level Level;
+    public int Level {
+        get {
+            return GetAttributeCount(AttributeType.LEVEL, false);
+        }
+    }
 
     public IDictionary<AttributeType, Attribute> Attributes { get; private set; }
     public IDictionary<ResourceType, Resource> Resources { get; private set; }
@@ -24,7 +28,7 @@ public abstract class Character : Entity, IReactable {
 
     public IList<SpellFactory> Spells;
     public IList<SpellFactory> Actions;
-    public Inventory Items;
+    public Inventory Inventory;
     public IList<SpellFactory> Mercies;
     public Equipment Equipment;
 
@@ -78,31 +82,36 @@ public abstract class Character : Entity, IReactable {
         }
     }
 
-    public Character(bool isControllable, Inventory items, Displays displays, Attributes attributes) : base(displays.Loc) {
+    public Character(bool isControllable, Displays displays, Attributes attributes, Items items) : base(displays.Loc) {
         this.Name = displays.Name;
-        this.Level = new NamedAttribute.Level();
-        Level.False = attributes.Lvl;
-
-        this.Attributes = new SortedDictionary<AttributeType, Attribute>() {
-            {AttributeType.LEVEL, Level },
-            {AttributeType.STRENGTH, new NamedAttribute.Strength(attributes.Str) },
-            {AttributeType.INTELLIGENCE, new NamedAttribute.Intelligence(attributes.Int) },
-            {AttributeType.AGILITY, new NamedAttribute.Agility(attributes.Agi) },
-            {AttributeType.VITALITY, new NamedAttribute.Vitality(attributes.Vit) }
-        };
-
-        this.Resources = new SortedDictionary<ResourceType, Resource>() {
-            {ResourceType.HEALTH, new NamedResource.Health((NamedAttribute.Vitality)Attributes[AttributeType.VITALITY]) },
-            {ResourceType.CHARGE, new NamedResource.Charge() },
-        };
 
         this.Attack = new Attack();
 
         Spells = new List<SpellFactory>();
         Actions = new List<SpellFactory>();
-        Items = items;
+        Inventory = new Inventory();
         Mercies = new List<SpellFactory>();
-        Equipment = new Equipment(items);
+        Equipment = new Equipment();
+        foreach (Item i in items.Inventory) {
+            Inventory.Add(i);
+        }
+        foreach (KeyValuePair<EquipmentType, EquippableItem> e in items.Equips) {
+            if (e.Value == null) {
+
+            }
+            Equipment.Add(e.Value);
+        }
+
+        this.Attributes = new SortedDictionary<AttributeType, Attribute>();
+        AddAttribute(new NamedAttribute.Level(attributes.Lvl));
+        AddAttribute(new NamedAttribute.Strength(attributes.Str));
+        AddAttribute(new NamedAttribute.Intelligence(attributes.Int));
+        AddAttribute(new NamedAttribute.Agility(attributes.Agi));
+        AddAttribute(new NamedAttribute.Vitality(attributes.Vit));
+
+        this.Resources = new SortedDictionary<ResourceType, Resource>();
+        AddResource(new NamedResource.Health());
+        AddResource(new NamedResource.Charge());
 
         this.TextColor = displays.Color;
         this.isPlayerControllable = isControllable;
@@ -123,12 +132,14 @@ public abstract class Character : Entity, IReactable {
         this.checkText = displays.Check;
     }
 
+    public Character(bool isControllable, Displays displays, Attributes attributes) : this(isControllable, displays, attributes, new Items(new Item[0], new EquippableItem[0])) { }
+
     public void AddAttribute(Attribute attribute) {
         this.Attributes.Add(attribute.Type, attribute);
     }
 
     public void AddResource(Resource resource) {
-        resource.Calculate();
+        resource.Calculate(GetAttributeCount(resource.Dependent, false));
         this.Resources.Add(resource.Type, resource);
     }
 
@@ -190,7 +201,7 @@ public abstract class Character : Entity, IReactable {
             Attribute attribute;
             Attributes.TryGetValue(attributeType, out attribute);
             if (!value) {
-                return (int)attribute.False;
+                return (int)(attribute.False + Equipment.GetAttributeCount(attributeType));
             } else {
                 return attribute.True;
             }
@@ -211,7 +222,9 @@ public abstract class Character : Entity, IReactable {
 
     void CalculateResources() {
         foreach (KeyValuePair<ResourceType, Resource> pair in Resources) {
-            pair.Value.Calculate();
+            if (pair.Value.Dependent != null) {
+                pair.Value.Calculate(GetAttributeCount(pair.Value.Dependent, false));
+            }
         }
 
         //Set Skill cap to be highest skill costing Spell

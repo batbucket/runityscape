@@ -26,7 +26,6 @@ public class Lasher : Mimic {
                 Vit = 1
             }
             ) {
-        Equipment.Add(new OldArmor());
     }
 
     protected override void DecideSpell() {

@@ -22,9 +22,10 @@ public class OtherPresenter {
         gold.IsEnabled = (camp != null);
         time.IsEnabled = (camp != null);
         if (camp != null) {
-            gold.Count = camp.PartyItems.Gold;
-            time.Day = camp.days;
-            time.Time = Util.Color(camp.time.Name, camp.time.Color);
+            gold.Count = camp.Gold;
+            time.Day = camp.Day;
+            TimeType type = TimeType.Get(camp.Time);
+            time.Time = Util.Color(type.Name, type.Color);
         }
     }
 }

@@ -6,13 +6,13 @@
  * For example: Health is directly tied to a Character's Vitality
  */
 public abstract class DependentResource : Resource {
-    Attribute attribute;
 
-    public DependentResource(Attribute attribute, ResourceType type, bool isFalseCappedAtTrue) : base(0, type, isFalseCappedAtTrue) {
-        this.attribute = attribute;
+    public DependentResource(AttributeType attribute, ResourceType type, bool isFalseCappedAtTrue) : base(0, type, isFalseCappedAtTrue) {
+        this.Dependent = attribute;
     }
 
-    public override void Calculate() {
-        Type.Calculation(attribute, this);
+    public override void Calculate(int attribute) {
+        this.True = Type.Calculation(attribute);
+
     }
 }

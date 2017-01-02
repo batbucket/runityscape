@@ -8,6 +8,8 @@
  * and a variable greater cap
  */
 public abstract class Resource : PairedInt {
+    public AttributeType Dependent;
+
     public bool IsVisible { get; set; }
 
     readonly ResourceType _type;
@@ -44,5 +46,7 @@ public abstract class Resource : PairedInt {
 
     public Resource(int initial, ResourceType type, bool isFalseCappedAtTrue) : this(initial, initial, type, isFalseCappedAtTrue) { }
 
-    public virtual void Calculate() { }
+    public virtual void Calculate(int attribute) {
+
+    }
 }

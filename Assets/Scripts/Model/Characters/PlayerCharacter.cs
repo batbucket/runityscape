@@ -2,18 +2,15 @@
 using UnityEngine;
 
 public abstract class PlayerCharacter : Character {
-    public const float CHARGE_CAP_RATIO = 3f;
 
     public const bool DISPLAYABLE = true;
 
-    // Debug Constructor
-    public PlayerCharacter(Displays displays, Attributes attributes)
-        : base(DISPLAYABLE, new Inventory(), displays, attributes) {
+    public PlayerCharacter(Displays displays, Attributes attributes, Items items)
+        : base(DISPLAYABLE, displays, attributes, items) {
     }
 
-    // Actual Constructor
-    public PlayerCharacter(Inventory inventory, Displays displays, Attributes attributes)
-        : base(DISPLAYABLE, inventory, displays, attributes) {
+    public PlayerCharacter(Displays displays, Attributes attributes)
+        : base(DISPLAYABLE, displays, attributes) {
     }
 
     protected override void Act() {

@@ -65,7 +65,7 @@ public class ShopPage : ReadPage {
     }
 
     private Process BuyItem(Item i, int cost) {
-        Inventory inven = party.Main.Items;
+        Inventory inven = party.Main.Inventory;
         return new Process(
             string.Format("{0} - {1}g", i.Name, cost),
             string.Format("{0} - {1}<color=yellow>g</color>\n{2}", i.Name, cost, i.Description),
@@ -75,7 +75,7 @@ public class ShopPage : ReadPage {
                 inven.Add(i);
                 Game.Instance.TextBoxes.AddTextBox(
                     new TextBox(
-                        string.Format("{0} was purchased for {1}<color=yellow>g</color>.\n{2}", i.Name, cost, party.Main.Items.SizeText)
+                        string.Format("{0} was purchased for {1}<color=yellow>g</color>.\n{2}", i.Name, cost, party.Main.Inventory.SizeText)
                         )
                         );
             },
@@ -133,6 +133,6 @@ public class ShopPage : ReadPage {
     }
 
     private void Fight() {
-        Game.Instance.CurrentPage = new BattlePage(party, camp, camp, "", "Ruins", "", new Shopkeeper(flags));
+        Game.Instance.CurrentPage = new BattlePage(party, camp, camp, "Hero Immortal", "Ruins", "", new Shopkeeper(flags));
     }
 }

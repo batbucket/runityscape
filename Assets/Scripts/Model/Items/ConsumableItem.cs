@@ -27,7 +27,7 @@ public abstract class ConsumableItem : Item {
             },
             perform: (c, t, calc, o) => {
                 Result.NumericPerform(c, t, calc);
-                c.Items.Remove(this);
+                c.Inventory.Remove(this);
                 OnPerform(c, t);
             },
             createText: (c, t, calc, o) => {

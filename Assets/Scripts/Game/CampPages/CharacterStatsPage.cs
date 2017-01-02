@@ -26,7 +26,15 @@ public class CharacterStatsPage : ReadPage {
         List<string> a = new List<string>();
         foreach (KeyValuePair<AttributeType, Attribute> pair in target.Attributes) {
             if (pair.Key.IsAssignable) {
-                a.Add((string.Format("{1}/{2} {0}: {3}", Util.Color(pair.Key.Name, pair.Key.Color), pair.Value.False, pair.Value.True, pair.Key.ShortDescription)));
+                a.Add(
+                    string.Format(
+                        "{0}+{1}/{2} {3}: {4}",
+                        target.Equipment.GetAttributeCount(pair.Key),
+                        pair.Value.False,
+                        pair.Value.True,
+                        Util.Color(pair.Key.Name, pair.Key.Color),
+                        pair.Key.ShortDescription)
+                        );
             }
         }
 
@@ -39,7 +47,7 @@ public class CharacterStatsPage : ReadPage {
         return string.Format(
             "Level {1} {0}\n{2}{3}{4}\n{5}",
             target.DisplayName,
-            target.Level.False,
+            target.Level,
             string.IsNullOrEmpty(target.CheckText) ? "" : string.Format("\n{0}", target.CheckText),
             "\nAttributes:\n" + string.Join("\n", a.ToArray()),
             "\nResources:\n" + string.Join("\n", r.ToArray()),

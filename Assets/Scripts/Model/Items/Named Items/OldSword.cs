@@ -8,9 +8,9 @@ public class OldSword : EquippableItem {
     const EquipmentType EQUIPMENT_TYPE = EquipmentType.WEAPON;
 
     //Bonus stats go here
-    static readonly IDictionary<AttributeType, PairedInt> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, PairedInt>() {
-        { AttributeType.STRENGTH, new PairedInt(2, 1) },
-        { AttributeType.AGILITY, new PairedInt(1, 1) }
+    static readonly IDictionary<AttributeType, int> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, int>() {
+        { AttributeType.STRENGTH, 2 },
+        { AttributeType.AGILITY, 1 }
     };
 
     public OldSword() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }

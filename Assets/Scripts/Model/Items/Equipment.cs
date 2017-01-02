@@ -12,13 +12,23 @@ public class Equipment : ICollection<EquippableItem> {
 
     public bool IsReadOnly { get { return false; } }
 
-    public Equipment(Inventory inventory) {
+    public Equipment() {
         EquipD = new SortedDictionary<EquipmentType, EquippableItem>() {
             { EquipmentType.WEAPON, null },
             { EquipmentType.OFFHAND, null},
             { EquipmentType.ARMOR, null},
             { EquipmentType.TRINKET, null}
         };
+    }
+
+    public int GetAttributeCount(AttributeType type) {
+        int total = 0;
+        foreach (EquippableItem e in this) {
+            if (e != null && e.Bonuses.ContainsKey(type)) {
+                total += e.Bonuses[type];
+            }
+        }
+        return total;
     }
 
     public EquippableItem Get(EquipmentType equipmentType) {

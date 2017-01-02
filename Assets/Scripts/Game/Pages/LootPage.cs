@@ -14,15 +14,13 @@ public class LootPage : ReadPage {
 
     public LootPage(BattlePage back, Party looters, IList<Character> defeated) : base(looters, "", "", "", "Looting", null, null) {
         this.back = back;
-        this.inventory = looters.Main.Items;
+        this.inventory = looters.Main.Inventory;
         this.loot = ExtractLoot(defeated);
         OnTickAction += () => {
             this.ClearActionGrid();
             CreateTooltip();
             DisplayLoot();
-            ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] =
-            new Process("Results", "Return to the battle results screen.",
-            () => Game.Instance.CurrentPage = back);
+            ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = back;
         };
     }
 
@@ -39,7 +37,7 @@ public class LootPage : ReadPage {
         // Get inventories and equips
         foreach (Character _c in defeated) {
             Character c = _c;
-            foreach (Item i in c.Items) {
+            foreach (Item i in c.Inventory) {
                 loot.Add(i);
             }
             foreach (EquippableItem _e in c.Equipment) {

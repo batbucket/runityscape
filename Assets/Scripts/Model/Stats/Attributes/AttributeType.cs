@@ -13,7 +13,16 @@ public sealed class AttributeType : IComparable {
     public bool IsAssignable { get; private set; }
     int order;
 
-    private AttributeType(string name, string shortName, string primaryDescription, string secondaryDescription, string shortDescription, Color color, int order, bool isAssignable = true) {
+    private AttributeType(
+        string name,
+        string shortName,
+        string primaryDescription,
+        string secondaryDescription,
+        string shortDescription,
+        Color color,
+        int order, bool
+        isAssignable = true) {
+
         this.Name = Util.Color(name, color);
         this.ShortName = Util.Color(shortName, color);
         this.PrimaryDescription = primaryDescription;

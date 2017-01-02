@@ -3,11 +3,11 @@ using System.Collections;
 
 public sealed class NamedResource {
     public sealed class Health : DependentResource {
-        public Health(NamedAttribute.Vitality vitality) : base(vitality, ResourceType.HEALTH, true) { }
+        public Health() : base(AttributeType.VITALITY, ResourceType.HEALTH, true) { }
     }
 
     public sealed class Mana : DependentResource {
-        public Mana(NamedAttribute.Intelligence intelligence) : base(intelligence, ResourceType.MANA, true) { }
+        public Mana() : base(AttributeType.INTELLIGENCE, ResourceType.MANA, true) { }
     }
 
     public sealed class Skill : Resource {
@@ -27,7 +27,7 @@ public sealed class NamedResource {
     }
 
     public sealed class Experience : DependentResource {
-        public Experience(NamedAttribute.Level level) : base(level, ResourceType.EXPERIENCE, false) {
+        public Experience() : base(AttributeType.LEVEL, ResourceType.EXPERIENCE, false) {
             this.False = 0;
         }
     }

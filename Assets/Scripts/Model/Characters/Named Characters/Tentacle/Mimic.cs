@@ -11,7 +11,7 @@ public abstract class Mimic : ComputerCharacter {
     private Displays real;
 
     public Mimic(Displays real, Displays fake, Attributes attributes)
-        : base(fake, attributes, 3) {
+        : base(fake, attributes, new Items(new Item[] { new Apple() }, new EquippableItem[] { new OldSword() })) {
         this.real = real;
     }
 

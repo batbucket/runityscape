@@ -54,9 +54,12 @@ public class BattlePage : Page {
         Func<bool> isDefeat = null,
         Page defeat = null
         )
-        : base(text, "", location, false, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
+        : base("", "", location, false, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
         this.mainCharacter = mainCharacter;
         characterQueue = new Queue<Character>();
+        this.OnFirstEnterAction += () => {
+            Game.Instance.TextBoxes.AddTextBox(new TextBox(text));
+        };
 
         /**
          * Set up the Selection Tree.
@@ -169,8 +172,8 @@ public class BattlePage : Page {
                         c.AddToResource(ResourceType.EXPERIENCE, false, expSum);
                     }
                 }
-                int goldSum = GetEnemies(mainCharacter).Sum(c => c.Items.Gold);
-                mainCharacter.Items.Gold += goldSum;
+                int goldSum = GetEnemies(mainCharacter).Sum(c => c.Inventory.Gold);
+                mainCharacter.Inventory.Gold += goldSum;
                 if (goldSum > 0) {
                     Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("<color=yellow>{0}</color> gold was added to the inventory.", goldSum)));
                 }
@@ -256,7 +259,7 @@ public class BattlePage : Page {
                 ActionGrid[BACK_INDEX] = CreateBackButton(this, character, "BACK");
                 break;
             case Selection.Type.ITEM:
-                ActionGrid = CreateSpellList(this, character.Items, character).ToArray();
+                ActionGrid = CreateSpellList(this, character.Inventory, character).ToArray();
                 ActionGrid[BACK_INDEX] = CreateBackButton(this, character, "BACK");
                 break;
             case Selection.Type.FLEE:
@@ -297,7 +300,7 @@ public class BattlePage : Page {
                 processes.Add(CreateUnequipProcess(current, equip, current.Equipment));
             }
         }
-        foreach (Item i in current.Items) {
+        foreach (Item i in current.Inventory) {
             if (i is EquippableItem) {
                 EquippableItem e = (EquippableItem)i;
                 processes.Add(CreateSpellProcess(page, e, current));

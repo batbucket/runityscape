@@ -5,7 +5,7 @@ using UnityEngine;
 
 public sealed class ResourceType : IComparable {
     public enum DisplayMode {
-        NUMERIC, PERCENTAGE, EXP, NONE
+        NUMERIC, PERCENTAGE, NONE
     }
 
     public static readonly IDictionary<DisplayMode, Func<int, int, string>> SPLAT_FUNCTIONS
@@ -13,7 +13,6 @@ public sealed class ResourceType : IComparable {
             { DisplayMode.NONE,       (a, b) =>          string.Format("", a.ToString("+#;-#")) },
             { DisplayMode.NUMERIC,    (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) },
             { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a) : string.Format("{0}%", ((a * 100) / b).ToString("+#;-#")) },
-            { DisplayMode.EXP,        (a, b) =>          string.Format("{0}", a.ToString("+#;-#")) },
         };
 
     public static readonly IDictionary<DisplayMode, Func<float, int, string>> BAR_DISPLAY_FUNCTIONS
@@ -44,15 +43,15 @@ public sealed class ResourceType : IComparable {
     AttributeType _dependent;
     public AttributeType Dependent { get { return _dependent; } }
 
-    Action<Attribute, Resource> _calculation;
-    public Action<Attribute, Resource> Calculation { get { return _calculation; } }
+    Func<int, int> _calculation;
+    public Func<int, int> Calculation { get { return _calculation; } }
 
     Func<float, int, string> _displayFunction;
     public Func<float, int, string> DisplayFunction { get { return _displayFunction; } } //Display actual values or percentage
     Func<int, int, string> _splatFunction;
     public Func<int, int, string> SplatFunction { get { return _splatFunction; } }
 
-    public ResourceType(string name, string shortName, string description, Color fillColor, Color emptyColor, int order, AttributeType dependent = null, Action<Attribute, Resource> calculation = null, DisplayMode displayMode = DisplayMode.NUMERIC) {
+    public ResourceType(string name, string shortName, string description, Color fillColor, Color emptyColor, int order, AttributeType dependent = null, Func<int, int> calculation = null, DisplayMode displayMode = DisplayMode.NUMERIC) {
         this._name = name;
         this._shortName = shortName;
         this._description = description;
@@ -60,7 +59,7 @@ public sealed class ResourceType : IComparable {
         this._emptyColor = emptyColor;
         this._order = order;
         this._dependent = dependent;
-        this._calculation = calculation ?? ((a, r) => { });
+        this._calculation = calculation ?? ((a) => { return 0; });
         this._displayFunction = BAR_DISPLAY_FUNCTIONS[displayMode];
         this._splatFunction = SPLAT_FUNCTIONS[displayMode];
         ALL.Add(this);
@@ -75,7 +74,7 @@ public sealed class ResourceType : IComparable {
                                                                   Color.red,
                                                                   0,
                                                                   AttributeType.VITALITY,
-                                                                  (a, r) => r.True = (int)a.False * 5);
+                                                                  a => a * 5);
 
     public static readonly ResourceType SKILL = new ResourceType("Skill",
                                                                  "SKIL",
@@ -91,7 +90,7 @@ public sealed class ResourceType : IComparable {
                                                                 Color.magenta,
                                                                 2,
                                                                 AttributeType.INTELLIGENCE,
-                                                                (a, r) => r.True = (int)a.False * 5);
+                                                                a => a * 5);
 
     public static readonly ResourceType CHARGE = new ResourceType("Charge",
                                                                   "CHRG",
@@ -116,7 +115,7 @@ public sealed class ResourceType : IComparable {
                                                                 Color.grey,
                                                                 998,
                                                                 AttributeType.LEVEL,
-                                                                (a, r) => r.True = (int)(1 + Mathf.Pow(2, a.False)));
+                                                                a => (int)(1 + Mathf.Pow(2, a)));
 
     public static readonly ResourceType DEATH_EXP = new ResourceType("Experience",
                                                                 "EXP",

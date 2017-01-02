@@ -14,7 +14,7 @@ public class LevelUpPage : ReadPage {
             c.AddToResource(ResourceType.EXPERIENCE, false, -c.GetResourceCount(ResourceType.EXPERIENCE, true));
             c.AddToAttribute(AttributeType.LEVEL, false, 1);
             IncreaseAttributes(c);
-            this.Location = string.Format("{0}: Level {1} → {2}", c.DisplayName, c.Level.False - 1, c.Level.False);
+            this.Location = string.Format("{0}: Level {1} → {2}", c.DisplayName, c.Level - 1, c.Level);
             Game.Instance.TextBoxes.AddTextBox(new TextBox(IncreaseText(c)));
             ActionGrid = AssignAttribute(c, back);
         };

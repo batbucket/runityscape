@@ -9,11 +9,11 @@ public abstract class EquippableItem : Item {
     const string SELF_EQUIP_TEXT = "{1} equipped <color=yellow>{2}</color>!";
     const string OTHER_EQUIP_TEXT = "{0} equipped {1} with <color=yellow>{2}</color>.";
 
-    public readonly IDictionary<AttributeType, PairedInt> bonuses;
+    public readonly IDictionary<AttributeType, int> Bonuses;
 
-    public EquippableItem(string name, string description, EquipmentType equipmentType, IDictionary<AttributeType, PairedInt> bonuses) : base(name, string.Format("{0} ({1})", description, BonusText(bonuses))) {
+    public EquippableItem(string name, string description, EquipmentType equipmentType, IDictionary<AttributeType, int> bonuses) : base(name, string.Format("{0} ({1})", description, BonusText(bonuses))) {
         this._equipmentType = equipmentType;
-        this.bonuses = bonuses;
+        this.Bonuses = bonuses;
     }
 
     public override Hit CreateHit() {
@@ -31,50 +31,30 @@ public abstract class EquippableItem : Item {
     }
 
     public void Equip(Character c) {
-        //Remove buffs of previous equipped item
         Equipment e = c.Equipment;
         if (e.ContainsEquipment(EquipmentType)) {
             UnequipItemInSlot(c);
         }
 
-        //Add buffs of this equipped item
-        this.ApplyBonus(c);
-
-        //Item management
-        c.Items.Remove(this);
+        c.Inventory.Remove(this);
         c.Equipment.Add(this);
     }
 
     public void UnequipItemInSlot(Character c) {
         EquippableItem current = c.Equipment.Get(EquipmentType);
         if (current != null) {
-            current.CancelBonus(c);
-            c.Items.Add(this);
             c.Equipment.Remove(this);
+            c.Inventory.Add(this);
         }
     }
 
 
-    private static string BonusText(IDictionary<AttributeType, PairedInt> bonuses) {
+    private static string BonusText(IDictionary<AttributeType, int> bonuses) {
         List<string> list = new List<string>();
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
-            int bonus = pair.Value.FlatBonus;
+        foreach (KeyValuePair<AttributeType, int> pair in bonuses) {
+            int bonus = pair.Value;
             list.Add(string.Format("{0}{1} {2}", bonus >= 0 ? "+" : "-", bonus, pair.Key.ShortName));
         }
         return string.Join(",", list.ToArray());
-    }
-
-    private void CancelBonus(Character wielder) {
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
-            wielder.Attributes[pair.Key].FlatBonus -= pair.Value.FlatBonus;
-            wielder.Attributes[pair.Key].PercentBonus /= pair.Value.PercentBonus;
-        }
-    }
-
-    private void ApplyBonus(Character wielder) {
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in bonuses) {
-            wielder.Attributes[pair.Key].FlatBonus += pair.Value.FlatBonus;
-            wielder.Attributes[pair.Key].PercentBonus *= pair.Value.PercentBonus;
-        }
     }
 }

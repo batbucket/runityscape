@@ -18,7 +18,7 @@ public class CharacterEquipsPage : ReadPage {
         this.c = c;
 
         OnEnterAction = () => {
-            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("Inventory size: {0}/{1}", c.Items.Count, Inventory.CAPACITY)));
+            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("Inventory size: {0}/{1}", c.Inventory.Count, Inventory.CAPACITY)));
             DisplayEquipped();
         };
     }
@@ -35,12 +35,12 @@ public class CharacterEquipsPage : ReadPage {
     }
 
     private Process CreateUnequipProcess(EquippableItem item) {
-        Process p = new Process(Util.Color(item.Name, c.Items.IsFull ? Color.red : Color.yellow), item.Description, () => {
+        Process p = new Process(Util.Color(item.Name, c.Inventory.IsFull ? Color.red : Color.yellow), item.Description, () => {
             item.UnequipItemInSlot(c);
             Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} unequipped <color=yellow>{1}</color>.\n{2}", c.DisplayName, item.Name, item.Description)));
-            Game.Instance.TextBoxes.AddTextBox(new TextBox(c.Items.SizeText));
+            Game.Instance.TextBoxes.AddTextBox(new TextBox(c.Inventory.SizeText));
             DisplayEquipped();
-        }, () => !c.Items.IsFull);
+        }, () => !c.Inventory.IsFull);
         return p;
     }
 
@@ -51,7 +51,7 @@ public class CharacterEquipsPage : ReadPage {
     private Process[] CreateEquipProcesses(EquipmentType type) {
         this.Tooltip = string.Format("What equipment will go into {0}'s {1} slot?", c.DisplayName, type.ToString());
         Process[] processes = new Process[ActionGridView.TOTAL_BUTTON_COUNT];
-        IList<EquippableItem> equips = c.Items.OfType<EquippableItem>().Cast<EquippableItem>().Where(i => i.EquipmentType == type).ToArray();
+        IList<EquippableItem> equips = c.Inventory.OfType<EquippableItem>().Cast<EquippableItem>().Where(i => i.EquipmentType == type).ToArray();
         int index = 0;
         foreach (EquippableItem _e in equips) {
             EquippableItem e = _e;
@@ -61,7 +61,7 @@ public class CharacterEquipsPage : ReadPage {
                     e.Equip(c);
                     DisplayEquipped();
                     Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} equipped <color=yellow>{1}</color>.\n{2}", c.DisplayName, e.Name, e.Description)));
-                    Game.Instance.TextBoxes.AddTextBox(new TextBox(c.Items.SizeText));
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox(c.Inventory.SizeText));
                 }
             );
         }

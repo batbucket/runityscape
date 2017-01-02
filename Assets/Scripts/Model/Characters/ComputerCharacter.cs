@@ -5,15 +5,20 @@ using System.Collections.Generic;
 
 public abstract class ComputerCharacter : Character {
     public const bool CONTROLLABLE_CPU = false;
+
+    private const int DEFAULT_MAX_DELAY = 3;
     readonly float maxDelay;
     protected float delay;
 
-    public ComputerCharacter(Displays displays, Attributes attributes, float maxDelay)
-        : base(CONTROLLABLE_CPU, new Inventory(), displays, attributes) {
-        this.maxDelay = maxDelay;
+    public ComputerCharacter(Displays displays, Attributes attributes, Items items)
+        : base(CONTROLLABLE_CPU, displays, attributes, items) {
+        this.maxDelay = DEFAULT_MAX_DELAY;
         this.delay = UnityEngine.Random.Range(0, maxDelay);
-        Items = new Inventory();
+        Inventory = new Inventory();
     }
+
+    public ComputerCharacter(Displays displays, Attributes attributes)
+        : this(displays, attributes, new Items(new Item[0], new EquippableItem[0])) { }
 
     protected override void Act() {
         if (State == CharacterState.NORMAL && IsCharged && (delay -= Time.deltaTime) <= 0) {

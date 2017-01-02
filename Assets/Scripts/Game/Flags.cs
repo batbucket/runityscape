@@ -1,4 +1,5 @@
 ﻿public class Flags {
+
     private int[] ints;
     private bool[] bools;
 
