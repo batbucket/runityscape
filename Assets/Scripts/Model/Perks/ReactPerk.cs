@@ -1,15 +1,15 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Scripts.Model.Processes;
 
-public class ReactPerk : Process {
+namespace Scripts.Model.Perks {
 
-    // Use this for initialization
-    void Start() {
+    public class ReactPerk : Process {
 
-    }
+        // Use this for initialization
+        private void Start() {
+        }
 
-    // Update is called once per frame
-    void Update() {
-
+        // Update is called once per frame
+        private void Update() {
+        }
     }
 }

@@ -1,10 +1,15 @@
-﻿using System;
+﻿using Scripts.Model.Characters;
+using Scripts.Model.Spells;
+using Scripts.Model.Stats;
+using Scripts.Model.Stats.Attributes;
+using Scripts.Model.Stats.Resources;
+using Scripts.View.Effects;
+using Scripts.View.Portraits;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class Result {
-
     public Type Type { get; set; }
     public Func<Character, Character, Spell, bool> IsState;
     public Func<Character, Character, Spell, bool> IsIndefinite;
@@ -52,44 +57,45 @@ public abstract class Result {
     }
 
     public static void NumericPerform(Character caster, Character target, Calculation calculation) {
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in calculation.CasterAttributes) {
+        foreach (KeyValuePair<AttributeType, PairedValue> pair in calculation.CasterAttributes) {
             caster.AddToAttribute(pair.Key, true, pair.Value.True, true);
             caster.AddToAttribute(pair.Key, false, pair.Value.False, true);
         }
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in calculation.TargetAttributes) {
+        foreach (KeyValuePair<AttributeType, PairedValue> pair in calculation.TargetAttributes) {
             target.AddToAttribute(pair.Key, true, pair.Value.True, true);
             target.AddToAttribute(pair.Key, false, pair.Value.False, true);
         }
-        foreach (KeyValuePair<ResourceType, PairedInt> pair in calculation.CasterResources) {
+        foreach (KeyValuePair<ResourceType, PairedValue> pair in calculation.CasterResources) {
             caster.AddToResource(pair.Key, true, pair.Value.True, true);
             caster.AddToResource(pair.Key, false, pair.Value.False, true);
         }
-        foreach (KeyValuePair<ResourceType, PairedInt> pair in calculation.TargetResources) {
+        foreach (KeyValuePair<ResourceType, PairedValue> pair in calculation.TargetResources) {
             target.AddToResource(pair.Key, true, pair.Value.True, true);
             target.AddToResource(pair.Key, false, pair.Value.False, true);
         }
     }
 
     public static void NumericUndo(Character caster, Character target, Calculation calculation) {
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in calculation.CasterAttributes) {
+        foreach (KeyValuePair<AttributeType, PairedValue> pair in calculation.CasterAttributes) {
             caster.AddToAttribute(pair.Key, true, -pair.Value.True, true);
             caster.AddToAttribute(pair.Key, false, -pair.Value.False, true);
         }
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in calculation.TargetAttributes) {
+        foreach (KeyValuePair<AttributeType, PairedValue> pair in calculation.TargetAttributes) {
             target.AddToAttribute(pair.Key, true, -pair.Value.True, true);
             target.AddToAttribute(pair.Key, false, -pair.Value.False, true);
         }
-        foreach (KeyValuePair<ResourceType, PairedInt> pair in calculation.CasterResources) {
+        foreach (KeyValuePair<ResourceType, PairedValue> pair in calculation.CasterResources) {
             caster.AddToResource(pair.Key, true, -pair.Value.True, true);
             caster.AddToResource(pair.Key, false, -pair.Value.False, true);
         }
-        foreach (KeyValuePair<ResourceType, PairedInt> pair in calculation.TargetResources) {
+        foreach (KeyValuePair<ResourceType, PairedValue> pair in calculation.TargetResources) {
             target.AddToResource(pair.Key, true, -pair.Value.True, true);
             target.AddToResource(pair.Key, false, -pair.Value.False, true);
         }
     }
 
     private const float BASE_SHAKE = 3;
+
     public static ShakeEffect ShakeBasedOnDamage(Character target, Calculation c) {
         float damage = Mathf.Min(c.TargetResources[ResourceType.HEALTH].False, 0);
         float shakePower = BASE_SHAKE * damage / target.GetResourceCount(ResourceType.HEALTH, true);
@@ -105,22 +111,22 @@ public abstract class Result {
         PortraitView casterPv = caster.Presenter.PortraitView;
         PortraitView targetPv = target.Presenter.PortraitView;
 
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in c.CasterAttributes) {
+        foreach (KeyValuePair<AttributeType, PairedValue> pair in c.CasterAttributes) {
             if (pair.Value.False != 0) {
                 splats.Add(new HitsplatEffect(casterPv, pair.Key.Color, (pair.Value.False >= 0 ? "+" : "-") + pair.Key.ShortName));
             }
         }
-        foreach (KeyValuePair<AttributeType, PairedInt> pair in c.TargetAttributes) {
+        foreach (KeyValuePair<AttributeType, PairedValue> pair in c.TargetAttributes) {
             if (pair.Value.False != 0) {
                 splats.Add(new HitsplatEffect(targetPv, pair.Key.Color, (pair.Value.False >= 0 ? "+" : "-") + pair.Key.ShortName));
             }
         }
-        foreach (KeyValuePair<ResourceType, PairedInt> pair in c.CasterResources) {
+        foreach (KeyValuePair<ResourceType, PairedValue> pair in c.CasterResources) {
             if (pair.Value.False != 0) {
                 splats.Add(new HitsplatEffect(casterPv, ResourceType.DetermineColor(pair.Key, pair.Value.False), Util.Sign(pair.Value.False)));
             }
         }
-        foreach (KeyValuePair<ResourceType, PairedInt> pair in c.TargetResources) {
+        foreach (KeyValuePair<ResourceType, PairedValue> pair in c.TargetResources) {
             if (pair.Value.False != 0) {
                 splats.Add(new HitsplatEffect(targetPv, ResourceType.DetermineColor(pair.Key, pair.Value.False), Util.Sign(pair.Value.False)));
             }

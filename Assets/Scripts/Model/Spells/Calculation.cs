@@ -1,48 +1,55 @@
-﻿using System.Collections.Generic;
+﻿using Scripts.Model.Stats;
+using Scripts.Model.Stats.Attributes;
+using Scripts.Model.Stats.Resources;
+using System.Collections.Generic;
 
-public class Calculation {
-    IDictionary<AttributeType, PairedInt> _targetAttributes;
-    public IDictionary<AttributeType, PairedInt> TargetAttributes { get { return _targetAttributes; } }
+namespace Scripts.Model.Spells {
 
-    IDictionary<ResourceType, PairedInt> _targetResources;
-    public IDictionary<ResourceType, PairedInt> TargetResources { get { return _targetResources; } }
+    /// <summary>
+    /// Represents the numeric effects of a spell.
+    /// </summary>
+    public class Calculation {
+        public IDictionary<AttributeType, PairedValue> _casterAttributes;
+        public IDictionary<ResourceType, PairedValue> _casterResources;
+        private IDictionary<AttributeType, PairedValue> _targetAttributes;
+        private IDictionary<ResourceType, PairedValue> _targetResources;
 
-    public IDictionary<AttributeType, PairedInt> _casterAttributes;
-    public IDictionary<AttributeType, PairedInt> CasterAttributes { get { return _casterAttributes; } }
-
-    public IDictionary<ResourceType, PairedInt> _casterResources;
-    public IDictionary<ResourceType, PairedInt> CasterResources { get { return _casterResources; } }
-
-    public Calculation(IDictionary<AttributeType, PairedInt> targetAttributes = null,
-                        IDictionary<ResourceType, PairedInt> targetResources = null,
-                        IDictionary<AttributeType, PairedInt> casterAttributes = null,
-                        IDictionary<ResourceType, PairedInt> casterResources = null) {
-        this._targetAttributes = targetAttributes ?? CreateBlankAttributeDictionary();
-        this._targetResources = targetResources ?? CreateBlankResourceDictionary();
-        this._casterAttributes = casterAttributes ?? CreateBlankAttributeDictionary();
-        this._casterResources = casterResources ?? CreateBlankResourceDictionary();
-    }
-
-    public void Clear() {
-        this._targetAttributes = CreateBlankAttributeDictionary();
-        this._targetResources = CreateBlankResourceDictionary();
-        this._casterAttributes = CreateBlankAttributeDictionary();
-        this._casterResources = CreateBlankResourceDictionary();
-    }
-
-    IDictionary<AttributeType, PairedInt> CreateBlankAttributeDictionary() {
-        IDictionary<AttributeType, PairedInt> d = new Dictionary<AttributeType, PairedInt>();
-        foreach (AttributeType at in AttributeType.ALL) {
-            d.Add(at, new PairedInt(0, 0));
+        public Calculation(IDictionary<AttributeType, PairedValue> targetAttributes = null,
+                            IDictionary<ResourceType, PairedValue> targetResources = null,
+                            IDictionary<AttributeType, PairedValue> casterAttributes = null,
+                            IDictionary<ResourceType, PairedValue> casterResources = null) {
+            this._targetAttributes = targetAttributes ?? CreateBlankAttributeDictionary();
+            this._targetResources = targetResources ?? CreateBlankResourceDictionary();
+            this._casterAttributes = casterAttributes ?? CreateBlankAttributeDictionary();
+            this._casterResources = casterResources ?? CreateBlankResourceDictionary();
         }
-        return d;
-    }
 
-    IDictionary<ResourceType, PairedInt> CreateBlankResourceDictionary() {
-        IDictionary<ResourceType, PairedInt> d = new Dictionary<ResourceType, PairedInt>();
-        foreach (ResourceType rt in ResourceType.ALL) {
-            d.Add(rt, new PairedInt(0, 0));
+        public IDictionary<AttributeType, PairedValue> CasterAttributes { get { return _casterAttributes; } }
+        public IDictionary<ResourceType, PairedValue> CasterResources { get { return _casterResources; } }
+        public IDictionary<AttributeType, PairedValue> TargetAttributes { get { return _targetAttributes; } }
+        public IDictionary<ResourceType, PairedValue> TargetResources { get { return _targetResources; } }
+
+        public void Clear() {
+            this._targetAttributes = CreateBlankAttributeDictionary();
+            this._targetResources = CreateBlankResourceDictionary();
+            this._casterAttributes = CreateBlankAttributeDictionary();
+            this._casterResources = CreateBlankResourceDictionary();
         }
-        return d;
+
+        private IDictionary<AttributeType, PairedValue> CreateBlankAttributeDictionary() {
+            IDictionary<AttributeType, PairedValue> d = new Dictionary<AttributeType, PairedValue>();
+            foreach (AttributeType at in AttributeType.ALL) {
+                d.Add(at, new PairedValue(0, 0));
+            }
+            return d;
+        }
+
+        private IDictionary<ResourceType, PairedValue> CreateBlankResourceDictionary() {
+            IDictionary<ResourceType, PairedValue> d = new Dictionary<ResourceType, PairedValue>();
+            foreach (ResourceType rt in ResourceType.ALL) {
+                d.Add(rt, new PairedValue(0, 0));
+            }
+            return d;
+        }
     }
 }

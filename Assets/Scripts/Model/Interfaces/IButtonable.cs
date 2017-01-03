@@ -1,12 +1,15 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿namespace Scripts.Model.Interfaces {
 
-public interface IButtonable {
-    string ButtonText { get; }
-    string TooltipText { get; }
-    bool IsInvokable { get; }
-    bool IsVisibleOnDisable { get; }
+    /// <summary>
+    /// Represents an object that can be converted
+    /// into a button.
+    /// </summary>
+    public interface IButtonable {
+        string ButtonText { get; }
+        bool IsInvokable { get; }
+        bool IsVisibleOnDisable { get; }
+        string TooltipText { get; }
 
-    void Invoke();
+        void Invoke();
+    }
 }

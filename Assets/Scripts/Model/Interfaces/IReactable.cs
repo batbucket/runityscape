@@ -1,17 +1,22 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Scripts.Model.Spells;
 
-public interface IReactable {
-
-    /// <summary>
-    /// Called when this Character is affected by a Spell.
-    /// </summary>
-    /// <param name="s">Spell Character hit by</param>
-    void React(Spell s);
+namespace Scripts.Model.Interfaces {
 
     /// <summary>
-    /// Called when any Character in the Page is affected by a Spell.
+    /// Represents any object that can react and witness spells.
     /// </summary>
-    /// <param name="s">Spell Character hit by</param>
-    void Witness(Spell s);
+    public interface IReactable {
+
+        /// <summary>
+        /// Called when this Character is affected by a Spell.
+        /// </summary>
+        /// <param name="s">Spell Character hit by</param>
+        void React(Spell s);
+
+        /// <summary>
+        /// Called when any Character in the Page is affected by a Spell.
+        /// </summary>
+        /// <param name="s">Spell Character hit by</param>
+        void Witness(Spell s);
+    }
 }

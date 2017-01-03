@@ -1,15 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using Scripts.Model.Stats.Attributes;
+using System.Collections.Generic;
 
-public class Scimitar : EquippableItem {
-    const string NAME = "Dragon Scimitar";
-    const string DESCRIPTION = "A vicious, curved sword.";
-    const EquipmentType EQUIPMENT_TYPE = EquipmentType.WEAPON;
+namespace Scripts.Model.Items.Named {
 
-    //Bonus stats go here
-    static readonly IDictionary<AttributeType, int> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, int>() {
+    public class Scimitar : EquippableItem {
+        private const string NAME = "Dragon Scimitar";
+        private const string DESCRIPTION = "A vicious, curved sword.";
+        private const EquipmentType EQUIPMENT_TYPE = EquipmentType.WEAPON;
+
+        //Bonus stats go here
+        private static readonly IDictionary<AttributeType, int> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, int>() {
         { AttributeType.STRENGTH, 300 },
         { AttributeType.AGILITY, 100 }
     };
 
-    public Scimitar() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
+        public Scimitar() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) {
+        }
+    }
 }

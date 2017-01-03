@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 /// <summary>
 /// Static class to improve readability
 /// Example:
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 ///
 /// </summary>
 public static class WeightedRandomizer {
+
     public static WeightedRandomizer<R> From<R>(Dictionary<R, int> spawnRate) {
         return new WeightedRandomizer<R>(spawnRate);
     }

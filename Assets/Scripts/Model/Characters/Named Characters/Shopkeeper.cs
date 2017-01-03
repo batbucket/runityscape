@@ -1,12 +1,15 @@
-﻿using UnityEngine;
-using System.Collections;
-using System;
+﻿using Scripts.Model.Characters;
+using Scripts.Model.World.Utility;
+using Scripts.Model.Spells;
+using Scripts.Model.Spells.Named;
+using Scripts.Presenter;
+using UnityEngine;
 
 public class Shopkeeper : ComputerCharacter {
     private const string NAME = "Maple";
     private EventFlags flags;
 
-    public Shopkeeper(EventFlags flags) : base(new Displays { Loc = "Icons/cowled", Color = Color.yellow, Name = "???", Check = "Checked!" }, new Attributes { Lvl = 3, Str = 2, Int = 2, Agi = 2, Vit = 3 }) {
+    public Shopkeeper(EventFlags flags) : base(new Displays { Loc = "Icons/cowled", Color = Color.yellow, Name = "???", Check = "Checked!" }, new StartStats { Lvl = 3, Str = 2, Int = 2, Agi = 2, Vit = 3 }) {
         this.flags = flags;
     }
 
@@ -22,7 +25,6 @@ public class Shopkeeper : ComputerCharacter {
     }
 
     public override void React(Spell spell) {
-
     }
 
     public override void OnVictory() {
@@ -37,7 +39,6 @@ public class Shopkeeper : ComputerCharacter {
         } else {
             Game.Instance.TextBoxes.AddTextBox(Talk("..."));
         }
-
     }
 
     protected override void DecideSpell() {

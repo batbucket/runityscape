@@ -1,19 +1,20 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.UI;
-using WindowsInput;
-using System.Text;
+﻿using Scripts.View.ObjectPool;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
+using UnityEngine;
+using UnityEngine.UI;
+using WindowsInput;
 
 /**
  * This class holds various helper methods that don't fit anywhere else
  */
+
 public static class Util {
 
     /// <summary>
@@ -63,6 +64,7 @@ public static class Util {
     }
 
     private const bool IS_DEBUG = true;
+
     public static void Log(string message) {
         if (IS_DEBUG) {
             UnityEngine.Debug.Log(message);
@@ -144,6 +146,7 @@ public static class Util {
     /**
      * Converts an AudioClip to an AudioSource
      */
+
     public static AudioSource ClipToSource(AudioClip clip) {
         AudioSource source = new AudioSource();
         source.clip = clip;
@@ -164,6 +167,7 @@ public static class Util {
      * VirtualKeyCode's toString (For the keys we deem important has VK_[KEY]
      * So we search for VK_ + [KEYCODE]
      */
+
     public static VirtualKeyCode KeyCodeToVirtualKeyCode(KeyCode keyToConvert) {
         return keyToConvert == KeyCode.None ? VirtualKeyCode.NONAME : (VirtualKeyCode)System.Enum.Parse(typeof(VirtualKeyCode), "VK_" + keyToConvert.ToString());
     }
@@ -172,7 +176,7 @@ public static class Util {
         return new Color(1.0f - color.r, 1.0f - color.g, 1.0f - color.b);
     }
 
-    static char[] splitChars = new char[] { ' ', '-', '\t', '\n' };
+    private static char[] splitChars = new char[] { ' ', '-', '\t', '\n' };
 
     public static string WordWrap(string str, int width) {
         string[] words = Explode(str, splitChars);
@@ -285,6 +289,7 @@ public static class Util {
     /**
      * Converts 1 to A, 2 to B, and so on
      */
+
     public static string IntToLetter(int column) {
         column++;
         string columnString = "";

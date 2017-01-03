@@ -1,16 +1,19 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using Scripts.Model.Stats.Attributes;
 using System.Collections.Generic;
 
-public class OldArmor : EquippableItem {
-    const string NAME = "Old Armor";
-    const string DESCRIPTION = "A familiar armor from an old time.";
-    const EquipmentType EQUIPMENT_TYPE = EquipmentType.ARMOR;
+namespace Scripts.Model.Items.Named {
 
-    //Bonus stats go here
-    static readonly IDictionary<AttributeType, int> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, int>() {
+    public class OldArmor : EquippableItem {
+        private const string NAME = "Old Armor";
+        private const string DESCRIPTION = "A familiar armor from an old time.";
+        private const EquipmentType EQUIPMENT_TYPE = EquipmentType.ARMOR;
+
+        //Bonus stats go here
+        private static readonly IDictionary<AttributeType, int> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, int>() {
         { AttributeType.VITALITY, 2 }
     };
 
-    public OldArmor() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) { }
+        public OldArmor() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) {
+        }
+    }
 }

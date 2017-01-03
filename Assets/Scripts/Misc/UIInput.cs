@@ -1,13 +1,13 @@
-﻿using UnityEngine;
-using System.Collections;
-using UnityEngine.EventSystems;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
 /**
  * This class lets us have mouseDown and mouseUp listeners
  * which is important for the HotkeyButtons
  */
+
 public class UIInput : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
     public List<Action<PointerEventData>> OnMouseDownListeners = new List<Action<PointerEventData>>();
     public List<Action<PointerEventData>> OnMouseUpListeners = new List<Action<PointerEventData>>();

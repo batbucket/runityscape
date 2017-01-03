@@ -1,52 +1,53 @@
-﻿using UnityEngine;
+﻿using Scripts.Model.Stats.Attributes;
+using UnityEngine;
 
-/**
- * This class represents a Resource
- * Think health, mana, etc.
- *
- * These values have a lesser cap of 0
- * and a variable greater cap
- */
-public abstract class Resource : PairedInt {
-    public AttributeType Dependent;
+namespace Scripts.Model.Stats.Resources {
 
-    public bool IsVisible { get; set; }
+    /// <summary>
+    /// This class represents a Resource
+    /// Think health, mana, etc.
+    ///
+    /// These values have a lesser cap of 0
+    /// and a variable greater cap
+    /// </summary>
+    public abstract class Resource : PairedValue {
+        public const int GREATER_CAP = 99999;
+        public const int LESSER_CAP = 0;
+        public readonly ResourceType Type;
+        public AttributeType Dependent;
 
-    readonly ResourceType _type;
-    public ResourceType Type { get { return _type; } }
+        private readonly bool isFalseCappedAtTrue;
 
-    public const int LESSER_CAP = 0;
-    public const int GREATER_CAP = 99999;
-
-    private readonly bool isFalseCappedAtTrue;
-
-    public override float False {
-        get {
-            return Mathf.Clamp(base.False, LESSER_CAP, isFalseCappedAtTrue ? True : GREATER_CAP);
+        public Resource(int trueValue, int falseValue, ResourceType type, bool isFalseCappedAtTrue) : base(trueValue, falseValue) {
+            this.Type = type;
+            this.IsVisible = true;
+            this.isFalseCappedAtTrue = isFalseCappedAtTrue;
         }
-        set {
-            base.False = value;
+
+        public Resource(int initial, ResourceType type, bool isFalseCappedAtTrue) : this(initial, initial, type, isFalseCappedAtTrue) {
         }
-    }
 
-    public override int True {
-        get {
-            return Mathf.Clamp(base.True, LESSER_CAP, GREATER_CAP);
+        public override float False {
+            get {
+                return Mathf.Clamp(base.False, LESSER_CAP, isFalseCappedAtTrue ? True : GREATER_CAP);
+            }
+            set {
+                base.False = value;
+            }
         }
-        set {
-            base.True = value;
+
+        public bool IsVisible { get; set; }
+
+        public override int True {
+            get {
+                return Mathf.Clamp(base.True, LESSER_CAP, GREATER_CAP);
+            }
+            set {
+                base.True = value;
+            }
         }
-    }
 
-    public Resource(int trueValue, int falseValue, ResourceType type, bool isFalseCappedAtTrue) : base(trueValue, falseValue) {
-        this._type = type;
-        this.IsVisible = true;
-        this.isFalseCappedAtTrue = isFalseCappedAtTrue;
-    }
-
-    public Resource(int initial, ResourceType type, bool isFalseCappedAtTrue) : this(initial, initial, type, isFalseCappedAtTrue) { }
-
-    public virtual void Calculate(int attribute) {
-
+        public virtual void Calculate(int attribute) {
+        }
     }
 }

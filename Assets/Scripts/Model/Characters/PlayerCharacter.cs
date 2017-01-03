@@ -1,23 +1,23 @@
-﻿using System;
-using UnityEngine;
+﻿namespace Scripts.Model.Characters {
 
-public abstract class PlayerCharacter : Character {
+    /// <summary>
+    /// Character who is commandable on a BattlePage by the user.
+    /// </summary>
+    public abstract class PlayerCharacter : Character {
+        public const bool DISPLAYABLE = true;
 
-    public const bool DISPLAYABLE = true;
+        public PlayerCharacter(Displays displays, StartStats attributes, Items items)
+            : base(DISPLAYABLE, displays, attributes, items) {
+        }
 
-    public PlayerCharacter(Displays displays, Attributes attributes, Items items)
-        : base(DISPLAYABLE, displays, attributes, items) {
-    }
+        public PlayerCharacter(Displays displays, StartStats attributes)
+            : base(DISPLAYABLE, displays, attributes) {
+        }
 
-    public PlayerCharacter(Displays displays, Attributes attributes)
-        : base(DISPLAYABLE, displays, attributes) {
-    }
+        protected override void Act() {
+        }
 
-    protected override void Act() {
-
-    }
-
-    protected override void WhileFullCharge() {
-
+        protected override void WhileFullCharge() {
+        }
     }
 }

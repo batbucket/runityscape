@@ -1,55 +1,53 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Linq;
+﻿using Scripts.View.TextBoxes;
 using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
-public class TextBox {
-    public virtual TextBoxType Type { get { return TextBoxType.TEXT; } }
+namespace Scripts.Model.TextBoxes {
 
-    string[] textArray;
-    public string[] TextArray { get { return textArray; } }
+    /// <summary>
+    /// Represents a box with text inside it.
+    /// </summary>
+    public class TextBox {
+        protected bool skip;
+        private Color color;
+        private TextEffect effect;
+        private string rawText;
+        private string soundLoc;
+        private string[] textArray;
+        private float timePerLetter;
 
-    string rawText;
-    public string RawText { get { return rawText; } }
-
-    Color color;
-    public Color Color { get { return color; } set { color = value; } }
-
-    float timePerLetter;
-    public float TimePerLetter { get { return timePerLetter; } }
-
-    string soundLoc;
-    public string SoundLoc { get { return soundLoc; } }
-
-    TextEffect effect;
-    public TextEffect Effect { get { return effect; } set { effect = value; } }
-
-    public bool IsDone { get; set; }
-
-    protected bool skip;
-
-
-    protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
-        this.textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
-        this.rawText = text;
-        this.color = color;
-        this.timePerLetter = timePerLetter;
-        this.soundLoc = soundLocation;
-        this.effect = effect;
-    }
-
-    public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) { }
-
-    public virtual void Write(GameObject textBoxPrefab, Action callBack) {
-        if (skip) {
-            this.effect = TextEffect.FADE_IN;
+        public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) {
         }
-        textBoxPrefab.GetComponent<TextBoxView>().WriteText(this, callBack);
-    }
 
-    public void Skip() {
-        skip = true;
+        protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
+            this.textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
+            this.rawText = text;
+            this.color = color;
+            this.timePerLetter = timePerLetter;
+            this.soundLoc = soundLocation;
+            this.effect = effect;
+        }
+
+        public Color Color { get { return color; } set { color = value; } }
+        public TextEffect Effect { get { return effect; } set { effect = value; } }
+        public bool IsDone { get; set; }
+        public string RawText { get { return rawText; } }
+        public string SoundLoc { get { return soundLoc; } }
+        public string[] TextArray { get { return textArray; } }
+        public float TimePerLetter { get { return timePerLetter; } }
+        public virtual TextBoxType Type { get { return TextBoxType.TEXT; } }
+
+        public void Skip() {
+            skip = true;
+        }
+
+        public virtual void Write(GameObject textBoxPrefab, Action callBack) {
+            if (skip) {
+                this.effect = TextEffect.FADE_IN;
+            }
+            textBoxPrefab.GetComponent<TextBoxView>().WriteText(this, callBack);
+        }
     }
 }

@@ -1,24 +1,30 @@
-﻿using System;
+﻿using Scripts.View;
+using Scripts.View.TextBoxes;
+using System;
 using UnityEngine;
 
-public abstract class AvatarBox : TextBox {
+namespace Scripts.Model.TextBoxes {
 
-    string _spriteLoc;
-    public string SpriteLoc { get { return _spriteLoc; } }
+    /// <summary>
+    /// Represents a textbox with a character portrait window to one of the sides.
+    /// </summary>
+    public abstract class AvatarBox : TextBox {
+        public readonly string SpriteLoc;
 
-    public AvatarBox(string spriteLoc,
-                     string text,
-                     Color color,
-                     string soundLocation,
-                     float timePerLetter)
-                     : base(text, color, TextEffect.TYPE, "Blip_0", 0) {
-        this._spriteLoc = spriteLoc;
-    }
-
-    public override void Write(GameObject avatarBoxPrefab, Action callBack) {
-        if (skip) {
-            this.Effect = TextEffect.FADE_IN;
+        public AvatarBox(string spriteLoc,
+                         string text,
+                         Color color,
+                         string soundLocation,
+                         float timePerLetter)
+                         : base(text, color, TextEffect.TYPE, "Blip_0", 0) {
+            this.SpriteLoc = spriteLoc;
         }
-        avatarBoxPrefab.GetComponent<AvatarBoxView>().WriteText(this, callBack);
+
+        public override void Write(GameObject avatarBoxPrefab, Action callBack) {
+            if (skip) {
+                this.Effect = TextEffect.FADE_IN;
+            }
+            avatarBoxPrefab.GetComponent<AvatarBoxView>().WriteText(this, callBack);
+        }
     }
 }
