@@ -12,7 +12,7 @@ public class SavePage : ReadPage {
 
                 ActionGrid[i] = new Process(
                     saveName,
-                    "",
+                    "Overwrite " + saveName,
                     () => Game.Instance.CurrentPage = new ReadPage(
                         camp.Party,
                         "",
@@ -20,12 +20,12 @@ public class SavePage : ReadPage {
                         "Overwrite this save?",
                         "",
                         new IButtonable[] {
-                            new Process("Yes", "", () => {
+                            new Process("Yes", "Overwrite this save.", () => {
                                 SaveLoad.Save(camp, filePath, true);
                                 Game.Instance.CurrentPage = this;
                                 Game.Instance.TextBoxes.AddTextBox(new TextBox("Overwrite was successful."));
                             }),
-                            new Process("No", "", () => Game.Instance.CurrentPage = this) },
+                            new Process("No", "Don't overwrite this save.", () => Game.Instance.CurrentPage = this) },
                         loadedCamp.Party
                     )
                 );

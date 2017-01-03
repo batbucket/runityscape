@@ -201,10 +201,12 @@ public class BattlePage : Page {
                 }
                 ActionGrid[1] = new ItemManagePage(this, new Party(mainCharacter, GetAllies(mainCharacter)));
                 ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Continue", "", () => Game.Instance.CurrentPage = Victory);
+                Game.Instance.Sound.StopAll();
                 break;
             case BattleState.POST_DEFEAT:
                 ActionGrid = new IButtonable[0];
                 ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Continue", "", () => Game.Instance.CurrentPage = Defeat);
+                Game.Instance.Sound.StopAll();
                 break;
         }
     }
