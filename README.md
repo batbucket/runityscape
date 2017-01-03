@@ -4,9 +4,11 @@
 * Despite the insane scope, I will be chipping away at this project. Hopefully not for too long.
 
 # Current Features #
+* JSON serialization for saving and loading
 * Active-time battle
 * Spell system with effect over time support
-* Attribute system, such as strength and intelligence.
-* Resource system, such as life and mana.
-* Item system, such as potions and equippable weapons.
+* Attribute system, such as strength and intelligence
+* Resource system, such as life and mana
+* Item system, such as potions and equippable weapons
 * Scrolling combat log
+* Namespaces and comments where appropriate
