@@ -1,4 +1,5 @@
 ﻿public class EventFlags {
+    private const int MAX_LENGTH = 50;
 
     private int[] ints;
     private bool[] bools;
@@ -16,8 +17,8 @@
     }
 
     public EventFlags() {
-        this.ints = new int[1000];
-        this.bools = new bool[1000];
+        this.ints = new int[MAX_LENGTH];
+        this.bools = new bool[MAX_LENGTH];
     }
 
     public EventFlags(int[] ints, bool[] bools) {

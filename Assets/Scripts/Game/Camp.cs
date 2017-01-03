@@ -62,9 +62,6 @@ public class Camp : ReadPage {
                 c.State = CharacterState.NORMAL;
             }
         };
-
-        flags.Ints[Flag.DAYS] = 0;
-        flags.Ints[Flag.TIME] = 0;
     }
 
     private void CreateCamp() {

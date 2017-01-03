@@ -19,5 +19,10 @@ public class StartMenu : ReadPage {
             ActionGrid[3] = new Process("Delete ALL Saves", "", () => { SaveLoad.DeleteAllSaves(); Game.Instance.TextBoxes.AddTextBox(new TextBox("Saves deleted.")); });
         }
         ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Exit", "Exit the application.", () => Application.Quit());
+
+        OnEnterAction += () => {
+            Game.Instance.Other.Camp = null;
+            Game.Instance.Time.IsEnabled = false;
+        };
     }
 }

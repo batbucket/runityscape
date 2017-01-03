@@ -26,6 +26,7 @@ public class Lasher : Mimic {
                 Vit = 1
             }
             ) {
+        this.AddResource(new NamedResource.DeathExperience(3));
     }
 
     protected override void DecideSpell() {

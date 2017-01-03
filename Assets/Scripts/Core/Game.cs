@@ -94,11 +94,12 @@ public class Game : MonoBehaviour {
         }
         instance = this;
 
-        StartMenu = new StartMenu();
-
         header.Location = "Main Menu";
-        pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
         Other = new OtherPresenter(gold, time);
+        StartMenu = new StartMenu();
+        pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
+
+
     }
 
     public void Cutscene(bool isGridVisible, params Event[] events) {

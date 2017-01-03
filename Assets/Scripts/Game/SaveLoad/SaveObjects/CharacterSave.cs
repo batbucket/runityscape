@@ -26,12 +26,12 @@ public struct CharacterSave : IRestorable<Character> {
     public Character Restore() {
         Character c = Util.StringToObject<Character>(Type);
         c.Name = this.Name;
+        c.Equipment = Equipment.Restore();
         c.Attributes = Attributes.Restore();
         c.Resources = Resources.Restore();
         c.Attack = Attack.Restore();
         c.Spells = Spells.Restore();
         c.Actions = Actions.Restore();
-        c.Equipment = Equipment.Restore();
         return c;
     }
 }
