@@ -91,7 +91,7 @@ public class BattlePage : Page {
     string musicLoc,
     string location,
     string text,
-    params Character[] enemies) : this(text, location, party.Main, party.Members, enemies, null, null, null, null, null, musicLoc, null, victory, null, defeat) {
+    params Character[] enemies) : this(text, location, party.Leader, party.Members, enemies, null, null, null, null, null, musicLoc, null, victory, null, defeat) {
 
     }
 

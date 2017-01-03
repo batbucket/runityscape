@@ -1,4 +1,5 @@
-﻿public struct AttributeSave : IRestorable<Attribute> {
+﻿[System.Serializable]
+public struct AttributeSave : IRestorable<Attribute> {
     public PairedValueSave Paired;
     public string Type;
 

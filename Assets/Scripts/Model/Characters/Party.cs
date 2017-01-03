@@ -3,9 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Party : IList<Character> {
-    public Character Main;
+    public Character Leader;
     public IList<Character> Members; // PC also counts as a member
-    public Inventory Inventory;
+    public Inventory Inventory {
+        get {
+            return Leader.Inventory;
+        }
+        set {
+            foreach (Character c in this) {
+                c.Inventory = value;
+            }
+        }
+    }
 
     public int Count {
         get {
@@ -29,14 +38,17 @@ public class Party : IList<Character> {
         }
     }
 
+    public Party() {
+        this.Leader = null;
+        this.Members = new List<Character>();
+    }
+
     public Party(Character pc) : this(pc, new Character[0]) { }
 
-    public Party(Character pc, IList<Character> followers) {
-        this.Main = pc;
-        this.Inventory = pc.Inventory;
-
+    public Party(Character leader, IList<Character> followers) {
+        this.Leader = leader;
         this.Members = new List<Character>();
-        Members.Add(pc);
+        Members.Add(leader);
         foreach (Character c in followers) {
             this.Add(c);
         }
@@ -56,8 +68,10 @@ public class Party : IList<Character> {
     }
 
     public void Add(Character item) {
-        item.Inventory = this.Inventory;
-        Members.Add(item);
+        if (!Members.Contains(item)) {
+            item.Inventory = this.Inventory;
+            Members.Add(item);
+        }
     }
 
     public void Clear() {

@@ -3,13 +3,10 @@
 public class LoadPage : ReadPage {
     public LoadPage() : base("Select a file to load.", "", "Load", false) {
         OnEnterAction += () => {
-            if (!Directory.Exists(SaveLoad.SAVE_DIRECTORY)) {
-                Directory.CreateDirectory(SaveLoad.SAVE_DIRECTORY);
-            }
-            string[] filePaths = Directory.GetFiles(SaveLoad.SAVE_DIRECTORY, SaveLoad.LOAD_SEARCH_PATTERN);
+            string[] filePaths = SaveLoad.GetSavePaths();
             for (int i = 0; i < filePaths.Length; i++) {
                 Camp camp = SaveLoad.Load(filePaths[i]);
-                string saveName = string.Format("{0}\nLevel {1}", camp.Party.Main.Name, camp.Party.Main.Level);
+                string saveName = SaveLoad.SaveFileDisplay(filePaths[i], camp.Party.Leader.Level);
 
                 ActionGrid[i] = new Process(saveName, "Load this file.", () =>
                 Game.Instance.CurrentPage = new ReadPage(

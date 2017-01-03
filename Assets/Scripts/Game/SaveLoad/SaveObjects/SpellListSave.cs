@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public struct SpellListSave<T> : IRestorable<IList<T>> where T : SpellFactory {
-    public SpellSave<T>[] SpellSaves;
+[System.Serializable]
+public struct SpellListSave : IRestorable<IList<SpellFactory>> {
+    public SpellSave[] SpellSaves;
 
-    public SpellListSave(IList<T> list) {
-        SpellSaves = new SpellSave<T>[list.Count];
+    public SpellListSave(IList<SpellFactory> list) {
+        SpellSaves = new SpellSave[list.Count];
 
         int index = 0;
-        foreach (T s in list) {
-            SpellSaves[index++] = new SpellSave<T>(s);
+        foreach (SpellFactory s in list) {
+            SpellSaves[index++] = new SpellSave(s);
         }
     }
 
-    public IList<T> Restore() {
-        IList<T> spells = new List<T>();
-        foreach (SpellSave<T> s in SpellSaves) {
+    public IList<SpellFactory> Restore() {
+        IList<SpellFactory> spells = new List<SpellFactory>();
+        foreach (SpellSave s in SpellSaves) {
             spells.Add(s.Restore());
         }
         return spells;

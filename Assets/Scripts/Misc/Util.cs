@@ -17,6 +17,21 @@ using System.Text.RegularExpressions;
 public static class Util {
 
     /// <summary>
+    /// From http://www.daveoncsharp.com/2009/09/how-to-use-temporary-files-in-csharp/
+    /// </summary>
+    public static void DeleteTmpFile(string tmpFile) {
+        try {
+            // Delete the temp file (if it exists)
+            if (File.Exists(tmpFile)) {
+                File.Delete(tmpFile);
+                Console.WriteLine("TEMP file deleted.");
+            }
+        } catch (Exception ex) {
+            Console.WriteLine("Error deleteing TEMP file: " + ex.Message);
+        }
+    }
+
+    /// <summary>
     /// From
     /// https://stackoverflow.com/questions/13049732/automatically-rename-a-file-if-it-already-exists-in-windows-way
     /// </summary>

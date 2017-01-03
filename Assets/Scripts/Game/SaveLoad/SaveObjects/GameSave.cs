@@ -1,7 +1,5 @@
-﻿using System;
-
+﻿[System.Serializable]
 public struct GameSave : IRestorable<Camp> {
-
     public PartySave Party;
     public EventFlagsSave Flags;
 

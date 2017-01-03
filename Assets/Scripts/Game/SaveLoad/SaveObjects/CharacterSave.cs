@@ -7,9 +7,9 @@ public struct CharacterSave : IRestorable<Character> {
     public string Name;
     public AttributeListSave Attributes;
     public ResourceListSave Resources;
-    public SpellSave<SpellFactory> Attack;
-    public SpellListSave<SpellFactory> Spells;
-    public SpellListSave<SpellFactory> Actions;
+    public SpellSave Attack;
+    public SpellListSave Spells;
+    public SpellListSave Actions;
     public EquipmentSave Equipment;
 
     public CharacterSave(Character c) {
@@ -17,9 +17,9 @@ public struct CharacterSave : IRestorable<Character> {
         Name = c.Name;
         Attributes = new AttributeListSave(c.Attributes.Values.ToList());
         Resources = new ResourceListSave(c.Resources.Values.ToList());
-        Attack = new SpellSave<SpellFactory>(c.Attack);
-        Spells = new SpellListSave<SpellFactory>(c.Spells);
-        Actions = new SpellListSave<SpellFactory>(c.Actions);
+        Attack = new SpellSave(c.Attack);
+        Spells = new SpellListSave(c.Spells);
+        Actions = new SpellListSave(c.Actions);
         Equipment = new EquipmentSave(c.Equipment);
     }
 

@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine.UI;
+using System.IO;
 
 public class Game : MonoBehaviour {
     private static Game instance;
@@ -88,6 +89,9 @@ public class Game : MonoBehaviour {
     public StartMenu StartMenu;
 
     void Start() {
+        if (!Directory.Exists(SaveLoad.SAVE_DIRECTORY)) {
+            Directory.CreateDirectory(SaveLoad.SAVE_DIRECTORY);
+        }
         instance = this;
 
         StartMenu = new StartMenu();

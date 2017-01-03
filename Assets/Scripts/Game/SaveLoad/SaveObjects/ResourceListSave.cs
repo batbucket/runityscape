@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 [System.Serializable]
 public struct ResourceListSave : IRestorable<IDictionary<ResourceType, Resource>> {
-    ResourceSave[] Resources;
+    public ResourceSave[] Resources;
 
     public ResourceListSave(IList<Resource> list) {
         Resources = new ResourceSave[list.Count];

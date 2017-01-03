@@ -4,10 +4,11 @@ public class SavePage : ReadPage {
 
     public SavePage(Camp camp) : base("", "Make a new save, or overwrite an existing one.", "Save", false, camp.Party, null) {
         OnTickAction += () => {
-            string[] filePaths = Directory.GetFiles(SaveLoad.SAVE_DIRECTORY, SaveLoad.LOAD_SEARCH_PATTERN);
+            string[] filePaths = SaveLoad.GetSavePaths();
             for (int i = 0; i < filePaths.Length; i++) {
+                string filePath = filePaths[i];
                 Camp loadedCamp = SaveLoad.Load(filePaths[i]);
-                string saveName = string.Format("{0}\nLevel {1}", camp.Party.Main.Name, camp.Party.Main.Level);
+                string saveName = SaveLoad.SaveFileDisplay(filePath, loadedCamp.Party.Leader.Level);
 
                 ActionGrid[i] = new Process(
                     saveName,
@@ -19,18 +20,22 @@ public class SavePage : ReadPage {
                         "Overwrite this save?",
                         "",
                         new IButtonable[] {
-                            new Process("Yes", "", () => SaveLoad.Save(camp, filePaths[i], true)),
+                            new Process("Yes", "", () => {
+                                SaveLoad.Save(camp, filePath, true);
+                                Game.Instance.CurrentPage = this;
+                                Game.Instance.TextBoxes.AddTextBox(new TextBox("Overwrite was successful."));
+                            }),
                             new Process("No", "", () => Game.Instance.CurrentPage = this) },
                         loadedCamp.Party
                     )
                 );
             }
 
-            for (int i = filePaths.Length; i < filePaths.Length - SaveLoad.MAX_SAVE_FILES; i++) {
+            for (int i = filePaths.Length; i < SaveLoad.MAX_SAVE_FILES; i++) {
                 ActionGrid[i] = new Process(
-                    "EMPTY",
+                    "<color=grey>EMPTY</color>",
                     "Create a new save.",
-                    () => SaveLoad.Save(camp, string.Format("{0}\\{1}", SaveLoad.SAVE_DIRECTORY, camp.Party.Main.Name), false)
+                    () => SaveLoad.Save(camp, string.Format("{0}\\{1}", SaveLoad.SAVE_DIRECTORY, camp.Party.Leader.Name), false)
                     );
             }
 

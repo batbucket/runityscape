@@ -7,6 +7,8 @@ public class Hero : PlayerCharacter {
         this.Attack = new Attack();
         this.AddResource(new NamedResource.Experience());
         this.Actions.Add(new Check());
+        this.Equipment.Add(new OldArmor());
+        this.Equipment.Add(new OldSword());
     }
 
     protected override void Act() {

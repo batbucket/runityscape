@@ -1,14 +1,12 @@
-﻿using System;
-
-[System.Serializable]
-public struct SpellSave<T> : IRestorable<T> where T : SpellFactory {
+﻿[System.Serializable]
+public struct SpellSave : IRestorable<SpellFactory> {
     public string Name;
 
-    public SpellSave(T s) {
+    public SpellSave(SpellFactory s) {
         Name = Util.GetClassName(s);
     }
 
-    public T Restore() {
-        return Util.StringToObject<T>(Name);
+    public SpellFactory Restore() {
+        return Util.StringToObject<SpellFactory>(Name);
     }
 }

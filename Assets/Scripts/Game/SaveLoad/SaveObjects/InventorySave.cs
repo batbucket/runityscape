@@ -3,18 +3,18 @@
 [System.Serializable]
 public struct InventorySave : IRestorable<Inventory> {
     public int Gold;
-    public SpellListSave<Item> Items;
+    public SpellListSave Items;
 
     public InventorySave(Inventory inv) {
         Gold = inv.Gold;
-        Items = new SpellListSave<Item>(inv.Items);
+        Items = new SpellListSave(inv.Items.Cast<SpellFactory>().ToList());
     }
 
     public Inventory Restore() {
         Inventory inven = new Inventory();
         inven.Gold = this.Gold;
-        foreach (SpellSave<Item> i in Items.SpellSaves) {
-            inven.Add(i.Restore());
+        foreach (SpellSave i in Items.SpellSaves) {
+            inven.Add((Item)i.Restore());
         }
         return inven;
     }

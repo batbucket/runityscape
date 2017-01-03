@@ -1,27 +1,30 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 [System.Serializable]
 public struct PartySave : IRestorable<Party> {
     public CharacterSave Leader;
-    public CharacterSave[] Characters;
+    public CharacterSave[] NonleaderMembers;
     public InventorySave Inventory;
 
     public PartySave(Party p) {
-        Leader = new CharacterSave(p.Main);
-        Characters = new CharacterSave[p.Members.Count];
+        Leader = new CharacterSave(p.Leader);
+        NonleaderMembers = new CharacterSave[p.Members.Count - 1];
         int index = 0;
         foreach (Character c in p.Members) {
-            Characters[index++] = new CharacterSave(c);
+            if (c != p.Leader) {
+                NonleaderMembers[index++] = new CharacterSave(c);
+            }
         }
         Inventory = new InventorySave(p.Inventory);
     }
 
     public Party Restore() {
-        Party p = new Party(Leader.Restore());
-        foreach (CharacterSave c in Characters) {
-            p.Add(c.Restore());
+        Character restoredLeader = Leader.Restore();
+        restoredLeader.Inventory = Inventory.Restore();
+        IList<Character> restoredNonleaderMembers = new List<Character>();
+        foreach (CharacterSave c in NonleaderMembers) {
+            restoredNonleaderMembers.Add(c.Restore());
         }
-        p.Inventory = Inventory.Restore();
-        return p;
+        return new Party(restoredLeader, restoredNonleaderMembers);
     }
 }

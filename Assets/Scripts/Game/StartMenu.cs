@@ -14,8 +14,9 @@ public class StartMenu : ReadPage {
         ActionGrid[0] = new Process("New Game", "Start a new adventure.", () => Game.Instance.CurrentPage = new NewGamePage(this));
         ActionGrid[1] = new Process("Load Game", "Load a saved game.", () => Game.Instance.CurrentPage = new LoadPage());
 
-        if (Application.isEditor) {
+        if (UnityEngine.Debug.isDebugBuild) {
             ActionGrid[2] = new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Game.Instance.CurrentPage = debug.Menu);
+            ActionGrid[3] = new Process("Delete ALL Saves", "", () => { SaveLoad.DeleteAllSaves(); Game.Instance.TextBoxes.AddTextBox(new TextBox("Saves deleted.")); });
         }
         ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Exit", "Exit the application.", () => Application.Quit());
     }

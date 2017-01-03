@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿[System.Serializable]
 public struct ResourceSave : IRestorable<Resource> {
     public PairedValueSave Paired;
     public string Type;

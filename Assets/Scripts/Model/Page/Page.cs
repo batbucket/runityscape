@@ -167,7 +167,6 @@ public abstract class Page : IButtonable {
             myList.Add(c);
             OnAddCharacter(c);
         }
-        RepeatedCharacterCheck(GetAll());
     }
 
     void SetSide(IList<Character> characters, bool isRightSide) {
@@ -192,7 +191,7 @@ public abstract class Page : IButtonable {
      * Check if repeated characters exist on a side, if so, append A->Z for each repeated character
      * For example: Steve A, Steve B
      */
-    void RepeatedCharacterCheck(IList<Character> characters) {
+    private void RepeatedCharacterCheck(IList<Character> characters) {
         Dictionary<string, IList<Character>> repeatedCharacters = new Dictionary<string, IList<Character>>();
         foreach (Character c in characters) {
             if (!repeatedCharacters.ContainsKey(c.Name)) {
@@ -279,6 +278,7 @@ public abstract class Page : IButtonable {
         OnTickAction.Invoke();
         OnTick();
         IList<Character> all = GetAll();
+        RepeatedCharacterCheck(all);
         foreach (Character c in all) {
             c.Tick();
         }

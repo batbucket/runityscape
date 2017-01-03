@@ -17,13 +17,7 @@ public class Attack : SpellFactory {
     const float CRIT_RATIO = 2f;
     const int MIN_DAMAGE = 1;
 
-    private bool canMiss;
-    private bool canCrit;
-
-    public Attack(bool canMiss = true, bool canCrit = true) : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE) {
-        this.canMiss = canMiss;
-        this.canCrit = canCrit;
-    }
+    public Attack() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE) { }
 
     protected override void OnOnce(Character caster, Spell other) {
         if (caster.HasResource(ResourceType.SKILL)) {
@@ -37,7 +31,7 @@ public class Attack : SpellFactory {
     public override Hit CreateHit() {
         return new Hit(
             isState: (c, t, o) => {
-                return t.State == CharacterState.DEFEAT || !canMiss || Util.Chance(.8);
+                return t.State == CharacterState.DEFEAT || Util.Chance(.8);
             },
             calculation: (c, t, o) => {
                 return new Calculation(
@@ -60,7 +54,7 @@ public class Attack : SpellFactory {
     public override Critical CreateCritical() {
         return new Critical(
                 isState: (c, t, o) => {
-                    return canCrit && Util.Chance(.2);
+                    return Util.Chance(.2);
                 },
                 calculation: (c, t, o) => {
                     return new Calculation(targetResources: new Dictionary<ResourceType, PairedInt>() {
