@@ -13,4 +13,4 @@
 * Item system, such as potions and equippable weapons
 * Scrolling combat log
 * Namespaces and comments where appropriate
-* Model-View-Presenterish
+* Model-View-Presenterish structure
