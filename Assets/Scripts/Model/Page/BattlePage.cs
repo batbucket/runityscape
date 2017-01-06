@@ -46,7 +46,7 @@ namespace Scripts.Model.Pages {
         /// <summary>
         /// The page the user will be able to go to if they lose the battle.
         /// </summary>
-        public Page Defeat;
+        public BattleResult Defeat;
 
         /// <summary>
         /// A function that returns true when the user's party has been defeated.
@@ -67,7 +67,7 @@ namespace Scripts.Model.Pages {
         /// <summary>
         /// The page the user will be able to go to if they are victorious in the battle.
         /// </summary>
-        public Page Victory;
+        public BattleResult Victory;
 
         /// <summary>
         /// The active Character is the Character who is currently under control
@@ -137,9 +137,9 @@ namespace Scripts.Model.Pages {
         /// <param name="onTick">Action invoked every tick.</param>
         /// <param name="musicLoc">Name of the music file to be played during battle.</param>
         /// <param name="isVictory">Function returning true when the user's side is victorious.</param>
-        /// <param name="victory">Page user can go to on victory.</param>
+        /// <param name="victory">Invoked on victory.</param>
         /// <param name="isDefeat">Function returning true when the user's side is defeated.</param>
-        /// <param name="defeat">Page user can go to on defeat.</param>
+        /// <param name="defeat">Invoked on defeat.</param>
         public BattlePage(
             string text = "",
             string location = "",
@@ -153,9 +153,9 @@ namespace Scripts.Model.Pages {
             Action onTick = null,
             string musicLoc = null,
             Func<bool> isVictory = null,
-            Page victory = null,
+            BattleResult victory = null,
             Func<bool> isDefeat = null,
-            Page defeat = null
+            BattleResult defeat = null
             )
             : base("", "", location, false, left, right, onFirstEnter, onEnter, onFirstExit, onExit, onTick, musicLoc: musicLoc) {
             this.mainCharacter = mainCharacter;
@@ -198,8 +198,8 @@ namespace Scripts.Model.Pages {
         /// <param name="enemies">Enemies to be battled in this page.</param>
         public BattlePage(
         Party party,
-        Page victory,
-        Page defeat,
+        BattleResult victory,
+        BattleResult defeat,
         string musicLoc,
         string location,
         string text,
@@ -218,21 +218,21 @@ namespace Scripts.Model.Pages {
         protected override void OnAddCharacter(Character c) {
             base.OnAddCharacter(c);
             c.OnBattleStart();
-            c.Flees.Add(new Flee(Defeat));
+            c.Flees.Add(new Flee(Defeat.Page));
         }
 
         protected override void OnAnyEnter() {
             base.OnAnyEnter();
             GetAll().ForEach(c => {
                 c.OnBattleStart();
-                c.Flees.Add(new Flee(Defeat));
+                c.Flees.Add(new Flee(Defeat.Page));
             });
         }
 
         protected override void OnAnyExit() {
             GetAll().ForEach(c => {
                 c.OnBattleStart();
-                c.Flees.Remove(new Flee(Defeat));
+                c.Flees.Remove(new Flee(Defeat.Page));
             });
         }
 
@@ -276,7 +276,10 @@ namespace Scripts.Model.Pages {
                      * Remove activeCharacter if they are not charged,
                      * Indicating that they've casted a spell or had their charge removed some other way
                      */
-                    if (activeCharacter == null || (activeCharacter != null && (!activeCharacter.IsCharged || activeCharacter.State == CharacterState.DEFEAT || activeCharacter.State == CharacterState.KILLED))) {
+                    if (activeCharacter == null
+                        || (activeCharacter != null && (!activeCharacter.IsCharged
+                        || activeCharacter.State == CharacterState.DEFEAT
+                        || activeCharacter.State == CharacterState.KILLED))) {
                         activeCharacter = PopAbledCharacter(activeCharacterQueue);
                         currentSelectionNode = selectionRoot;
                     }
@@ -296,16 +299,26 @@ namespace Scripts.Model.Pages {
                 case BattleState.VICTORY:
                     IList<Character> allies = GetAllies(mainCharacter);
 
-                    // Sum up all the experience given by the killed enemies to add to each player in the party
-                    int expSum = GetEnemies(mainCharacter).Sum(c => c.GetResourceCount(ResourceType.DEATH_EXP, false));
                     foreach (Character c in allies) {
                         c.OnVictory();
 
+                        /**
+                         * Sum up all the experience given by the killed enemies to add to each player in the party
+                         * We do this for every player because you only get experience if your_level is (less than or equal to) enemy_level
+                         */
+                        int expSum = GetEnemies(mainCharacter)
+                            .Where(e => c.Level <= e.Level)
+                            .Sum(e => e.GetResourceCount(ResourceType.DEATH_EXP, false));
+
                         // Only show the XP textboxes if experience was actually gained
-                        if (expSum > 0 && c.HasResource(ResourceType.EXPERIENCE)) {
-                            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} gained {1} experience.", c.DisplayName, expSum)));
-                            Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} has enough experience to level up.", c.DisplayName)));
-                            c.AddToResource(ResourceType.EXPERIENCE, false, expSum);
+                        if (c.HasResource(ResourceType.EXPERIENCE)) {
+                            if (expSum > 0) {
+                                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} gained {1} experience.", c.DisplayName, expSum)));
+                                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} has enough experience to level up.", c.DisplayName)));
+                                c.AddToResource(ResourceType.EXPERIENCE, false, expSum);
+                            } else {
+                                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} is too high level to gain experience from these enemies.", c.DisplayName, expSum)));
+                            }
                         }
                     }
 
@@ -321,6 +334,9 @@ namespace Scripts.Model.Pages {
                     Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!"));
 
                     Game.Instance.Sound.StopAllSounds();
+
+                    Victory.Action.Invoke();
+
                     loot = new LootPage(this, new Party(mainCharacter, GetAllies(mainCharacter)), GetEnemies(mainCharacter));
                     State = BattleState.POST_VICTORY;
                     break;
@@ -333,22 +349,30 @@ namespace Scripts.Model.Pages {
                     Game.Instance.TextBoxes.AddTextBox(new TextBox("Defeat!"));
                     Game.Instance.Sound.StopAllSounds();
 
+                    Defeat.Action.Invoke();
+
                     State = BattleState.POST_DEFEAT;
                     break;
 
                 case BattleState.POST_VICTORY:
-                    ActionGrid = new IButtonable[0];
+                    ClearActionGrid();
                     if (loot.HasLoot) {
                         ActionGrid[0] = loot;
                     }
                     ActionGrid[1] = new ItemManagePage(this, new Party(mainCharacter, GetAllies(mainCharacter)));
-                    ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Continue", "", () => Game.Instance.CurrentPage = Victory);
+                    bool lootHasKeyItems = loot.HasKeyItems;
+                    ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1]
+                        = new Process(
+                            "Continue",
+                            lootHasKeyItems ? string.Format("{0} must be looted to proceed.", Util.Color("Key items", Item.KEY_ITEM_COLOR)) : "",
+                            () => Game.Instance.CurrentPage = Victory.Page,
+                            () => !lootHasKeyItems);
                     Game.Instance.Sound.StopAllSounds();
                     break;
 
                 case BattleState.POST_DEFEAT:
-                    ActionGrid = new IButtonable[0];
-                    ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Continue", "", () => Game.Instance.CurrentPage = Defeat);
+                    ClearActionGrid();
+                    ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = Defeat.Page;
                     Game.Instance.Sound.StopAllSounds();
                     break;
             }
@@ -595,6 +619,7 @@ namespace Scripts.Model.Pages {
                     // One enemy case, just target them automatically
                     case SpellTargetState.ONE_TARGET:
                         spell.TryCast(caster, targetables[0]);
+                        SpellCastEnd(spell, caster, page);
                         break;
 
                     // Multiple targets case, go to the target selection grid

@@ -8,10 +8,12 @@
 
         public PlayerCharacter(Displays displays, StartStats attributes, Items items)
             : base(DISPLAYABLE, displays, attributes, items) {
+            this.IsShowingBarCounts = true;
         }
 
         public PlayerCharacter(Displays displays, StartStats attributes)
             : base(DISPLAYABLE, displays, attributes) {
+            this.IsShowingBarCounts = true;
         }
 
         protected override void Act() {

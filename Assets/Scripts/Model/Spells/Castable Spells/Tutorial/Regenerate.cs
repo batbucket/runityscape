@@ -12,12 +12,12 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
-                isIndefinite: (c, t, o) => t.State == CharacterState.NORMAL,
-                timePerTick: (c, t, o) => 0f,
-                perform: (c, t, calc, o) => t.AddToResource(ResourceType.HEALTH, false, 0.05f),
-                createText: (c, t, calc, o) => string.Format("{0} is regenerating life.", c.DisplayName),
-                sfx: (c, t, calc, o) => new CharacterEffect[0]
+                isState: (c, t) => true,
+                isIndefinite: (c, t) => t.State == CharacterState.NORMAL,
+                timePerTick: (c, t) => 0f,
+                perform: (c, t, calc) => t.AddToResource(ResourceType.HEALTH, false, 0.05f),
+                createText: (c, t, calc) => string.Format("{0} is regenerating <color=lime>life</color>.", c.DisplayName),
+                sfx: (c, t, calc) => new CharacterEffect[0]
                 );
         }
     }

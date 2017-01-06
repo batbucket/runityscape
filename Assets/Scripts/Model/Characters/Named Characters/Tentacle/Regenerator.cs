@@ -1,5 +1,7 @@
 ﻿using Script.Model.Characters.Named;
 using Scripts.Model.Characters;
+using Scripts.Model.Items;
+using Scripts.Model.Items.Named;
 using Scripts.Model.Spells.Named;
 using Scripts.Model.Stats.Resources;
 using Scripts.Presenter;
@@ -13,26 +15,31 @@ namespace Scripts.Model.Characters.Named {
         public Regenerator()
             : base(
                 new Displays {
-                    Loc = "Icons/tentacle",
+                    Loc = "tentacle",
                     Name = "Regenerator",
                     Color = Color.white,
                     Check = "A non-combatative tentacle with high life regeneration that can transfer its life to allies. Known as a \"regenerador\" in other languages."
                 },
                 new Displays {
-                    Loc = "Icons/hospital-cross",
+                    Loc = "hospital-cross",
                     Name = "Bishop",
                     Color = Color.white,
                     Check = "A non-combatative magic user with healing spells. Rumor has it that a bishop can run extremely quickly, but only in ordinal directions."
                 },
                 new StartStats {
-                    Lvl = 2,
+                    Lvl = 5,
                     Str = 1,
                     Int = 2,
-                    Agi = 1,
+                    Agi = 3,
                     Vit = 2
-                }
+                },
+                new Items { Inventory = new Item[] { new Apple() } }
                 ) {
+            this.Spells.Add(new Regenerate());
+            this.Spells.Add(new TransferLife());
+            this.Spells.Add(new Heal());
             AddResource(new NamedResource.DeathExperience(5));
+            this.Inventory.Gold = Util.Random(10, .50f);
         }
 
         protected override void DecideSpell() {
@@ -62,7 +69,7 @@ namespace Scripts.Model.Characters.Named {
                 Character target = Game.Instance
                     .CurrentPage.GetAllies(this)
                     .Where(c => c.State == CharacterState.NORMAL)
-                    .OrderBy(c => c.GetResourceCount(ResourceType.HEALTH, false))
+                    .OrderBy(c => ((float)c.GetResourceCount(ResourceType.HEALTH, false) / c.GetResourceCount(ResourceType.HEALTH, true)))
                     .FirstOrDefault();
                 QuickCast(new Heal(), target);
             }

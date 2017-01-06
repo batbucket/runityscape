@@ -99,25 +99,25 @@ namespace Scripts.Model.Pages {
         public string Text { get; protected set; }
         public string Tooltip { get; set; }
 
-        string IButtonable.ButtonText {
+        public string ButtonText {
             get {
                 return Location;
             }
         }
 
-        bool IButtonable.IsInvokable {
+        public bool IsInvokable {
             get {
                 return true;
             }
         }
 
-        bool IButtonable.IsVisibleOnDisable {
+        public bool IsVisibleOnDisable {
             get {
                 return true;
             }
         }
 
-        string IButtonable.TooltipText {
+        public string TooltipText {
             get {
                 return string.Format("Go to {0}.", Location);
             }
@@ -223,7 +223,7 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        void IButtonable.Invoke() {
+        public void Invoke() {
             Game.Instance.CurrentPage = this;
         }
 
@@ -245,6 +245,11 @@ namespace Scripts.Model.Pages {
         protected virtual void OnTick() {
         }
 
+        /// <summary>
+        /// Check if repeated characters exist on a side, if so, append A->Z for each repeated character
+        /// For example: Steve A, Steve B
+        /// </summary>
+        /// <param name="characters">To check</param>
         private void RepeatedCharacterCheck(IList<Character> characters) {
             Dictionary<string, IList<Character>> repeatedCharacters = new Dictionary<string, IList<Character>>();
             foreach (Character c in characters) {
@@ -273,7 +278,6 @@ namespace Scripts.Model.Pages {
 
         private void SetCharacterSides(IList<Character> characters, bool isRightSide) {
             foreach (Character c in characters) {
-                c.IsShowingBarCounts = !isRightSide;
                 c.Side = isRightSide;
             }
         }
@@ -288,10 +292,5 @@ namespace Scripts.Model.Pages {
                 RightCharacters = myList;
             }
         }
-
-        /**
-         * Check if repeated characters exist on a side, if so, append A->Z for each repeated character
-         * For example: Steve A, Steve B
-         */
     }
 }

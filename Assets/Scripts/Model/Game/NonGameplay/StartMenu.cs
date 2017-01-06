@@ -5,6 +5,7 @@ using Scripts.Model.TextBoxes;
 using Scripts.View.ActionGrid;
 using UnityEngine;
 using Scripts.Presenter;
+using Scripts.Model.Interfaces;
 
 namespace Scripts.Model.World.Pages {
 
@@ -12,12 +13,15 @@ namespace Scripts.Model.World.Pages {
         private Debug debug;
 
         public StartMenu() : base(
-                text: "Welcome to RunityScape.",
+                text: Game.GREETING,
                 tooltip: "Buttons can be accessed with the keyboard characters (QWERASDFZXCV) or by clicking.",
+                location: "Main Menu",
                 buttonables: new Process[0]) {
             this.debug = new Debug(this);
             ActionGrid[0] = new Process("New Game", "Start a new adventure.", () => Game.Instance.CurrentPage = new NewGamePage(this));
             ActionGrid[1] = new Process("Load Game", "Load a saved game.", () => Game.Instance.CurrentPage = new LoadPage());
+            ActionGrid[8] = new CreditsPage(this);
+
 
             if (UnityEngine.Debug.isDebugBuild) {
                 ActionGrid[2] = new Process("Debug", "Enter the debug page. ENTER AT YOUR OWN RISK.", () => Game.Instance.CurrentPage = debug.Menu);

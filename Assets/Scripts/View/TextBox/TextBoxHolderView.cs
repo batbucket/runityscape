@@ -27,10 +27,21 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private TextBoxView textBoxPrefab;
 
+        private IList<PooledBehaviour> children;
+
         public InputBoxView AddInputBox() {
             InputBoxView ibv = ObjectPoolManager.Instance.Get(inputBoxPrefab);
+            children.Add(ibv);
             Util.Parent(ibv.gameObject, gameObject);
+
             return ibv;
+        }
+
+        public void ReturnChildren() {
+            foreach (PooledBehaviour pb in children) {
+                ObjectPoolManager.Instance.Return(pb);
+            }
+            children.Clear();
         }
 
         public GameObject AddTextBox(TextBox textBox, Action callBack = null) {
@@ -38,6 +49,7 @@ namespace Scripts.View.TextBoxes {
                 return null;
             }
             PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
+            children.Add(pb);
             Util.Parent(pb.gameObject, gameObject);
             pb.transform.SetAsLastSibling();
             textBox.Write(pb.gameObject, callBack);
@@ -64,6 +76,7 @@ namespace Scripts.View.TextBoxes {
         }
 
         private void Start() {
+            children = new List<PooledBehaviour>();
             textBoxes = new Dictionary<TextBoxType, PooledBehaviour>() {
             { TextBoxType.TEXT, textBoxPrefab },
             { TextBoxType.LEFT, leftBoxPrefab },

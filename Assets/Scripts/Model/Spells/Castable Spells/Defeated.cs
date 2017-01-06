@@ -11,16 +11,16 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
-                isIndefinite: (c, t, o) => true,
-                onStart: (c, t, o) => t.IsCharging = false,
+                isState: (c, t) => true,
+                isIndefinite: (c, t) => true,
+                onStart: (c, t) => t.IsCharging = false,
                 react: (s) => {
                     if (s.Calculation.TargetResources[ResourceType.HEALTH].False < 0) {
                         s.Target.OnKill();
                     }
                 },
-                onEnd: (c, t, o) => t.IsCharging = true,
-                sfx: (c, t, calc, o) => new CharacterEffect[] { new DefeatEffect(t.Presenter.PortraitView) }
+                onEnd: (c, t) => t.IsCharging = true,
+                sfx: (c, t, calc) => new CharacterEffect[] { new DefeatEffect(t.Presenter.PortraitView) }
                 );
         }
     }

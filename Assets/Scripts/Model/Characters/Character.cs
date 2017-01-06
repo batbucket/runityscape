@@ -60,10 +60,10 @@ namespace Scripts.Model.Characters {
             foreach (Item i in items.Inventory) {
                 Inventory.Add(i);
             }
-            foreach (KeyValuePair<EquipmentType, EquippableItem> e in items.Equips) {
-                if (e.Value == null) {
+            if (items.Equips != null) {
+                foreach (KeyValuePair<EquipmentType, EquippableItem> e in items.Equips) {
+                    Equipment.Add(e.Value);
                 }
-                Equipment.Add(e.Value);
             }
 
             this.Attributes = new SortedDictionary<AttributeType, Stats.Attributes.Attribute>();
@@ -191,6 +191,7 @@ namespace Scripts.Model.Characters {
         }
 
         public void AddToBuffs(Spell spell) {
+            Buffs.RemoveAll(s => s.Equals(spell));
             Buffs.Add(spell);
         }
 
@@ -340,9 +341,10 @@ namespace Scripts.Model.Characters {
             this.state = CharacterState.DEFEAT;
             Game.Instance.TextBoxes.AddTextBox(
                 new TextBox(
-                    string.Format("{0} sustained <color=red>mortal damage</color>.", DisplayName)
+                    string.Format("{0} sustains <color=red>mortal damage</color>.", DisplayName)
                 ));
             AddToResource(ResourceType.HEALTH, false, 1, false);
+            CancelBuffs();
             (new Defeated()).Cast(this, this);
         }
 
@@ -350,7 +352,7 @@ namespace Scripts.Model.Characters {
             this.state = CharacterState.KILLED;
             Game.Instance.TextBoxes.AddTextBox(
                 new TextBox(
-                    string.Format("{0} was <color=red>slain</color>.", DisplayName)
+                    string.Format("{0} is <color=red>slain</color>.", DisplayName)
                     ));
 
             Presenter.PortraitView.AddEffect(new DeathEffect(Presenter.PortraitView));
@@ -370,9 +372,24 @@ namespace Scripts.Model.Characters {
             if (Side) {
                 a = new RightBox(SpriteLoc, sel, TextColor);
             } else {
-                a = new RightBox(SpriteLoc, sel, TextColor);
+                a = new LeftBox(SpriteLoc, sel, TextColor);
             }
             return a;
+        }
+
+        /// <summary>
+        /// Talk(), but doesn't return a textbox.
+        /// </summary>
+        /// <param name="s">Strings to be possibly said</param>
+        protected void Speak(params string[] s) {
+            AvatarBox a = null;
+            string sel = s.PickRandom(1).First();
+            if (Side) {
+                a = new RightBox(SpriteLoc, sel, TextColor);
+            } else {
+                a = new LeftBox(SpriteLoc, sel, TextColor);
+            }
+            Game.Instance.TextBoxes.AddTextBox(a);
         }
 
         public void Tick() {

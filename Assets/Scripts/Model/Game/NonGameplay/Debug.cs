@@ -48,6 +48,7 @@ namespace Scripts.Model.World.Pages {
                         );
                 }),
                 new Process("BossTransition", action: () => Game.Instance.Title.Play("fox-head", "Hello World")),
+                new Process("I am boss", action: () => Game.Instance.CurrentPage = BossBattle),
                 new Process("Back", "Go back to the main menu.", () => { Game.Instance.CurrentPage = primary; })
                 }
             );
@@ -55,7 +56,7 @@ namespace Scripts.Model.World.Pages {
             this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: amity, left: new Character[] { amity }, right: new Character[] { new Lasher(), new Regenerator(), new Lasher() });
             this.ComputerBattle = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Amit() }, right: new Character[] { new Lasher() });
             Amit a = new Amit();
-            this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { new Regenerator(), a, new Regenerator() }, right: new Character[] { new Lasher() });
+            this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { a }, right: new Character[] { new Shopkeeper(new Utility.EventFlags()) });
         }
     }
 }

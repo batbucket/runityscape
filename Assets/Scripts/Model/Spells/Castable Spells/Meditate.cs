@@ -20,19 +20,19 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => {
+                isState: (c, t) => {
                     return true;
                 },
-                calculation: (c, t, o) => {
+                calculation: (c, t) => {
                     return new Calculation(
                         targetResources: new Dictionary<ResourceType, PairedValue>() {
                     { ResourceType.HEALTH, new PairedValue(0, t.GetResourceCount(ResourceType.HEALTH, true) / 2) }
                         });
                 },
-                createText: (c, t, calc, o) => {
+                createText: (c, t, calc) => {
                     return string.Format(CAST_TEXT, t.DisplayName, calc.TargetResources[ResourceType.HEALTH].False);
                 },
-                sound: (c, t, calc, o) => {
+                sound: (c, t, calc) => {
                     return "Zip_0";
                 }
             );

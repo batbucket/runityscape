@@ -6,10 +6,9 @@ namespace Scripts.Model.Processes {
 
     public class Process : IButtonable {
         private Action action;
-        private Func<string> description;
-        private Func<string> disabledDesc;
+        private string description;
         private bool isVisibleOnDisable;
-        private Func<string> name;
+        private string name;
         private Func<bool> playCondition;
 
         public Process(string name,
@@ -17,27 +16,25 @@ namespace Scripts.Model.Processes {
                        Action action = null,
                        Func<bool> playCondition = null,
                        bool isVisibleOnDisable = true) {
-            this.name = () => name;
-            this.description = () => description;
+            this.name = name;
+            this.description = description;
             this.action = action ?? (() => { });
             this.playCondition = playCondition ?? (() => { return true; });
             this.isVisibleOnDisable = isVisibleOnDisable;
-            this.disabledDesc = () => "";
         }
 
         public Process() {
-            this.name = () => "";
-            this.description = () => "";
+            this.name = "";
+            this.description = "";
             this.action = (() => { });
             this.playCondition = (() => { return false; });
             this.isVisibleOnDisable = false;
-            this.disabledDesc = () => "";
         }
 
         public string ButtonText {
             get {
                 return
-                    Util.Color(name.Invoke(), IsInvokable ? Color.white : Color.red);
+                    Util.Color(name, IsInvokable ? Color.white : Color.red);
             }
         }
 
@@ -55,8 +52,11 @@ namespace Scripts.Model.Processes {
 
         public string TooltipText {
             get {
-                return
-                    Util.Color(description.Invoke(), IsInvokable ? Color.white : Color.red);
+                if (!string.IsNullOrEmpty(description)) {
+                    return Util.Color(description, IsInvokable ? Color.white : Color.red);
+                } else {
+                    return "";
+                }
             }
         }
 

@@ -15,22 +15,14 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
-                calculation: (c, t, o) => {
-                    return new Calculation(
-                        casterResources: new Dictionary<ResourceType, PairedValue>() {
-                        { ResourceType.CORRUPTION, new PairedValue(0, -c.GetResourceCount(ResourceType.CORRUPTION, false)) }
-                        }
-                        );
-                },
-                perform: (c, t, calc, o) => {
+                isState: (c, t) => true,
+                perform: (c, t, calc) => {
                     for (int i = 0; i < tents.Count; i++) {
                         Mimic s = tents[i].Summon();
                         Game.Instance.CurrentPage.AddCharacters(c.Side, s);
                     }
-                    Result.NumericPerform(c, t, calc);
                 },
-                createText: (c, t, calc, o) => string.Format("Tentacles erupt from the ground on {0}'s side!", c.DisplayName)
+                createText: (c, t, calc) => string.Format("Tentacles erupt from the ground on {0}'s side!", c.DisplayName)
                 );
         }
     }

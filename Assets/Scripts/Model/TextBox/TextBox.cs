@@ -10,7 +10,6 @@ namespace Scripts.Model.TextBoxes {
     /// Represents a box with text inside it.
     /// </summary>
     public class TextBox {
-        protected bool skip;
         private Color color;
         private TextEffect effect;
         private string rawText;
@@ -39,14 +38,7 @@ namespace Scripts.Model.TextBoxes {
         public float TimePerLetter { get { return timePerLetter; } }
         public virtual TextBoxType Type { get { return TextBoxType.TEXT; } }
 
-        public void Skip() {
-            skip = true;
-        }
-
         public virtual void Write(GameObject textBoxPrefab, Action callBack) {
-            if (skip) {
-                this.effect = TextEffect.FADE_IN;
-            }
             textBoxPrefab.GetComponent<TextBoxView>().WriteText(this, callBack);
         }
     }

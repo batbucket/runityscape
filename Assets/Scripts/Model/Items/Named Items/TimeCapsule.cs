@@ -19,7 +19,7 @@ namespace Scripts.Model.Items.Named {
         };
         }
 
-        protected override void OnOnce(Character caster, Spell other) {
+        protected override void OnOnce(Character caster) {
             foreach (Item i in items) {
                 caster.Inventory.Add(i);
             }

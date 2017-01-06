@@ -16,9 +16,9 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
-                perform: (c, t, calc, o) => Game.Instance.StartCoroutine(Escape(c)),
-                createText: (c, t, calc, o) => string.Format("{0} fled from battle!", t.DisplayName)
+                isState: (c, t) => true,
+                perform: (c, t, calc) => Game.Instance.StartCoroutine(Escape(c)),
+                createText: (c, t, calc) => string.Format("{0} flees from battle!", t.DisplayName)
                 );
         }
 

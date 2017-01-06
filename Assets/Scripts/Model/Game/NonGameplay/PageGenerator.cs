@@ -74,24 +74,31 @@ namespace Scripts.Model.World.Utility {
             IList<Encounter> enabledEncounts = new List<Encounter>();
 
             // Add enabled encounters into pool
-            foreach (Encounter e in encounters) {
-                enabledEncounts.Add(e);
+            for (int i = 0; i < encounters.Count; i++) {
+                Encounter e = encounters[i];
+                if (e.IsEnabled) {
+                    enabledEncounts.Add(e);
+                }
             }
 
             // Sum up weights
             float totalSum = 0;
-            foreach (Encounter e in encounters) {
-                totalSum += e.weight.Invoke();
+            for (int i = 0; i < enabledEncounts.Count; i++) {
+                Encounter e = enabledEncounts[i];
+                if (e.IsEnabled) {
+                    totalSum += e.Weight;
+                }
             }
 
             float random = UnityEngine.Random.Range(0, totalSum);
 
             float cumulSum = 0;
-            foreach (Encounter e in encounters) {
-                cumulSum += e.weight.Invoke();
+            for (int i = 0; i < enabledEncounts.Count; i++) {
+                Encounter e = enabledEncounts[i];
+                cumulSum += e.Weight;
 
                 if (random <= cumulSum) {
-                    Game.Instance.CurrentPage = e.page.Invoke();
+                    Game.Instance.CurrentPage = e.Page;
                     return;
                 }
             }

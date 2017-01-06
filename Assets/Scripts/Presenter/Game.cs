@@ -16,10 +16,13 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 namespace Scripts.Presenter {
 
     public class Game : MonoBehaviour {
+        public const string VERSION = "1.0";
+        public const string GREETING = "monsterscape version 1.0 - the demo";
         public const float NORMAL_TEXT_SPEED = 0.001f;
         public OtherPresenter Other;
         public StartMenu StartMenu;
@@ -62,6 +65,9 @@ namespace Scripts.Presenter {
 
         [SerializeField]
         private TooltipView tooltip;
+
+        [SerializeField]
+        private Text version;
 
         public static Game Instance { get { return instance; } }
 
@@ -114,6 +120,16 @@ namespace Scripts.Presenter {
             StartCoroutine(Timeline(acts, isGridVisible));
         }
 
+        public void Cutscene(bool isGridVisible, params Act[][] acts) {
+            List<Act> list = new List<Act>();
+            for (int i = 0; i < acts.Length; i++) {
+                for (int j = 0; j < acts[i].Length; j++) {
+                    list.Add(acts[i][j]);
+                }
+            }
+            StartCoroutine(Timeline(list.ToArray(), isGridVisible));
+        }
+
         public void Cutscene(bool isGridVisible, Act[] act0, params Act[] acts1) {
             Act[] all = new Act[act0.Length + acts1.Length];
             for (int i = 0; i < act0.Length; i++) {
@@ -132,13 +148,20 @@ namespace Scripts.Presenter {
             instance = this;
 
             header.Location = "Main Menu";
-            Other = new OtherPresenter(gold, time);
+            Other = new OtherPresenter(gold, time, version);
             StartMenu = new StartMenu();
             pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
         }
 
+        /// <summary>
+        /// Strings together a group of acts to make a cutscene-like event.
+        /// </summary>
+        /// <param name="acts">Acts to string up</param>
+        /// <param name="isGridVisible">Whether or not the user can see their normal action grid during the cutscene</param>
+        /// <returns></returns>
         private IEnumerator Timeline(Act[] acts, bool isGridVisible) {
             IButtonable[] savedGrid = new IButtonable[0];
+            Page pageWhenCutsceneStarts = CurrentPage;
             bool skip = false;
             if (!isGridVisible) {
                 savedGrid = CurrentPage.ActionGrid;
@@ -152,10 +175,11 @@ namespace Scripts.Presenter {
                 while (!skip && (timer += UnityEngine.Time.deltaTime) < a.Delay) {
                     yield return null;
                 }
-                if (skip && a.SkipEvent != null) {
-                    a.SkipEvent.Invoke();
+                if (skip && a.IsSkippable) {
+                    yield return new WaitForSeconds(0.01f);
+                } else {
+                    a.Action.Invoke();
                 }
-                a.Action.Invoke();
                 while (!skip && !a.HasEnded.Invoke()) {
                     yield return null;
                 }
@@ -179,7 +203,7 @@ namespace Scripts.Presenter {
                 }
             }
             if (!isGridVisible) {
-                CurrentPage.ActionGrid = savedGrid;
+                pageWhenCutsceneStarts.ActionGrid = savedGrid;
                 pagePresenter.Page.GetAll().ForEach(c => c.IsCharging = true);
             }
         }

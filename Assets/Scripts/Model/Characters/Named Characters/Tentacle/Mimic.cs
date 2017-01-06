@@ -17,8 +17,13 @@ namespace Script.Model.Characters.Named {
         private const float TRANSFORM_LIFE_PERCENT = 0.5f;
         private Displays real;
 
+        public Mimic(Displays real, Displays fake, StartStats attributes, Items items)
+            : base(fake, attributes, items) {
+            this.real = real;
+        }
+
         public Mimic(Displays real, Displays fake, StartStats attributes)
-            : base(fake, attributes, new Items(new Item[] { new Apple() }, new EquippableItem[] { new OldSword() })) {
+        : base(fake, attributes) {
             this.real = real;
         }
 

@@ -12,7 +12,7 @@
 
         public override Hit CreateHit() {
             return new Hit(
-                sound: (c, t, calc, o) => {
+                sound: (c, t, calc) => {
                     return "Blip_0";
                 }
             );

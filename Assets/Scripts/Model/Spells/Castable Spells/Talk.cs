@@ -13,7 +13,7 @@
 
         public override Hit CreateHit() {
             return new Hit(
-                createText: (c, t, calc, o) => {
+                createText: (c, t, calc) => {
                     return string.Format(text, c.DisplayName, t.DisplayName);
                 }
             );

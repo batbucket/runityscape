@@ -9,12 +9,12 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
-                isIndefinite: (c, t, o) => true,
+                isState: (c, t) => true,
+                isIndefinite: (c, t) => true,
                 onStart:
-                (c, t, o) => t.IsCharging = false,
+                (c, t) => t.IsCharging = false,
                 onEnd:
-                (c, t, o) => t.IsCharging = true
+                (c, t) => t.IsCharging = true
                 );
         }
     }

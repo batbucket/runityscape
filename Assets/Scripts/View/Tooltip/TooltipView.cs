@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+
 namespace Script.View.Tooltip {
 
     /// <summary>
@@ -16,11 +17,10 @@ namespace Script.View.Tooltip {
         public string MouseText;
 
         private void Update() {
-            if (PageText != null) {
+            tooltipText.text = MouseText;
+
+            if (string.IsNullOrEmpty(tooltipText.text) && !string.IsNullOrEmpty(PageText)) {
                 tooltipText.text = PageText;
-            }
-            if (!string.IsNullOrEmpty(MouseText)) {
-                tooltipText.text = MouseText;
             }
         }
     }

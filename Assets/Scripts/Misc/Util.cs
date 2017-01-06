@@ -273,15 +273,6 @@ public static class Util {
         return source.OrderBy(x => Guid.NewGuid());
     }
 
-    public static void ReturnAllChildren(GameObject parent) {
-        PooledBehaviour[] pbs = parent.GetComponentsInChildren<PooledBehaviour>();
-        foreach (PooledBehaviour pb in pbs) {
-            if (pb.gameObject.GetInstanceID() != parent.gameObject.GetInstanceID()) {
-                ObjectPoolManager.Instance.Return(pb);
-            }
-        }
-    }
-
     public static Sprite GetSprite(string name) {
         return Resources.Load<Sprite>(string.Format("{0}/{1}", "Images", name));
     }

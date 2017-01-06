@@ -10,7 +10,8 @@ namespace Scripts.Model.Items.Named {
         public SpellTome(SpellFactory spell)
             : base(
                 string.Format("Tome: {0}", spell.Name),
-                string.Format("Teaches {0} - {1}: {2}", spell.Name, spell.GetCosts(), spell.Description)) {
+                string.Format("Teaches {0} - {1}: {2}", spell.Name, spell.GetCosts(), spell.Description),
+                true) {
             this.spell = spell;
         }
 
@@ -24,11 +25,11 @@ namespace Scripts.Model.Items.Named {
         }
 
         protected override string OtherUseText(Character caster, Character target, Calculation calculation) {
-            return string.Format("{0} taught the Spell: {1} to {2}.", caster.Name, spell.Name, target.Name);
+            return string.Format("{0} uses {2} on {1}.\n{1} learns the spell {3}.", caster.Name, target.Name, this.name, this.spell.Name);
         }
 
         protected override string SelfUseText(Character caster, Character target, Calculation calculation) {
-            return string.Format("{0} taught themselves {1}.", caster.Name, spell.Name);
+            return string.Format("{0} uses {1} on themselves.\n{0} learns the spell {2}.", caster.Name, this.name, spell.Name);
         }
     }
 }

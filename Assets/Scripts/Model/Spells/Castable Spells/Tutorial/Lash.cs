@@ -27,10 +27,10 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => {
+                isState: (c, t) => {
                     return Util.Chance(.8);
                 },
-                calculation: (c, t, o) => {
+                calculation: (c, t) => {
                     return new Calculation(
                         targetResources: new Dictionary<ResourceType, PairedValue>() {
                         { ResourceType.HEALTH,
@@ -39,13 +39,13 @@ namespace Scripts.Model.Spells.Named {
                         }
                     );
                 },
-                createText: (c, t, calc, o) => {
+                createText: (c, t, calc) => {
                     return string.Format(SUCCESS_TEXT, c.DisplayName, t.DisplayName, -calc.TargetResources[ResourceType.HEALTH].False);
                 },
-                sound: (c, t, calc, o) => {
+                sound: (c, t, calc) => {
                     return SOUND_LOCATION;
                 },
-                sfx: (c, t, calc, o) => {
+                sfx: (c, t, calc) => {
                     return new CharacterEffect[] {
                     ShakeBasedOnDamage(t, calc.TargetResources[ResourceType.HEALTH].False),
                     DamageSplat(t, calc.TargetResources[ResourceType.HEALTH].False)
@@ -56,10 +56,10 @@ namespace Scripts.Model.Spells.Named {
 
         public override Miss CreateMiss() {
             return new Miss(
-                    createText: (c, t, calc, o) => {
+                    createText: (c, t, calc) => {
                         return string.Format(MISS_TEXT, c.Name, t.Name);
                     },
-                    sfx: (c, t, calc, o) => {
+                    sfx: (c, t, calc) => {
                         return new CharacterEffect[] {
                         new HitsplatEffect(t.Presenter.PortraitView, Color.grey, "MISS"),
                         };

@@ -10,7 +10,8 @@ namespace Scripts.Model.Items.Named {
 
         //Bonus stats go here
         private static readonly IDictionary<AttributeType, int> ATTRIBUTE_BONUSES = new Dictionary<AttributeType, int>() {
-        { AttributeType.VITALITY, 2 }
+        { AttributeType.VITALITY, 2 },
+        { AttributeType.AGILITY, -1 }
     };
 
         public OldArmor() : base(NAME, DESCRIPTION, EQUIPMENT_TYPE, ATTRIBUTE_BONUSES) {

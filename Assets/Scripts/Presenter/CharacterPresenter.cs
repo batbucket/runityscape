@@ -53,7 +53,7 @@ namespace Scripts.Presenter {
                 })
                     .ToArray());
 
-            this.PortraitView.Sprite = Util.GetSprite(Character.SpriteLoc);
+            this.PortraitView.Sprite = Util.LoadIcon(Character.SpriteLoc);
         }
     }
 }

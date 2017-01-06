@@ -9,7 +9,7 @@ namespace Scripts.Model.Items {
     /// </summary>
     public abstract class ConsumableItem : Item {
 
-        public ConsumableItem(string name, string description) : base(name, description) {
+        public ConsumableItem(string name, string description, bool isKeyItem = false) : base(name, description, isKeyItem) {
         }
 
         public override Critical CreateCritical() {
@@ -18,22 +18,23 @@ namespace Scripts.Model.Items {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
-                calculation: (c, t, o) => {
+                isState: (c, t) => true,
+                calculation: (c, t) => {
                     return CreateCalculation(c, t);
                 },
-                perform: (c, t, calc, o) => {
+                perform: (c, t, calc) => {
                     Result.NumericPerform(c, t, calc);
                     c.Inventory.Remove(this);
                     OnPerform(c, t);
                 },
-                createText: (c, t, calc, o) => {
+                createText: (c, t, calc) => {
                     if (c == t) {
                         return SelfUseText(c, t, calc);
                     } else {
                         return OtherUseText(c, t, calc);
                     }
-                }
+                },
+                sound: (c, t, calc) => "Zip_0"
             );
         }
 

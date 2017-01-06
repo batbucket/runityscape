@@ -1,4 +1,5 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.Spells.Named;
 using Scripts.Model.Stats.Resources;
 using Scripts.View.Effects;
 using System.Collections.Generic;
@@ -13,13 +14,13 @@ namespace Scripts.Model.Spells {
     /// </summary>
     public abstract class SpellFactory {
         protected readonly IDictionary<ResourceType, int> costs;
+        protected string name;
         private readonly bool isSelfTargetable;
         private readonly SpellType spellType;
         private readonly TargetType targetType;
         private string abbreviation;
         private Color color;
         private string description;
-        private string name;
 
         public SpellFactory(string name,
                             string description,
@@ -75,12 +76,12 @@ namespace Scripts.Model.Spells {
         public string Description { get { return description; } }
         public bool IsEnabled { get; set; }
         public bool IsSelfTargetable { get { return isSelfTargetable; } }
-        public string Name { get { return name; } }
+        public virtual string Name { get { return name; } }
         public SpellType SpellType { get { return spellType; } }
         public TargetType TargetType { get { return targetType; } }
 
-        public void Cast(Character caster, Character target, Spell other = null) {
-            Spell spell = new Spell(this, caster, target, other);
+        public void Cast(Character caster, Character target) {
+            Spell spell = new Spell(this, caster, target);
             caster.CastSpells.Add(spell);
             target.RecievedSpells.Add(spell);
 
@@ -99,7 +100,7 @@ namespace Scripts.Model.Spells {
 
         public virtual Miss CreateMiss() {
             return new Miss(
-                sfx: (c, t, calc, o) => {
+                sfx: (c, t, calc) => {
                     return new CharacterEffect[] {
                     new HitsplatEffect(t.Presenter.PortraitView, Color.grey, "MISS")
                     };
@@ -175,24 +176,30 @@ namespace Scripts.Model.Spells {
             return targets.Count == 1;
         }
 
-        public void TryCast(Character caster, Character target, Spell other = null) {
+        public void TryCast(Character caster, Character target) {
             if (target != null && target.State != CharacterState.KILLED) {
-                TryCast(caster, new List<Character>() { target }, other);
+                TryCast(caster, new List<Character>() { target });
             }
         }
 
-        public void TryCast(Character caster, IList<Character> targets, Spell other = null) {
+        public void TryCast(Character caster, IList<Character> targets) {
             if (targets.Any(target => IsCastable(caster, target))) {
                 ConsumeResources(caster);
-                OnOnce(caster, other);
+                OnOnce(caster);
                 foreach (Character target in targets) {
-                    Cast(caster, target, other);
+                    Cast(caster, target);
                 }
             }
         }
 
         protected virtual bool Castable(Character caster, Character target) {
-            return true;
+            if (SpellType == SpellType.ACT) {
+                return caster.Actions.Contains(this);
+            } else if (SpellType == SpellType.MERCY) {
+                return caster.Flees.Contains(this);
+            } else {
+                return this is Attack || caster.Spells.Contains(this);
+            }
         }
 
         protected virtual void ConsumeResources(Character caster) {
@@ -202,7 +209,7 @@ namespace Scripts.Model.Spells {
             caster.Discharge();
         }
 
-        protected virtual void OnOnce(Character caster, Spell other) {
+        protected virtual void OnOnce(Character caster) {
         }
     }
 }

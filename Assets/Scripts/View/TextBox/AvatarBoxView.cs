@@ -24,7 +24,7 @@ namespace Scripts.View.TextBoxes {
         }
 
         public void WriteText(AvatarBox a, Action callBack = null) {
-            avatar.sprite = Util.GetSprite(a.SpriteLoc);
+            avatar.sprite = Util.LoadIcon(a.SpriteLoc);
             textBoxView.WriteText(a, callBack);
         }
     }

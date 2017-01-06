@@ -12,13 +12,13 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => {
+                isState: (c, t) => {
                     return true;
                 },
-                perform: (c, t, calc, o) => {
+                perform: (c, t, calc) => {
                     t.IsShowingBarCounts = true;
                 },
-                createText: (c, t, calc, o) => {
+                createText: (c, t, calc) => {
                     return CheckText(t);
                 }
             );

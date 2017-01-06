@@ -22,13 +22,13 @@ namespace Scripts.Model.Items {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => {
+                isState: (c, t) => {
                     return true;
                 },
-                perform: (c, t, calc, o) => {
+                perform: (c, t, calc) => {
                     Equip(t);
                 },
-                createText: (c, t, calc, o) => {
+                createText: (c, t, calc) => {
                     return string.Format((c == t) ? SELF_EQUIP_TEXT : OTHER_EQUIP_TEXT, c.DisplayName, t.DisplayName, this.Name);
                 }
             );
@@ -56,7 +56,7 @@ namespace Scripts.Model.Items {
             List<string> list = new List<string>();
             foreach (KeyValuePair<AttributeType, int> pair in bonuses) {
                 int bonus = pair.Value;
-                list.Add(string.Format("{0}{1} {2}", bonus >= 0 ? "+" : "-", bonus, pair.Key.ShortName));
+                list.Add(string.Format("{0}{1} {2}", bonus >= 0 ? "+" : "", bonus, pair.Key.ShortName));
             }
             return string.Join(",", list.ToArray());
         }

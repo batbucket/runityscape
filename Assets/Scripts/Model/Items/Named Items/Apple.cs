@@ -10,8 +10,8 @@ namespace Scripts.Model.Items.Named {
         public const string NAME = "Apple";
         public static readonly string DESCRIPTION = string.Format("Heal an ally for <color=lime>{0}</color> Life.", HEAL_AMOUNT);
         public const int HEAL_AMOUNT = 10;
-        public const string USE_TEXT_SELF = "{1} eats an apple!\n{1} restored <color=lime>{2}</color> life!";
-        public const string USE_TEXT_OTHER = "{0} uses an apple on {1}!\n{1} restored <color=lime>{2}</color> life!";
+        public const string USE_TEXT_SELF = "{1} eats an apple!\n{1} restores <color=lime>{2}</color> life!";
+        public const string USE_TEXT_OTHER = "{0} uses an apple on {1}!\n{1} restores <color=lime>{2}</color> life!";
 
         public Apple() : base(NAME, DESCRIPTION) {
         }

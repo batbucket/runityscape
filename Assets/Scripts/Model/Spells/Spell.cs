@@ -19,7 +19,7 @@ namespace Scripts.Model.Spells {
         public float TimePerTick;
         private bool isFirstTick;
 
-        public Spell(SpellFactory spellFactory, Character caster, Character target, Spell other = null) {
+        public Spell(SpellFactory spellFactory, Character caster, Character target) {
             this.SpellFactory = spellFactory;
 
             this.Hit = spellFactory.CreateHit();
@@ -28,15 +28,14 @@ namespace Scripts.Model.Spells {
 
             this.Caster = caster;
             this.Target = target;
-            this.Other = other;
 
             this.isFirstTick = true;
 
             Result = DetermineResult();
-            Calculation = Result.Calculation(this.Caster, this.Target, this.Other);
-            Duration = Result.Duration.Invoke(this.Caster, this.Target, this.Other);
+            Calculation = Result.Calculation(this.Caster, this.Target);
+            Duration = Result.Duration.Invoke(this.Caster, this.Target);
             DurationTimer = Duration;
-            TimePerTick = Result.TimePerTick.Invoke(this.Caster, this.Target, this.Other);
+            TimePerTick = Result.TimePerTick.Invoke(this.Caster, this.Target);
             TickTimer = TimePerTick;
         }
 
@@ -58,7 +57,7 @@ namespace Scripts.Model.Spells {
 
         public bool IsIndefinite {
             get {
-                return Result.IsIndefinite(Caster, Target, this.Other);
+                return Result.IsIndefinite(Caster, Target);
             }
         }
 
@@ -76,12 +75,12 @@ namespace Scripts.Model.Spells {
         public Character Target { get; set; }
 
         public void Cancel() {
-            Result.OnEnd(Caster, Target, Other);
+            Result.OnEnd(Caster, Target);
         }
 
         public Result DetermineResult() {
-            if (Hit.IsState.Invoke(this.Caster, this.Target, this.Other)) {
-                if (Critical.IsState(this.Caster, this.Target, this.Other)) {
+            if (Hit.IsState.Invoke(this.Caster, this.Target)) {
+                if (Critical.IsState(this.Caster, this.Target)) {
                     return Critical;
                 } else {
                     return Hit;
@@ -89,6 +88,22 @@ namespace Scripts.Model.Spells {
             } else {
                 return Miss;
             }
+        }
+
+        public override bool Equals(object obj) {
+            // If parameter is null return false.
+            if (obj == null) {
+                return false;
+            }
+
+            // If parameter cannot be cast to SpellFactory return false.
+            Spell s = obj as Spell;
+            if ((object)s == null) {
+                return false;
+            }
+
+            // Return true if the fields match:
+            return this.SpellFactory.Equals(s.SpellFactory);
         }
 
         public virtual void Invoke() {
@@ -111,18 +126,18 @@ namespace Scripts.Model.Spells {
                 }
             }
 
-            Result.Perform(this.Caster, this.Target, Calculation, this.Other);
+            Result.Perform(this.Caster, this.Target, Calculation);
 
-            IList<CharacterEffect> ce = Result.Sfx(this.Caster, this.Target, Calculation, this.Other);
+            IList<CharacterEffect> ce = Result.Sfx(this.Caster, this.Target, Calculation);
             foreach (CharacterEffect sfx in ce) {
                 Target.Presenter.PortraitView.AddEffect(sfx);
             }
 
-            Game.Instance.Sound.PlaySound(Result.Sound(this.Caster, this.Target, Calculation, this.Other));
-            string text = Result.CreateText(this.Caster, this.Target, Calculation, this.Other);
+            Game.Instance.Sound.PlaySound(Result.Sound(this.Caster, this.Target, Calculation));
+            string text = Result.CreateText(this.Caster, this.Target, Calculation);
 
             if (!string.IsNullOrEmpty(text) && isFirstTick) {
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation, this.Other)));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(Result.CreateText(this.Caster, this.Target, Calculation)));
             }
 
             Caster.UpdateState();
@@ -130,21 +145,28 @@ namespace Scripts.Model.Spells {
 
             for (int i = 0; i < characters.Count; i++) {
                 Character c = characters[i];
-                c.Witness(this);
+                if (c.State == CharacterState.NORMAL) {
+                    c.Witness(this);
+                }
             }
 
-            Caster.React(this);
-            Target.React(this);
+            if (Caster.State == CharacterState.NORMAL) {
+                Caster.React(this);
+            }
+
+            if (Target.State == CharacterState.NORMAL) {
+                Target.React(this);
+            }
         }
 
         public virtual void Tick() {
             if (isFirstTick) {
-                Result.OnStart(this.Caster, this.Target, this.Other);
+                Result.OnStart(this.Caster, this.Target);
             }
 
             if (!IsTimedOut) {
                 if (!IsIndefinite && DurationTimer <= 0) {
-                    Result.OnEnd(Caster, Target, Other);
+                    Result.OnEnd(Caster, Target);
                     IsTimedOut = true;
                 }
 

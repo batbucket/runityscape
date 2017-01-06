@@ -10,19 +10,19 @@ namespace Scripts.Model.Characters.Named {
         public Lasher()
             : base(
                 new Displays {
-                    Loc = "Icons/spiked-tentacle",
+                    Loc = "spiked-tentacle",
                     Name = "Lasher",
                     Color = Color.white,
                     Check = "A tentacle optimized for combat. Many have tried to weaponize these creatures, only to realize that they are at best, abysmal whips."
                 },
                 new Displays {
-                    Loc = "Icons/gladius",
+                    Loc = "gladius",
                     Name = "Knight",
                     Color = Color.white,
                     Check = "A knight in shining white armor, sans horse. Rumored to have an eccentric and suboptimal walking style."
                 },
                 new StartStats {
-                    Lvl = 1,
+                    Lvl = 3,
                     Str = 1,
                     Int = 1,
                     Agi = 1,
@@ -30,6 +30,7 @@ namespace Scripts.Model.Characters.Named {
                 }
                 ) {
             this.AddResource(new NamedResource.DeathExperience(3));
+            this.Inventory.Gold = Util.Random(5, .50f);
         }
 
         protected override void DecideSpell() {

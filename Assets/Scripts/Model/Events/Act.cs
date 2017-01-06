@@ -18,36 +18,36 @@ namespace Scripts.Model.Acts {
         public readonly float Delay;
         public readonly Func<bool> HasEnded;
         public readonly bool RequiresUserAdvance;
-        public readonly Action SkipEvent;
+        public readonly bool IsSkippable;
 
         private const char AVATARBOX_SYMBOL = '/';
 
         /// <summary>
         /// Splits up a string
-        /// "/Hello;World" to "/Hello" and ";World"
+        /// "/Hello>World" to "/Hello" and ">World"
         /// </summary>
         private const string REGEX = "(?=>|/)";
 
         private const char TEXTBOX_SYMBOL = '>';
 
-        public Act(Action a) : this(a, () => true, 0, false, null) {
+        public Act(Action a) : this(a, () => true, 0, false, false) {
         }
 
-        public Act(TextBox t) : this(() => Game.Instance.TextBoxes.AddTextBox(t), () => t.IsDone, 0.5f, true, () => t.Skip()) {
+        public Act(TextBox t) : this(() => Game.Instance.TextBoxes.AddTextBox(t), () => t.IsDone, 0.5f, true, true) {
         }
 
-        public Act(string imageLoc, string text) : this(() => Game.Instance.Title.Play(imageLoc, text), () => Game.Instance.Title.IsDone, 0.5f, false) {
+        public Act(string imageLoc, string text) : this(() => Game.Instance.Title.Play(imageLoc, text), () => Game.Instance.Title.IsDone, 0.5f, false, true) {
         }
 
-        public Act(Page nextPage) : this(() => Game.Instance.CurrentPage = nextPage, () => true, 0.5f, false) {
+        public Act(Page nextPage) : this(() => Game.Instance.CurrentPage = nextPage, () => true, 0.5f, false, false) {
         }
 
-        private Act(Action action, Func<bool> endCondition, float delay, bool reqUserAdv, Action skip = null) {
+        private Act(Action action, Func<bool> endCondition, float delay, bool reqUserAdv, bool isSkippable) {
             this.Action = action;
             this.HasEnded = endCondition ?? (() => true);
             this.Delay = delay;
             this.RequiresUserAdvance = reqUserAdv;
-            this.SkipEvent = skip;
+            this.IsSkippable = isSkippable;
         }
 
         public static Act[] LongTalk(Character c, string big) {

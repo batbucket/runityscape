@@ -10,6 +10,7 @@ using Scripts.Model.TextBoxes;
 using Scripts.View.ActionGrid;
 using System.Collections.Generic;
 using Scripts.Presenter;
+using Scripts.Model.Characters.Named;
 
 namespace Scripts.Model.World.Pages {
 
@@ -29,7 +30,6 @@ namespace Scripts.Model.World.Pages {
             this.camp = camp;
             this.party = party;
             AddCharacters(true, shopkeep);
-            flags.Bools[Flag.SHOPKEEPER_FRIENDS] = true;
             OnEnterAction += () => {
                 Choose();
                 if (!flags.Bools[Flag.SHOPKEEPER_GAVE_NAME]) {
@@ -37,19 +37,12 @@ namespace Scripts.Model.World.Pages {
                         ">You come across a woman in white desert clothing, complete with a loose hood. She seems to have no issues carrying what appears to be a massive backpack full of goods behind her despite being a head shorter than you.>From the opening in her hood you see she has brown hair, eyes, and skin. There is no doubt she spends a lot of time in the desert./Hey, are you gonna stare at me all day or are you gonna buy--/Oh, you're a new face around these parts, huh? I haven't seen you before./Actually, I think you're the first person I've seen in these parts./Ever./The name's Maple. Professional fruit dealer of the plateau./Don't want fruit? I also have non-fruit things on sale. Like a book, and other junk./Get your goods today at Maple's wandering emporium of fruit and non-fruit goods."),
                         new Act(() => flags.Bools[Flag.SHOPKEEPER_GAVE_NAME] = true)
                         );
-                } else if (!flags.Bools[Flag.SHOPKEEPER_FRIENDS]
-                && flags.Bools[Flag.SHOPKEEPER_MENTIONED_KEEPER]
-                && flags.Bools[Flag.SHOPKEEPER_BOUGHT_SOMETHING]) {
-                    Game.Instance.Cutscene(true,
-                    Act.LongTalk(shopkeep,
-                    "/You know, I've been thinking./You've been a good friend of mine, you know that?/You've bought my wares, and you've listened to me blabber about random things./I'd give you a discount, but I can't."),
-                    new Act(() => flags.Bools[Flag.SHOPKEEPER_FRIENDS] = true));
                 } else {
                     Game.Instance.Cutscene(true,
                         new Act(shopkeep.Talk(
                             "Whaddya need?",
                             "Need something?",
-                            "The best... and only fruit dealer on this plateau.",
+                            "The best and only fruit dealer on this plateau.",
                             "Fruit and fruit accessories.",
                             "All goods are at market price."
                             ))
@@ -66,7 +59,49 @@ namespace Scripts.Model.World.Pages {
             ActionGrid[3] = new Process("Fight", "", () => Fight());
 
             ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 2] = new ItemManagePage(this, party);
-            ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = camp;
+            ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = Leave();
+        }
+
+        private Process Leave() {
+            return new Process(
+                "Leave",
+                "",
+                () => {
+                    if (flags.Bools[Flag.SHOPKEEPER_MENTIONED_KEEPER]
+                     && flags.Bools[Flag.SHOPKEEPER_BOUGHT_SOMETHING]
+                     && flags.Ints[Flag.SHOPKEEPER_STATUS] == Flag.SHOPKEEPER_NEUTRAL) {
+                        flags.Ints[Flag.SHOPKEEPER_STATUS] = Flag.SHOPKEEPER_FRIENDLY;
+
+                        Act[] waitUp = Act.LongTalk(shopkeep,
+                            "/Hey, wait up./Thanks for uhh... being such a great customer and listener./I know you really wanted that tome, so...");
+                        Act[] tomeGiving = null;
+                        if (party.Inventory.IsFull) {
+                            tomeGiving = new Act[] {
+                            new Act(() => (new SpellTome(new Smite())).Cast(shopkeep, party.Leader)),
+                            new Act(shopkeep.Talk("Your inventory was full, so here you go."))
+                            };
+                        } else {
+                            tomeGiving = new Act[] {
+                                new Act(() => party.Inventory.Add(new SpellTome(new Smite()))),
+                                new Act(shopkeep.Talk("Here you go.")),
+                                new Act(shopkeep.Emote("Tome: Smite was added to the inventory."))
+                            };
+                        }
+                        Act[] reminder = new Act[] {
+                            new Act(shopkeep.Talk("Don't forget to come back here, okay?")),
+                            new Act(shopkeep.Talk("Giving you that book puts me in the negative. You owe me one."))
+                        };
+
+                        Game.Instance.Cutscene(false,
+                                waitUp,
+                                tomeGiving,
+                                reminder
+                            );
+                    } else {
+                        Game.Instance.CurrentPage = camp;
+                    }
+                }
+                );
         }
 
         private void Buy() {
@@ -74,12 +109,12 @@ namespace Scripts.Model.World.Pages {
             ActionGrid[0] = BuyItem(new Apple(), 5);
             ActionGrid[1] = BuyItem(new OldSword(), 15);
             ActionGrid[2] = BuyItem(new OldArmor(), 15);
-            ActionGrid[3] = BuyItem(new SpellTome(new Smite()), int.MaxValue);
+            ActionGrid[3] = BuyItem(new SpellTome(new Smite()), int.MaxValue, false);
 
             ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "", () => Choose());
         }
 
-        private Process BuyItem(Item i, int cost) {
+        private Process BuyItem(Item i, int cost, bool isBuyable = true) {
             Inventory inven = party.Inventory;
             return new Process(
                 string.Format("{0} - {1}g", i.Name, cost),
@@ -94,7 +129,7 @@ namespace Scripts.Model.World.Pages {
                             )
                             );
                 },
-                () => !inven.IsFull && inven.Gold >= cost
+                () => isBuyable && !inven.IsFull && inven.Gold >= cost
                 );
         }
 
@@ -127,7 +162,7 @@ namespace Scripts.Model.World.Pages {
 
             ActionGrid[1] = new Process("What kind of name is Maple?", "", () =>
                 Game.Instance.Cutscene(false, Act.LongTalk(shopkeep, "/You know, the tree? Maple trees? Maple wood? People make bows out of the stuff./Someone had some high hopes for my archery abilities./Seeing how I'm currently peddling goods off, you can probably guess that I'm not very good at marksmanship./My sister, Willow, is pretty good at shooting./But she uses one of those mechanical bows. So I guess it doesn't count."),
-                new Act(() => flags.Ints[Flag.SHOPKEEPER_MENTIONED_SISTER] = 1)));
+                new Act(() => flags.Bools[Flag.SHOPKEEPER_MENTIONED_SISTER] = true)));
 
             ActionGrid[5] = new Process("Ask about Willow", "", () =>
                 Game.Instance.Cutscene(false, Act.LongTalk(shopkeep,
@@ -141,13 +176,13 @@ namespace Scripts.Model.World.Pages {
 
             ActionGrid[3] = new Process("Why is your Tome of Smite so expensive?", "", () =>
             Game.Instance.Cutscene(false, Act.LongTalk(shopkeep,
-            "/I've only got one in stock./These books have to be smuggled out of a maximum security library./Hence the pricing.")));
+            "/I've only got a few in stock./These books have to be smuggled out of a maximum security library./Hence the pricing.")));
 
             ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "", () => Choose());
         }
 
         private void Fight() {
-            Game.Instance.CurrentPage = new BattlePage(party, camp, camp, "Hero Immortal", "Ruins", "", new Shopkeeper(flags));
+            Game.Instance.CurrentPage = new BattlePage(party, new BattleResult(camp), new BattleResult(camp), "", "Ruins", "", new Shopkeeper(flags));
         }
     }
 }

@@ -101,7 +101,7 @@ namespace Scripts.Presenter {
             Page.GetAll().ForEach(c => c.BattleTimer = 0);
 
             // Return all textboxes used
-            Util.ReturnAllChildren(textBoxHolder.gameObject);
+            textBoxHolder.ReturnChildren();
 
             // Stop any cutscenes
             Game.Instance.StopCoroutine("Timeline");

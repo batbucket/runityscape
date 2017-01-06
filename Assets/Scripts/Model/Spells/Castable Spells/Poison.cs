@@ -13,25 +13,25 @@ namespace Scripts.Model.Spells.Named {
         public override Hit CreateHit() {
             return new Hit(
                 isState:
-                (c, t, o) => true,
+                (c, t) => true,
                 duration:
-                (c, t, o) => {
+                (c, t) => {
                     return 30;
                 },
                 timePerTick:
-                (c, t, o) => {
+                (c, t) => {
                     return 1.5f;
                 },
                 calculation:
-                (c, t, o) => {
+                (c, t) => {
                     return new Calculation(targetResources: new Dictionary<ResourceType, PairedValue>() { { ResourceType.HEALTH, new PairedValue(0, -2) } });
                 },
                 createText:
-                (c, t, calc, o) => {
+                (c, t, calc) => {
                     return string.Format("{0} is <color=magenta>poisoned</color>!\n{0} took {1} damage!", t.DisplayName, Util.Color("" + -calc.TargetResources[ResourceType.HEALTH].False, Color.red));
                 },
                 sound:
-                (c, t, calc, o) => {
+                (c, t, calc) => {
                     return "Blip_1";
                 }
                 );

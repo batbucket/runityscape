@@ -4,6 +4,7 @@ using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.View.ActionGrid;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scripts.Model.World.Pages {
 
@@ -15,7 +16,7 @@ namespace Scripts.Model.World.Pages {
 
         private Inventory inventory;
 
-        private IList<Item> loot;
+        private List<Item> loot;
 
         public LootPage(BattlePage back, Party looters, IList<Character> defeated) : base(looters, "", "", "", "Looting", null, null) {
             this.back = back;
@@ -27,6 +28,12 @@ namespace Scripts.Model.World.Pages {
                 DisplayLoot();
                 ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = back;
             };
+        }
+
+        public bool HasKeyItems {
+            get {
+                return loot.Any(i => i.IsKeyItem);
+            }
         }
 
         public bool HasLoot {
@@ -48,8 +55,8 @@ namespace Scripts.Model.World.Pages {
             }
         }
 
-        private IList<Item> ExtractLoot(IList<Character> defeated) {
-            IList<Item> loot = new List<Item>();
+        private List<Item> ExtractLoot(IList<Character> defeated) {
+            List<Item> loot = new List<Item>();
 
             // Get inventories and equips
             foreach (Character _c in defeated) {

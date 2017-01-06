@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.View.ObjectPool {
@@ -17,6 +18,13 @@ namespace Scripts.View.ObjectPool {
         /// holding all unused, registered PooledBehaviors
         /// </summary>
         private IDictionary<string, Stack<PooledBehaviour>> pools;
+
+        /// <summary>
+        /// Tracks all instanceids of pooledbehaviors currently in the pools
+        /// Used to detect memory leak esque errors when a behavior is
+        /// Return()ed twice.
+        /// </summary>
+        private HashSet<int> ids;
 
         public static ObjectPoolManager Instance {
             get {
@@ -47,8 +55,11 @@ namespace Scripts.View.ObjectPool {
             } else {
                 //Util.Log(string.Format("Getting {0} from a pool of {1}.", script.gameObject.name, pools[script.gameObject.name].Count));
                 pb = pools[script.gameObject.name].Pop();
+                ids.Remove(pb.gameObject.GetInstanceID());
             }
+
             pb.gameObject.SetActive(true);
+            //Util.Log("Retrieved " + pb.GetInstanceID());
             return pb.GetComponent<T>();
         }
 
@@ -67,8 +78,10 @@ namespace Scripts.View.ObjectPool {
                 pb.gameObject.name = prefab.gameObject.name;
                 pb.gameObject.SetActive(false);
                 Util.Parent(pb.gameObject, this.gameObject);
+                ids.Add(pb.gameObject.GetInstanceID());
                 pools[prefab.name].Push(pb);
             }
+            //Util.Log(string.Format("Instantiated {0} of {1}", pools[prefab.name].Count, prefab.name));
         }
 
         /// <summary>
@@ -79,14 +92,22 @@ namespace Scripts.View.ObjectPool {
             Util.Assert(
                 pools.ContainsKey(pb.gameObject.name),
                 string.Format("Unable to find {0} in Pool. Did you use Instantiate?", pb.gameObject.name));
-            pb.Reset();
-            pb.gameObject.SetActive(false);
-            pools[pb.gameObject.name].Push(pb);
-            Util.Parent(pb.gameObject, this.gameObject);
+
+            // Prevents returning of already returned gameobjects.
+            if (!ids.Contains(pb.gameObject.GetInstanceID())) {
+                pb.Reset();
+                pb.gameObject.SetActive(false);
+                ids.Add(pb.gameObject.GetInstanceID());
+                pools[pb.gameObject.name].Push(pb);
+                Util.Parent(pb.gameObject, this.gameObject);
+            } else {
+                Util.Log(string.Format("Duplicate ID detected: {0}. Did you already return this behavior?", pb.GetInstanceID()));
+            }
         }
 
         public void Start() {
             pools = new Dictionary<string, Stack<PooledBehaviour>>();
+            ids = new HashSet<int>();
         }
     }
 }

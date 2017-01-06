@@ -12,10 +12,10 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
-                calculation: (c, t, o) => new Calculation(targetResources: new Dictionary<ResourceType, PairedValue>() { { ResourceType.HEALTH, new PairedValue(0, 2) } }),
-                sound: (c, t, calc, o) => "Zip_0",
-                createText: (c, t, calc, o) =>
+                isState: (c, t) => true,
+                calculation: (c, t) => new Calculation(targetResources: new Dictionary<ResourceType, PairedValue>() { { ResourceType.HEALTH, new PairedValue(0, 5) } }),
+                sound: (c, t, calc) => "Zip_0",
+                createText: (c, t, calc) =>
                     string.Format("{0} heals {1} for {2} life.",
                         c.DisplayName,
                         c != t ? t.DisplayName : "themselves",

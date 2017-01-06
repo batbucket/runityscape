@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.World.Pages;
 using Scripts.Model.World.Utility;
 using Scripts.View.Other;
+using UnityEngine.UI;
 
 namespace Scripts.Presenter {
 
@@ -14,17 +15,20 @@ namespace Scripts.Presenter {
 
         private GoldView gold;
         private TimeView time;
+        private Text version;
 
         private Camp camp;
 
-        public OtherPresenter(GoldView gold, TimeView time) {
+        public OtherPresenter(GoldView gold, TimeView time, Text version) {
             this.gold = gold;
             this.time = time;
+            this.version = version;
         }
 
         public void Tick() {
             gold.IsEnabled = (camp != null);
             time.IsEnabled = (camp != null);
+            this.version.text = Game.VERSION;
             if (camp != null) {
                 gold.Count = camp.Gold;
                 time.Day = camp.Day;

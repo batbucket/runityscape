@@ -13,9 +13,9 @@ namespace Scripts.Model.Spells.Named {
 
         public override Hit CreateHit() {
             return new Hit(
-                isState: (c, t, o) => true,
+                isState: (c, t) => true,
                 calculation:
-                (c, t, o) => {
+                (c, t) => {
                     int count = c.GetResourceCount(ResourceType.HEALTH, false) - 1;
                     return new Calculation(
                         casterResources:
@@ -28,7 +28,7 @@ namespace Scripts.Model.Spells.Named {
                         }
                     );
                 },
-                createText: (c, t, calc, o) =>
+                createText: (c, t, calc) =>
                 string.Format(
                     "{0} transfers {1} {2} to {3}!",
                     c.DisplayName,
@@ -36,8 +36,8 @@ namespace Scripts.Model.Spells.Named {
                     "<color=lime>life</color>",
                     t.DisplayName
                 ),
-                sound: (c, t, calc, o) => "Zip_0",
-                sfx: (c, t, calc, o) => new CharacterEffect[] {
+                sound: (c, t, calc) => "Zip_0",
+                sfx: (c, t, calc) => new CharacterEffect[] {
                 new HitsplatEffect(c.Presenter.PortraitView, Color.red, "" + calc.CasterResources[ResourceType.HEALTH].False),
                 new HitsplatEffect(t.Presenter.PortraitView, Color.green, "" + calc.TargetResources[ResourceType.HEALTH].False)
                 }

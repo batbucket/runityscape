@@ -13,7 +13,7 @@ namespace Scripts.Model.Characters {
         public const bool CONTROLLABLE_CPU = false;
 
         /// <summary>
-        /// Time before the AI can issue a command.
+        /// Seconds before the AI can issue a command.
         /// This is to simulate human input and reaction time.
         /// </summary>
         private const int DEFAULT_MAX_DELAY = 3;
@@ -25,7 +25,6 @@ namespace Scripts.Model.Characters {
             : base(CONTROLLABLE_CPU, displays, attributes, items) {
             this.maxDelay = DEFAULT_MAX_DELAY;
             this.delay = UnityEngine.Random.Range(0, maxDelay);
-            Inventory = new Inventory();
         }
 
         public ComputerCharacter(Displays displays, StartStats attributes)

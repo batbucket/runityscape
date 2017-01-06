@@ -11,49 +11,48 @@ using UnityEngine;
 
 public abstract class Result {
     public Type Type { get; set; }
-    public Func<Character, Character, Spell, bool> IsState;
-    public Func<Character, Character, Spell, bool> IsIndefinite;
-    public Func<Character, Character, Spell, float> Duration;
-    public Func<Character, Character, Spell, float> TimePerTick;
+    public Func<Character, Character, bool> IsState;
+    public Func<Character, Character, bool> IsIndefinite;
+    public Func<Character, Character, float> Duration;
+    public Func<Character, Character, float> TimePerTick;
     public Action<Spell> React;
     public Action<Spell> Witness;
-    public Func<Character, Character, Spell, Calculation> Calculation;
-    public Action<Character, Character, Calculation, Spell> Perform;
-    public Action<Character, Character, Spell> OnStart;
-    public Action<Character, Character, Spell> OnEnd;
-    public Func<Character, Character, Calculation, Spell, string> CreateText;
-    public Func<Character, Character, Calculation, Spell, string> Sound;
-    public Func<Character, Character, Calculation, Spell, IList<CharacterEffect>> Sfx;
+    public Func<Character, Character, Calculation> Calculation;
+    public Action<Character, Character, Calculation> Perform;
+    public Action<Character, Character> OnStart;
+    public Action<Character, Character> OnEnd;
+    public Func<Character, Character, Calculation, string> CreateText;
+    public Func<Character, Character, Calculation, string> Sound;
+    public Func<Character, Character, Calculation, IList<CharacterEffect>> Sfx;
 
-    public Result(Func<Character, Character, Spell, bool> isState = null,
-              Func<Character, Character, Spell, float> duration = null,
-              Func<Character, Character, Spell, float> timePerTick = null,
+    public Result(Func<Character, Character, bool> isState = null,
+              Func<Character, Character, float> duration = null,
+              Func<Character, Character, float> timePerTick = null,
               Action<Spell> react = null,
               Action<Spell> witness = null,
-              Func<Character, Character, Spell, bool> isIndefinite = null,
-              Func<Character, Character, Spell, Calculation> calculation = null,
-              Action<Character, Character, Calculation, Spell> perform = null,
-              Action<Character, Character, Spell> onStart = null,
-              Action<Character, Character, Spell> onEnd = null,
-              Func<Character, Character, Calculation, Spell, string> createText = null,
-              Func<Character, Character, Calculation, Spell, string> sound = null,
-              Func<Character, Character, Calculation, Spell, IList<CharacterEffect>> sfx = null) {
-        this.IsState = isState ?? ((c, t, o) => { return false; });
-        this.Duration = duration ?? ((c, t, o) => { return 0; });
-        this.TimePerTick = timePerTick ?? ((c, t, o) => { return 0; });
+              Func<Character, Character, bool> isIndefinite = null,
+              Func<Character, Character, Calculation> calculation = null,
+              Action<Character, Character, Calculation> perform = null,
+              Action<Character, Character> onStart = null,
+              Action<Character, Character> onEnd = null,
+              Func<Character, Character, Calculation, string> createText = null,
+              Func<Character, Character, Calculation, string> sound = null,
+              Func<Character, Character, Calculation, IList<CharacterEffect>> sfx = null) {
+        this.IsState = isState ?? ((c, t) => { return false; });
+        this.Duration = duration ?? ((c, t) => { return 0; });
+        this.TimePerTick = timePerTick ?? ((c, t) => { return 0; });
         this.React = react ?? ((s) => { });
         this.Witness = witness ?? ((s) => { });
-        this.IsIndefinite = isIndefinite ?? ((c, t, o) => { return false; });
-        this.Calculation = calculation ?? ((c, t, o) => { return new Calculation(); });
-        this.Perform = perform ?? ((c, t, calc, o) => { NumericPerform(c, t, calc); });
-        this.OnStart = onStart ?? ((c, t, o) => { });
-        this.OnEnd = onEnd ?? ((c, t, o) => { });
-        this.CreateText = createText ?? ((c, t, calc, o) => { return ""; });
-        this.Sound = sound ?? ((c, t, calc, o) => { return ""; });
-        this.Sfx = sfx ?? ((c, t, calc, o) => {
+        this.IsIndefinite = isIndefinite ?? ((c, t) => { return false; });
+        this.Calculation = calculation ?? ((c, t) => { return new Calculation(); });
+        this.Perform = perform ?? ((c, t, calc) => { NumericPerform(c, t, calc); });
+        this.OnStart = onStart ?? ((c, t) => { });
+        this.OnEnd = onEnd ?? ((c, t) => { });
+        this.CreateText = createText ?? ((c, t, calc) => { return ""; });
+        this.Sound = sound ?? ((c, t, calc) => { return ""; });
+        this.Sfx = sfx ?? ((c, t, calc) => {
             return AppendToStandard(c, t, calc, new CharacterEffect[0]);
-        }
-        );
+        });
     }
 
     public static void NumericPerform(Character caster, Character target, Calculation calculation) {
@@ -98,7 +97,10 @@ public abstract class Result {
 
     public static ShakeEffect ShakeBasedOnDamage(Character target, Calculation c) {
         float damage = Mathf.Min(c.TargetResources[ResourceType.HEALTH].False, 0);
-        float shakePower = BASE_SHAKE * damage / target.GetResourceCount(ResourceType.HEALTH, true);
+        float shakePower = 0;
+        if (target.GetResourceCount(ResourceType.HEALTH, true) > 0) {
+            shakePower = BASE_SHAKE * damage / target.GetResourceCount(ResourceType.HEALTH, true);
+        }
         return new ShakeEffect(target.Presenter.PortraitView, shakePower, 0);
     }
 

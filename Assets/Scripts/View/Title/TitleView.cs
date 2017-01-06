@@ -32,6 +32,12 @@ namespace Scripts.View.Title {
             }
         }
 
+        public void Cancel() {
+            this.IsDone = true;
+            StopAllCoroutines();
+            alpha = 0;
+        }
+
         public void Play(string imageLoc, string text) {
             StartCoroutine(TitleTransition(imageLoc, text, DURATION));
         }
@@ -47,6 +53,7 @@ namespace Scripts.View.Title {
                 alpha = Mathf.Lerp(0, 1, timer / FADE_TIME);
                 yield return null;
             }
+            alpha = 1;
             yield return new WaitForSeconds(duration);
             timer = 0;
 

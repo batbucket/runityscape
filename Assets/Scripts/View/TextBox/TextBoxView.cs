@@ -68,7 +68,6 @@ namespace Scripts.View.TextBoxes {
                     break;
 
                 case TextEffect.FADE_IN:
-                skipLoc:
                     text.text = textBox.RawText;
                     Color color = text.color;
                     color.a = 0;
@@ -98,10 +97,6 @@ namespace Scripts.View.TextBoxes {
                     text.text = string.Join("", currentTextArray);
                     string wrapper = "\u2007"; // Wordwrapped space
                     while (index < textBox.TextArray.Length) {
-                        if (IsSkip) {
-                            goto skipLoc;
-                        }
-
                         // Type out letters every time we reach the timePerLetter time.
                         if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                             if (!taggedText[index]) {
