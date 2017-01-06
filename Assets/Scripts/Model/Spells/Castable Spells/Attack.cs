@@ -36,7 +36,7 @@ namespace Scripts.Model.Spells.Named {
         public override Critical CreateCritical() {
             return new Critical(
                     isState: (c, t) => {
-                        return true || Util.Chance(.2);
+                        return Util.Chance(.2);
                     },
                     calculation: (c, t) => {
                         return new Calculation(targetResources: new Dictionary<ResourceType, PairedValue>() {
