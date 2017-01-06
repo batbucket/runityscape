@@ -1,8 +1,8 @@
 ﻿using Scripts.Model.World.Pages;
 using Scripts.Model.World.Serialization.SaveObject;
+using System;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace Scripts.Model.World.Serialization {
@@ -22,7 +22,7 @@ namespace Scripts.Model.World.Serialization {
         }
 
         public static void DeleteAllSaves() {
-            FileUtil.DeleteFileOrDirectory(SAVE_DIRECTORY);
+            Array.ForEach(Directory.GetFiles(SAVE_DIRECTORY), File.Delete);
             Directory.CreateDirectory(SAVE_DIRECTORY);
         }
 
