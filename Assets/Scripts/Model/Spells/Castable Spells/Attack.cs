@@ -26,6 +26,7 @@ namespace Scripts.Model.Spells.Named {
         private bool canMiss;
 
         public Attack() : base(NAME, DESCRIPTION, SPELL_TYPE, TARGET_TYPE) {
+            this.canMiss = true;
         }
 
         public Attack(bool canMiss) : this() {
@@ -35,7 +36,7 @@ namespace Scripts.Model.Spells.Named {
         public override Critical CreateCritical() {
             return new Critical(
                     isState: (c, t) => {
-                        return Util.Chance(.2);
+                        return true || Util.Chance(.2);
                     },
                     calculation: (c, t) => {
                         return new Calculation(targetResources: new Dictionary<ResourceType, PairedValue>() {

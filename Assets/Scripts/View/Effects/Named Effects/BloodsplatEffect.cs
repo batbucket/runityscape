@@ -20,7 +20,7 @@ namespace Scripts.View.Effects {
 
             protected override IEnumerator EffectRoutine() {
                 bloodsplat = ObjectPoolManager.Instance.Get(bloodsplatPrefab);
-                Util.Parent(bloodsplat.gameObject, target.gameObject);
+                Util.Parent(bloodsplat.gameObject, target.EffectsHolder);
                 isDone = true;
                 yield break;
             }

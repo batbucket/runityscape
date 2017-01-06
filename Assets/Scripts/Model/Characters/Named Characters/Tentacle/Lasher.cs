@@ -26,7 +26,7 @@ namespace Scripts.Model.Characters.Named {
                     Str = 1,
                     Int = 1,
                     Agi = 1,
-                    Vit = 1
+                    Vit = 10
                 }
                 ) {
             this.AddResource(new NamedResource.DeathExperience(3));

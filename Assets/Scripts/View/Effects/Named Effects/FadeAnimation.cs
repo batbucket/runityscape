@@ -14,6 +14,7 @@ namespace Scripts.View.Effects {
         private Image image;
 
         public override void Reset() {
+            Util.SetImageAlpha(image, 1);
         }
 
         private IEnumerator FadeEffect() {
@@ -26,7 +27,7 @@ namespace Scripts.View.Effects {
             yield break;
         }
 
-        private void Start() {
+        private void OnEnable() {
             StartCoroutine(FadeEffect());
         }
     }

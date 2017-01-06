@@ -46,7 +46,7 @@ namespace Scripts.Model.Spells {
         public string DurationText {
             get {
                 if (IsIndefinite) {
-                    return "∞";
+                    return "inf";
                 } else {
                     return "" + (int)DurationTimer;
                 }

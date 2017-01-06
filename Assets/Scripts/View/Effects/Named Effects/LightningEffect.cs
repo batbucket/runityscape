@@ -18,7 +18,7 @@ namespace Scripts.View.Effects {
 
         protected override IEnumerator EffectRoutine() {
             this.lightningEffect = ObjectPoolManager.Instance.Get(lightningEffectPrefab);
-            Util.Parent(lightningEffect.gameObject, target.gameObject);
+            Util.Parent(lightningEffect.gameObject, target.EffectsHolder);
             isDone = true;
             yield break;
         }
