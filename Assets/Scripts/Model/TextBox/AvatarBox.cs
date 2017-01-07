@@ -9,6 +9,8 @@ namespace Scripts.Model.TextBoxes {
     /// Represents a textbox with a character portrait window to one of the sides.
     /// </summary>
     public abstract class AvatarBox : TextBox {
+        protected const float TEXT_SPEED = 0.01f;
+
         public readonly string SpriteLoc;
 
         public AvatarBox(string spriteLoc,
@@ -16,7 +18,7 @@ namespace Scripts.Model.TextBoxes {
                          Color color,
                          string soundLocation,
                          float timePerLetter)
-                         : base(text, color, TextEffect.TYPE, "Blip_0", 0) {
+                         : base(text, color, TextEffect.TYPE, "Blip_0", timePerLetter) {
             this.SpriteLoc = spriteLoc;
         }
 

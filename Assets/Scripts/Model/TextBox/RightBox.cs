@@ -10,7 +10,7 @@ namespace Scripts.Model.TextBoxes {
         public RightBox(string spriteLoc,
                        string text,
                        Color color)
-                       : base(spriteLoc, text, color, "Blip_0", 0f) {
+                       : base(spriteLoc, text, color, "Blip_0", TEXT_SPEED) {
         }
 
         public RightBox(string spriteLoc,
