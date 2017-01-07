@@ -30,3 +30,7 @@ sysinfo.txt
 *.apk
 *.unitypackage
 *.json
+Saves/
+Game_Data/
+Library/
+obj/
