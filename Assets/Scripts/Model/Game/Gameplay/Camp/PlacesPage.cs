@@ -13,7 +13,7 @@ namespace Scripts.Model.World.Pages {
         public PlacesPage(EventFlags flags, Page back, Party party) : base(back, party, "Where will you go?", "Places") {
             this.flags = flags;
             OnEnterAction = () => {
-                if (true || flags.Bools[Flag.DISCOVERED_TEMPLE]) {
+                if (flags.Bools[Flag.DISCOVERED_TEMPLE]) {
                     ActionGrid[0] = CreatePlaceProcess("Temple", new TempleEntrance(back, flags, party));
                 }
 
