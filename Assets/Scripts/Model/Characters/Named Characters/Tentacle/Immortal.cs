@@ -1,5 +1,6 @@
 ﻿using Script.Model.Characters.Named;
 using Scripts.Model.Spells.Named;
+using Scripts.Model.Stats.Attributes;
 using Scripts.Model.Stats.Resources;
 using UnityEngine;
 
@@ -23,6 +24,7 @@ namespace Scripts.Model.Characters.Named {
                     Vit = 1
                 }
                 ) {
+            this.Attributes.Remove(AttributeType.VITALITY);
             this.Resources.Remove(ResourceType.HEALTH);
         }
 

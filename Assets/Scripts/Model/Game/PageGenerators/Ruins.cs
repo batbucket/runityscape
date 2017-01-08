@@ -34,7 +34,7 @@ namespace Scripts.Model.World.PageGenerators {
 
             encounters.Add(
                 TypicalBattle(
-                    "A human knight in white armor blocks your way, drawing their sword. Their armor looks completely new and untouched.",
+                    "A human knight and bishop pair blokc the way.",
                     () => 0.05f,
                     new Lasher(),
                     new Regenerator()

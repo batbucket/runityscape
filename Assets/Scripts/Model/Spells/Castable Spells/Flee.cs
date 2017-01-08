@@ -29,6 +29,7 @@ namespace Scripts.Model.Spells.Named {
         private IEnumerator Escape(Character escapee) {
             escapee.IsCharging = false;
             yield return new WaitForSeconds(0.5f);
+            escapee.OnBattleEnd();
             Game.Instance.CurrentPage = escapePage;
         }
     }

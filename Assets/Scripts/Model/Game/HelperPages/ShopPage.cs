@@ -117,7 +117,7 @@ namespace Scripts.Model.World.Pages {
         private Process BuyItem(Item i, int cost, bool isBuyable = true) {
             Inventory inven = party.Inventory;
             return new Process(
-                string.Format("{0} - {1}g", i.Name, cost),
+                string.Format("{0} - {1}<color=yellow>g</color>", i.Name, cost),
                 string.Format("{0} - {1}<color=yellow>g</color>\n{2}", i.Name, cost, i.Description),
                 () => {
                     flags.Bools[Flag.SHOPKEEPER_BOUGHT_SOMETHING] = true;
@@ -151,7 +151,7 @@ namespace Scripts.Model.World.Pages {
 
             ActionGrid[4] = new Process("Where are you from?", "", () =>
             Game.Instance.Cutscene(false, Act.LongTalk(shopkeep,
-                "/All the way across the desert.>{0} points./That's as specific as I'll get. Don't wanna get murdered, after all./Yep, that's happened before. Someone followed me home and tried to murder me./I cross the desert all the time to to maximize my market area./Cuts a lot of the distance. That saves time. And as the saying goes..."),
+                "/All the way across the desert.>{0} points./That's as specific as I'll get. Don't wanna get murdered, after all./Yep, that's happened before. Someone followed me home and tried to murder me./I cross the desert all the time to maximize my market area./Cuts a lot of the distance. That saves time. And as the saying goes..."),
                 new Act(() => flags.Bools[Flag.SHOPKEEPER_MENTIONED_MURDER] = true)
                 ));
 

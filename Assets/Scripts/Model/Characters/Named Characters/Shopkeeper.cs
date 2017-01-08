@@ -54,7 +54,7 @@ namespace Scripts.Model.Characters.Named {
 
         public override void OnVictory() {
             base.OnVictory();
-            Game.Instance.TextBoxes.AddTextBox(Talk("\"Killed by a shopkeeper.\" How's that for an epitath?"));
+            Game.Instance.TextBoxes.AddTextBox(Talk("\"Killed by a shopkeeper.\" How's that for an epitaph?"));
         }
 
         public override void OnDefeat() {

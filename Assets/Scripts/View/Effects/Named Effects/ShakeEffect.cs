@@ -23,6 +23,7 @@ namespace Scripts.View.Effects {
         }
 
         public override void CancelEffect() {
+            StopCoroutine();
             target.Image.rectTransform.localPosition = originalPosition;
         }
 
@@ -46,6 +47,7 @@ namespace Scripts.View.Effects {
                 icon.localPosition = new Vector2(originalPos.x + Mathf.Sin(UnityEngine.Random.Range(0, 5)) * currentIntensity, originalPos.y + Mathf.Sin(UnityEngine.Random.Range(0, 5)) * currentIntensity);
                 yield return null;
             }
+            target.Image.rectTransform.localPosition = originalPosition;
         }
     }
 }
