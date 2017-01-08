@@ -9,7 +9,7 @@ namespace Scripts.Model.Spells.Named {
         private bool isIndefinite;
 
         public BackTurn() : base(
-            "BackTurn",
+            "Back Turn",
             "Back is turned to the enemy.",
             SpellType.DEFENSE,
             TargetType.SELF,
@@ -27,6 +27,8 @@ namespace Scripts.Model.Spells.Named {
                 isIndefinite: (c, t) => isIndefinite,
                 react: (s) => {
                     if (s.SpellFactory is Attack) {
+                        s.Result = s.Miss;
+                        s.Result.CreateText = (c, t, calc) => null;
                         s.Calculation.TargetResources[ResourceType.HEALTH].False = 0;
                         (new TailSpike()).Cast(s.Target, s.Caster);
                     }

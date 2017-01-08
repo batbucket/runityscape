@@ -34,7 +34,7 @@ namespace Scripts.Model.World.PageGenerators {
 
             encounters.Add(
                 TypicalBattle(
-                    "A human knight and bishop pair blokc the way.",
+                    "A human knight and bishop pair block the way.",
                     () => 0.05f,
                     new Lasher(),
                     new Regenerator()

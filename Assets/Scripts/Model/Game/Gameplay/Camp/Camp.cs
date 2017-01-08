@@ -45,6 +45,9 @@ namespace Scripts.Model.World.Pages {
                 CreateCamp();
             };
             OnEnterAction += () => {
+                if (TimeType.Get(flags.Ints[Flag.TIME]) == TimeType.NIGHT) {
+                    Game.Instance.TextBoxes.AddTextBox(new TextBox("It is too dark outside to travel anywhere from camp."));
+                }
                 if (flags.Ints[Flag.TEMPLE_STATUS] == Flag.TEMPLE_BOSS_CLEARED) {
                     Game.Instance.TextBoxes.AddTextBox(new TextBox("Congratulations, you have completed the demo. Thanks for playing my game."));
                 }
@@ -118,6 +121,7 @@ namespace Scripts.Model.World.Pages {
                 RestoreResources(REST_RESTORE_PERCENT);
                 Flags.Ints[Flag.TIME]++;
                 Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party rests.")));
+                Game.Instance.CurrentPage = this;
             }, () => !IsNight);
         }
 

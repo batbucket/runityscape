@@ -315,11 +315,11 @@ namespace Scripts.Model.Pages {
                             if (expSum > 0) {
                                 Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} gained {1} experience.", c.DisplayName, expSum)));
                                 c.AddToResource(ResourceType.EXPERIENCE, false, expSum);
-                                if (c.GetResourceCount(ResourceType.EXPERIENCE, false) >= c.GetResourceCount(ResourceType.EXPERIENCE, true)) {
-                                    Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} has enough experience to level up.", c.DisplayName)));
-                                }
                             } else {
                                 Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("{0} is too high level to gain experience from these enemies.", c.DisplayName, expSum)));
+                            }
+                            if (c.GetResourceCount(ResourceType.EXPERIENCE, false) >= c.GetResourceCount(ResourceType.EXPERIENCE, true)) {
+                                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("<color=cyan>{0} has enough experience to level up.</color>", c.DisplayName)));
                             }
                         }
                     }

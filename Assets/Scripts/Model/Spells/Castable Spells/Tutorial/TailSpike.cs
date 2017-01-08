@@ -20,7 +20,7 @@ namespace Scripts.Model.Spells.Named {
                     }),
                 createText: (c, t, calc) =>
                 string.Format(
-                    "{1}'s tails extend out, piercing into {0}!\n{0} takes <color=red>{2}</color> damage!",
+                    "{0} attacks into {1}'s tails!\n{0} was pierced through by the tails!\n{0} takes <color=red>{2}</color> damage!",
                     t.DisplayName,
                     c.DisplayName,
                     -calc.TargetResources[ResourceType.HEALTH].False),
