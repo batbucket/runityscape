@@ -31,7 +31,7 @@ namespace Scripts.Model.World.Pages {
                     new Act(new TextBox("The fallen bodies of countless knights litter the room.")),
                     new Act(() => AddCharacters(false, knight)),
                     new Act(knight.Talk("They had families and aspirations, you monster! How many more have to die?")),
-                    new Act(fox.Talk("There needn't be any bloodshed. I only wanted to access the gateway.")),
+                    new Act(fox.Talk("There was no need for any bloodshed. I only wanted to access the gateway.")),
                     new Act(fox.Talk("All they had to do was look the other way and let me through, but they didn't.")),
                     new Act(fox.Talk("This is the aftermath of their choice.")),
                     new Act(fox.Talk("Leave now little human, this olive-branch I extend to you. Whatever that means.")),
