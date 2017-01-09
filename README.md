@@ -1,5 +1,6 @@
 # monsterscape #
 * A text-based role-playing game project for PCs 
+* The game window works fine on Windows, but there may be some issues with the window on Apple devices.
 * Written in the Unity engine using C#
 * Demo available [here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc)
 
