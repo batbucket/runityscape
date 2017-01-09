@@ -43,7 +43,7 @@ namespace Scripts.Model.World.Pages {
                 flags.Ints[Flag.TIME]++;
                 Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party rests.")));
                 PageUtil.EnterMessages(flags);
-            }, () => IsNight(flags));
+            }, () => !IsNight(flags));
         }
 
         public static void RestoreResources(Party party, float percent) {
