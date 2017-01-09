@@ -1,5 +1,5 @@
 # monsterscape #
-* A text-based choose-your-adventure role-playing game project for PCs 
+* A text-based role-playing game project for PCs 
 * Written in the Unity engine using C#
 * Demo available [here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc)
 
