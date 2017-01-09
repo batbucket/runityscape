@@ -2,7 +2,7 @@
 using Scripts.Presenter;
 using System.Collections.Generic;
 
-namespace Scripts.Model.World.Utility {
+namespace Scripts.Model.World.PageGenerators {
 
     /// <summary>
     /// Used to generate random encounters when the user

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Scripts.Model.World.Utility {
+namespace Scripts.Model.World.Flags {
 
     /// <summary>
     /// Type-safe enum used to represent the time of day.

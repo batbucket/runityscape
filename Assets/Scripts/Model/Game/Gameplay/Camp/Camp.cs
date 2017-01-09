@@ -1,14 +1,10 @@
 ﻿using Scripts.Model.Characters;
 using Scripts.Model.World.Serialization;
-using Scripts.Model.World.Utility;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
-using Scripts.Model.Stats.Resources;
-using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
-using Scripts.Model.Items.Named;
-using Scripts.Model.Spells.Named;
+using Scripts.Model.World.Flags;
 
 namespace Scripts.Model.World.Pages {
 

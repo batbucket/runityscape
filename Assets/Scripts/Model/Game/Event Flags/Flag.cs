@@ -1,4 +1,4 @@
-﻿namespace Scripts.Model.World.Utility {
+﻿namespace Scripts.Model.World.Flags {
 
     /// <summary>
     /// Stores indicies for easy Flags checking.

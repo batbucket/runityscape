@@ -4,7 +4,7 @@ using Scripts.Model.Characters.Named;
 using Scripts.Model.Pages;
 using Scripts.Model.Spells.Named;
 using Scripts.Model.TextBoxes;
-using Scripts.Model.World.Utility;
+using Scripts.Model.World.Flags;
 using Scripts.Presenter;
 
 namespace Scripts.Model.World.Pages {
@@ -16,7 +16,7 @@ namespace Scripts.Model.World.Pages {
         public IntroScenePage(Party party)
             : base("",
                    "",
-                   "Temple - Starlight Gateway",
+                   "Temple/Starlight Gateway",
                    false,
                    null,
                    null) {

@@ -1,11 +1,11 @@
 ﻿using Scripts.Model.Characters;
 using Scripts.Model.Characters.Named;
 using Scripts.Model.World.Pages;
-using Scripts.Model.World.Utility;
 using Scripts.Model.Pages;
 using System;
+using Scripts.Model.World.Flags;
 
-namespace Scripts.Model.World.PageGenerators {
+namespace Scripts.Model.World.PageGenerators.Named {
 
     public class Ruins : PageGenerator {
         private const string BATTLE_MUSIC = "Hero Immortal";

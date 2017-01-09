@@ -4,6 +4,7 @@ using Scripts.Model.Characters.Named;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
+using Scripts.Model.World.Flags;
 using Scripts.Presenter;
 using UnityEngine;
 
@@ -56,7 +57,7 @@ namespace Scripts.Model.World.Pages {
             this.PlayerBattle = new BattlePage(text: "Hello world!", mainCharacter: amity, left: new Character[] { amity }, right: new Character[] { new Lasher(), new Regenerator(), new Lasher() });
             this.ComputerBattle = new BattlePage(mainCharacter: new Steve(), left: new Character[] { new Amit() }, right: new Character[] { new Lasher() });
             Amit a = new Amit();
-            this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { a }, right: new Character[] { new Shopkeeper(new Utility.EventFlags()) });
+            this.BossBattle = new BattlePage(mainCharacter: a, musicLoc: "Flicker", left: new Character[] { a }, right: new Character[] { new Shopkeeper(new EventFlags()) });
         }
     }
 }

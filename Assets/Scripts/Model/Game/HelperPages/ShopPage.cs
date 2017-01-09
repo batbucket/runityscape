@@ -1,6 +1,5 @@
 ﻿using Scripts.Model.Acts;
 using Scripts.Model.Characters;
-using Scripts.Model.World.Utility;
 using Scripts.Model.Items;
 using Scripts.Model.Items.Named;
 using Scripts.Model.Pages;
@@ -11,6 +10,7 @@ using Scripts.View.ActionGrid;
 using System.Collections.Generic;
 using Scripts.Presenter;
 using Scripts.Model.Characters.Named;
+using Scripts.Model.World.Flags;
 
 namespace Scripts.Model.World.Pages {
 

@@ -1,5 +1,4 @@
 ﻿using Scripts.Model.Characters;
-using Scripts.Model.World.Utility;
 using Scripts.Model.Spells;
 using Scripts.Model.Spells.Named;
 using Scripts.Presenter;
@@ -7,6 +6,7 @@ using UnityEngine;
 using Scripts.Model.Items;
 using Scripts.Model.Items.Named;
 using Scripts.Model.Stats.Resources;
+using Scripts.Model.World.Flags;
 
 namespace Scripts.Model.Characters.Named {
 

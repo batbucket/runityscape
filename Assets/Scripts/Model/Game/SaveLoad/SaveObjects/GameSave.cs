@@ -1,6 +1,6 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.World.Flags;
 using Scripts.Model.World.Pages;
-using Scripts.Model.World.Utility;
 
 namespace Scripts.Model.World.Serialization.SaveObject {
 

@@ -1,5 +1,5 @@
-﻿using Scripts.Model.World.Pages;
-using Scripts.Model.World.Utility;
+﻿using Scripts.Model.World.Flags;
+using Scripts.Model.World.Pages;
 using Scripts.View.Other;
 using UnityEngine.UI;
 

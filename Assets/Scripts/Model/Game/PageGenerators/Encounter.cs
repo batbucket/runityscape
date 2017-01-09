@@ -1,7 +1,7 @@
 ﻿using Scripts.Model.Pages;
 using System;
 
-namespace Scripts.Model.World.Utility {
+namespace Scripts.Model.World.PageGenerators {
 
     /// <summary>
     /// Represents one encounter stored in a PageGenerator
