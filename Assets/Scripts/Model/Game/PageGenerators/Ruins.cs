@@ -19,7 +19,7 @@ namespace Scripts.Model.World.PageGenerators.Named {
             encounters.Add(
                 TypicalBattle(
                     "A human in a white priestly gown blocks your way. Their clothing is in perfect condition.",
-                    () => 0.10f,
+                    Rarity.UNCOMMON,
                     new Regenerator()
                     )
                 );
@@ -27,7 +27,7 @@ namespace Scripts.Model.World.PageGenerators.Named {
             encounters.Add(
                 TypicalBattle(
                     "A human knight in white armor blocks your way, drawing their sword. Their armor looks completely new and untouched.",
-                    () => 0.25f,
+                    Rarity.COMMON,
                     new Lasher()
                     )
             );
@@ -35,7 +35,7 @@ namespace Scripts.Model.World.PageGenerators.Named {
             encounters.Add(
                 TypicalBattle(
                     "A human knight and bishop pair block the way.",
-                    () => 0.05f,
+                    Rarity.RARE,
                     new Lasher(),
                     new Regenerator()
                     )
@@ -50,14 +50,14 @@ namespace Scripts.Model.World.PageGenerators.Named {
                         () => flags.Bools[Flag.DISCOVERED_TEMPLE] = true,
                         camp
                         ),
-                    () => 0.20f,
+                    Rarity.UNCOMMON,
                     () => !flags.Bools[Flag.DISCOVERED_TEMPLE])
                 );
 
             encounters.Add(
                     new Encounter(
                         () => new ShopPage(flags, camp, party),
-                        () => 0.30f,
+                        Rarity.COMMON,
                         () => flags.Ints[Flag.SHOPKEEPER_STATUS] == Flag.SHOPKEEPER_NEUTRAL || flags.Ints[Flag.SHOPKEEPER_STATUS] == Flag.SHOPKEEPER_FRIENDLY)
                 );
 
@@ -69,22 +69,22 @@ namespace Scripts.Model.World.PageGenerators.Named {
                     "",
                     "Ruins",
                     "You come across Maple. She doesn't look too happy.", new Character[] { new Shopkeeper(flags) }),
-                    () => 0.30f,
+                    Rarity.COMMON,
                     () => flags.Ints[Flag.SHOPKEEPER_STATUS] == Flag.SHOPKEEPER_ENEMY)
                 );
         }
 
-        private Encounter TypicalBattle(string text, Func<float> chance, Func<bool> isEnabled, params Character[] enemies) {
+        private Encounter TypicalBattle(string text, Rarity rarity, Func<bool> isEnabled, params Character[] enemies) {
             return new Encounter(
                 () => new BattlePage(party, new BattleResult(camp), new BattleResult(camp), BATTLE_MUSIC, "Ruins", text, enemies),
-                chance,
+                rarity,
                 isEnabled);
         }
 
-        private Encounter TypicalBattle(string text, Func<float> chance, params Character[] enemies) {
+        private Encounter TypicalBattle(string text, Rarity rarity, params Character[] enemies) {
             return new Encounter(
                 () => new BattlePage(party, new BattleResult(camp), new BattleResult(camp), BATTLE_MUSIC, "Ruins", text, enemies),
-                chance);
+                rarity);
         }
     }
 }

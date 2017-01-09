@@ -16,7 +16,7 @@ namespace Scripts.Model.World.PageGenerators {
         /// <summary>
         /// Chance of getting this Encounter.
         /// </summary>
-        public float Weight { get { return this.weightFunc.Invoke(); } }
+        public float Weight { get { return this.weight; } }
 
         /// <summary>
         /// If true, this encounter can occur.
@@ -24,13 +24,15 @@ namespace Scripts.Model.World.PageGenerators {
         public bool IsEnabled { get { return this.isEnabledFunc.Invoke(); } }
 
         private Func<Page> pageFunc;
-        private Func<float> weightFunc;
+        private float weight;
         private Func<bool> isEnabledFunc;
 
-        public Encounter(Func<Page> page, Func<float> weight, Func<bool> isEnabled = null) {
+        private Encounter(Func<Page> page, float weight, Func<bool> isEnabled = null) {
             this.pageFunc = page;
-            this.weightFunc = weight;
+            this.weight = weight;
             this.isEnabledFunc = isEnabled ?? (() => { return true; });
         }
+
+        public Encounter(Func<Page> page, Rarity rarity, Func<bool> isEnabled = null) : this(page, rarity.Weight, isEnabled) { }
     }
 }
