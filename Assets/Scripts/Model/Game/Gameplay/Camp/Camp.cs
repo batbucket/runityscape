@@ -31,6 +31,8 @@ namespace Scripts.Model.World.Pages {
 
         private PlacesPage places;
 
+        private bool hasTraveled;
+
         public Camp(Party party, EventFlags flags)
             : base(
                 "",
@@ -43,23 +45,21 @@ namespace Scripts.Model.World.Pages {
 
             OnFirstEnterAction += () => {
                 CreateCamp();
+                Game.Instance.Time.IsTimeEnabled = true;
+                Game.Instance.Time.IsDayEnabled = true;
             };
             OnEnterAction += () => {
-                if (TimeType.Get(flags.Ints[Flag.TIME]) == TimeType.NIGHT) {
-                    Game.Instance.TextBoxes.AddTextBox(new TextBox("It is too dark outside to travel anywhere from camp."));
-                }
-                if (flags.Ints[Flag.TEMPLE_STATUS] == Flag.TEMPLE_BOSS_CLEARED) {
-                    Game.Instance.TextBoxes.AddTextBox(new TextBox("Congratulations, you have completed the demo. Thanks for playing my game."));
-                }
+                TimeUpdateCheck(Flags);
+                PageUtil.EnterMessages(Flags);
                 Game.Instance.Other.Camp = this;
-                foreach (Character c in party) {
-                    c.CancelBuffs();
-                    if (c.State == CharacterState.KILLED) {
-                        c.AddToResource(ResourceType.HEALTH, false, 1);
-                    }
-                    c.State = CharacterState.NORMAL;
-                }
+                PageUtil.RestoreParty(Party);
             };
+        }
+
+        public bool HasTraveled {
+            set {
+                hasTraveled = value;
+            }
         }
 
         public int Day {
@@ -80,12 +80,6 @@ namespace Scripts.Model.World.Pages {
             }
         }
 
-        private bool IsNight {
-            get {
-                return Flags.Ints[Flag.TIME] == TimeType.NIGHT.Index;
-            }
-        }
-
         private void CreateCamp() {
             this.explore = new ExplorePage(Flags, this, Party);
             this.places = new PlacesPage(Flags, this, Party);
@@ -95,16 +89,16 @@ namespace Scripts.Model.World.Pages {
 
             this.ActionGrid = new IButtonable[] {
                 new Process("Explore", "Explore a location.", () => Game.Instance.CurrentPage = explore,
-                () => !IsNight),
+                () => !PageUtil.IsNight(Flags)),
                 new Process("Places", "Visit a place.", () => Game.Instance.CurrentPage = places,
-                () => !IsNight),
+                () => !PageUtil.IsNight(Flags)),
                 character,
                 itemMan,
 
                 null,
                 null,
-                Rest(),
-                Sleep(),
+                PageUtil.CreateRest(Flags, Party, REST_RESTORE_PERCENT),
+                PageUtil.CreateSleep(Flags, Party, SLEEP_RESTORE_PERCENT),
 
                 null,
                 null,
@@ -112,42 +106,13 @@ namespace Scripts.Model.World.Pages {
                 new Process("Save & Exit", "", () => Game.Instance.CurrentPage = new SavePage(this))
         };
             this.LeftCharacters = Party.Members;
-            Game.Instance.Time.IsTimeEnabled = true;
-            Game.Instance.Time.IsDayEnabled = true;
         }
 
-        private Process Rest() {
-            return new Process("Rest", "Rest until the next part of the day.", () => {
-                RestoreResources(REST_RESTORE_PERCENT);
-                Flags.Ints[Flag.TIME]++;
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party rests.")));
-                Game.Instance.CurrentPage = this;
-            }, () => !IsNight);
-        }
-
-        private void RestoreResources(float percent) {
-            foreach (Character c in Party.Members) {
-                c.CancelBuffs();
-                foreach (ResourceType r in ResourceType.RESTORED_RESOURCES) {
-                    float missing = c.GetResourceCount(r, true) - c.GetResourceCount(r, false);
-                    c.AddToResource(r, false, missing * percent, true);
-                }
+        private void TimeUpdateCheck(EventFlags flags) {
+            if (hasTraveled) {
+                hasTraveled = false;
+                PageUtil.AdvanceTime(flags);
             }
-        }
-
-        private Process Sleep() {
-            return new Process("Sleep", "End the day.", () => {
-                RestoreResources(SLEEP_RESTORE_PERCENT);
-                Flags.Ints[Flag.TIME] = 0;
-
-                // Overflow guard against sleep spammers
-                if (Flags.Ints[Flag.DAYS] < int.MaxValue) {
-                    Flags.Ints[Flag.DAYS]++;
-                }
-
-                Game.Instance.CurrentPage = this;
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(string.Format("The party sleeps.")));
-            }, () => IsNight);
         }
     }
 }

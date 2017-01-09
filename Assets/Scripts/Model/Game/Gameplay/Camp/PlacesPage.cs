@@ -10,14 +10,18 @@ namespace Scripts.Model.World.Pages {
     public class PlacesPage : CampOptionPage {
         private EventFlags flags;
 
-        public PlacesPage(EventFlags flags, Page back, Party party) : base(back, party, "Where will you go?", "Places") {
+        private Camp camp;
+
+        public PlacesPage(EventFlags flags, Camp camp, Party party) : base(camp, party, "Where will you go?", "Places") {
             this.flags = flags;
+            this.camp = camp;
+
             OnEnterAction = () => {
                 if (flags.Bools[Flag.DISCOVERED_TEMPLE]) {
-                    ActionGrid[0] = CreatePlaceProcess("Temple", new TempleEntrance(back, flags, party));
+                    ActionGrid[0] = CreatePlaceProcess("Temple", new TempleEntrance(camp, flags, party));
                 }
 
-                ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = back;
+                ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = camp;
             };
         }
 
@@ -26,7 +30,7 @@ namespace Scripts.Model.World.Pages {
                     name,
                     "Go to " + name + ".",
                     () => {
-                        flags.Ints[Flag.TIME]++;
+                        camp.HasTraveled = true;
                         Game.Instance.CurrentPage = page;
                     }
                     );

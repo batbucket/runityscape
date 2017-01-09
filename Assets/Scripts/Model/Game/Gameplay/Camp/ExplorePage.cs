@@ -13,9 +13,11 @@ namespace Scripts.Model.World.Pages {
         private const int DISCOVERED_TEMPLE = 0;
 
         private EventFlags flags;
+        private Camp camp;
 
-        public ExplorePage(EventFlags flags, Page camp, Party party) : base(camp, party, "Where will you explore?", "Explore") {
+        public ExplorePage(EventFlags flags, Camp camp, Party party) : base(camp, party, "Where will you explore?", "Explore") {
             this.flags = flags;
+            this.camp = camp;
             OnEnterAction = () => {
                 Game.Instance.TextBoxes.AddTextBox(new TextBox("Explorations of an area may yield differing encounters every time."));
                 ActionGrid[0] = CreateExploreProcess(new Ruins(flags, camp, party));
@@ -29,7 +31,7 @@ namespace Scripts.Model.World.Pages {
                     pageGen.ButtonText,
                     pageGen.TooltipText,
                     () => {
-                        flags.Ints[Flag.TIME]++;
+                        camp.HasTraveled = true;
                         pageGen.Invoke();
                     }
                     );
