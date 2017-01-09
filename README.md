@@ -1,7 +1,7 @@
 # monsterscape #
-* A text-based choose-your-adventure role-playing game project for PCs 
+* A text-based role-playing game project for PCs 
 * Written in the Unity engine using C#
-* Demo available [here](https://drive.google.com/open?id=0B5E_IBqde8fLYjV6NkJNYS1SN3M)
+* Demo available [here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc)
 
 # Current Features #
 * [JSON serialization](https://docs.unity3d.com/Manual/JSONSerialization.html) for saving and loading data
