@@ -1,6 +1,6 @@
 # monsterscape #
 * A text-based role-playing game project for PCs 
-* The game window works fine on devices with a screen ratio of 16:9. 16:10 might cause some cutoffs.
+* The game window works fine on devices with a screen ratio of 16:9. Other dimensions may cause cutoffs.
 * Written in the Unity engine using C#
 * Demo available [here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc)
 
