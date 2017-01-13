@@ -23,7 +23,8 @@ namespace Scripts.Model.World.Pages {
 
         public override void Init() {
             Character amit = new Amit();
-            this.Menu = new ReadPage("What", "Hello world", left: new Character[] { new Amit() }, right: new Character[] { new Steve(), new Steve() },
+            this.Menu = new ReadPage("What", "Hello world", "Debug", left: new Character[] { new Amit() }, right: new Character[] { new Steve(), new Steve() },
+                pageActions: new PageActions() { onEnter = () => Game.Instance.Other.Camp = new Camp(new Party(new Hero()), new EventFlags()) },
                 buttonables: new Process[] {
                 new Process("Normal TextBox", "Say Hello world",
                     () => Game.Instance.TextBoxes.AddTextBox(
