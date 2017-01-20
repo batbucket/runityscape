@@ -20,7 +20,8 @@ namespace Scripts.Model.World.Pages {
             this.debug = new Debug(this);
             ActionGrid[0] = new Process("New Game", "Start a new adventure.", () => Game.Instance.CurrentPage = new NewGamePage(this));
             ActionGrid[1] = new Process("Load Game", "Load a saved game.", () => Game.Instance.CurrentPage = new LoadPage());
-            ActionGrid[8] = new CreditsPage(this);
+            ActionGrid[4] = new CreditsPage(this);
+            ActionGrid[5] = new HotkeyTest(this);
 
 
             if (UnityEngine.Debug.isDebugBuild) {
