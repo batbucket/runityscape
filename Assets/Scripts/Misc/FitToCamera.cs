@@ -12,7 +12,7 @@ public class FitToCamera : MonoBehaviour {
     /// <summary>
     /// http://answers.unity3d.com/questions/640325/get-screen-height-in-real-world-coordinates.html
     /// </summary>
-    private void Start() {
+    private void Update() {
         float height = Camera.main.orthographicSize * 2.0f;
         float width = height * Camera.main.aspect;
 

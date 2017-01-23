@@ -111,16 +111,10 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        private void OnMouseEnter() {
-            Game.Instance.Tooltip.MouseText = tooltip;
-        }
-
-        private void OnMouseExit() {
-            Game.Instance.Tooltip.MouseText = "";
-        }
-
-        private void OnMouseOver() {
-            Game.Instance.Tooltip.MouseText = tooltip;
+        protected override string HoverOverText {
+            get {
+                return tooltip;
+            }
         }
     }
 }

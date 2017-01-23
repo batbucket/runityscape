@@ -63,12 +63,10 @@ namespace Scripts.View.Portraits {
             image.color = Color.black;
         }
 
-        private void OnMouseOver() {
-            Game.Instance.Tooltip.MouseText = tooltip;
-        }
-
-        private void OnMouseExit() {
-            Game.Instance.Tooltip.MouseText = "";
+        protected override string HoverOverText {
+            get {
+                return tooltip;
+            }
         }
     }
 }

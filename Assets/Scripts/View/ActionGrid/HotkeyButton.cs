@@ -86,6 +86,12 @@ namespace Scripts.View.ActionGrid {
             Hotkey = KeyCode.None;
         }
 
+        protected override string HoverOverText {
+            get {
+                return tooltipText;
+            }
+        }
+
         private void ActiveAppearance() {
             button.image.color = ACTIVE_COLOR;
             text.color = INACTIVE_COLOR;
@@ -107,18 +113,6 @@ namespace Scripts.View.ActionGrid {
             button.image.color = INACTIVE_COLOR;
             text.color = ACTIVE_COLOR;
             hotkeyText.color = ACTIVE_COLOR;
-        }
-
-        private void OnMouseExit() {
-            Game.Instance.Tooltip.MouseText = "";
-        }
-
-        private void OnMouseOver() {
-            if (this.enabled) {
-                Game.Instance.Tooltip.MouseText = tooltipText;
-            } else {
-                Game.Instance.Tooltip.MouseText = "";
-            }
         }
 
         // Update is called once per frame
