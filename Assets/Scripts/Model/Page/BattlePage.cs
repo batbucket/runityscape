@@ -335,8 +335,6 @@ namespace Scripts.Model.Pages {
 
                     Game.Instance.TextBoxes.AddTextBox(new TextBox("Victory!"));
 
-                    Game.Instance.Sound.StopAllSounds();
-
                     Victory.Action.Invoke();
 
                     loot = new LootPage(this, new Party(mainCharacter, GetAllies(mainCharacter)), GetEnemies(mainCharacter));
@@ -349,7 +347,6 @@ namespace Scripts.Model.Pages {
                         c.OnVictory();
                     }
                     Game.Instance.TextBoxes.AddTextBox(new TextBox("Defeat!"));
-                    Game.Instance.Sound.StopAllSounds();
 
                     Defeat.Action.Invoke();
 
@@ -369,13 +366,11 @@ namespace Scripts.Model.Pages {
                             lootHasKeyItems ? string.Format("{0} must be looted to proceed.", Util.Color("Key items", Item.KEY_ITEM_COLOR)) : "",
                             () => Game.Instance.CurrentPage = Victory.Page,
                             () => !lootHasKeyItems);
-                    Game.Instance.Sound.StopAllSounds();
                     break;
 
                 case BattleState.POST_DEFEAT:
                     ClearActionGrid();
                     ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = Defeat.Page;
-                    Game.Instance.Sound.StopAllSounds();
                     break;
             }
         }
