@@ -4,7 +4,7 @@
 
 # Demo #
 * Demo available [here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc) as a download.
-* Beta WebGL demo available [here](https://mothgarden.itch.io/monsterscape).
+* Slightly buggier WebGL demo available [here](https://mothgarden.itch.io/monsterscape).
 * For the demo, the game window works on devices with a screen ratio of 16:9. Other dimensions may cause cutoffs.
 
 # Current Features #
