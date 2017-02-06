@@ -13,7 +13,7 @@ namespace Scripts.Model.World.Pages {
         private const int LOWER_CHARACTER_LIMIT = 4;
 
         public NewGamePage(Page back) : base(
-            "Names must be at least 4 letters long and not be in the existing saves.",
+            "Names must be at least 4 letters long.",
             "What is your name?",
             "Name Selection",
             true) {
@@ -29,12 +29,7 @@ namespace Scripts.Model.World.Pages {
 
         private bool nameMeetsRequirements {
             get {
-                string[] filePaths = Directory.GetFiles(SaveLoad.SAVE_DIRECTORY);
-                IList<string> takenNames = new List<string>();
-                foreach (string filePath in filePaths) {
-                    takenNames.Add(SaveLoad.Load(filePath).Party.Leader.Name);
-                }
-                return InputtedString.Length >= LOWER_CHARACTER_LIMIT && !takenNames.Contains(this.InputtedString);
+                return InputtedString.Length >= LOWER_CHARACTER_LIMIT;
             }
         }
     }

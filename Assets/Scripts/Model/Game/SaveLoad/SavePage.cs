@@ -5,6 +5,7 @@ using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
 using Scripts.View.ActionGrid;
 using Scripts.Presenter;
+using System;
 
 namespace Scripts.Model.World.Serialization {
 
@@ -15,39 +16,40 @@ namespace Scripts.Model.World.Serialization {
 
         public SavePage(Camp camp) : base("", "Make a new save, or overwrite an existing one.", "Save", false, camp.Party, null) {
             OnTickAction += () => {
-                string[] filePaths = SaveLoad.GetSavePaths();
-                for (int i = 0; i < filePaths.Length; i++) {
-                    string filePath = filePaths[i];
-                    Camp loadedCamp = SaveLoad.Load(filePaths[i]);
-                    string saveName = SaveLoad.SaveFileDisplay(filePath, loadedCamp.Party.Leader.Level);
+                for (int i = 0; i < SaveLoad.MAX_SAVE_FILES; i++) {
+                    int index = i;
+                    if (SaveLoad.IsSaveUsed(index)) {
+                        Camp loadedCamp = SaveLoad.Load(i);
+                        string saveName = SaveLoad.SaveFileDisplay(loadedCamp.Party.Leader.Name, loadedCamp.Party.Leader.Level);
 
-                    ActionGrid[i] = new Process(
-                        saveName,
-                        "Overwrite " + saveName,
-                        () => Game.Instance.CurrentPage = new ReadPage(
-                            camp.Party,
-                            "",
-                            "Save to be overwritten: " + saveName,
-                            "Overwrite this save?",
-                            "",
-                            new IButtonable[] {
+                        ActionGrid[index] = new Process(
+                            saveName,
+                            "Overwrite " + saveName,
+                            () => Game.Instance.CurrentPage = new ReadPage(
+                                camp.Party,
+                                "",
+                                "Save to be overwritten: " + saveName,
+                                "Overwrite this save?",
+                                "",
+                                new IButtonable[] {
                             new Process("Yes", "Overwrite this save.", () => {
-                                SaveLoad.Save(camp, filePath, true);
                                 Game.Instance.CurrentPage = this;
-                                Game.Instance.TextBoxes.AddTextBox(new TextBox("Overwrite was successful."));
+                                SaveLoad.Save(camp, index, string.Format("Overwrite into Slot {0} successful.", index));
                             }),
                             new Process("No", "Don't overwrite this save.", () => Game.Instance.CurrentPage = this) },
-                            loadedCamp.Party
-                        )
-                    );
-                }
-
-                for (int i = filePaths.Length; i < SaveLoad.MAX_SAVE_FILES; i++) {
-                    ActionGrid[i] = new Process(
-                        "<color=grey>EMPTY</color>",
-                        "Create a new save.",
-                        () => SaveLoad.Save(camp, string.Format("{0}\\{1}", SaveLoad.SAVE_DIRECTORY, camp.Party.Leader.Name), false)
+                                loadedCamp.Party
+                            )
                         );
+
+                    } else {
+                        ActionGrid[index] = new Process(
+                            string.Format("<color=grey>SLOT_{0}</color>", index),
+                            "Save in an new slot.",
+                            () => {
+                                SaveLoad.Save(camp, index, string.Format("Save into Slot {0} successful.", index));
+                            }
+                            );
+                    }
                 }
 
                 ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 2] = new Process(
