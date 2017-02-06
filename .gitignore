@@ -36,3 +36,4 @@ Library/
 obj/
 *.zip
 *.meta
+Encrypt/config.txt
