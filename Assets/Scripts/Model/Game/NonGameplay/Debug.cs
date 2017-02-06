@@ -6,6 +6,7 @@ using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
 using Scripts.Model.World.Flags;
 using Scripts.Presenter;
+using System;
 using UnityEngine;
 
 namespace Scripts.Model.World.Pages {
@@ -39,7 +40,7 @@ namespace Scripts.Model.World.Pages {
                 new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { Game.Instance.CurrentPage = ComputerBattle; }),
                 new Process("Shake yourself", "Literally U******E", () => { }),
                 new OneShotProcess("Test OneShotProcess", "Meme", action: () => Game.Instance.TextBoxes.AddTextBox(new TextBox("hello"))),
-                new Process("deadm00se", "Text not displaying right.", () => Game.Instance.TextBoxes.AddTextBox(new RightBox("placeholder", "But this world is.", Color.white))),
+                new Process("print date", "", () => Game.Instance.TextBoxes.AddTextBox(new TextBox(DateTime.Now.ToString()))),
                 new Process("Cutscene Test", action: () => {
                     Game.Instance.Cutscene(
                          false,
