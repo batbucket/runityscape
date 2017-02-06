@@ -26,7 +26,6 @@ namespace Scripts.View.ObjectPool {
         }
 
         public void MouseEnter() {
-            Util.Log("enter");
             isMouseOver = true;
         }
 
