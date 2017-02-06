@@ -26,7 +26,7 @@ namespace Scripts.Model.World.Pages {
                 c.AddToResource(ResourceType.EXPERIENCE, false, -c.GetResourceCount(ResourceType.EXPERIENCE, true));
                 c.AddToAttribute(AttributeType.LEVEL, false, 1);
                 IncreaseAttributes(c);
-                this.Location = string.Format("{0}: Level {1} → {2}", c.DisplayName, c.Level - 1, c.Level);
+                this.Location = string.Format("{0}: Level {1} > {2}", c.DisplayName, c.Level - 1, c.Level);
                 Game.Instance.TextBoxes.AddTextBox(new TextBox(IncreaseText(c)));
                 ActionGrid = AssignAttribute(c, back);
             };
@@ -42,7 +42,7 @@ namespace Scripts.Model.World.Pages {
         private static string IncreaseText(Character c) {
             List<string> s = new List<string>();
             foreach (AttributeType at in AttributeType.COMBAT_ATTRIBUTES) {
-                s.Add(string.Format("{0}: {1} → {2}", at.Name, c.GetAttributeCount(at, true) - ALL_ATT_INCREASE_AMOUNT, c.GetAttributeCount(at, true)));
+                s.Add(string.Format("{0}: {1} > {2}", at.Name, c.GetAttributeCount(at, true) - ALL_ATT_INCREASE_AMOUNT, c.GetAttributeCount(at, true)));
             }
             return string.Join("\n", s.ToArray());
         }
