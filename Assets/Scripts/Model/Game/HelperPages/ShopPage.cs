@@ -182,7 +182,7 @@ namespace Scripts.Model.World.Pages {
         }
 
         private void Fight() {
-            Game.Instance.CurrentPage = new BattlePage(party, new BattleResult(camp), new BattleResult(camp), "", "Ruins", "", new Shopkeeper(flags));
+            Game.Instance.CurrentPage = new BattlePage(party, new BattleResult(camp), new BattleResult(camp), "Bad Hero", "Ruins", "", new Shopkeeper(flags));
         }
     }
 }
