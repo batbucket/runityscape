@@ -1,5 +1,5 @@
 # monsterscape #
-* A text-based role-playing game project for PCs 
+* A text-based role-playing game project for PC/Web
 * Written in the Unity engine using C#
 
 # Demo #
