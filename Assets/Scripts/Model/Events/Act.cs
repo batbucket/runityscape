@@ -19,6 +19,7 @@ namespace Scripts.Model.Acts {
         public readonly Func<bool> HasEnded;
         public readonly bool RequiresUserAdvance;
         public readonly bool IsSkippable;
+        public readonly Action SkipAction;
 
         private const char AVATARBOX_SYMBOL = '/';
 
@@ -30,24 +31,43 @@ namespace Scripts.Model.Acts {
 
         private const char TEXTBOX_SYMBOL = '>';
 
-        public Act(Action a) : this(a, () => true, 0, false, false) {
+        public Act(Action a) : this(a, () => true, 0, false) {
         }
 
-        public Act(TextBox t) : this(() => Game.Instance.TextBoxes.AddTextBox(t), () => t.IsDone, 0.5f, true, true) {
+        public Act(TextBox t) : this(
+            () => Game.Instance.TextBoxes.AddTextBox(t),
+            () => {
+                t.Effect = TextEffect.FADE_IN;
+                Game.Instance.TextBoxes.AddTextBox(t);
+            },
+            () => t.IsDone,
+            0.5f,
+            true) {
         }
 
-        public Act(string imageLoc, string text) : this(() => Game.Instance.Title.Play(imageLoc, text), () => Game.Instance.Title.IsDone, 0.5f, false, true) {
+        public Act(string imageLoc, string text) : this(
+            () => Game.Instance.Title.Play(imageLoc, text),
+            () => Game.Instance.Title.IsDone, 0.5f, false) {
         }
 
-        public Act(Page nextPage) : this(() => Game.Instance.CurrentPage = nextPage, () => true, 0.5f, false, false) {
+        public Act(Page nextPage) : this(() => Game.Instance.CurrentPage = nextPage, () => true, 0.5f, false) {
         }
 
-        private Act(Action action, Func<bool> endCondition, float delay, bool reqUserAdv, bool isSkippable) {
+        private Act(Action action, Func<bool> endCondition, float delay, bool reqUserAdv) {
             this.Action = action;
             this.HasEnded = endCondition ?? (() => true);
             this.Delay = delay;
             this.RequiresUserAdvance = reqUserAdv;
-            this.IsSkippable = isSkippable;
+            this.IsSkippable = false;
+        }
+
+        private Act(Action action, Action skipAction, Func<bool> endCondition, float delay, bool reqUserAdv) {
+            this.Action = action;
+            this.HasEnded = endCondition ?? (() => true);
+            this.Delay = delay;
+            this.RequiresUserAdvance = reqUserAdv;
+            this.IsSkippable = true;
+            this.SkipAction = skipAction;
         }
 
         public static Act[] LongTalk(Character c, string big) {

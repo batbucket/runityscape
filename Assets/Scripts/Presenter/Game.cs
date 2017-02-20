@@ -174,6 +174,7 @@ namespace Scripts.Presenter {
                 }
                 if (skip && a.IsSkippable) {
                     yield return new WaitForSeconds(0.01f);
+                    a.SkipAction.Invoke();
                 } else {
                     a.Action.Invoke();
                 }
