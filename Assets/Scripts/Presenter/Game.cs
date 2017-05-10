@@ -24,7 +24,6 @@ namespace Scripts.Presenter {
         public const string VERSION = "1.0";
         public const string GREETING = "monsterscape version 1.0 - the demo";
         public const float NORMAL_TEXT_SPEED = 0.001f;
-        public OtherPresenter Other;
         public StartMenu StartMenu;
         private static Game instance;
 
@@ -56,9 +55,6 @@ namespace Scripts.Presenter {
 
         [SerializeField]
         private TextBoxHolderView textBoxHolder;
-
-        [SerializeField]
-        private TimeView time;
 
         [SerializeField]
         private TitleView title;
@@ -95,12 +91,6 @@ namespace Scripts.Presenter {
         public TextBoxHolderView TextBoxes {
             get {
                 return textBoxHolder;
-            }
-        }
-
-        public TimeView Time {
-            get {
-                return time;
             }
         }
 
@@ -145,7 +135,7 @@ namespace Scripts.Presenter {
             instance = this;
 
             header.Location = "Main Menu";
-            Other = new OtherPresenter(gold, time, version);
+
             StartMenu = new StartMenu();
             pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
         }
@@ -209,9 +199,6 @@ namespace Scripts.Presenter {
         private void Update() {
             if (pagePresenter != null) {
                 pagePresenter.Tick();
-            }
-            if (Other != null) {
-                Other.Tick();
             }
         }
     }

@@ -41,13 +41,10 @@ namespace Scripts.Model.World.Pages {
 
             OnFirstEnterAction += () => {
                 CreateCamp();
-                Game.Instance.Time.IsTimeEnabled = true;
-                Game.Instance.Time.IsDayEnabled = true;
             };
             OnEnterAction += () => {
                 TimeUpdateCheck(Flags);
                 PageUtil.EnterMessages(Flags);
-                Game.Instance.Other.Camp = this;
                 PageUtil.RestoreParty(Party);
             };
         }

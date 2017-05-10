@@ -16,7 +16,7 @@ namespace Scripts.Model.Pages {
             bool hasInputField = false,
             IList<Character> left = null,
             IList<Character> right = null,
-            PageActions pageActions = new PageActions() { },
+            PageActions pageActions = new PageActions(),
             IList<IButtonable> buttonables = null,
             string musicLoc = null
             )
