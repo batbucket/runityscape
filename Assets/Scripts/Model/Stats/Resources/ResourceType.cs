@@ -24,7 +24,7 @@ namespace Scripts.Model.Stats.Resources {
         public static readonly IDictionary<DisplayMode, Func<float, int, string>> BAR_DISPLAY_FUNCTIONS
             = new Dictionary<DisplayMode, Func<float, int, string>>() {
             { DisplayMode.NONE, (a, b) =>                string.Format("", (int)a, b) },
-            { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}/{1}", (int)a, b) },
+            { DisplayMode.NUMERIC, (a, b) =>             string.Format("{0}", (int)a, b) },
             { DisplayMode.PERCENTAGE, (a, b) => b == 0 ? string.Format("", a, b) : string.Format("{0}%", (int)((a * 100) / b)) },
             };
 
