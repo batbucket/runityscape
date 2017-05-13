@@ -62,9 +62,6 @@ namespace Scripts.Presenter {
         [SerializeField]
         private TooltipView tooltip;
 
-        [SerializeField]
-        private Text version;
-
         public static Game Instance { get { return instance; } }
 
         public Page CurrentPage {
