@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Steve : ComputerCharacter {
 
-    public Steve() : base(new Displays() { Loc = "laughing_shinx", Name = "Steve", Color = Color.white, Check = "Hello world" }, new StartStats { Lvl = 5, Str = 1, Int = 1, Agi = 1, Vit = 1 }) {
+    public Steve() : base(new Displays() { Loc = "fox-head", Name = "Steve", Color = Color.white, Check = "Hello world" }, new StartStats { Lvl = 5, Str = 1, Int = 1, Agi = 1, Vit = 1 }) {
         AddResource(new NamedResource.Skill());
     }
 
