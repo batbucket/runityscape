@@ -62,11 +62,5 @@ namespace Scripts.View.Portraits {
             Color = Color.white;
             image.color = Color.black;
         }
-
-        protected override string HoverOverText {
-            get {
-                return tooltip;
-            }
-        }
     }
 }

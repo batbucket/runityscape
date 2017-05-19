@@ -10,47 +10,40 @@ namespace Scripts.View.ObjectPool {
     /// Pooled objects are Reset() and returned to the object pool when "destroyed."
     /// So we can retrieve them from there instead of doing costly instantiations.
     /// </summary>
-    public abstract class PooledBehaviour : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
-        private bool isMouseOver;
+    public abstract class PooledBehaviour : MonoBehaviour {
 
-        protected virtual string HoverOverText {
+        private Sprite icon;
+
+        public virtual string ToolTitle {
             get {
-                return "";
+                return "Placeholder Title";
             }
         }
 
-        private bool IsShowHoverOver {
+        public virtual string ToolText {
             get {
-                return !string.IsNullOrEmpty(HoverOverText) && isMouseOver;
+                return "This object does not have any tooltip text. Hello world!";
             }
         }
 
-        public void MouseEnter() {
-            isMouseOver = true;
+        public virtual Sprite ToolIcon {
+            get {
+                if (icon == null) {
+                    icon = Util.LoadIcon(toolIconLoc);
+                }
+                return icon;
+            }
         }
 
-        public void MouseExit() {
-            isMouseOver = false;
-            Game.Instance.Tooltip.MouseText = "";
-        }
-
-        public void OnPointerEnter(PointerEventData eventData) {
-            MouseEnter();
-        }
-
-        public void OnPointerExit(PointerEventData eventData) {
-            MouseExit();
+        protected virtual string toolIconLoc {
+            get {
+                return "info";
+            }
         }
 
         /// <summary>
         /// Reset the state of this MonoBehavior.
         /// </summary>
         abstract public void Reset();
-
-        private void LateUpdate() {
-            if (IsShowHoverOver) {
-                Game.Instance.Tooltip.MouseText = HoverOverText;
-            }
-        }
     }
 }

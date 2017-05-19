@@ -44,20 +44,18 @@ namespace Scripts.Presenter {
         private PortraitHolderView left;
         private PortraitHolderView right;
         private HeaderView header;
-        private TooltipView tooltip;
         private SoundView sound;
 
         private IList<CharacterPresenter> characterPresenters;
 
         private InputBoxView inputBox;
 
-        public PagePresenter(ReadPage initial, TextBoxHolderView textBoxHolder, ActionGridView actionGrid, PortraitHolderView left, PortraitHolderView right, HeaderView header, TooltipView tooltip, SoundView sound) {
+        public PagePresenter(ReadPage initial, TextBoxHolderView textBoxHolder, ActionGridView actionGrid, PortraitHolderView left, PortraitHolderView right, HeaderView header, SoundView sound) {
             this.textBoxHolder = textBoxHolder;
             this.actionGrid = actionGrid;
             this.left = left;
             this.right = right;
             this.header = header;
-            this.tooltip = tooltip;
             this.sound = sound;
             this.characterPresenters = new List<CharacterPresenter>();
             page = new ReadPage();
@@ -68,7 +66,6 @@ namespace Scripts.Presenter {
             Page.Tick();
             actionGrid.ClearAll();
             actionGrid.SetButtonAttributes(Page.ActionGrid);
-            tooltip.PageText = Page.Tooltip;
             header.Location = Page.Location;
             SetCharacterPresenters(Page.LeftCharacters, left);
             SetCharacterPresenters(Page.RightCharacters, right);

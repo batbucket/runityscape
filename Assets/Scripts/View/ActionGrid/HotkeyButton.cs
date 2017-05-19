@@ -55,7 +55,6 @@ namespace Scripts.View.ActionGrid {
                 button.onClick.AddListener(() => {
                     if (value.IsInvokable) {
                         value.Invoke();
-                        Game.Instance.Tooltip.MouseText = "";
                     }
                 });
             }
@@ -84,12 +83,6 @@ namespace Scripts.View.ActionGrid {
 
         public override void Reset() {
             Hotkey = KeyCode.None;
-        }
-
-        protected override string HoverOverText {
-            get {
-                return tooltipText;
-            }
         }
 
         private void ActiveAppearance() {

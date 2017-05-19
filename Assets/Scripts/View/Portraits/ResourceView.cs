@@ -110,11 +110,5 @@ namespace Scripts.View.Portraits {
                 BarScale = numerator / denominator;
             }
         }
-
-        protected override string HoverOverText {
-            get {
-                return tooltip;
-            }
-        }
     }
 }

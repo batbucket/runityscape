@@ -59,9 +59,6 @@ namespace Scripts.Presenter {
         [SerializeField]
         private TitleView title;
 
-        [SerializeField]
-        private TooltipView tooltip;
-
         public static Game Instance { get { return instance; } }
 
         public Page CurrentPage {
@@ -97,12 +94,6 @@ namespace Scripts.Presenter {
             }
         }
 
-        public TooltipView Tooltip {
-            get {
-                return tooltip;
-            }
-        }
-
         public void Cutscene(bool isGridVisible, params Act[] acts) {
             StartCoroutine(Timeline(acts, isGridVisible));
         }
@@ -134,7 +125,7 @@ namespace Scripts.Presenter {
             header.Location = "Main Menu";
 
             StartMenu = new StartMenu();
-            pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, tooltip, sound);
+            pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, sound);
         }
 
         /// <summary>
