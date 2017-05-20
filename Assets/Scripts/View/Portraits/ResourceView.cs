@@ -26,7 +26,7 @@ namespace Scripts.View.Portraits {
         private Image fillBar;
 
         [SerializeField]
-        private Text resourceName; //Should be only 2 letters.
+        private Image resourceIcon;
 
         [SerializeField]
         private Text text;
@@ -59,21 +59,9 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public Color ResourceColor {
-            get {
-                return resourceName.color;
-            }
+        public string ResourceLoc {
             set {
-                resourceName.color = value;
-            }
-        }
-
-        public string ResourceName {
-            get {
-                return resourceName.text;
-            }
-            set {
-                resourceName.text = value;
+                resourceIcon.sprite = Util.LoadIcon(value);
             }
         }
 
@@ -96,8 +84,7 @@ namespace Scripts.View.Portraits {
         }
 
         public override void Reset() {
-            ResourceName = "";
-            ResourceColor = Color.white;
+            ResourceLoc = null;
             EmptyColor = Color.white;
             FillColor = Color.white;
             Text = "";

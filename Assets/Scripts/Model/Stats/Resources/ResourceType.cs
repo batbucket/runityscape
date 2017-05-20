@@ -31,8 +31,8 @@ namespace Scripts.Model.Stats.Resources {
         private string _name;
         public string Name { get { return _name; } }
 
-        private string _shortName;
-        public string ShortName { get { return _shortName; } }
+        private string _iconLoc;
+        public string IconLoc { get { return _iconLoc; } }
 
         private string _description;
         public string Description { get { return _description; } }
@@ -57,9 +57,9 @@ namespace Scripts.Model.Stats.Resources {
         private Func<int, int, string> _splatFunction;
         public Func<int, int, string> SplatFunction { get { return _splatFunction; } }
 
-        private ResourceType(string name, string shortName, string description, Color fillColor, Color emptyColor, int order, AttributeType dependent = null, Func<int, int> calculation = null, DisplayMode displayMode = DisplayMode.NUMERIC) {
+        private ResourceType(string name, string iconLoc, string description, Color fillColor, Color emptyColor, int order, AttributeType dependent = null, Func<int, int> calculation = null, DisplayMode displayMode = DisplayMode.NUMERIC) {
             this._name = name;
-            this._shortName = shortName;
+            this._iconLoc = iconLoc;
             this._description = description;
             this._fillColor = fillColor;
             this._emptyColor = emptyColor;
@@ -73,8 +73,8 @@ namespace Scripts.Model.Stats.Resources {
 
         public static readonly IList<ResourceType> ALL = new List<ResourceType>();
 
-        public static readonly ResourceType HEALTH = new ResourceType("Life",
-                                                                      "LIFE",
+        public static readonly ResourceType HEALTH = new ResourceType("Health",
+                                                                      "nested-hearts",
                                                                       "Vital state.",
                                                                       Color.green,
                                                                       Color.red,
@@ -83,7 +83,7 @@ namespace Scripts.Model.Stats.Resources {
                                                                       a => a * 5);
 
         public static readonly ResourceType SKILL = new ResourceType("Skill",
-                                                                     "SKIL",
+                                                                     "concentration-orb",
                                                                      "Replenished on Attacks.",
                                                                      Color.yellow,
                                                                      new Color(51.0f / 255, 51.0f / 255, 0),
@@ -115,7 +115,7 @@ namespace Scripts.Model.Stats.Resources {
                                                                           displayMode: DisplayMode.PERCENTAGE);
 
         public static readonly ResourceType EXPERIENCE = new ResourceType("Experience",
-                                                                    "EXP",
+                                                                    "upgrade",
                                                                     "Needed to level up.",
                                                                     Color.white,
                                                                     Color.grey,
