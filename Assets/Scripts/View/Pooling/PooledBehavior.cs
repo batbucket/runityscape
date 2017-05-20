@@ -20,7 +20,7 @@ namespace Scripts.View.ObjectPool {
             }
         }
 
-        public virtual string ToolText {
+        public virtual string ToolBody {
             get {
                 return "This object does not have any tooltip text. Hello world!";
             }
