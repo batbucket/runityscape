@@ -95,8 +95,17 @@ public static class Util {
         return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
     }
 
+    // Store sprites for easy post-first-call retrieval
+    private static IDictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+
     public static Sprite LoadIcon(string name) {
-        return Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name));
+        if (!sprites.ContainsKey(name)) {
+            sprites.Add(name, Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name)));
+        }
+        Sprite icon;
+        sprites.TryGetValue(name, out icon);
+        Util.Assert(icon != null, string.Format("Unable to find icon \"{0}\" in sprite dictionary!", name));
+        return icon;
     }
 
     public static bool Chance(double probability) {
