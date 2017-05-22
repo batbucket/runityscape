@@ -90,7 +90,7 @@ namespace Scripts.Model.Stats.Resources {
                                                                      1);
 
         public static readonly ResourceType MANA = new ResourceType("Mana",
-                                                                    "MANA",
+                                                                    "fox-head",
                                                                     "Magical resources.",
                                                                     Color.blue,
                                                                     Color.magenta,
@@ -99,7 +99,7 @@ namespace Scripts.Model.Stats.Resources {
                                                                     a => a * 5);
 
         public static readonly ResourceType CHARGE = new ResourceType("Charge",
-                                                                      "CHRG",
+                                                                      "fox-head",
                                                                       "Actions may be performed when full.",
                                                                       Color.white,
                                                                       Color.black,
@@ -107,7 +107,7 @@ namespace Scripts.Model.Stats.Resources {
                                                                       displayMode: DisplayMode.PERCENTAGE);
 
         public static readonly ResourceType CORRUPTION = new ResourceType("Corruption",
-                                                                          "CRPT",
+                                                                          "fox-head",
                                                                           "Corruption level.",
                                                                           Color.magenta,
                                                                           new Color(50.0f / 255, 0f, 50.0f / 255),
@@ -124,7 +124,7 @@ namespace Scripts.Model.Stats.Resources {
                                                                     a => (int)(1 + Mathf.Pow(2, a)));
 
         public static readonly ResourceType DEATH_EXP = new ResourceType("Experience",
-                                                                    "EXP",
+                                                                    "fox-head",
                                                                     "Needed to level up.",
                                                                     Color.white,
                                                                     Color.grey,
