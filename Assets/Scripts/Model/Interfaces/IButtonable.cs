@@ -1,4 +1,6 @@
-﻿namespace Scripts.Model.Interfaces {
+﻿using UnityEngine;
+
+namespace Scripts.Model.Interfaces {
 
     /// <summary>
     /// Represents an object that can be converted
@@ -9,6 +11,7 @@
         bool IsInvokable { get; }
         bool IsVisibleOnDisable { get; }
         string TooltipText { get; }
+        Sprite Sprite { get; }
 
         void Invoke();
     }

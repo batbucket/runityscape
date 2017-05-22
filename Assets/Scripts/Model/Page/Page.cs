@@ -6,6 +6,7 @@ using Scripts.View.ActionGrid;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Scripts.Model.Pages {
 
@@ -120,6 +121,12 @@ namespace Scripts.Model.Pages {
         public string TooltipText {
             get {
                 return string.Format("Go to {0}.", Location);
+            }
+        }
+
+        public Sprite Sprite {
+            get {
+                return Util.LoadIcon("fox-head");
             }
         }
 

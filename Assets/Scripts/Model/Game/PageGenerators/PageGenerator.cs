@@ -1,6 +1,8 @@
 ﻿using Scripts.Model.Interfaces;
 using Scripts.Presenter;
 using System.Collections.Generic;
+using System;
+using UnityEngine;
 
 namespace Scripts.Model.World.PageGenerators {
 
@@ -57,6 +59,12 @@ namespace Scripts.Model.World.PageGenerators {
         public string TooltipText {
             get {
                 return description;
+            }
+        }
+
+        public Sprite Sprite {
+            get {
+                return Util.LoadIcon("fox-head");
             }
         }
 

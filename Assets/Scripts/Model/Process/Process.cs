@@ -60,6 +60,12 @@ namespace Scripts.Model.Processes {
             }
         }
 
+        public Sprite Sprite {
+            get {
+                return Util.LoadIcon("fox-head");
+            }
+        }
+
         public virtual void Invoke() {
             if (IsInvokable) {
                 action.Invoke();
