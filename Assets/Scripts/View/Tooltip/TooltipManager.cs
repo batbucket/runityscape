@@ -1,5 +1,5 @@
-﻿using Script.View.Tooltip;
-using Scripts.View.ObjectPool;
+﻿using Scripts.View.ObjectPool;
+using Scripts.View.Tooltip;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,10 +18,17 @@ namespace Script.View.Tooltip {
         [SerializeField]
         private float distanceMultiplier;
 
+        private bool isOverTooltipContent;
+
         private void Update() {
-            UpdateTooltip();
             box.Pivot = CalculatePivot();
             box.Position = CalculatePosition();
+            UpdateTooltip();
+            if (isOverTooltipContent) {
+                StartCoroutine(DisplayTooltip());
+            } else {
+                SetRenderers(false);
+            }
         }
 
         private void UpdateTooltip() {
@@ -30,20 +37,48 @@ namespace Script.View.Tooltip {
             ped.position = Input.mousePosition;
             grc.Raycast(ped, results);
 
-            bool isOnTooltipContent = false;
+            bool isOverContent = false;
+            box.Sprite = null;
+            box.Title = string.Empty;
+            box.Body = string.Empty;
 
             foreach (RaycastResult rr in results) {
-                PooledBehaviour pb = rr.gameObject.GetComponent<PooledBehaviour>();
-                if (pb != null) {
+                Tip tip = rr.gameObject.GetComponent<Tip>();
+                if (tip != null) {
                     Debug.Log("You are on a tooltippable object by the name of " + rr.gameObject.name);
-                    box.Sprite = pb.ToolIcon;
-                    box.Title = pb.ToolTitle;
-                    box.Body = pb.ToolBody;
-                    isOnTooltipContent = true;
+                    box.Sprite = tip.Sprite;
+                    box.Title = tip.Title;
+                    box.Body = tip.Body;
+                    isOverContent = true;
                 }
             }
+            isOverTooltipContent = isOverContent;
+        }
 
-            box.gameObject.SetActive(isOnTooltipContent);
+        /// <summary>
+        /// Disable renderers instead of disabling the tooltip box object so that the
+        /// content size fitter has enough time to work with the new text.
+        ///
+        /// If we disable the gameobject instead, the tooltip box will appear to jump, since it
+        /// needs a moment to resize to accomodate the new text.
+        /// </summary>
+        /// <param name="isEnabled">True if renderers of the tooltip box object and its children should be enabled</param>
+        private void SetRenderers(bool isEnabled) {
+            CanvasRenderer[] renderers = box.GetComponentsInChildren<CanvasRenderer>();
+            foreach (CanvasRenderer r in renderers) {
+                r.SetAlpha(isEnabled ? 1 : 0);
+            }
+        }
+
+        /// <summary>
+        /// Delay showing of the tooltip until the end of the frame so that
+        /// there is enough time for the tooltip box's contentsizefitters
+        /// to resize itself for the new text.
+        /// </summary>
+        /// <returns></returns>
+        private IEnumerator DisplayTooltip() {
+            yield return new WaitForEndOfFrame();
+            SetRenderers(true);
         }
 
         private Vector2 CalculatePosition() {
