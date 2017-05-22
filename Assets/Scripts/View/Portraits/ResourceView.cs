@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.Stats.Resources;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
+using Scripts.View.Tooltip;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,7 +32,14 @@ namespace Scripts.View.Portraits {
         [SerializeField]
         private Text text;
 
-        private string tooltip;
+        [SerializeField]
+        private Tip tip;
+
+        public Tip Tip {
+            get {
+                return tip;
+            }
+        }
 
         public float BarScale {
             set {
@@ -59,9 +67,9 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public string ResourceLoc {
+        public Sprite Sprite {
             set {
-                resourceIcon.sprite = Util.LoadIcon(value);
+                resourceIcon.sprite = value;
             }
         }
 
@@ -77,14 +85,8 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public string Tooltip {
-            set {
-                tooltip = value;
-            }
-        }
-
         public override void Reset() {
-            ResourceLoc = null;
+            Sprite = null;
             EmptyColor = Color.white;
             FillColor = Color.white;
             Text = "";
@@ -96,6 +98,7 @@ namespace Scripts.View.Portraits {
             } else {
                 BarScale = numerator / denominator;
             }
+            tip.Body = string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, Type.Description);
         }
     }
 }

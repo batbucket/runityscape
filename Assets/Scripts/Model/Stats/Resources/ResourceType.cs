@@ -31,8 +31,8 @@ namespace Scripts.Model.Stats.Resources {
         private string _name;
         public string Name { get { return _name; } }
 
-        private string _iconLoc;
-        public string IconLoc { get { return _iconLoc; } }
+        private Sprite _sprite;
+        public Sprite Sprite { get { return _sprite; } }
 
         private string _description;
         public string Description { get { return _description; } }
@@ -59,7 +59,7 @@ namespace Scripts.Model.Stats.Resources {
 
         private ResourceType(string name, string iconLoc, string description, Color fillColor, Color emptyColor, int order, AttributeType dependent = null, Func<int, int> calculation = null, DisplayMode displayMode = DisplayMode.NUMERIC) {
             this._name = name;
-            this._iconLoc = iconLoc;
+            this._sprite = Util.LoadIcon(iconLoc);
             this._description = description;
             this._fillColor = fillColor;
             this._emptyColor = emptyColor;
@@ -75,7 +75,7 @@ namespace Scripts.Model.Stats.Resources {
 
         public static readonly ResourceType HEALTH = new ResourceType("Health",
                                                                       "nested-hearts",
-                                                                      "Vital state.",
+                                                                      "Life state. Most units enter a deathlike state when their health reaches zero.",
                                                                       Color.green,
                                                                       Color.red,
                                                                       0,
@@ -84,7 +84,7 @@ namespace Scripts.Model.Stats.Resources {
 
         public static readonly ResourceType SKILL = new ResourceType("Skill",
                                                                      "concentration-orb",
-                                                                     "Replenished on Attacks.",
+                                                                     "A spell resource that is replenished on basic attacks.",
                                                                      Color.yellow,
                                                                      new Color(51.0f / 255, 51.0f / 255, 0),
                                                                      1);

@@ -70,24 +70,6 @@ namespace Scripts.View.Portraits {
         public IDictionary<ResourceType, ResourceBundle> ResourceViews { get; private set; }
         public Sprite Sprite { get { return iconImage.sprite; } set { iconImage.sprite = value; } }
 
-        public override Sprite ToolIcon {
-            get {
-                return Sprite;
-            }
-        }
-
-        public override string ToolBody {
-            get {
-                return "Placeholder unit text.";
-            }
-        }
-
-        public override string ToolTitle {
-            get {
-                return PortraitName;
-            }
-        }
-
         public void AddEffect(CharacterEffect ce) {
             CharacterEffect current;
             Effects.TryGetValue(ce.ID, out current);
@@ -185,10 +167,13 @@ namespace Scripts.View.Portraits {
                     rv = ObjectPoolManager.Instance.Get(resourcePrefab);
                     Util.Parent(rv.gameObject, resourcesHolder); // Placed in back.
 
+                    // Set tooltip details
+                    rv.Tip.Sprite = resourceType.Sprite;
+                    rv.Tip.Title = resourceType.Name;
+
                     // Set resource prefab's details
-                    rv.Tooltip = string.Format("{0} - {1}", resourceType.Name, resourceType.Description);
                     rv.Type = resourceType;
-                    rv.ResourceLoc = resourceType.IconLoc;
+                    rv.Sprite = resourceType.Sprite;
                     rv.FillColor = resourceType.FillColor;
                     rv.EmptyColor = resourceType.EmptyColor;
 
