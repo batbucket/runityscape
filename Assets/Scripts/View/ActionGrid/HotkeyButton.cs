@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.Interfaces;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
+using Scripts.View.Tooltip;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,17 +12,16 @@ namespace Scripts.View.ActionGrid {
     /// the mouse and the keyboard
     /// </summary>
     public class HotkeyButton : PooledBehaviour {
-        private Color ACTIVE_COLOR = Color.white;
+        private static Color ACTIVE_COLOR = Color.white;
 
-        /// <summary>
-        /// Collider we use to detect when the mouse is over the button
-        /// For tooltip changing
-        /// </summary>
         [SerializeField]
-        private BoxCollider2D bc;
+        private Tip tip;
 
         [SerializeField]
         private Button button;
+
+        [SerializeField]
+        private Image icon;
 
         private KeyCode hotkey;
 
@@ -45,12 +45,13 @@ namespace Scripts.View.ActionGrid {
         [SerializeField]
         private Text text;
 
-        private string tooltipText;
-
         public IButtonable Buttonable {
             set {
                 text.text = value.ButtonText;
-                tooltipText = value.TooltipText;
+                icon.sprite = value.Sprite;
+                tip.Sprite = value.Sprite;
+                tip.Title = value.ButtonText;
+                tip.Body = value.TooltipText;
                 button.onClick.RemoveAllListeners();
                 button.onClick.AddListener(() => {
                     if (value.IsInvokable) {
@@ -87,6 +88,7 @@ namespace Scripts.View.ActionGrid {
 
         private void ActiveAppearance() {
             button.image.color = ACTIVE_COLOR;
+            icon.color = ACTIVE_COLOR;
             text.color = INACTIVE_COLOR;
             hotkeyText.color = INACTIVE_COLOR;
         }
@@ -98,12 +100,16 @@ namespace Scripts.View.ActionGrid {
 
         private void DisabledAppearance() {
             text.text = "";
+            tip.enabled = false;
+            icon.color = Color.clear;
             button.image.color = Color.clear;
             hotkeyText.color = Color.clear;
         }
 
         private void InactiveAppearance() {
             button.image.color = INACTIVE_COLOR;
+            tip.enabled = true;
+            icon.color = ACTIVE_COLOR;
             text.color = ACTIVE_COLOR;
             hotkeyText.color = ACTIVE_COLOR;
         }
