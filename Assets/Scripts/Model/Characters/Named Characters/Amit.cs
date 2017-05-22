@@ -10,7 +10,7 @@ namespace Scripts.Model.Characters.Named {
     /// </summary>
     public class Amit : PlayerCharacter {
 
-        public Amit() : base(new Displays { Loc = "crying_mudkip", Name = "Amit", Color = Color.white, Check = "Yourself" }, new StartStats { Lvl = 2, Str = 1, Agi = 1, Int = 1, Vit = 1 }) {
+        public Amit() : base(new Displays { Loc = "fox-head", Name = "Amit", Color = Color.white, Check = "Yourself" }, new StartStats { Lvl = 2, Str = 1, Agi = 1, Int = 1, Vit = 1 }) {
             Side = false;
             AddResource(new NamedResource.Skill());
             AddResource(new NamedResource.Experience());
