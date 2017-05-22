@@ -31,10 +31,10 @@ namespace Scripts.Model.World.Pages {
                         new TextBox("Ethan"))),
                 new Process("LeftBox", "Say Hello world",
                     () => Game.Instance.TextBoxes.AddTextBox(
-                        new LeftBox("crying_mudkip", "hello", Color.white))),
+                        new LeftBox("fox-head", "hello", Color.white))),
                 new Process("RightBox", "Say Hello world",
                     () => Game.Instance.TextBoxes.AddTextBox(
-                        new RightBox("crying_mudkip", "im ethan bradberry", Color.white))),
+                        new RightBox("fox-head", "im ethan bradberry", Color.white))),
                 new Process("Test Battle", "You only <i>LOOK</i> human, don't you?", () => Game.Instance.CurrentPage = PlayerBattle),
                 new Process("Steve Massacre", "Steve. It was nice to meet you. Goodbye.", () => { Game.Instance.CurrentPage = ComputerBattle; }),
                 new Process("Shake yourself", "Literally U******E", () => { }),
