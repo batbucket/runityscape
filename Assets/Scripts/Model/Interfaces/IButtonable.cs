@@ -9,7 +9,6 @@ namespace Scripts.Model.Interfaces {
     public interface IButtonable {
         string ButtonText { get; }
         bool IsInvokable { get; }
-        bool IsVisibleOnDisable { get; }
         string TooltipText { get; }
         Sprite Sprite { get; }
 
