@@ -163,7 +163,7 @@ namespace Scripts.Presenter {
                 if (!skip && a.RequiresUserAdvance && !isGridVisible && i < acts.Length - 1) {
                     bool isAdvanced = false;
                     CurrentPage.ActionGrid = new IButtonable[] {
-                    new Process(">", "", () => isAdvanced = true),
+                    new Process("Step", "", () => isAdvanced = true),
                     null,
                     null,
                     new Process("Skip All", "Skip all events in this series.", () =>
