@@ -45,7 +45,7 @@ namespace Script.View.Tooltip {
             foreach (RaycastResult rr in results) {
                 Tip tip = rr.gameObject.GetComponent<Tip>();
                 if (tip != null && tip.enabled && !string.IsNullOrEmpty(tip.Body)) {
-                    Debug.Log("You are on a tooltippable object by the name of " + rr.gameObject.name);
+                    box.IsIconEnabled = (tip.Sprite != null);
                     box.Sprite = tip.Sprite;
                     box.Title = tip.Title;
                     box.Body = tip.Body;

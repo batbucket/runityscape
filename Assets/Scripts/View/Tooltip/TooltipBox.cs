@@ -38,6 +38,12 @@ namespace Script.View.Tooltip {
             }
         }
 
+        public bool IsIconEnabled {
+            set {
+                image.gameObject.SetActive(value);
+            }
+        }
+
         public string Title {
             set {
                 title.text = value;
