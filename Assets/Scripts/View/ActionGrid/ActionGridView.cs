@@ -59,7 +59,7 @@ namespace Scripts.View.ActionGrid {
             Util.Assert(buttonables.Length <= actionButtons.Length);
             for (int i = 0; i < actionButtons.Length; i++) {
                 if (i < buttonables.Length && buttonables[i] != null) {
-                    if (buttonables[i].IsInvokable || buttonables[i].IsVisibleOnDisable) {
+                    if (buttonables[i].IsInvokable) {
                         actionButtons[i].IsVisible = true;
                         actionButtons[i].Buttonable = buttonables[i];
                     } else {
