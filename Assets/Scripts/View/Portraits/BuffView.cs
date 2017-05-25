@@ -12,12 +12,6 @@ namespace Scripts.View.Portraits {
     public class BuffView : PooledBehaviour {
 
         /// <summary>
-        /// Outline of the buff's box
-        /// </summary>
-        [SerializeField]
-        private Outline outline;
-
-        /// <summary>
         /// Text inside the buff's box
         /// </summary>
         [SerializeField]
@@ -52,7 +46,6 @@ namespace Scripts.View.Portraits {
         public Color Color {
             set {
                 text.color = value;
-                outline.effectColor = value;
             }
         }
 
