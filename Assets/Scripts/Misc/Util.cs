@@ -99,6 +99,10 @@ public static class Util {
     private static IDictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
 
     public static Sprite LoadIcon(string name) {
+        if (string.IsNullOrEmpty(name)) {
+            return null;
+        }
+
         if (!sprites.ContainsKey(name)) {
             sprites.Add(name, Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name)));
         }
