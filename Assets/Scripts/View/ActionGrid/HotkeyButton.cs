@@ -48,6 +48,7 @@ namespace Scripts.View.ActionGrid {
         public IButtonable Buttonable {
             set {
                 text.text = value.ButtonText;
+                icon.gameObject.SetActive(value.Sprite != null);
                 icon.sprite = value.Sprite;
                 tip.Sprite = value.Sprite;
                 tip.Title = value.ButtonText;
@@ -84,6 +85,7 @@ namespace Scripts.View.ActionGrid {
 
         public override void Reset() {
             Hotkey = KeyCode.None;
+            icon.sprite = null;
         }
 
         private void ActiveAppearance() {
