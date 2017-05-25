@@ -50,8 +50,6 @@ namespace Scripts.Model.World.Serialization {
                             )
                             }
                         ));
-                    } else {
-                        ActionGrid[i] = new Process(string.Format("<color=grey>SLOT_{0}</color>", index));
                     }
                 }
                 ActionGrid[ActionGridView.TOTAL_BUTTON_COUNT - 1] = new Process("Back", "Return to the Main Menu", () => Game.Instance.CurrentPage = Game.Instance.StartMenu);

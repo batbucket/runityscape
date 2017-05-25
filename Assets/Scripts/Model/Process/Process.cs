@@ -6,29 +6,43 @@ namespace Scripts.Model.Processes {
 
     public class Process : IButtonable {
         private Action action;
+        private Sprite sprite;
         private string description;
-        private bool isVisibleOnDisable;
         private string name;
-        private Func<bool> playCondition;
+        private Func<bool> condition;
+
+        /// <summary>
+        /// Descriptionless constructor
+        /// </summary>
+        public Process(string name,
+               Action action,
+               Func<bool> condition = null) : this(name, null, null, action, condition) { }
+
+        /// <summary>
+        /// Spriteless constructor
+        /// </summary>
+        public Process(string name,
+                       string description,
+                       Action action,
+                       Func<bool> condition = null) : this(name, null, description, action, condition) { }
 
         public Process(string name,
-                       string description = "",
-                       Action action = null,
-                       Func<bool> playCondition = null,
-                       bool isVisibleOnDisable = true) {
+               string spriteLoc,
+               string description,
+               Action action,
+               Func<bool> condition) {
             this.name = name;
+            this.sprite = Util.LoadIcon(spriteLoc);
             this.description = description;
-            this.action = action ?? (() => { });
-            this.playCondition = playCondition ?? (() => { return true; });
-            this.isVisibleOnDisable = isVisibleOnDisable;
+            this.action = action;
+            this.condition = condition ?? (() => true);
         }
 
         public Process() {
             this.name = "";
             this.description = "";
             this.action = (() => { });
-            this.playCondition = (() => { return false; });
-            this.isVisibleOnDisable = false;
+            this.condition = (() => { return false; });
         }
 
         public string ButtonText {
@@ -44,12 +58,6 @@ namespace Scripts.Model.Processes {
             }
         }
 
-        public bool IsVisibleOnDisable {
-            get {
-                return isVisibleOnDisable;
-            }
-        }
-
         public string TooltipText {
             get {
                 if (!string.IsNullOrEmpty(description)) {
@@ -62,7 +70,7 @@ namespace Scripts.Model.Processes {
 
         public Sprite Sprite {
             get {
-                return Util.LoadIcon("fox-head");
+                return sprite;
             }
         }
 
@@ -73,7 +81,7 @@ namespace Scripts.Model.Processes {
         }
 
         protected virtual bool isInvokable() {
-            return playCondition.Invoke();
+            return condition.Invoke();
         }
     }
 }

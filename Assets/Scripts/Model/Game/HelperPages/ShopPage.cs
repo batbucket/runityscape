@@ -149,30 +149,30 @@ namespace Scripts.Model.World.Pages {
                 ))
             );
 
-            ActionGrid[4] = new Process("Where are you from?", "", () =>
+            ActionGrid[4] = new Process("Where are you from?", () =>
             Game.Instance.Cutscene(false, Act.LongTalk(shopkeep,
                 "/All the way across the desert.>{0} points./That's as specific as I'll get. Don't wanna get murdered, after all./Yep, that's happened before. Someone followed me home and tried to murder me./I cross the desert all the time to maximize my market area./Cuts a lot of the distance. That saves time. And as the saying goes..."),
                 new Act(() => flags.Bools[Flag.SHOPKEEPER_MENTIONED_MURDER] = true)
                 ));
 
-            ActionGrid[8] = new Process("Why are you so dark?", "", () =>
+            ActionGrid[8] = new Process("Why are you so dark?", () =>
                 Game.Instance.Cutscene(false, Act.LongTalk(shopkeep,
                 "/Gets pretty boring, doing shopkeeper stuff all day. Gotta keep things interesting./Or did you mean that literally?/This desert outfit is a new buy./Guess what happens when you lug a bunch of stuff around in the sun without any protection?")
-            ), () => flags.Bools[Flag.SHOPKEEPER_MENTIONED_MURDER], false);
+            ), () => flags.Bools[Flag.SHOPKEEPER_MENTIONED_MURDER]);
 
             ActionGrid[1] = new Process("What kind of name is Maple?", "", () =>
                 Game.Instance.Cutscene(false, Act.LongTalk(shopkeep, "/You know, the tree? Maple trees? Maple wood? People make bows out of the stuff./Someone had some high hopes for my archery abilities./Seeing how I'm currently peddling goods off, you can probably guess that I'm not very good at marksmanship./My sister, Willow, is pretty good at shooting./But she uses one of those mechanical bows. So I guess it doesn't count."),
                 new Act(() => flags.Bools[Flag.SHOPKEEPER_MENTIONED_SISTER] = true)));
 
-            ActionGrid[5] = new Process("Ask about Willow", "", () =>
+            ActionGrid[5] = new Process("Ask about Willow", () =>
                 Game.Instance.Cutscene(false, Act.LongTalk(shopkeep,
                 "/Also named after a tree./She's a bounty hunter of sorts. She makes money taking down crooks./Currently going after a rogue Keeper./When she's done with that, let's just say I won't be shopkeeping anymore."),
                 new Act(() => flags.Bools[Flag.SHOPKEEPER_MENTIONED_KEEPER] = true)),
-                () => flags.Bools[Flag.SHOPKEEPER_MENTIONED_SISTER], false);
+                () => flags.Bools[Flag.SHOPKEEPER_MENTIONED_SISTER]);
 
-            ActionGrid[9] = new Process("Ask about the Keeper", "", () =>
+            ActionGrid[9] = new Process("Ask about the Keeper", () =>
                 Game.Instance.Cutscene(false, Act.LongTalk(shopkeep, "/Keepers are very, very, bad and powerful monsters in charge of sowing corruption across the land./Whether that's literally or metaphorically, I don't know./And there's a rogue Keeper on the loose. That probably means that they're doubly very, very bad and powerful.")),
-                () => flags.Bools[Flag.SHOPKEEPER_MENTIONED_KEEPER], false);
+                () => flags.Bools[Flag.SHOPKEEPER_MENTIONED_KEEPER]);
 
             ActionGrid[3] = new Process("Why is your Tome of Smite so expensive?", "", () =>
             Game.Instance.Cutscene(false, Act.LongTalk(shopkeep,

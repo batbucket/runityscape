@@ -96,7 +96,7 @@ namespace Scripts.Model.World.Pages {
                 null,
                 null,
                 null,
-                new Process("Save & Exit", "", () => Game.Instance.CurrentPage = new SavePage(this))
+                new Process("Save & Exit", () => Game.Instance.CurrentPage = new SavePage(this))
         };
             this.LeftCharacters = Party.Members;
         }
