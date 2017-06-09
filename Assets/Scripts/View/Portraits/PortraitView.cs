@@ -1,10 +1,10 @@
-﻿using Scripts.Model;
-using Scripts.Model.Stats.Attributes;
-using Scripts.Model.Stats.Resources;
+﻿using Scripts.Model.Stats;
 using Scripts.Presenter;
 using Scripts.View.Effects;
 using Scripts.View.ObjectPool;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,19 +40,12 @@ namespace Scripts.View.Portraits {
         [SerializeField]
         private GameObject resourcesHolder;
 
-        public IDictionary<AttributeType, AttributeBundle> AttributeViews { get; private set; }
-
         public GameObject BuffsHolder { get { return buffsHolder; } }
 
         /// <summary>
         /// Dictionary of all the buff boxes.
         /// </summary>
         public IDictionary<int, BuffBundle> BuffViews { get; private set; }
-
-        /// <summary>
-        /// Dictionary of the effects affecting this portrait.
-        /// </summary>
-        public IDictionary<string, CharacterEffect> Effects { get; private set; }
 
         public GameObject EffectsHolder { get { return effectsHolder; } }
 
@@ -67,26 +60,8 @@ namespace Scripts.View.Portraits {
 
         public string PortraitName { get { return portraitName.text; } set { portraitName.text = value; } }
         public Text PortraitText { get { return portraitName; } }
-        public IDictionary<ResourceType, ResourceBundle> ResourceViews { get; private set; }
+        public IDictionary<StatType, ResourceBundle> ResourceViews { get; private set; }
         public Sprite Sprite { get { return iconImage.sprite; } set { iconImage.sprite = value; } }
-
-        public void AddEffect(CharacterEffect ce) {
-            CharacterEffect current;
-            Effects.TryGetValue(ce.ID, out current);
-            if (current != null && !current.IsDone) {
-                current.StopCoroutine();
-                current.CancelEffect();
-            }
-            ce.StartCoroutine();
-            Effects[ce.ID] = ce;
-        }
-
-        public void ClearEffects() {
-            foreach (KeyValuePair<string, CharacterEffect> pair in Effects) {
-                pair.Value.StopCoroutine();
-                pair.Value.CancelEffect();
-            }
-        }
 
         public override void Reset() {
             PortraitName = "";
@@ -114,10 +89,6 @@ namespace Scripts.View.Portraits {
             BuffViews.Clear();
         }
 
-        public void SetAttributeViews(AttributeType attribute, AttributeBundle bundle) {
-            AttributeViews[attribute] = bundle;
-        }
-
         public void SetBuffs(BuffParams[] buffParams) {
             //Set all existing isSets to false.
             List<int> keys = new List<int>(BuffViews.Keys); //Can't modify Dictionary in foreach loop
@@ -135,8 +106,13 @@ namespace Scripts.View.Portraits {
                     bv = BuffViews[b.id].buffView;
                 }
 
-                bv.Tooltip = string.Format("{0} - {1}", b.name, b.description);
-                bv.Text = b.abbreviation;
+                // Tooltip details
+                bv.Tooltip.Sprite = b.sprite;
+                bv.Tooltip.Title = b.name;
+                bv.Tooltip.Body = b.description;
+
+                bv.Text = b.name;
+                bv.Icon = b.sprite;
                 bv.Color = b.color;
                 bv.Duration = b.duration;
                 BuffViews[b.id] = new BuffBundle { buffView = bv, isSet = true };
@@ -152,15 +128,15 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public void SetResources(ResourceType[] resourceTypes) {
+        public void SetResources(StatType[] resourceTypes) {
             //Set all existing isSets to false.
-            List<ResourceType> keys = new List<ResourceType>(ResourceViews.Keys); //Can't modify Dictionary in foreach loop
-            foreach (ResourceType key in keys) {
+            List<StatType> keys = new List<StatType>(ResourceViews.Keys); //Can't modify Dictionary in foreach loop
+            foreach (StatType key in keys) {
                 ResourceViews[key] = new ResourceBundle { resourceView = ResourceViews[key].resourceView, isSet = false };
             }
 
             //Add or possibly replace new ResourceViews.
-            foreach (ResourceType resourceType in resourceTypes) {
+            foreach (StatType resourceType in resourceTypes) {
                 ResourceView rv;
                 if (!ResourceViews.ContainsKey(resourceType)) {
                     // Instantiate new resource prefab
@@ -174,18 +150,19 @@ namespace Scripts.View.Portraits {
                     // Set resource prefab's details
                     rv.Type = resourceType;
                     rv.Sprite = resourceType.Sprite;
-                    rv.FillColor = resourceType.FillColor;
-                    rv.EmptyColor = resourceType.EmptyColor;
+                    rv.FillColor = resourceType.Color;
+                    rv.EmptyColor = resourceType.NegativeColor;
 
                     // Move resource prefab to appropraite location, resources are ordered.
                     ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
                     int index = rvs.Length - 1;
 
-                    // BubbleSort. We use this to move ResourceViews to their appropriate positions. (For example, LIFE is always the topmost resourceview)
-                    while (index - 1 >= 0 && rv.Type.CompareTo(rvs[index - 1].Type) < 0) {
-                        Util.Swap(rvs[index].gameObject, rvs[index - 1].gameObject);
-                        index--;
-                    }
+                    //// BubbleSort. We use this to move ResourceViews to their appropriate positions. (For example, LIFE is always the topmost resourceview)
+                    //while (index - 1 >= 0 && rv.Type.CompareTo(rvs[index - 1].Type) < 0) {
+                    //    Util.Swap(rvs[index].gameObject, rvs[index - 1].gameObject);
+                    //    index--;
+                    //}
+                    Array.Sort(rvs);
                 } else {
                     rv = ResourceViews[resourceType].resourceView;
                 }
@@ -195,7 +172,7 @@ namespace Scripts.View.Portraits {
 
             //Check if any isSets are false, if so, remove them and Destroy their gameObjects.
             //We can use same keys list as before since newly added keys cannot be false
-            foreach (ResourceType key in keys) {
+            foreach (StatType key in keys) {
                 if (!ResourceViews[key].isSet) {
                     if (ResourceViews[key].resourceView != null) {
                         ObjectPoolManager.Instance.Return(ResourceViews[key].resourceView);
@@ -210,15 +187,8 @@ namespace Scripts.View.Portraits {
             ObjectPoolManager.Instance.Register(buffPrefab, 10);
             ObjectPoolManager.Instance.Register(resourcePrefab, 4);
 
-            ResourceViews = new SortedDictionary<ResourceType, ResourceBundle>();
-            AttributeViews = new SortedDictionary<AttributeType, AttributeBundle>();
+            ResourceViews = new SortedDictionary<StatType, ResourceBundle>();
             BuffViews = new SortedDictionary<int, BuffBundle>();
-            Effects = new Dictionary<string, CharacterEffect>();
-        }
-
-        public struct AttributeBundle {
-            public int falseValue;
-            public int trueValue;
         }
 
         public struct BuffBundle {
@@ -227,12 +197,12 @@ namespace Scripts.View.Portraits {
         }
 
         public struct BuffParams {
-            public string abbreviation;
-            public Color color;
-            public string description;
-            public string duration;
             public int id;
+            public Color color;
+            public Sprite sprite;
             public string name;
+            public string duration;
+            public string description;
         }
 
         public struct ResourceBundle {

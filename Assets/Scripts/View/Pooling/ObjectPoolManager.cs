@@ -101,7 +101,7 @@ namespace Scripts.View.ObjectPool {
                 pools[pb.gameObject.name].Push(pb);
                 Util.Parent(pb.gameObject, this.gameObject);
             } else {
-                Util.Log(string.Format("Duplicate ID detected: {0}. Did you already return this behavior?", pb.GetInstanceID()));
+                //Util.Log(string.Format("Duplicate ID detected: {0}. Did you already return this behavior?", pb.GetInstanceID()));
             }
         }
 

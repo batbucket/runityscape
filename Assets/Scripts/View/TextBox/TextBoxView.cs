@@ -69,13 +69,11 @@ namespace Scripts.View.TextBoxes {
 
                 case TextEffect.FADE_IN:
                     text.text = textBox.RawText;
-                    Color color = text.color;
-                    color.a = 0;
-                    text.color = color;
-                    while (text.color.a < 1) {
-                        Color c = text.color;
-                        c.a += Time.deltaTime * 3;
-                        text.color = c;
+                    float alpha = 0;
+                    while (alpha < 1) {
+                        alpha += Time.deltaTime * 3;
+                        Util.SetOutlineAlpha(outline, alpha);
+                        Util.SetTextAlpha(text, alpha);
                         yield return null;
                     }
                     break;

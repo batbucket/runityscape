@@ -2,6 +2,7 @@
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -40,8 +41,6 @@ namespace Scripts.View.ActionGrid {
         [SerializeField]
         private UIInput input;
 
-        private bool isHotkeyEnabled;
-
         [SerializeField]
         private Text text;
 
@@ -62,14 +61,25 @@ namespace Scripts.View.ActionGrid {
             }
         }
 
-        public KeyCode Hotkey { get { return isHotkeyEnabled ? hotkey : KeyCode.None; } set { hotkey = value; } } //The keyboard key that interacts with this button
-
-        public bool IsHotkeyEnabled {
-            set {
-                this.isHotkeyEnabled = value;
-                hotkeyText.text = (value && Hotkey != KeyCode.None ? Hotkey.ToString() : "");
+        public KeyCode Hotkey {
+            get {
+                return hotkey;
             }
-        }
+            set {
+                hotkeyText.enabled = (value != KeyCode.None);
+                string text = "";
+                string keyCode = value.ToString();
+
+                // Change "Alpha1" to 1 and etc.
+                if (keyCode.Contains("Alpha")) {
+                    text = "" + keyCode[keyCode.Length - 1];
+                } else {
+                    text = keyCode;
+                }
+                hotkeyText.text = text;
+                hotkey = value;
+            }
+        } //The keyboard key that interacts with this button
 
         public bool IsVisible {
             set {
@@ -95,11 +105,6 @@ namespace Scripts.View.ActionGrid {
             hotkeyText.color = INACTIVE_COLOR;
         }
 
-        // Use this for initialization
-        private void Awake() {
-            IsHotkeyEnabled = true;
-        }
-
         private void DisabledAppearance() {
             text.text = "";
             tip.enabled = false;
@@ -118,7 +123,7 @@ namespace Scripts.View.ActionGrid {
 
         // Update is called once per frame
         private void Update() {
-            if (isHotkeyEnabled && Input.GetKeyDown(this.Hotkey)) {
+            if (Input.GetKeyDown(this.Hotkey)) {
                 button.onClick.Invoke();
             }
         }

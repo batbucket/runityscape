@@ -22,7 +22,7 @@ namespace Scripts.View.Portraits {
         /// This allows us to use the shake effect.
         /// </summary>
         /// <param name="characters"></param>
-        public void AddPortraits(IList<Character> characters) {
+        public void AddPortraits(ICollection<Character> characters) {
             //Set all existing isSets to false.
             List<Character> keys = new List<Character>(CharacterViews.Keys); //Can't modify Dictionary in foreach loop
             foreach (Character key in keys) {
@@ -34,12 +34,11 @@ namespace Scripts.View.Portraits {
                 PortraitView pv;
                 if (!CharacterViews.ContainsKey(c)) {
                     pv = ObjectPoolManager.Instance.Get(portraitPrefab);
-                    pv.ClearEffects();
                     Util.Parent(pv.gameObject, gameObject);
                 } else {
                     pv = CharacterViews[c].portraitView;
                 }
-                pv.PortraitName = c.DisplayName;
+                pv.PortraitName = c.Look.DisplayName;
                 CharacterViews[c] = new PortraitBundle { portraitView = pv, isSet = true };
             }
 

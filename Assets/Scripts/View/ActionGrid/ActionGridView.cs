@@ -1,5 +1,6 @@
 ﻿using Scripts.Model.Interfaces;
 using Scripts.View.ObjectPool;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.View.ActionGrid {
@@ -9,80 +10,71 @@ namespace Scripts.View.ActionGrid {
     /// These buttons are accessible via mouse left clicks as well as keyboard input.
     /// </summary>
     public sealed class ActionGridView : MonoBehaviour {
-        public const int COLS = 4;
-
-        public const int ROWS = 3;
-
-        public const int TOTAL_BUTTON_COUNT = ROWS * COLS;
 
         public static readonly KeyCode[] HOTKEYS = new KeyCode[] {
+            KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4,
             KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
             KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.F,
             KeyCode.Z, KeyCode.X, KeyCode.C, KeyCode.V
             };
 
         [SerializeField]
-        private PooledBehaviour actionButtonPrefab;
+        private HotkeyButton actionButtonPrefab;
 
         /**
          * Hotkeys that are assigned to the buttons
          */
-        private HotkeyButton[] actionButtons;
+        private List<HotkeyButton> buttons;
 
         /// <summary>
         /// Enables and disables the buttons
         /// </summary>
         public bool IsEnabled {
             set {
-                foreach (HotkeyButton b in actionButtons) {
+                foreach (HotkeyButton b in buttons) {
                     b.IsVisible = value;
                 }
             }
         }
 
-        /// <summary>
-        /// Enables and disables the hotkeys for each button
-        /// </summary>
-        public bool IsHotkeysEnabled {
-            set {
-                foreach (HotkeyButton b in actionButtons) {
-                    b.IsHotkeyEnabled = value;
-                }
-            }
-        }
-
         public void ClearAll() {
-            SetButtonAttributes();
+            for (int i = 0; i < buttons.Count; i++) {
+                ObjectPoolManager.Instance.Return(buttons[i]);
+            }
+            buttons.Clear();
         }
 
-        public void SetButtonAttributes(params IButtonable[] buttonables) {
-            Util.Assert(buttonables.Length <= actionButtons.Length);
-            for (int i = 0; i < actionButtons.Length; i++) {
-                if (i < buttonables.Length && buttonables[i] != null) {
-                    if (buttonables[i].IsInvokable) {
-                        actionButtons[i].IsVisible = true;
-                        actionButtons[i].Buttonable = buttonables[i];
-                    } else {
-                        actionButtons[i].IsVisible = false;
-                    }
+        public void SetButtonAttributes(IList<IButtonable> buttonables) {
+            for (int i = 0; i < buttonables.Count; i++) {
+                HotkeyButton hb;
+
+                if (i < buttons.Count) {
+                    hb = buttons[i];
                 } else {
-                    actionButtons[i].IsVisible = false;
+                    hb = ObjectPoolManager.Instance.Get(actionButtonPrefab);
+                    Util.Parent(hb.gameObject, gameObject);
+                    buttons.Add(hb);
+                }
+
+                if (buttonables[i] != null) {
+                    hb.IsVisible = true;
+                    hb.Buttonable = buttonables[i];
+                } else {
+                    hb.IsVisible = false;
+                }
+
+                if (i < HOTKEYS.Length) {
+                    hb.Hotkey = HOTKEYS[i];
+                } else {
+                    hb.Hotkey = KeyCode.None;
                 }
             }
         }
 
         // Use this for initialization
         private void Start() {
-            ObjectPoolManager.Instance.Register(actionButtonPrefab, TOTAL_BUTTON_COUNT);
-
-            this.actionButtons = new HotkeyButton[HOTKEYS.Length];
-            for (int i = 0; i < actionButtons.Length; i++) {
-                PooledBehaviour actionButton = ObjectPoolManager.Instance.Get(actionButtonPrefab);
-                Util.Parent(actionButton.gameObject, gameObject);
-                actionButton.GetComponent<HotkeyButton>().Hotkey = HOTKEYS[i];
-                actionButtons[i] = actionButton.GetComponent<HotkeyButton>();
-            }
-            ClearAll();
+            ObjectPoolManager.Instance.Register(actionButtonPrefab, 20);
+            buttons = new List<HotkeyButton>();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Scripts.Model.Stats.Resources;
-using Scripts.Presenter;
+﻿using Scripts.Model.Stats;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
 using UnityEngine;
@@ -12,7 +11,7 @@ namespace Scripts.View.Portraits {
     /// on a CharacterView, representing their resources.
     /// </summary>
     public class ResourceView : PooledBehaviour {
-        public ResourceType Type;
+        public StatType Type;
 
         /// <summary>
         /// Bar that represents the absence of a resource

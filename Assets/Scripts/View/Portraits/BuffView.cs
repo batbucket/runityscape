@@ -1,5 +1,6 @@
 ﻿using Scripts.Presenter;
 using Scripts.View.ObjectPool;
+using Scripts.View.Tooltip;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,19 +28,36 @@ namespace Scripts.View.Portraits {
         /// Background of the buff
         /// </summary>
         [SerializeField]
-        private Image image;
-
-        public string Text { set { text.text = value; } }
-        public string Duration { set { duration.text = value; } }
+        private Image background;
 
         /// <summary>
-        /// Buff description on mouse hoverover
+        /// Icon representing the buff
         /// </summary>
-        private string tooltip;
+        [SerializeField]
+        private Image icon;
 
-        public string Tooltip {
+        [SerializeField]
+        private Tip Tip;
+
+        public Tip Tooltip {
+            get {
+                return Tip;
+            }
+        }
+
+        public string Text {
             set {
-                tooltip = value;
+                text.text = value;
+            }
+        }
+        public string Duration {
+            set {
+                duration.text = value;
+            }
+        }
+        public Sprite Icon {
+            set {
+                icon.sprite = value;
             }
         }
 
@@ -53,7 +71,7 @@ namespace Scripts.View.Portraits {
             Text = "";
             Duration = "";
             Color = Color.white;
-            image.color = Color.black;
+            background.color = Color.black;
         }
     }
 }
