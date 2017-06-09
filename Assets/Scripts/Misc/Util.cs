@@ -1,4 +1,5 @@
-﻿using Scripts.View.ObjectPool;
+﻿using Scripts.Model.Interfaces;
+using Scripts.Model.Processes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,48 @@ using WindowsInput;
  */
 
 public static class Util {
+
+    /// <summary>
+    /// From https://stackoverflow.com/questions/12172162/how-to-insert-item-into-list-in-order
+    /// </summary>
+    /// <typeparam name="T">Type of item</typeparam>
+    /// <param name="list">List for item to be inserted</param>
+    /// <param name="item">Item to be inserted into list</param>
+    public static void InsertIntoAscendingList<T>(List<T> list, T item) {
+        int index = list.BinarySearch(item);
+        if (index < 0) {
+            index = ~index;
+        }
+        list.Insert(index, item);
+    }
+
+    public static IButtonable[] UpdateArray<T>(IButtonable[] currentArray, Tuple tuple) {
+        IButtonable[] array = currentArray;
+        if (currentArray.Length - 1 < tuple.Index) {
+            array = new IButtonable[tuple.Index];
+            Array.Copy(currentArray, array, currentArray.Length);
+        }
+        array[tuple.Index] = tuple.Data;
+        return array;
+    }
+
+    public static IButtonable[] GetArray(params Tuple[] indicies) {
+        return GetArray(indicies, Grid.DEFAULT_BUTTON_COUNT);
+    }
+
+    private static IButtonable[] GetArray(Tuple[] indices, int smallestAllowedSize = 0) {
+        int size = Mathf.Max(indices.Max(t => t.Index) + 1, smallestAllowedSize);
+        IButtonable[] array = new IButtonable[size];
+        HashSet<int> indexSet = new HashSet<int>();
+        foreach (Tuple t in indices) {
+            if (indexSet.Contains(t.Index)) {
+                throw new UnityException(string.Format("Index collision detected at index: {0}. Tried to place {1}, but {2} was already there.", t.Data.ButtonText, array[t.Index].ButtonText));
+            }
+            indexSet.Add(t.Index);
+            array[t.Index] = t.Data;
+        }
+        return array;
+    }
 
     /// <summary>
     /// From
@@ -112,7 +155,7 @@ public static class Util {
         return icon;
     }
 
-    public static bool Chance(double probability) {
+    public static bool IsChance(double probability) {
         return UnityEngine.Random.Range(0f, 1f) < probability;
     }
 
@@ -287,7 +330,7 @@ public static class Util {
     }
 
     public static Sprite GetSprite(string name) {
-        return Resources.Load<Sprite>(string.Format("{0}/{1}", "Images", name));
+        return Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name));
     }
 
     /**
