@@ -1,8 +1,7 @@
 ﻿using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Processes;
-using Scripts.Presenter;
-using Scripts.View.ActionGrid;
+using Scripts.Model.TextBoxes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,95 +9,46 @@ using UnityEngine;
 
 namespace Scripts.Model.Pages {
 
-    public abstract class Page : IButtonable {
-        public static int idCount = 0;
-        protected Stack<IButtonable[]> gridStack;
-        private string _inputtedString;
-        private IButtonable[] actionGrid;
+    public class Page : IButtonable {
+        public static Action<Page> ChangePageFunc;
+        public static Action<Page> UpdateGridUI;
+        public static Action<TextBox> TypeText;
 
-        public Page(
-            string text = "",
-            string tooltip = "",
-            string location = "",
-            bool hasInputField = false,
-            IList<Character> left = null,
-            IList<Character> right = null,
-            Action onFirstEnter = null,
-            Action onEnter = null,
-            Action onFirstExit = null,
-            Action onExit = null,
-            Action onTick = null,
-            IList<IButtonable> buttonables = null,
-            string musicLoc = null
-            ) {
-            this.Text = text;
-            this.Tooltip = tooltip;
-            this.HasInputField = hasInputField;
+        public ICollection<Character> Left;
+        public string Location;
+        public string Music;
+        public ICollection<Character> Right;
+        public string Body;
+        public Sprite Icon;
+        public Action OnEnter;
 
+        private IButtonable[] grid;
+
+        public Page(string location) {
             this.Location = location;
-
-            //Left Characters initialization
-            if (left == null || left.Count == 0) {
-                this.LeftCharacters = new List<Character>();
-            } else {
-                SetSide(left, false);
-            }
-
-            //Right Characters initialization
-            if (right == null || right.Count == 0) {
-                this.RightCharacters = new List<Character>();
-            } else {
-                SetSide(right, true);
-            }
-
-            this.RepeatedCharacterCheck(GetAll());
-            this.OnFirstEnterAction = onFirstEnter ?? (() => { });
-            this.OnEnterAction = onEnter ?? (() => { });
-            this.OnFirstExitAction = onFirstExit ?? (() => { });
-            this.OnExitAction = onExit ?? (() => { });
-
-            this.ActionGrid = buttonables == null ? new IButtonable[0] : buttonables.ToArray();
-
-            this.OnTickAction = onTick ?? (() => { });
-            this.Music = musicLoc;
-
-            this.Id = idCount++;
-
-            this._inputtedString = "";
+            this.grid = new IButtonable[Grid.DEFAULT_BUTTON_COUNT];
+            this.Left = new HashSet<Character>();
+            this.Right = new HashSet<Character>();
+            this.OnEnter = () => { };
         }
 
-        public IButtonable[] ActionGrid {
-            get {
-                return actionGrid;
-            }
+        public IButtonable[] Actions {
             set {
-                this.actionGrid = new IButtonable[ActionGridView.TOTAL_BUTTON_COUNT];
-                for (int i = 0; i < actionGrid.Length; i++) {
-                    if (value != null && i < value.Length) {
-                        actionGrid[i] = value[i];
-                    } else {
-                        actionGrid[i] = new Process();
-                    }
+                IButtonable[] set = null;
+                if (value.Length < Grid.DEFAULT_BUTTON_COUNT) {
+                    set = new IButtonable[Grid.DEFAULT_BUTTON_COUNT];
+                    Array.Copy(value, set, value.Length);
+                } else {
+                    set = value;
                 }
+                this.grid = set;
+                UpdateGridUI.Invoke(this);
+            }
+
+            get {
+                return grid;
             }
         }
-
-        public bool HasEnteredBefore { get; protected set; }
-        public bool HasExitedBefore { get; protected set; }
-        public bool HasInputField { get; set; }
-        public int Id { get; private set; }
-        public string InputtedString { get { return _inputtedString; } set { _inputtedString = value; } }
-        public IList<Character> LeftCharacters { get; protected set; }
-        public string Location { get; set; }
-        public string Music { get; protected set; }
-        public Action OnEnterAction { get; protected set; }
-        public Action OnExitAction { get; protected set; }
-        public Action OnFirstEnterAction { get; protected set; }
-        public Action OnFirstExitAction { get; protected set; }
-        public Action OnTickAction { get; protected set; }
-        public IList<Character> RightCharacters { get; protected set; }
-        public string Text { get; protected set; }
-        public string Tooltip { get; set; }
 
         public string ButtonText {
             get {
@@ -126,63 +76,19 @@ namespace Scripts.Model.Pages {
 
         public Sprite Sprite {
             get {
-                return Util.LoadIcon("fox-head");
+                return Icon;
             }
         }
 
-        public void AddCharacters(Character sameSide, params Character[] chars) {
-            AddCharacters(sameSide.Side, chars);
-        }
-
         public void AddCharacters(bool isRightSide, params Character[] chars) {
-            SetCharacterSides(chars, isRightSide);
-            IList<Character> myList = !isRightSide ? LeftCharacters : RightCharacters;
+            ICollection<Character> mySet = !isRightSide ? Left : Right;
             foreach (Character c in chars) {
-                myList.Add(c);
-                OnAddCharacter(c);
+                mySet.Add(c);
             }
         }
 
         public void ClearActionGrid() {
-            for (int i = 0; i < ActionGrid.Length; i++) {
-                ActionGrid[i] = new Process();
-            }
-        }
-
-        public void Enter() {
-            if (!HasEnteredBefore) {
-                HasEnteredBefore = true;
-                OnFirstEnter();
-                OnFirstEnterAction.Invoke();
-            }
-            OnAnyEnter();
-            OnEnterAction.Invoke();
-        }
-
-        public override bool Equals(object obj) {
-            // If parameter is null return false.
-            if (obj == null) {
-                return false;
-            }
-
-            // If parameter cannot be cast to Page return false.
-            Page p = obj as Page;
-            if ((object)p == null) {
-                return false;
-            }
-
-            // Return true if the fields match:
-            return p.Id == this.Id;
-        }
-
-        public void Exit() {
-            if (!HasExitedBefore) {
-                HasExitedBefore = true;
-                OnFirstExit();
-                OnFirstExitAction.Invoke();
-            }
-            OnAnyExit();
-            OnExitAction.Invoke();
+            Actions = new IButtonable[Grid.DEFAULT_BUTTON_COUNT];
         }
 
         public List<Character> GetAll(Character c = null) {
@@ -192,64 +98,53 @@ namespace Scripts.Model.Pages {
             return c == null ? allChars : allChars.Where(chara => chara != c).ToList();
         }
 
-        public IList<Character> GetAllies(Character c) {
-            return GetCharacters(c.Side);
+        public ICollection<Character> GetAllies(Character c) {
+            return GetCharacters(GetSide(c));
         }
 
-        public IList<Character> GetCharacters(bool isRightSide) {
-            return !isRightSide ? LeftCharacters : RightCharacters;
+        public ICollection<Character> GetFoes(Character c) {
+            return GetCharacters(!GetSide(c));
         }
 
-        public IList<Character> GetEnemies(Character c) {
-            return GetCharacters(!c.Side);
-        }
-
-        public override int GetHashCode() {
-            return Id;
-        }
-
-        public Character GetRandomAlly(Character c) {
-            return GetAllies(c).PickRandom();
-        }
-
-        public Character GetRandomCharacter(Character c = null) {
-            return GetAll(c).PickRandom();
-        }
-
-        public Character GetRandomEnemy(Character c) {
-            return GetEnemies(c).PickRandom();
+        public ICollection<Character> GetCharacters(bool isRightSide) {
+            return !isRightSide ? Left : Right;
         }
 
         public void Tick() {
-            OnTickAction.Invoke();
-            OnTick();
             IList<Character> all = GetAll();
             RepeatedCharacterCheck(all);
             foreach (Character c in all) {
-                c.Tick();
+                c.Update();
             }
         }
 
         public void Invoke() {
-            Game.Instance.CurrentPage = this;
+            ChangePageFunc.Invoke(this);
         }
 
-        protected virtual void OnAddCharacter(Character c) {
+        public bool GetSide(Character c) {
+            if (Left.Contains(c)) {
+                return false;
+            } else if (Right.Contains(c)) {
+                return true;
+            } else {
+                throw new UnityException(string.Format("Character {0} not found in either side.", c.Look.DisplayName));
+            }
         }
 
-        protected virtual void OnAnyEnter() {
+        public void AddText(Character c, string s) {
+            bool side = GetSide(c);
+            TextBox t = null;
+            if (!side) {
+                t = new LeftBox(c.Look.Sprite, s, c.Look.TextColor);
+            } else {
+                t = new RightBox(c.Look.Sprite, s, c.Look.TextColor);
+            }
+            TypeText(t);
         }
 
-        protected virtual void OnAnyExit() {
-        }
-
-        protected virtual void OnFirstEnter() {
-        }
-
-        protected virtual void OnFirstExit() {
-        }
-
-        protected virtual void OnTick() {
+        public void AddText(string s) {
+            TypeText(new TextBox(s));
         }
 
         /// <summary>
@@ -260,12 +155,12 @@ namespace Scripts.Model.Pages {
         private void RepeatedCharacterCheck(IList<Character> characters) {
             Dictionary<string, IList<Character>> repeatedCharacters = new Dictionary<string, IList<Character>>();
             foreach (Character c in characters) {
-                if (!repeatedCharacters.ContainsKey(c.Name)) {
+                if (!repeatedCharacters.ContainsKey(c.Look.Name)) {
                     List<Character> characterList = new List<Character>();
                     characterList.Add(c);
-                    repeatedCharacters.Add(c.Name, characterList);
+                    repeatedCharacters.Add(c.Look.Name, characterList);
                 } else {
-                    repeatedCharacters[c.Name].Add(c);
+                    repeatedCharacters[c.Look.Name].Add(c);
                 }
             }
 
@@ -274,29 +169,12 @@ namespace Scripts.Model.Pages {
                     int index = 0;
                     foreach (Character c in cPair.Value) {
                         if (characters.Contains(c)) {
-                            c.Suffix = Util.IntToLetter(index++);
+                            c.Look.Suffix = Util.IntToLetter(index++);
                         }
                     }
                 } else {
-                    cPair.Value[0].Suffix = "";
+                    cPair.Value[0].Look.Suffix = "";
                 }
-            }
-        }
-
-        private void SetCharacterSides(IList<Character> characters, bool isRightSide) {
-            foreach (Character c in characters) {
-                c.Side = isRightSide;
-            }
-        }
-
-        private void SetSide(IList<Character> characters, bool isRightSide) {
-            SetCharacterSides(characters, isRightSide);
-            List<Character> myList = new List<Character>();
-            myList.AddRange(characters);
-            if (!isRightSide) {
-                LeftCharacters = myList;
-            } else {
-                RightCharacters = myList;
             }
         }
     }

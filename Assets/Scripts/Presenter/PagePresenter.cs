@@ -1,6 +1,7 @@
 ﻿using Script.View.Tooltip;
 using Scripts.Model.Characters;
 using Scripts.Model.Pages;
+using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
 using Scripts.View.ActionGrid;
 using Scripts.View.Other;
@@ -19,24 +20,6 @@ namespace Scripts.Presenter {
     /// and the page model.
     /// </summary>
     public class PagePresenter {
-
-        public Page Page {
-            set {
-                SetPage(value);
-            }
-
-            get {
-                return page;
-            }
-        }
-
-        public string InputtedText {
-            get {
-                Util.Assert(inputBox != null, "Cannot get InputBox value from a Page without an InputBox!");
-                return inputBox.Input;
-            }
-        }
-
         private Page page;
 
         private TextBoxHolderView textBoxHolder;
@@ -50,7 +33,7 @@ namespace Scripts.Presenter {
 
         private InputBoxView inputBox;
 
-        public PagePresenter(ReadPage initial, TextBoxHolderView textBoxHolder, ActionGridView actionGrid, PortraitHolderView left, PortraitHolderView right, HeaderView header, SoundView sound) {
+        public PagePresenter(Page initial, TextBoxHolderView textBoxHolder, ActionGridView actionGrid, PortraitHolderView left, PortraitHolderView right, HeaderView header, SoundView sound) {
             this.textBoxHolder = textBoxHolder;
             this.actionGrid = actionGrid;
             this.left = left;
@@ -58,24 +41,50 @@ namespace Scripts.Presenter {
             this.header = header;
             this.sound = sound;
             this.characterPresenters = new List<CharacterPresenter>();
-            page = new ReadPage();
-            this.Page = initial; // Called last because we need the views
+
+            InitializeFunctions();
+            this.Page = initial;
+        }
+
+        public Page Page {
+            set {
+                Debug.Log(value.Location);
+                SetPage(value);
+            }
+
+            get {
+                return page;
+            }
+        }
+
+        private void InitializeFunctions() {
+            Grid.ChangeGridFunc = (a => Page.Actions = a);
+            Page.ChangePageFunc = (p => {
+                Page = p;
+            });
+            Page.UpdateGridUI = p => {
+                if (p == Page) {
+                    actionGrid.ClearAll();
+                    actionGrid.SetButtonAttributes(p.Actions);
+                }
+            };
+            Page.TypeText = (t) => {
+                Game.Instance.TextBoxes.AddTextBox(t);
+            };
         }
 
         public void Tick() {
             Page.Tick();
-            actionGrid.ClearAll();
-            actionGrid.SetButtonAttributes(Page.ActionGrid);
+            //actionGrid.ClearAll();
+            //actionGrid.SetButtonAttributes(Page.Grid);
             header.Location = Page.Location;
-            SetCharacterPresenters(Page.LeftCharacters, left);
-            SetCharacterPresenters(Page.RightCharacters, right);
-            TickCharacterPresenters(Page.LeftCharacters.Where(c => c.IsTargetable).ToArray());
-            TickCharacterPresenters(Page.RightCharacters.Where(c => c.IsTargetable).ToArray());
-            Page.InputtedString = Page.HasInputField ? inputBox.Input : "";
+            SetCharacterPresenters(Page.Left, left);
+            SetCharacterPresenters(Page.Right, right);
+            TickCharacterPresenters(Page.Left);
+            TickCharacterPresenters(Page.Right);
         }
 
         private void SetPage(Page page) {
-            this.Page.Exit();
 
             // Music decision
             if (string.IsNullOrEmpty(page.Music)) {
@@ -87,15 +96,7 @@ namespace Scripts.Presenter {
                 sound.LoopMusic(page.Music);
             }
 
-            // Restore charging if defeated
             this.page = page;
-            IList<Character> chars = page.GetAll();
-            foreach (Character c in chars) {
-                c.IsCharging = true;
-            }
-
-            // Reset battle timer
-            Page.GetAll().ForEach(c => c.BattleTimer = 0);
 
             // Return all textboxes used
             textBoxHolder.ReturnChildren();
@@ -107,20 +108,15 @@ namespace Scripts.Presenter {
             // From Timelining
             actionGrid.IsEnabled = true;
 
-            if (!string.IsNullOrEmpty(page.Text)) {
-                AddTextBox(new TextBox(page.Text));
+            if (!string.IsNullOrEmpty(page.Body)) {
+                AddTextBox(new TextBox(page.Body));
             }
 
-            // Only allow hotkeyable buttons on pages without an input field
-            actionGrid.IsHotkeysEnabled = !this.Page.HasInputField;
-            if (this.Page.HasInputField) {
-                inputBox = textBoxHolder.AddInputBox();
-                inputBox.Input = Page.InputtedString;
-            } else {
-                inputBox = null;
-            }
+            actionGrid.ClearAll();
+            actionGrid.SetButtonAttributes(Page.Actions);
 
-            page.Enter();
+            page.OnEnter.Invoke();
+
             Tick();
         }
 
@@ -129,8 +125,8 @@ namespace Scripts.Presenter {
             return textBoxHolder.AddTextBox(t, callBack);
         }
 
-        private void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
-            IList<Character> targetableCharacters = characters.Where(c => c.IsTargetable).ToArray();
+        private void SetCharacterPresenters(ICollection<Character> characters, PortraitHolderView portraitHolder) {
+            ICollection<Character> targetableCharacters = characters;
             portraitHolder.AddPortraits(targetableCharacters); //Pass in characters' Names as parameter
             foreach (Character c in targetableCharacters) {
                 c.Presenter = new CharacterPresenter(c, portraitHolder.CharacterViews[c].portraitView);
@@ -138,7 +134,7 @@ namespace Scripts.Presenter {
             }
         }
 
-        private void TickCharacterPresenters(IList<Character> characters) {
+        private void TickCharacterPresenters(ICollection<Character> characters) {
             foreach (Character c in characters) {
                 c.Presenter.Tick();
             }
