@@ -1,6 +1,5 @@
 ﻿using Script.View.Tooltip;
 using Scripts.Model.Acts;
-using Scripts.Model.World.Pages;
 using Scripts.Model.World.Serialization;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
@@ -17,14 +16,11 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using Scripts.Model.World;
 
 namespace Scripts.Presenter {
 
     public class Game : MonoBehaviour {
-        public const string VERSION = "1.0";
-        public const string GREETING = "monsterscape version 1.0 - the demo";
-        public const float NORMAL_TEXT_SPEED = 0.001f;
-        public StartMenu StartMenu;
         private static Game instance;
 
         [SerializeField]
@@ -61,21 +57,6 @@ namespace Scripts.Presenter {
 
         public static Game Instance { get { return instance; } }
 
-        public Page CurrentPage {
-            set {
-                pagePresenter.Page = value;
-            }
-            get {
-                return pagePresenter.Page;
-            }
-        }
-
-        public GoldView Gold {
-            get {
-                return gold;
-            }
-        }
-
         public SoundView Sound {
             get {
                 return sound;
@@ -94,98 +75,18 @@ namespace Scripts.Presenter {
             }
         }
 
-        public void Cutscene(bool isGridVisible, params Act[] acts) {
-            StartCoroutine(Timeline(acts, isGridVisible));
-        }
-
-        public void Cutscene(bool isGridVisible, params Act[][] acts) {
-            List<Act> list = new List<Act>();
-            for (int i = 0; i < acts.Length; i++) {
-                for (int j = 0; j < acts[i].Length; j++) {
-                    list.Add(acts[i][j]);
-                }
-            }
-            StartCoroutine(Timeline(list.ToArray(), isGridVisible));
-        }
-
-        public void Cutscene(bool isGridVisible, Act[] act0, params Act[] acts1) {
-            Act[] all = new Act[act0.Length + acts1.Length];
-            for (int i = 0; i < act0.Length; i++) {
-                all[i] = act0[i];
-            }
-            for (int i = act0.Length; i < act0.Length + acts1.Length; i++) {
-                all[i] = acts1[i - act0.Length];
-            }
-            StartCoroutine(Timeline(all, isGridVisible));
-        }
-
         private void Start() {
             instance = this;
 
-            header.Location = "Main Menu";
+            Page mainMenu = new Page("placeholder");
+            pagePresenter = new PagePresenter(mainMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, sound);
 
-            StartMenu = new StartMenu();
-            pagePresenter = new PagePresenter(StartMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, sound);
-        }
-
-        /// <summary>
-        /// Strings together a group of acts to make a cutscene-like event.
-        /// </summary>
-        /// <param name="acts">Acts to string up</param>
-        /// <param name="isGridVisible">Whether or not the user can see their normal action grid during the cutscene</param>
-        /// <returns></returns>
-        private IEnumerator Timeline(Act[] acts, bool isGridVisible) {
-            IButtonable[] savedGrid = new IButtonable[0];
-            Page pageWhenCutsceneStarts = CurrentPage;
-            bool skip = false;
-            if (!isGridVisible) {
-                savedGrid = CurrentPage.ActionGrid;
-                CurrentPage.ActionGrid = null;
-                pagePresenter.Page.GetAll().ForEach(c => c.IsCharging = false);
-            }
-            for (int i = 0; i < acts.Length; i++) {
-                Act a = acts[i];
-                float timer = 0;
-
-                while (!skip && (timer += UnityEngine.Time.deltaTime) < a.Delay) {
-                    yield return null;
-                }
-                if (skip && a.IsSkippable) {
-                    yield return new WaitForSeconds(0.01f);
-                    a.SkipAction.Invoke();
-                } else {
-                    a.Action.Invoke();
-                }
-                while (!skip && !a.HasEnded.Invoke()) {
-                    yield return null;
-                }
-
-                if (!skip && a.RequiresUserAdvance && !isGridVisible && i < acts.Length - 1) {
-                    bool isAdvanced = false;
-                    CurrentPage.ActionGrid = new IButtonable[] {
-                    new Process("Step", "", () => isAdvanced = true),
-                    null,
-                    null,
-                    new Process("Skip All", "Skip all events in this series.", () =>
-                    {
-                        isAdvanced = true;
-                        skip = true;
-                    }),
-                };
-                    while (!isAdvanced) {
-                        yield return null;
-                    }
-                    CurrentPage.ActionGrid = new IButtonable[0];
-                }
-            }
-            if (!isGridVisible) {
-                pageWhenCutsceneStarts.ActionGrid = savedGrid;
-                pagePresenter.Page.GetAll().ForEach(c => c.IsCharging = true);
-            }
+            Menus menus = new Menus();
+            pagePresenter.Page = menus.Start;
         }
 
         private void Update() {
-            if (pagePresenter != null) {
+            if (pagePresenter != null && pagePresenter.Page != null) {
                 pagePresenter.Tick();
             }
         }
