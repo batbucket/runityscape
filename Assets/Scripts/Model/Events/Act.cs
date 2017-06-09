@@ -50,9 +50,6 @@ namespace Scripts.Model.Acts {
             () => Game.Instance.Title.IsDone, 0.5f, false) {
         }
 
-        public Act(Page nextPage) : this(() => Game.Instance.CurrentPage = nextPage, () => true, 0.5f, false) {
-        }
-
         private Act(Action action, Func<bool> endCondition, float delay, bool reqUserAdv) {
             this.Action = action;
             this.HasEnded = endCondition ?? (() => true);
@@ -98,7 +95,7 @@ namespace Scripts.Model.Acts {
                         break;
 
                     case AVATARBOX_SYMBOL:
-                        boxes.Add(c.Talk(rest));
+                        //boxes.Add(c.Talk(rest));
                         break;
 
                     default:
