@@ -1,5 +1,4 @@
-﻿using Scripts.Model.Items;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Characters {
@@ -12,17 +11,6 @@ namespace Scripts.Model.Characters {
     public class Party : IList<Character> {
         public Character Leader;
         public IList<Character> Members; // Leader also counts as a member
-
-        public Inventory Inventory {
-            get {
-                return Leader.Inventory;
-            }
-            set {
-                foreach (Character c in this) {
-                    c.Inventory = value;
-                }
-            }
-        }
 
         public int Count {
             get {
@@ -68,7 +56,6 @@ namespace Scripts.Model.Characters {
         }
 
         public void Insert(int index, Character item) {
-            item.Inventory = this.Inventory;
             Members.Insert(index, item);
         }
 
@@ -78,7 +65,6 @@ namespace Scripts.Model.Characters {
 
         public void Add(Character item) {
             if (!Members.Contains(item)) {
-                item.Inventory = this.Inventory;
                 Members.Add(item);
             }
         }
