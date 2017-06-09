@@ -1,6 +1,5 @@
 ﻿using Scripts.Model.Characters;
-using Scripts.Model.Stats.Attributes;
-using Scripts.Model.Stats.Resources;
+using Scripts.Model.Stats;
 using Scripts.View.Portraits;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,42 +17,33 @@ namespace Scripts.Presenter {
 
         public void Tick() {
             //Attempt to set ResourceViews
-            PortraitView.SetResources(Character.Resources.Keys.Where(k => Character.Resources[k].IsVisible && (Character.IsShowingBarCounts || !k.Equals(ResourceType.CHARGE))).ToArray());
-
-            foreach (KeyValuePair<AttributeType, Attribute> pair in Character.Attributes) {
-                PortraitView.SetAttributeViews(pair.Key, new PortraitView.AttributeBundle { falseValue = (int)pair.Value.False, trueValue = pair.Value.True });
-            }
+            PortraitView.SetResources(Character.Stats.Dict.Keys.Where(k => StatType.RESOURCES.Contains(k)).ToArray());
 
             //Update ResourceViews' values
-            foreach (KeyValuePair<ResourceType, Resource> pair in Character.Resources) {
-                if (PortraitView != null && PortraitView.ResourceViews.ContainsKey(pair.Key) && pair.Value.IsVisible) {
+            foreach (KeyValuePair<StatType, Stat> pair in Character.Stats.Dict) {
+                if (PortraitView != null && PortraitView.ResourceViews.ContainsKey(pair.Key)) {
                     ResourceView rv = PortraitView.ResourceViews[pair.Key].resourceView;
-                    ResourceType resType = pair.Key;
-                    Resource res = pair.Value;
-
-                    if (Character.IsShowingBarCounts) {
-                        rv.Text = resType.DisplayFunction(res.False, res.True);
-                    } else {
-                        rv.Text = "";
-                    }
-                    rv.SetBarScale(res.False, res.True);
+                    StatType resType = pair.Key;
+                    Stat res = pair.Value;
+                    rv.SetBarScale(res.Mod, res.Max);
+                    rv.Text = "" + res.Mod;
                 }
             }
 
-            PortraitView
-                .SetBuffs(Character.Buffs.Where(b => b.DurationTimer > 0 || b.IsIndefinite)
+            //TODO Buff stuff
+            PortraitView.SetBuffs(Character.Stats.Buffs.Collection
                 .Select(b =>
                 new PortraitView.BuffParams {
                     id = b.GetHashCode(),
-                    name = b.SpellFactory.Name,
-                    abbreviation = b.SpellFactory.Abbreviation,
-                    description = b.SpellFactory.Description,
-                    color = b.SpellFactory.Color,
-                    duration = b.DurationText
+                    name = b.Name,
+                    description = b.Description,
+                    sprite = b.Sprite,
+                    duration = b.IsDefinite ? ("" + b.TurnsRemaining) : "inf"
                 })
-                    .ToArray());
+                .ToArray()
+                );
 
-            this.PortraitView.Sprite = Util.LoadIcon(Character.SpriteLoc);
+            this.PortraitView.Sprite = Character.Look.Sprite;
         }
     }
 }
