@@ -11,15 +11,15 @@ namespace Scripts.Model.TextBoxes {
     public abstract class AvatarBox : TextBox {
         protected const float TEXT_SPEED = 0.01f;
 
-        public readonly string SpriteLoc;
+        public readonly Sprite Sprite;
 
-        public AvatarBox(string spriteLoc,
+        public AvatarBox(Sprite sprite,
                          string text,
                          Color color,
                          string soundLocation,
                          float timePerLetter)
                          : base(text, color, TextEffect.TYPE, "Blip_0", timePerLetter) {
-            this.SpriteLoc = spriteLoc;
+            this.Sprite = sprite;
         }
 
         public override void Write(GameObject avatarBoxPrefab, Action callBack) {

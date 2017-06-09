@@ -7,10 +7,10 @@ namespace Scripts.Model.TextBoxes {
     /// </summary>
     public class LeftBox : AvatarBox {
 
-        public LeftBox(string spriteLoc,
+        public LeftBox(Sprite sprite,
                        string text,
                        Color color)
-                       : base(spriteLoc, text, color, "Blip_0", TEXT_SPEED) { }
+                       : base(sprite, text, color, "Blip_0", TEXT_SPEED) { }
 
         public override TextBoxType Type { get { return TextBoxType.LEFT; } }
     }

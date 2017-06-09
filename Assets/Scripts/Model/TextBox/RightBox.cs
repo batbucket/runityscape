@@ -7,15 +7,10 @@ namespace Scripts.Model.TextBoxes {
     /// </summary>
     public class RightBox : AvatarBox {
 
-        public RightBox(string spriteLoc,
+        public RightBox(Sprite sprite,
                        string text,
                        Color color)
-                       : base(spriteLoc, text, color, "Blip_0", TEXT_SPEED) {
-        }
-
-        public RightBox(string spriteLoc,
-                   string text)
-                   : base(spriteLoc, text, Color.white, "Blip_0", 0f) {
+                       : base(sprite, text, color, "Blip_0", TEXT_SPEED) {
         }
 
         public override TextBoxType Type { get { return TextBoxType.RIGHT; } }
