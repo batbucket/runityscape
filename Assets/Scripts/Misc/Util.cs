@@ -330,7 +330,9 @@ public static class Util {
     }
 
     public static Sprite GetSprite(string name) {
-        return Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name));
+        Sprite sprite = Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name)); ;
+        Util.Assert(sprite != null, "Sprite from: " + name + " was null.");
+        return sprite;
     }
 
     /**
