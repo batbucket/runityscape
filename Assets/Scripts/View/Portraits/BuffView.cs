@@ -71,7 +71,7 @@ namespace Scripts.View.Portraits {
             Text = "";
             Duration = "";
             Color = Color.white;
-            background.color = Color.black;
+            background.color = Color.clear;
         }
     }
 }
