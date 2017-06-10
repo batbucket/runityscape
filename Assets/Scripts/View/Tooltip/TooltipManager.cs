@@ -19,13 +19,14 @@ namespace Script.View.Tooltip {
         private float distanceMultiplier;
 
         private bool isOverTooltipContent;
+        private int contentID;
 
         private void Update() {
             box.Pivot = CalculatePivot();
             box.Position = CalculatePosition();
             UpdateTooltip();
             if (isOverTooltipContent) {
-                StartCoroutine(DisplayTooltip());
+                StartCoroutine(DisplayTooltip(contentID));
             } else {
                 SetRenderers(false);
             }
@@ -50,6 +51,7 @@ namespace Script.View.Tooltip {
                     box.Title = tip.Title;
                     box.Body = tip.Body;
                     isOverContent = true;
+                    contentID = tip.gameObject.GetInstanceID();
                 }
             }
             isOverTooltipContent = isOverContent;
@@ -71,14 +73,15 @@ namespace Script.View.Tooltip {
         }
 
         /// <summary>
-        /// Delay showing of the tooltip until the end of the frame so that
+        /// Delay showing of the tooltip so that
         /// there is enough time for the tooltip box's contentsizefitters
         /// to resize itself for the new text.
         /// </summary>
         /// <returns></returns>
-        private IEnumerator DisplayTooltip() {
-            yield return new WaitForEndOfFrame();
-            SetRenderers(true);
+        private IEnumerator DisplayTooltip(int instanceID) {
+            int id = instanceID;
+            yield return new WaitForSeconds(0.00001f); // Delay is just long enough for box to be updated
+            SetRenderers(this.contentID == id && isOverTooltipContent); // dont show if instanceID does not match current hovered
         }
 
         private Vector2 CalculatePosition() {
