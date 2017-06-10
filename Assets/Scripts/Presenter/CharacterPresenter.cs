@@ -1,10 +1,24 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using Scripts.View.Portraits;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Scripts.Presenter {
+
+    public struct SplatDetails {
+        public readonly Sprite Sprite;
+        public readonly Color Color;
+        public readonly string Text;
+
+        public SplatDetails(Color color, string text, Sprite sprite = null) {
+            this.Color = color;
+            this.Text = text;
+            this.Sprite = sprite;
+        }
+    }
 
     public class CharacterPresenter {
         public Character Character { get; private set; }
@@ -16,6 +30,8 @@ namespace Scripts.Presenter {
         }
 
         public void Tick() {
+            SetupFuncs();
+
             //Attempt to set ResourceViews
             PortraitView.SetResources(Character.Stats.Dict.Keys.Where(k => StatType.RESOURCES.Contains(k)).ToArray());
 
@@ -31,19 +47,29 @@ namespace Scripts.Presenter {
             }
 
             //TODO Buff stuff
-            PortraitView.SetBuffs(Character.Stats.Buffs.Collection
+            PortraitView.SetBuffs(Character.Buffs.Collection
                 .Select(b =>
                 new PortraitView.BuffParams {
                     id = b.GetHashCode(),
                     name = b.Name,
+                    color = Color.white,
                     description = b.Description,
                     sprite = b.Sprite,
-                    duration = b.IsDefinite ? ("" + b.TurnsRemaining) : "inf"
+                    duration = b.DurationText
                 })
                 .ToArray()
                 );
 
             this.PortraitView.Sprite = Character.Look.Sprite;
+        }
+
+        private void SetupFuncs() {
+            Character.Stats.AddSplat = (sd => AddHitsplat(sd));
+            Character.Buffs.AddSplat = (sd => AddHitsplat(sd));
+        }
+
+        private void AddHitsplat(SplatDetails sd) {
+            PortraitView.StartCoroutine(SFXList.HitSplat(PortraitView.EffectsHolder, sd));
         }
     }
 }
