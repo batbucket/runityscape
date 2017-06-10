@@ -27,12 +27,12 @@ namespace Scripts.Model.Processes {
                        Func<bool> condition = null) : this(name, null, description, action, condition) { }
 
         public Process(string name,
-               string spriteLoc,
+               Sprite sprite,
                string description,
                Action action,
                Func<bool> condition) {
             this.name = name;
-            this.sprite = Util.LoadIcon(spriteLoc);
+            this.sprite = sprite;
             this.description = description;
             this.action = action;
             this.condition = condition ?? (() => true);
