@@ -10,46 +10,29 @@ namespace Scripts.Model.Spells {
     public static class SpellEffectList {
         public class AddToModStat : SpellEffect {
             private readonly StatType affected;
+            private readonly Characters.Stats target;
 
-            public AddToModStat(Characters.Stats target, StatType affected, int value) : base(SpellEffectType.ADD_TO_MOD_STAT, target, value) {
+            public AddToModStat(Characters.Stats target, StatType affected, int value) : base(SpellEffectType.ADD_TO_MOD_STAT, value) {
                 this.affected = affected;
-            }
-
-            public override SplatDetails SplatDetails {
-                get {
-                    Color color = Color.grey;
-                    if (Value > 0) {
-                        color = affected.Color;
-                    } else if (Value < 0) {
-                        color = affected.NegativeColor;
-                    } else {
-                        color = Color.gray;
-                    }
-
-                    return new SplatDetails(color, Value.ToString("+#;-#;0"), affected.Sprite);
-                }
+                this.target = target;
             }
 
             public override void CauseEffect() {
-                Target.AddToStat(affected, Value);
+                target.AddToStat(affected, Stats.Value.MOD, Value);
             }
         }
 
         public class AddBuff : SpellEffect {
             private readonly Buff buff;
+            private readonly Characters.Buffs target;
 
-            public AddBuff(Characters.Stats target, Buff buff) : base(SpellEffectType.ADD_BUFF, target, buff.TurnsRemaining) {
+            public AddBuff(Characters.Buffs target, Buff buff) : base(SpellEffectType.ADD_BUFF, 1) {
+                this.target = target;
                 this.buff = buff;
             }
 
-            public override SplatDetails SplatDetails {
-                get {
-                    return new SplatDetails(Color.white, string.Format("+{0}", buff.Name));
-                }
-            }
-
             public override void CauseEffect() {
-                Target.Buffs.AddBuff(buff);
+                target.AddBuff(buff);
             }
         }
     }

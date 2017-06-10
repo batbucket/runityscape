@@ -1,4 +1,4 @@
-﻿namespace Scripts.Model.Characters {
+﻿namespace Scripts.Model.Stats {
     public enum Value {
         MOD,
         MAX

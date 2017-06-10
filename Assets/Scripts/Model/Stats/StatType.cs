@@ -155,5 +155,17 @@ namespace Scripts.Model.Stats {
         public override int GetHashCode() {
             return this.Name.GetHashCode();
         }
+
+        public Color DetermineColor(float value) {
+            Color c = Color.grey;
+            if (value < 0) {
+                c = this.NegativeColor;
+            } else if (value == 0) {
+                c = Color.grey;
+            } else {
+                c = this.Color;
+            }
+            return c;
+        }
     }
 }

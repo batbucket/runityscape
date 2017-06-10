@@ -6,11 +6,11 @@ using System.Collections.Generic;
 
 public static class BuffList {
     public class Poison : Buff {
-        public Poison(Stats caster, Stats target) : base(caster, target, Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.") { }
+        public Poison(SpellParams caster, SpellParams target) : base(caster, target, Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.") { }
 
-        public override IList<SpellEffect> OnEndOfTurn() {
+        protected override IList<SpellEffect> OnEndOfTurnHelper() {
             return new SpellEffect[] {
-                new SpellEffectList.AddToModStat(Target, StatType.HEALTH, -1)
+                new SpellEffectList.AddToModStat(Target.Stats, StatType.HEALTH, -1)
             };
         }
     }

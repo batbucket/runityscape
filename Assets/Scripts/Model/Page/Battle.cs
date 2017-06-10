@@ -40,10 +40,11 @@ namespace Scripts.Model.Pages {
         }
 
         private IEnumerator startRound() {
+            AddText(string.Format(Util.Color("<Turn {0} START>", Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();
             List<Character> chars = GetAll();
             HashSet<Character> set = new HashSet<Character>();
-            AddText(string.Format(Util.Color("<Setup Turn {0}>", Color.grey), turnCount));
+            AddText(string.Format(Util.Color("<Setup Phase>", Color.grey)));
             for (int i = 0; i < chars.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 Character c = chars[i];
@@ -65,7 +66,7 @@ namespace Scripts.Model.Pages {
                 }
             }
             plays.Sort();
-            AddText(string.Format(Util.Color("<Turn {0}>", Color.grey), turnCount));
+            AddText(string.Format(Util.Color("<Action Phase>", Color.grey)));
             for (int i = 0; i < plays.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 IPlayable play = plays[i];
@@ -89,24 +90,30 @@ namespace Scripts.Model.Pages {
                     }
                 }
             }
-            //TODO end of round buff interactions
+            //End of round buff interactions
+            AddText(string.Format(Util.Color("<Buff Phase>", Color.grey)));
             foreach (Character c in chars) {
-                Characters.Buffs buffs = c.Stats.Buffs;
+                yield return new WaitForSeconds(0.25f);
+                Characters.Buffs buffs = c.Buffs;
                 ICollection<Buff> buffCollection = buffs.Collection;
                 IList<Buff> timedOut = new List<Buff>();
                 foreach (Buff myB in buffCollection) {
+                    yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
+                    AddText(string.Format("[{0}] is affected by [{1}].", c.Look.DisplayName, b.Name));
                     b.OnEndOfTurn();
-                    b.TurnsRemaining--;
-                    if (b.TurnsRemaining <= 0) {
+                    if (b.IsTimedOut) {
                         timedOut.Add(b);
                     }
                 }
                 foreach (Buff myB in timedOut) {
+                    yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
+                    AddText(string.Format("[{0}]'s [{1}] fades.", c.Look.DisplayName, b.Name));
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
                 }
             }
+            AddText(string.Format(Util.Color("<Turn {0} END>", Color.grey), turnCount));
             turnCount++;
         }
     }

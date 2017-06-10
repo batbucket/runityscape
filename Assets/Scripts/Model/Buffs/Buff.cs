@@ -1,5 +1,6 @@
 ﻿using Scripts.Model.Characters;
 using Scripts.Model.Spells;
+using Scripts.Presenter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,42 +13,63 @@ namespace Scripts.Model.Buffs {
         public readonly string Name;
         public readonly string Description;
 
-        public readonly Characters.Stats Caster;
-        public readonly Characters.Stats Target;
+        public readonly SpellParams Caster;
+        public readonly SpellParams Target;
 
-        public int TurnsRemaining;
-        public bool IsDefinite;
-
+        private GameObject hitsplatsHolder;
+        private int turnsRemaining;
+        private bool isDefinite;
         private static int idCount;
         private int id;
 
-        public Buff(Characters.Stats caster, Characters.Stats target, Sprite sprite, string name, string description) {
+        public Buff(SpellParams caster, SpellParams target, Sprite sprite, string name, string description) {
             this.Caster = caster;
             this.Target = target;
             this.Sprite = sprite;
             this.Name = name;
             this.Description = description;
-            this.id = id;
+            this.id = idCount++;
         }
 
-        public virtual IList<SpellEffect> OnApply() {
-            return new SpellEffect[0];
+        public bool IsTimedOut {
+            get {
+                return isDefinite && turnsRemaining > 0;
+            }
         }
 
-        public virtual IList<SpellEffect> OnEndOfTurn() {
-            return new SpellEffect[0];
+        public string DurationText {
+            get {
+                string s = string.Empty;
+                if (isDefinite) {
+                    s = turnsRemaining.ToString();
+                } else {
+                    s = "inf";
+                }
+                return s;
+            }
         }
 
-        public virtual IList<SpellEffect> React(Spell s) {
-            return new SpellEffect[0];
+        public void OnApply() {
+            PerformSpellEffects(OnApplyHelper());
         }
 
-        public virtual IList<SpellEffect> OnTimeOut() {
-            return new SpellEffect[0];
+        public void OnEndOfTurn() {
+            PerformSpellEffects(OnEndOfTurnHelper());
+            if (isDefinite) {
+                turnsRemaining--;
+            }
         }
 
-        public virtual IList<SpellEffect> OnDispell() {
-            return new SpellEffect[0];
+        public void React(Spell s) {
+            PerformSpellEffects(ReactHelper(s));
+        }
+
+        public void OnTimeOut() {
+            PerformSpellEffects(OnTimeOutHelper());
+        }
+
+        public void OnDispell() {
+            PerformSpellEffects(OnDispellHelper());
         }
 
         public override bool Equals(object obj) {
@@ -59,7 +81,34 @@ namespace Scripts.Model.Buffs {
         }
 
         public int CompareTo(Buff other) {
-            return this.TurnsRemaining - other.TurnsRemaining;
+            return this.turnsRemaining - other.turnsRemaining;
+        }
+
+        protected virtual IList<SpellEffect> OnApplyHelper() {
+            return new SpellEffect[0];
+        }
+
+        protected virtual IList<SpellEffect> OnEndOfTurnHelper() {
+            return new SpellEffect[0];
+        }
+
+        protected virtual IList<SpellEffect> ReactHelper(Spell s) {
+            return new SpellEffect[0];
+        }
+
+        protected virtual IList<SpellEffect> OnTimeOutHelper() {
+            return new SpellEffect[0];
+        }
+
+        protected virtual IList<SpellEffect> OnDispellHelper() {
+            return new SpellEffect[0];
+        }
+
+        private void PerformSpellEffects(IList<SpellEffect> list) {
+            foreach (SpellEffect mySE in list) {
+                SpellEffect se = mySE;
+                se.CauseEffect();
+            }
         }
     }
 }

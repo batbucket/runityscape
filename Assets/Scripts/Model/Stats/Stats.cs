@@ -1,4 +1,5 @@
 ﻿using Scripts.Model.Characters;
+using System.Linq;
 
 using UnityEngine;
 
@@ -32,7 +33,7 @@ namespace Scripts.Model.Stats {
     public class Skill : Stat {
         public Skill(float mod, int max) : base(mod, max, StatType.SKILL) { }
         public override void Update(Character c) {
-            //TODO Set Skill cap to be highest skill costing Spell
+            this.Max = c.Spells.Set.Select(s => s.Costs[StatType.SKILL]).Max();
         }
     }
 

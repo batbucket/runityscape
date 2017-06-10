@@ -7,6 +7,18 @@ using UnityEngine;
 
 namespace Scripts.Model.Spells {
 
+    public struct SpellParams {
+        public readonly Characters.Stats Stats;
+        public readonly Characters.Spells Spells;
+        public readonly Characters.Buffs Buffs;
+
+        public SpellParams(Character c) {
+            this.Stats = c.Stats;
+            this.Spells = c.Spells;
+            this.Buffs = c.Buffs;
+        }
+    }
+
     public abstract class SpellBook {
         public readonly string Name;
         public readonly Sprite Icon;
@@ -43,12 +55,12 @@ namespace Scripts.Model.Spells {
             return Name.GetHashCode();
         }
 
-        public string CreateDescription(Characters.Stats caster) {
+        public string CreateDescription(SpellParams caster) {
             // TODO target type and etc.
             return CreateDescriptionHelper(caster);
         }
 
-        public abstract string CreateDescriptionHelper(Characters.Stats caster);
+        public abstract string CreateDescriptionHelper(SpellParams caster);
 
         public bool CasterHasResources(Characters.Stats caster) {
             foreach (KeyValuePair<StatType, int> stat in Costs) {
@@ -59,17 +71,17 @@ namespace Scripts.Model.Spells {
             return true;
         }
 
-        public bool IsCastable(Characters.Spells casterSpells, Characters.Stats caster, Characters.Stats target) {
-            return CasterHasResources(caster) && IsMeetOtherCastRequirements(caster, target) && casterSpells.HasSpellBook(this);
+        public bool IsCastable(SpellParams caster, SpellParams target) {
+            return CasterHasResources(caster.Stats) && IsMeetOtherCastRequirements(caster, target) && caster.Spells.HasSpellBook(this);
         }
 
         public Spell BuildSpell(Character caster, Character target) {
             Util.Assert(
-                (IsCastable(caster.Spells, caster.Stats, target.Stats)),
+                IsCastable(new SpellParams(caster), new SpellParams(target)),
                 string.Format(
                 "Attempted to cast spell without requirements fulfilled. Resources={0}, OtherRequirements={1}."
                 , CasterHasResources(caster.Stats),
-                IsMeetOtherCastRequirements(caster.Stats, target.Stats)
+                IsMeetOtherCastRequirements(new SpellParams(caster), new SpellParams(target))
                 ));
 
             // Consume resources
@@ -85,43 +97,43 @@ namespace Scripts.Model.Spells {
             Characters.Stats targetStats = target.Stats;
 
             Result res = new Result();
-            if (IsHit(casterStats, targetStats)) {
+            if (IsHit(new SpellParams(caster), new SpellParams(target))) {
                 res.AddSFX(GetHitSFX(caster.Presenter.PortraitView, target.Presenter.PortraitView));
-                if (IsCritical(casterStats, targetStats)) {
+                if (IsCritical(new SpellParams(caster), new SpellParams(target))) {
                     res.Type = ResultType.CRITICAL;
-                    res.Effects = GetCriticalEffects(casterStats, targetStats);
+                    res.Effects = GetCriticalEffects(new SpellParams(caster), new SpellParams(target));
                 } else {
                     res.Type = ResultType.HIT;
-                    res.Effects = GetHitEffects(casterStats, targetStats);
+                    res.Effects = GetHitEffects(new SpellParams(caster), new SpellParams(target));
                 }
             } else {
                 res.AddSFX(GetMissSFX(caster.Presenter.PortraitView, target.Presenter.PortraitView));
                 res.Type = ResultType.MISS;
-                res.Effects = GetMissEffects(casterStats, targetStats);
+                res.Effects = GetMissEffects(new SpellParams(caster), new SpellParams(target));
             }
 
             return new Spell(this, res, caster, target);
         }
 
-        protected virtual bool IsMeetOtherCastRequirements(Characters.Stats caster, Characters.Stats target) {
+        protected virtual bool IsMeetOtherCastRequirements(SpellParams caster, SpellParams target) {
             return true;
         }
 
-        protected virtual bool IsHit(Characters.Stats caster, Characters.Stats target) {
+        protected virtual bool IsHit(SpellParams caster, SpellParams target) {
             return true;
         }
 
-        protected abstract IList<SpellEffect> GetHitEffects(Characters.Stats caster, Characters.Stats target);
+        protected abstract IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target);
 
-        protected virtual bool IsCritical(Characters.Stats caster, Characters.Stats target) {
+        protected virtual bool IsCritical(SpellParams caster, SpellParams target) {
             return false;
         }
 
-        protected virtual IList<SpellEffect> GetCriticalEffects(Characters.Stats caster, Characters.Stats target) {
+        protected virtual IList<SpellEffect> GetCriticalEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[0];
         }
 
-        protected virtual IList<SpellEffect> GetMissEffects(Characters.Stats caster, Characters.Stats target) {
+        protected virtual IList<SpellEffect> GetMissEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[0];
         }
 

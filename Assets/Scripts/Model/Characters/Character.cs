@@ -22,6 +22,7 @@ namespace Scripts.Model.Characters {
     public class Character : IComparable<Character> {
 
         public Stats Stats;
+        public Buffs Buffs;
         public Look Look;
         public Spells Spells;
         public CharacterPresenter Presenter;
@@ -32,6 +33,7 @@ namespace Scripts.Model.Characters {
 
         public Character(Stats stats, Look look, Brain brain, Spells spells) {
             this.Stats = stats;
+            this.Buffs = new Buffs();
             this.Brain = brain;
             this.Look = look;
             this.Spells = spells;

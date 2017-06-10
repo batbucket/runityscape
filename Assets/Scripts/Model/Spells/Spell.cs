@@ -52,7 +52,6 @@ namespace Scripts.Model.Spells {
         public IEnumerator Skip() {
             foreach (SpellEffect se in Result.Effects) {
                 se.CauseEffect();
-                yield return SFXList.HitSplat(Target.Presenter.PortraitView.EffectsHolder, se.SplatDetails);
             }
             yield break;
         }
@@ -78,14 +77,6 @@ namespace Scripts.Model.Spells {
             foreach (SpellEffect mySE in Result.Effects) {
                 SpellEffect se = mySE;
                 se.CauseEffect();
-
-                Character target = null;
-                if (se.Target.Equals(Caster.Stats)) {
-                    target = Caster;
-                } else {
-                    target = Target;
-                }
-                Game.Instance.StartCoroutine(SFXList.HitSplat(target.Presenter.PortraitView.EffectsHolder, se.SplatDetails));
             }
         }
 

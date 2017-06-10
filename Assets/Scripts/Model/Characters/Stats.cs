@@ -1,15 +1,22 @@
-﻿using Scripts.Model.Stats;
+﻿using Scripts.Model.Spells;
+using Scripts.Model.Stats;
+using Scripts.Presenter;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Scripts.Model.Characters {
     public class Stats {
+        private const string SHOW_SIGNS = "+#;-#;0";
+
         public readonly IDictionary<StatType, Stat> Dict;
-        public readonly Buffs Buffs;
+
+        public Action<SplatDetails> AddSplat;
 
         public Stats() {
             this.Dict = new Dictionary<StatType, Stat>();
-            this.Buffs = new Buffs();
+            this.AddSplat = (a => { });
             SetDefaultStats();
             SetDefaultResources();
         }
@@ -36,6 +43,7 @@ namespace Scripts.Model.Characters {
 
         public void AddStat(Stat stat) {
             this.Dict.Add(stat.Type, stat);
+            AddSplat(new SplatDetails(stat.Type.Color, "+", stat.Type.Sprite));
         }
 
         public void SetToStat(StatType statType, Value value, float amount) {
@@ -47,6 +55,7 @@ namespace Scripts.Model.Characters {
                     stat.Max = (int)amount;
                 }
             }
+            AddSplat(new SplatDetails(statType.DetermineColor(amount), string.Format("={0}", amount), statType.Sprite));
         }
 
         public void SetToStat(StatType statType, float amount) {
@@ -63,6 +72,7 @@ namespace Scripts.Model.Characters {
                     stat.Max += (int)amount;
                 }
             }
+            AddSplat(new SplatDetails(statType.DetermineColor(amount), amount.ToString(SHOW_SIGNS), statType.Sprite));
         }
 
         public void AddToStat(StatType statType, float amount) {

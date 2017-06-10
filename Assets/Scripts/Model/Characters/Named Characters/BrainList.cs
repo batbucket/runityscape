@@ -4,6 +4,7 @@ using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.Model.Spells;
+using UnityEngine;
 
 namespace Scripts.Model.Characters {
     public static class BrainList {
@@ -13,9 +14,10 @@ namespace Scripts.Model.Characters {
             private Battle battle;
 
             public override void DetermineAction(Action<IPlayable> addPlay) {
-                Grid main = new Grid("Main");
+                Grid main = new Grid("Back");
                 main.Array = Util.GetArray(
-                    new Tuple(0, GenerateTargets(main, Attack, addPlay))
+                    new Tuple(0, GenerateTargets(main, Attack, addPlay)),
+                    new Tuple(1, GenerateSpellBooks(main, Owner.Spells, addPlay))
                     );
                 battle.Actions = main.Array;
             }
@@ -24,28 +26,58 @@ namespace Scripts.Model.Characters {
                 this.battle = battle;
             }
 
+            private Grid GenerateBackableGrid(Grid previous, Sprite icon, int size, string name, string tooltip) {
+                Grid grid = new Grid(name);
+                grid.Icon = icon;
+                grid.Tooltip = tooltip;
+                IButtonable[] buttons = new IButtonable[size + 1];
+                buttons[0] = GenerateBack(previous);
+                grid.Array = buttons;
+                return grid;
+            }
+
+            private Grid GenerateSpellBooks(Grid previous, Characters.Spells spells, Action<IPlayable> addFunc) {
+                Grid grid = GenerateBackableGrid(previous, Util.GetSprite("spell-book"), spells.Set.Count, "Spell", "Cast a spell.");
+                int index = 1;
+                foreach (SpellBook mySb in spells.Set) {
+                    SpellBook sb = mySb;
+                    if (!sb.Equals(Attack)) {
+                        grid.Array[index++] = GenerateTargets(grid, sb, addFunc);
+                    }
+                }
+                return grid;
+            }
+
             private Grid GenerateTargets(Grid previous, SpellBook sb, Action<IPlayable> addFunc) {
-                Grid grid = new Grid(sb.Name);
-                grid.Tooltip = Attack.CreateDescription(Owner.Stats);
                 ICollection<Character> targets = sb.TargetType.GetTargets(Owner, battle);
-                IButtonable[] buttons = new IButtonable[targets.Count + 1];
-                buttons[0] = previous;
+                Grid grid = GenerateBackableGrid(previous, sb.Icon, targets.Count, sb.Name, sb.CreateDescription(new SpellParams(Owner)));
+                grid.Icon = sb.Icon;
 
                 int index = 1;
                 foreach (Character myTarget in targets) {
                     Character target = myTarget;
-                    buttons[index++] =
+                    grid.Array[index++] =
                         new Process(target.Look.DisplayName,
-                                    string.Format("{0} will target {1} with Attack.\n", Owner.Look.DisplayName, target.Look.DisplayName, Attack.CreateDescription(Owner.Stats)),
+                                    target.Look.Sprite,
+                                    string.Format("{0} will target {1} with {2}.\n\n{2}\n{3}",
+                                    Owner.Look.DisplayName,
+                                    Owner.Equals(target) ? "themselves" : target.Look.DisplayName,
+                                    sb.Name,
+                                    sb.CreateDescription(new SpellParams(Owner))),
                                     () => {
-                                        addFunc(Spells.CreateSpell(Attack, this.Owner, target));
-
-                                        //previous.Invoke();
+                                        addFunc(Spells.CreateSpell(sb, this.Owner, target));
                                     },
-                                    () => Attack.IsCastable(Spells, Owner.Stats, target.Stats));
+                                    () => sb.IsCastable(new SpellParams(Owner), new SpellParams(target)));
                 }
-                grid.Array = buttons;
                 return grid;
+            }
+
+            private Process GenerateBack(Grid previous) {
+                return new Process(
+                    "Back",
+                    "Go back to the previous menu.",
+                    () => previous.Invoke()
+                    );
             }
         }
 
