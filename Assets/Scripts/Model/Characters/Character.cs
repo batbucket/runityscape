@@ -21,12 +21,13 @@ namespace Scripts.Model.Characters {
     /// </summary>
     public class Character : IComparable<Character> {
 
-        public Stats Stats;
-        public Buffs Buffs;
-        public Look Look;
-        public Spells Spells;
+        public readonly Stats Stats;
+        public readonly Buffs Buffs;
+        public readonly Look Look;
+        public readonly Spells Spells;
+        public readonly Brain Brain;
+
         public CharacterPresenter Presenter;
-        public Brain Brain;
 
         private static int idCounter;
         private int id;
