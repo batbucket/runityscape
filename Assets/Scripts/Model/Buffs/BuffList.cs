@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public static class BuffList {
     public class Poison : Buff {
-        public Poison(SpellParams caster, SpellParams target) : base(caster, target, Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.") { }
+        public Poison(SpellParams caster, SpellParams target) : base(2, caster, target, Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.") { }
 
         protected override IList<SpellEffect> OnEndOfTurnHelper() {
             return new SpellEffect[] {
