@@ -38,6 +38,8 @@ namespace Scripts.Model.Processes {
             this.condition = condition ?? (() => true);
         }
 
+        public Process(string name, Sprite sprite, string description, Action action) : this(name, sprite, description, action, null) { }
+
         public Process() {
             this.name = "";
             this.description = "";
@@ -48,7 +50,7 @@ namespace Scripts.Model.Processes {
         public string ButtonText {
             get {
                 return
-                    Util.Color(name, IsInvokable ? Color.white : Color.red);
+                    Util.ColorString(name, IsInvokable ? Color.white : Color.red);
             }
         }
 
@@ -60,11 +62,7 @@ namespace Scripts.Model.Processes {
 
         public string TooltipText {
             get {
-                if (!string.IsNullOrEmpty(description)) {
-                    return Util.Color(description, IsInvokable ? Color.white : Color.red);
-                } else {
-                    return "";
-                }
+                return description;
             }
         }
 
