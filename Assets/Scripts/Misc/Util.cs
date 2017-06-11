@@ -185,7 +185,7 @@ public static class Util {
 
     public static void Parent(GameObject child, GameObject parent) {
         child.transform.SetParent(parent.transform);
-        child.transform.localPosition = new Vector3(0, 0, 0);
+        //child.transform.localPosition = new Vector3(0, 0, 0);
     }
 
     public static void Parent(IList<GameObject> child, GameObject parent) {
