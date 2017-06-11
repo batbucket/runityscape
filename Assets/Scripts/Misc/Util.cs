@@ -295,8 +295,12 @@ public static class Util {
         }
     }
 
-    public static string Color(string s, Color c) {
+    public static string ColorString(string s, Color c) {
         return string.Format("<color={1}>{0}</color>", s, RGBToHex(c));
+    }
+
+    public static string ColorString(string s, bool isWhite) {
+        return Util.ColorString(s, isWhite ? UnityEngine.Color.white : UnityEngine.Color.red);
     }
 
     public static string RGBToHex(Color color) {
