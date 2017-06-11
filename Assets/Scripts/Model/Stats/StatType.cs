@@ -32,7 +32,7 @@ namespace Scripts.Model.Stats {
             int order,
             Color negativeColor) {
             AttributeBounds.TryGetValue(boundType, out Bounds);
-            this.Name = Util.Color(name, color);
+            this.Name = Util.ColorString(name, color);
             this.Sprite = Util.LoadIcon(spriteLoc);
             this.Description = description;
             this.Color = color;

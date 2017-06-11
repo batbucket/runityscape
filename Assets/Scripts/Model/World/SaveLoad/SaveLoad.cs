@@ -75,10 +75,10 @@ namespace Scripts.Model.World.Serialization {
             try {
                 PlayerPrefs.DeleteKey(GetSaveKey(index));
             } catch (Exception e) {
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.Color(e.ToString(), Color.red)));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(e.ToString(), Color.red)));
             }
             if (!string.IsNullOrEmpty(successMessage)) {
-                Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.Color(successMessage, Color.cyan)));
+                Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(successMessage, Color.cyan)));
             }
         }
 
