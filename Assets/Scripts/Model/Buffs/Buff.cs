@@ -31,9 +31,21 @@ namespace Scripts.Model.Buffs {
             this.id = idCount++;
         }
 
+        public Buff(int duration, SpellParams caster, SpellParams target, Sprite sprite, string name, string description) {
+            Util.Assert(duration > 0, "Duration must be positive.");
+            this.Caster = caster;
+            this.Target = target;
+            this.Sprite = sprite;
+            this.Name = name;
+            this.Description = description;
+            this.id = idCount++;
+            this.turnsRemaining = duration;
+            this.isDefinite = true;
+        }
+
         public bool IsTimedOut {
             get {
-                return isDefinite && turnsRemaining > 0;
+                return isDefinite && turnsRemaining <= 0;
             }
         }
 
