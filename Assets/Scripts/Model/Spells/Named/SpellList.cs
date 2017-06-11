@@ -62,7 +62,9 @@ namespace Scripts.Model.Spells {
         }
 
         public class Poison : SpellBook {
-            public Poison() : base("Poison", "fox-head", TargetType.SINGLE_ENEMY, SpellType.OFFENSE, 0, 0) { }
+            public Poison() : base("Poison", "fox-head", TargetType.SINGLE_ENEMY, SpellType.OFFENSE, 0, 0) {
+                Costs.Add(StatType.MANA, 1);
+            }
 
             public override string CreateDescriptionHelper(SpellParams caster) {
                 return string.Format("Enemy is afflicted with Poison.");
