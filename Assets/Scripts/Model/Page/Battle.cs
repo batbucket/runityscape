@@ -40,11 +40,11 @@ namespace Scripts.Model.Pages {
         }
 
         private IEnumerator startRound() {
-            AddText(string.Format(Util.Color("<Turn {0} START>", Color.grey), turnCount));
+            AddText(string.Format(Util.ColorString("<Turn {0} START>", Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();
             List<Character> chars = GetAll();
             HashSet<Character> set = new HashSet<Character>();
-            AddText(string.Format(Util.Color("<Setup Phase>", Color.grey)));
+            AddText(string.Format(Util.ColorString("<Setup Phase>", Color.grey)));
             for (int i = 0; i < chars.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 Character c = chars[i];
@@ -66,7 +66,7 @@ namespace Scripts.Model.Pages {
                 }
             }
             plays.Sort();
-            AddText(string.Format(Util.Color("<Action Phase>", Color.grey)));
+            AddText(string.Format(Util.ColorString("<Action Phase>", Color.grey)));
             for (int i = 0; i < plays.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 IPlayable play = plays[i];
@@ -91,7 +91,7 @@ namespace Scripts.Model.Pages {
                 }
             }
             //End of round buff interactions
-            AddText(string.Format(Util.Color("<Buff Phase>", Color.grey)));
+            AddText(string.Format(Util.ColorString("<Buff Phase>", Color.grey)));
             foreach (Character c in chars) {
                 yield return new WaitForSeconds(0.25f);
                 Characters.Buffs buffs = c.Buffs;
@@ -113,7 +113,7 @@ namespace Scripts.Model.Pages {
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
                 }
             }
-            AddText(string.Format(Util.Color("<Turn {0} END>", Color.grey), turnCount));
+            AddText(string.Format(Util.ColorString("<Turn {0} END>", Color.grey), turnCount));
             turnCount++;
         }
     }
