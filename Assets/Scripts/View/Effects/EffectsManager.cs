@@ -11,6 +11,9 @@ namespace Scripts.View.Effects {
         private static EffectsManager instance;
 
         [SerializeField]
+        private GameObject foreground;
+
+        [SerializeField]
         private OneShotAnimation bloodsplatPrefab;
 
         [SerializeField]
@@ -39,6 +42,7 @@ namespace Scripts.View.Effects {
         public HitsplatView Hitsplat { get { return hitsplatPrefab; } }
         public FadeAnimation Lightning { get { return lightningPrefab; } }
         public HitsplatView Minisplat { get { return minisplatPrefab; } }
+        public GameObject Foreground { get { return foreground; } }
 
         private void Start() {
             ObjectPoolManager.Instance.Register(hitsplatPrefab, 10);

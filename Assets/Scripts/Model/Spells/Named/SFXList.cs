@@ -20,16 +20,18 @@ public static class SFXList {
     }
 
     public static IEnumerator Melee(GameObject mover, GameObject destination, float duration, string soundLoc) {
-        Util.Log("doing the melee");
-        Vector2 moverOriginalPos = mover.transform.position;
+        // Move mover to upper layer so it is on top of all elements
+        int index = mover.transform.GetSiblingIndex();
+        GameObject parent = mover.transform.parent.gameObject;
 
+        Util.Parent(mover, EffectsManager.Instance.Foreground);
+        Vector2 moverOriginalPos = mover.transform.position;
         yield return MoveTowards(mover, destination, duration / 3);
-        Util.Log("doing the move towards");
         Game.Instance.Sound.PlaySound(soundLoc);
         yield return Shake(destination, 10, duration / 3);
-        Util.Log("doing the shake");
         yield return MoveBack(mover, moverOriginalPos, duration / 3);
-        Util.Log("doing the moveback");
+        Util.Parent(mover, parent);
+        mover.transform.SetSiblingIndex(index);
     }
 
     public static IEnumerator Death(GameObject parent) {
