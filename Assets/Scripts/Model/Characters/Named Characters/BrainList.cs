@@ -42,34 +42,53 @@ namespace Scripts.Model.Characters {
                 foreach (SpellBook mySb in spells.Set) {
                     SpellBook sb = mySb;
                     if (!sb.Equals(Attack)) {
-                        grid.Array[index++] = GenerateTargets(grid, sb, addFunc);
+                        grid.Array[index++] = GenerateSpellProcess(grid, sb, addFunc);
                     }
                 }
                 return grid;
             }
 
+            private Process GenerateSpellProcess(Grid previous, SpellBook sb, Action<IPlayable> addFunc) {
+                return new Process(CreateDetailedSpellName(Owner.Stats, sb), sb.Icon, sb.CreateDescription(new SpellParams(Owner)),
+                    () => {
+                        if (sb.CasterHasResources(Owner.Stats)) {
+                            GenerateTargets(previous, sb, addFunc).Invoke();
+                        }
+                    });
+            }
+
+            private string CreateDetailedSpellName(Characters.Stats caster, SpellBook sb) {
+                return Util.ColorString(sb.Name, sb.CasterHasResources(caster));
+            }
+
             private Grid GenerateTargets(Grid previous, SpellBook sb, Action<IPlayable> addFunc) {
                 ICollection<Character> targets = sb.TargetType.GetTargets(Owner, battle);
                 Grid grid = GenerateBackableGrid(previous, sb.Icon, targets.Count, sb.Name, sb.CreateDescription(new SpellParams(Owner)));
+
                 grid.Icon = sb.Icon;
 
                 int index = 1;
                 foreach (Character myTarget in targets) {
                     Character target = myTarget;
-                    grid.Array[index++] =
-                        new Process(target.Look.DisplayName,
-                                    target.Look.Sprite,
-                                    string.Format("{0} will target {1} with {2}.\n\n{2}\n{3}",
-                                    Owner.Look.DisplayName,
-                                    Owner.Equals(target) ? "themselves" : target.Look.DisplayName,
-                                    sb.Name,
-                                    sb.CreateDescription(new SpellParams(Owner))),
-                                    () => {
-                                        addFunc(Spells.CreateSpell(sb, this.Owner, target));
-                                    },
-                                    () => sb.IsCastable(new SpellParams(Owner), new SpellParams(target)));
+                    grid.Array[index++] = GenerateTargetProcess(target, sb, addFunc);
+
                 }
                 return grid;
+            }
+
+            private Process GenerateTargetProcess(Character target, SpellBook sb, Action<IPlayable> addFunc) {
+                return new Process(CreateDetailedTargetName(target, sb),
+                                    target.Look.Sprite,
+                                    sb.CreateTargetDescription(Owner, target),
+                                    () => {
+                                        if (sb.IsCastable(new SpellParams(Owner), new SpellParams(target))) {
+                                            addFunc(Spells.CreateSpell(sb, this.Owner, target));
+                                        }
+                                    });
+            }
+
+            private string CreateDetailedTargetName(Character target, SpellBook sb) {
+                return Util.ColorString(target.Look.DisplayName, sb.IsCastable(new SpellParams(Owner), new SpellParams(target)));
             }
 
             private Process GenerateBack(Grid previous) {

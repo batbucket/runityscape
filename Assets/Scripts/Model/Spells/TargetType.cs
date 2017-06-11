@@ -10,7 +10,6 @@ namespace Scripts.Model.Spells {
     /// Who a Spell can target.
     /// </summary>
     public sealed class TargetType {
-        //SELF, SINGLE_ALLY, ALL_ALLY, SINGLE_ENEMY, ALL_ENEMY, ANY, ALL
 
         public readonly string Name;
         private Func<Character, Page, ICollection<Character>> getFunc;
@@ -25,7 +24,7 @@ namespace Scripts.Model.Spells {
         public static TargetType ALL_ALLIES = new TargetType("All allies", (c, p) => p.GetAllies(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
         public static TargetType SINGLE_ENEMY = new TargetType("Single enemy", (c, p) => p.GetFoes(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
         public static TargetType ALL_ENEMIES = new TargetType("All enemies", (c, p) => p.GetFoes(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
-        public static TargetType ANY = new TargetType("Any", (c, p) => p.GetAll().Where(a => a.Stats.State == State.ALIVE).ToArray());
+        public static TargetType ANY = new TargetType("Single", (c, p) => p.GetAll().Where(a => a.Stats.State == State.ALIVE).ToArray());
         public static TargetType ALL = new TargetType("All", (c, p) => p.GetAll().Where(a => a.Stats.State == State.ALIVE).ToArray());
 
         public static HashSet<TargetType> SINGLE_TARGET_OPTIONS = new HashSet<TargetType> { SELF, SINGLE_ALLY, SINGLE_ENEMY, ANY };

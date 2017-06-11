@@ -3,6 +3,7 @@ using Scripts.Model.Stats;
 using Scripts.View.Portraits;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace Scripts.Model.Spells {
@@ -56,11 +57,23 @@ namespace Scripts.Model.Spells {
         }
 
         public string CreateDescription(SpellParams caster) {
-            // TODO target type and etc.
-            return CreateDescriptionHelper(caster);
+            return string.Format("{0}Target: {1}\nCost: {2}\n\n{3}",
+                CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n\n", Color.red),
+                TargetType.Name,
+                Costs.Count == 0 ? "None" : GetCommaSeparatedCosts(caster.Stats),
+                CreateDescriptionHelper(caster)
+                );
+        }
+
+        public string CreateTargetDescription(Character caster, Character target) {
+            return string.Format("{0} will use {1} on {2}.\n\n{3}", caster.Look.DisplayName, this.Name, target.Look.DisplayName, CreateDescription(new SpellParams(caster)));
         }
 
         public abstract string CreateDescriptionHelper(SpellParams caster);
+
+        public bool CasterHasResource(StatType stat, Characters.Stats caster) {
+            return caster.GetStatCount(stat) >= Costs[stat];
+        }
 
         public bool CasterHasResources(Characters.Stats caster) {
             foreach (KeyValuePair<StatType, int> stat in Costs) {
@@ -143,6 +156,18 @@ namespace Scripts.Model.Spells {
 
         protected virtual IList<IEnumerator> GetMissSFX(PortraitView caster, PortraitView target) {
             return new IEnumerator[0];
+        }
+
+        private string GetCommaSeparatedCosts(Characters.Stats caster) {
+            string[] arr = new string[Costs.Count];
+
+            int index = 0;
+            foreach (KeyValuePair<StatType, int> pair in Costs) {
+                arr[index++] = string.Format("{0} {1}",
+                    Util.ColorString(pair.Value.ToString(), CasterHasResource(pair.Key, caster)),
+                    Util.ColorString(pair.Key.Name, pair.Key.Color));
+            }
+            return string.Join(", ", arr);
         }
     }
 }
