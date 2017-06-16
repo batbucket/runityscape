@@ -44,7 +44,7 @@ namespace Scripts.View.TextBoxes {
             children.Clear();
         }
 
-        public GameObject AddTextBox(TextBox textBox, Action callBack = null) {
+        public PooledBehaviour AddTextBox(TextBox textBox, Action callBack = null) {
             if (string.IsNullOrEmpty(textBox.RawText)) {
                 return null;
             }
@@ -53,7 +53,7 @@ namespace Scripts.View.TextBoxes {
             Util.Parent(pb.gameObject, gameObject);
             pb.transform.SetAsLastSibling();
             textBox.Write(pb.gameObject, callBack);
-            return pb.gameObject;
+            return pb;
         }
 
         public void AddTextBoxes(IList<TextBox> textBoxes) {

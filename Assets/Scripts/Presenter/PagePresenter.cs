@@ -4,6 +4,7 @@ using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
 using Scripts.View.ActionGrid;
+using Scripts.View.ObjectPool;
 using Scripts.View.Other;
 using Scripts.View.Portraits;
 using Scripts.View.Sounds;
@@ -69,7 +70,7 @@ namespace Scripts.Presenter {
                 }
             };
             Page.TypeText = (t) => {
-                Main.Instance.TextBoxes.AddTextBox(t);
+                return AddTextBox(t);
             };
         }
 
@@ -120,7 +121,7 @@ namespace Scripts.Presenter {
             Tick();
         }
 
-        public GameObject AddTextBox(TextBox t, Action callBack = null) {
+        public PooledBehaviour AddTextBox(TextBox t, Action callBack = null) {
             textBoxHolder.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
             return textBoxHolder.AddTextBox(t, callBack);
         }

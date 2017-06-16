@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Presenter;
+using Scripts.View.ObjectPool;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,13 @@ using UnityEngine;
 namespace Scripts.Model.Pages {
 
     public class Battle : Page {
-        private const string DEATH_MESSAGE = "<color=yellow>{0}</color> has been <color=red>defeated.</color>.";
+        private const string BATTLE_START = "The battle begins.";
+        private const string ROUND_START = "Turn {0}";
+        private const string PLAYER_QUESTION = "What will <color=yellow>{0}</color> do?";
+        private const string RESOLVED = "The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turns.";
+        private const string CHARACTER_DEATH = "<color=yellow>{0}</color> has been <color=red>defeated.</color>.";
+        private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=yellow>{1}</color>.";
+        private const string BUFF_FADE = "<color=yellow>{0}</color>'s {1} fades.";
 
         private int turnCount;
 
@@ -31,16 +38,16 @@ namespace Scripts.Model.Pages {
         }
 
         private IEnumerator startBattle() {
-            AddText("The battle begins.");
+            AddText(BATTLE_START);
             while (!IsResolved) {
                 yield return startRound();
                 yield return new WaitForSeconds(1);
             }
-            AddText(string.Format("The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turns.", turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "right" : "left"));
+            AddText(string.Format(RESOLVED, turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "right" : "left"));
         }
 
         private IEnumerator startRound() {
-            AddText(string.Format(Util.ColorString("<Turn {0} START>", Color.grey), turnCount));
+            AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();
             List<Character> chars = GetAll();
             HashSet<Character> playerActionSet = new HashSet<Character>();
@@ -52,12 +59,14 @@ namespace Scripts.Model.Pages {
         }
 
         private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
-            AddText(string.Format(Util.ColorString("<Setup Phase>", Color.grey)));
             for (int i = 0; i < chars.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 Character c = chars[i];
                 if (c.Stats.State == State.ALIVE) {
-                    AddText(string.Format("<color=yellow>{0}</color> is thinking...", c.Look.DisplayName));
+                    PooledBehaviour textbox = null;
+                    if (c.Brain is Game.Defined.Characters.Player) {
+                        textbox = AddText(string.Format(PLAYER_QUESTION, c.Look.DisplayName));
+                    }
                     bool isActionTaken = false;
                     c.Brain.PageSetup(this);
                     c.Brain.DetermineAction((p) => {
@@ -73,13 +82,14 @@ namespace Scripts.Model.Pages {
                     while (!isActionTaken) {
                         yield return null;
                     }
+
+                    ObjectPoolManager.Instance.Return(textbox);
                 }
             }
         }
 
         private IEnumerator PerformActions(List<IPlayable> plays) {
             plays.Sort();
-            AddText(string.Format(Util.ColorString("<Action Phase>", Color.grey)));
             for (int i = 0; i < plays.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 IPlayable play = plays[i];
@@ -92,13 +102,13 @@ namespace Scripts.Model.Pages {
 
                     // Caster somehow kills themself, don't say they died twice
                     if (caster.Equals(target) && caster.Stats.State == State.DEAD) {
-                        AddText(string.Format(DEATH_MESSAGE, play.MySpell.Caster.Look.DisplayName));
+                        AddText(string.Format(CHARACTER_DEATH, play.MySpell.Caster.Look.DisplayName));
                     } else {
                         if (caster.Stats.State == State.DEAD) {
-                            AddText(string.Format(DEATH_MESSAGE, play.MySpell.Caster.Look.DisplayName));
+                            AddText(string.Format(CHARACTER_DEATH, play.MySpell.Caster.Look.DisplayName));
                         }
                         if (target.Stats.State == State.DEAD) {
-                            AddText(string.Format(DEATH_MESSAGE, play.MySpell.Target.Look.DisplayName));
+                            AddText(string.Format(CHARACTER_DEATH, play.MySpell.Target.Look.DisplayName));
                         }
                     }
                 }
@@ -107,7 +117,6 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator GoThroughBuffs(IList<Character> chars) {
             //End of round buff interactions
-            AddText(string.Format(Util.ColorString("<Buff Phase>", Color.grey)));
             foreach (Character c in chars) {
                 yield return new WaitForSeconds(0.25f);
                 Characters.Buffs buffs = c.Buffs;
@@ -116,7 +125,7 @@ namespace Scripts.Model.Pages {
                 foreach (Buff myB in buffCollection) {
                     yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
-                    AddText(string.Format("<color=yellow>{0}</color> is affected by <color=yellow>{1}</color>.", c.Look.DisplayName, b.Name));
+                    AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
                     b.OnEndOfTurn();
                     if (b.IsTimedOut) {
                         timedOut.Add(b);
@@ -125,14 +134,13 @@ namespace Scripts.Model.Pages {
                 foreach (Buff myB in timedOut) {
                     yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
-                    AddText(string.Format("<color=yellow>{0}</color>'s [{1}] fades.", c.Look.DisplayName, b.Name));
+                    AddText(string.Format(BUFF_FADE, c.Look.DisplayName, b.Name));
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
                 }
             }
         }
 
         private void EndRound() {
-            AddText(string.Format(Util.ColorString("<Turn {0} END>", Color.grey), turnCount));
             turnCount++;
         }
     }
