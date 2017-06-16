@@ -8,10 +8,11 @@ using Scripts.Model.Stats;
 using Scripts.Model.Buffs;
 using Scripts.Model.Spells;
 using Scripts.Presenter;
+using Scripts.Model.Interfaces;
 
 namespace Scripts.Model.Characters {
 
-    public class Equipment : IEnumerable<EquippableItem>, IEnumerable<SpellBook> {
+    public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable> {
         public readonly IDictionary<EquipType, EquippableItem> Dict;
         public Inventory Inventory;
         public Buffs Buffs;
@@ -49,7 +50,7 @@ namespace Scripts.Model.Characters {
                 this.statBonuses[pair.Key] += pair.Value;
             }
 
-            AddSplat(new SplatDetails(Color.green, string.Format("{0}+{1}", e.Type.Name, e.Name), e.Icon));
+            AddSplat(new SplatDetails(Color.green, "+", e.Icon));
         }
 
         public void RemoveEquip(EquipType type) {
@@ -68,7 +69,7 @@ namespace Scripts.Model.Characters {
                 this.statBonuses[pair.Key] -= pair.Value;
             }
 
-            AddSplat(new SplatDetails(Color.red, string.Format("{0}-{1}", itemToRemove.Type.Name, itemToRemove.Name), itemToRemove.Icon));
+            AddSplat(new SplatDetails(Color.red, "-", itemToRemove.Icon));
         }
 
         public EquippableItem PeekItem(EquipType type) {
@@ -91,8 +92,8 @@ namespace Scripts.Model.Characters {
             return Dict.Values.GetEnumerator();
         }
 
-        IEnumerator<SpellBook> IEnumerable<SpellBook>.GetEnumerator() {
-            return Dict.Values.Select(e => e.GetSpellBook()).ToList().GetEnumerator();
+        IEnumerator<ISpellable> IEnumerable<ISpellable>.GetEnumerator() {
+            return Dict.Values.Select(e => e.GetSpellBook()).Cast<ISpellable>().ToList().GetEnumerator();
         }
     }
 }

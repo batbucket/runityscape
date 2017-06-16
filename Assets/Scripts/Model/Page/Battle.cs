@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Scripts.Model.Pages {
 
     public class Battle : Page {
-        private const string DEATH_MESSAGE = "[{0}] has <color=red>bit the dust</color>.";
+        private const string DEATH_MESSAGE = "<color=yellow>{0}</color> has been <color=red>defeated.</color>.";
 
         private int turnCount;
 
@@ -36,7 +36,7 @@ namespace Scripts.Model.Pages {
                 yield return startRound();
                 yield return new WaitForSeconds(1);
             }
-            AddText(string.Format("The [{1}] side is victorious after [{0}] turns.", turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "left" : "right"));
+            AddText(string.Format("The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turns.", turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "left" : "right"));
         }
 
         private IEnumerator startRound() {
@@ -49,7 +49,7 @@ namespace Scripts.Model.Pages {
                 yield return new WaitForSeconds(0.25f);
                 Character c = chars[i];
                 if (c.Stats.State == State.ALIVE) {
-                    AddText(string.Format("[{0}] is thinking...", c.Look.DisplayName));
+                    AddText(string.Format("<color=yellow>{0}</color> is thinking...", c.Look.DisplayName));
                     c.Brain.PageSetup(this);
                     c.Brain.DetermineAction((p) => {
                         if (!set.Contains(c)) {
@@ -100,7 +100,7 @@ namespace Scripts.Model.Pages {
                 foreach (Buff myB in buffCollection) {
                     yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
-                    AddText(string.Format("[{0}] is affected by [{1}].", c.Look.DisplayName, b.Name));
+                    AddText(string.Format("<color=yellow>{0}</color> is affected by <color=yellow>{1}</color>.", c.Look.DisplayName, b.Name));
                     b.OnEndOfTurn();
                     if (b.IsTimedOut) {
                         timedOut.Add(b);
@@ -109,7 +109,7 @@ namespace Scripts.Model.Pages {
                 foreach (Buff myB in timedOut) {
                     yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
-                    AddText(string.Format("[{0}]'s [{1}] fades.", c.Look.DisplayName, b.Name));
+                    AddText(string.Format("<color=yellow>{0}</color>'s [{1}] fades.", c.Look.DisplayName, b.Name));
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
                 }
             }

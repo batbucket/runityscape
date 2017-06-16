@@ -30,7 +30,6 @@ namespace Scripts.Model.Spells {
     }
 
     public abstract class SpellBook : ISpellable {
-        public static readonly HashSet<SpellBook> UNCASTABLES = new HashSet<SpellBook>() { new Attack(), new CastEquipItem(new PoisonArmor()), new CastUnequipItem(new PoisonArmor()), new UseItem(new Apple()) };
 
         public readonly string Name;
         public readonly Sprite Icon;
@@ -43,6 +42,8 @@ namespace Scripts.Model.Spells {
         public int Cooldown;
         public bool IsSilenced;
 
+        protected readonly HashSet<Flag> flags;
+
         public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown) {
             this.Name = spellName;
             this.Icon = sprite;
@@ -51,6 +52,7 @@ namespace Scripts.Model.Spells {
             this.SpellType = spell;
             this.CastTime = castTime;
             this.Cooldown = cooldown;
+            this.flags = new HashSet<Flag>() { Flag.CASTER_REQUIRES_SPELL };
         }
 
         public SpellBook(string spellName, string spriteLoc, TargetType target, SpellType spell, int castTime, int cooldown)
@@ -65,7 +67,7 @@ namespace Scripts.Model.Spells {
         }
 
         public virtual string CreateDescription(SpellParams caster) {
-            return string.Format("{0}Target: {1}\nCost: {2}\n\n{3}",
+            return string.Format("{0}{3}\n\nTarget: {1}\nCost: {2}",
                 CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n", Color.red),
                 TargetType.Name,
                 Costs.Count == 0 ? "None" : GetCommaSeparatedCosts(caster.Stats),
@@ -93,8 +95,7 @@ namespace Scripts.Model.Spells {
         }
 
         public bool IsCastable(SpellParams caster, SpellParams target) {
-            Util.Log(string.Format("Contains {0}? {1}", this.Name, UNCASTABLES.Contains(this)));
-            return CasterHasResources(caster.Stats) && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || UNCASTABLES.Contains(this));
+            return !IsSilenced && CasterHasResources(caster.Stats) && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || !flags.Contains(Flag.CASTER_REQUIRES_SPELL));
         }
 
         public Spell BuildSpell(Character caster, Character target) {
@@ -183,8 +184,12 @@ namespace Scripts.Model.Spells {
             return string.Join(", ", arr);
         }
 
-        public SpellBook GetSpellBook() {
+        SpellBook ISpellable.GetSpellBook() {
             return this;
+        }
+
+        public virtual string GetDetailedName(SpellParams caster) {
+            return Util.ColorString(Name, CasterHasResources(caster.Stats));
         }
     }
 }

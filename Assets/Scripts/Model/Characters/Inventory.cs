@@ -6,142 +6,99 @@ using System.Collections;
 using Scripts.Presenter;
 using UnityEngine;
 using Scripts.Model.Spells;
+using Scripts.Model.Interfaces;
 
 namespace Scripts.Model.Characters {
 
-    public class Inventory : IEnumerable<Item>, IEnumerable<SpellBook> {
-        private struct ItemIndex {
-            public readonly Item Item;
-            public readonly int Index;
-            public ItemIndex(Item item, int index) {
-                this.Item = item;
-                this.Index = index;
-            }
-        }
-
+    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable> {
         private const int CAPACITY = 10;
 
         public Action<SplatDetails> AddSplat;
 
-        private List<Item> list;
-
-        private IDictionary<Item, Stack<ItemIndex>> dict;
+        private IDictionary<Item, int> dict;
         private int size;
 
         public Inventory() {
-            this.list = new List<Item>();
-            this.dict = new Dictionary<Item, Stack<ItemIndex>>();
+            this.dict = new Dictionary<Item, int>();
             this.AddSplat = ((p) => { });
         }
 
-        public IList<Item> List {
+        public int TotalOccupiedSpace {
             get {
-                return list;
+                int sum = 0;
+                foreach (KeyValuePair<Item, int> pair in dict) {
+                    if (pair.Key.HasFlag(Items.Flag.OCCUPIES_SPACE)) {
+                        sum += pair.Value;
+                    }
+                }
+                return sum;
             }
         }
 
-        public int Count {
+        public int UniqueItemCount {
             get {
-                return List.Count;
+                return dict.Count;
             }
         }
 
-        public void Add(Item itemToAdd) {
-            Util.Assert(IsAddable(itemToAdd), "No more room!");
-
-            // Update last added item of same type
-            if (HasItem(itemToAdd)) {
-                GetLastItem(itemToAdd).Add(itemToAdd);
+        public int MaxCapacity {
+            get {
+                return CAPACITY;
             }
+        }
 
-            // Put remainder into a new item slot
-            if (itemToAdd.Count > 0) {
-                int index = List.Count;
-                List.Add(itemToAdd);
-                PushStack(itemToAdd, index);
+        public void Add(Item itemToAdd, int count = 1) {
+            Util.Assert(IsAddable(itemToAdd, count), "No more room!");
+            Util.Assert(count >= 0, string.Format("Invalid count: {0}", count));
+            if (!dict.ContainsKey(itemToAdd)) {
+                dict.Add(itemToAdd, 0);
             }
-
-            AddSplat(new SplatDetails(Color.white, string.Format("+{0}", itemToAdd.Name), itemToAdd.Icon));
+            dict[itemToAdd] += count;
+            AddSplat(new SplatDetails(Color.green, string.Format("+{0}x", count), itemToAdd.Icon));
         }
 
         public bool HasItem(Item item) {
-            return dict.ContainsKey(item) && dict[item].Count > 0;
+            return dict.ContainsKey(item) && dict[item] > 0;
         }
 
-        public void Remove(Item itemToRemove) {
+        public void Remove(Item itemToRemove, int count = 1) {
             if (dict.ContainsKey(itemToRemove)) {
+                Util.Assert(IsRemovable(itemToRemove, count), string.Format("{0} only has quantity: {1}. Unable to remove {2} from it.", itemToRemove.Name, dict[itemToRemove], count));
+                dict[itemToRemove] -= count;
 
-                // Remove from topmost item
-                GetLastItem(itemToRemove).Remove(itemToRemove);
-
-                // Pop if item is empty, remove from list
-                if (GetLastItem(itemToRemove).Count == 0) {
-                    ItemIndex i = PopStack(itemToRemove);
-
-                    //Remove index
-                    List.RemoveAt(i.Index);
+                if (dict[itemToRemove] <= 0) {
+                    dict.Remove(itemToRemove);
                 }
 
-                // Remove from the next item
-                if (HasItem(itemToRemove)) {
-                    GetLastItem(itemToRemove).Remove(itemToRemove);
-                }
-
-                AddSplat(new SplatDetails(Color.white, string.Format("-{0}", itemToRemove.Name), itemToRemove.Icon));
+                AddSplat(new SplatDetails(Color.red, string.Format("-{0}x", count), itemToRemove.Icon));
 
             } else {
                 Util.Assert(false, "Unable to find item.");
             }
         }
 
-        public bool IsAddable(Item itemToAdd) {
-            return (Count < CAPACITY) || (GetLastItem(itemToAdd).RemainingSpace >= itemToAdd.Count);
+        public bool IsAddable(Item item, int count = 0) {
+            return !item.HasFlag(Items.Flag.OCCUPIES_SPACE) || TotalOccupiedSpace < CAPACITY;
+        }
+
+        public bool IsRemovable(Item item, int count = 0) {
+            return dict[item] >= count;
         }
 
         public int GetCount(Item item) {
-            int count = 0;
-            if (!dict.ContainsKey(item)) {
-                count = 0;
-            } else {
-                Stack<ItemIndex> s = GetStack(item);
-                foreach (ItemIndex i in s) {
-                    count += i.Item.Count;
-                }
-            }
-            return count;
-        }
-
-        private Item GetLastItem(Item item) {
-            return dict[item].Peek().Item;
-        }
-
-        private Stack<ItemIndex> GetStack(Item item) {
-            if (!dict.ContainsKey(item)) {
-                dict.Add(item, new Stack<ItemIndex>());
-            }
             return dict[item];
         }
 
-        private ItemIndex PopStack(Item item) {
-            Util.Assert(dict.ContainsKey(item) && dict[item].Count > 0 && GetLastItem(item).Count == 0, "Unable to pop.");
-            return dict[item].Pop();
+        IEnumerator IEnumerable.GetEnumerator() {
+            return dict.Keys.GetEnumerator();
         }
 
-        private void PushStack(Item item, int index) {
-            Util.Assert(!HasItem(item) || GetLastItem(item).IsFull, "Last item not at full capacity.");
-            GetStack(item).Push(new ItemIndex(item, index));
+        IEnumerator<ISpellable> IEnumerable<ISpellable>.GetEnumerator() {
+            return dict.Keys.Where(i => i is UseableItem).Cast<ISpellable>().ToList().GetEnumerator();
         }
 
         IEnumerator<Item> IEnumerable<Item>.GetEnumerator() {
-            return List.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() {
-            return list.GetEnumerator();
-        }
-
-        IEnumerator<SpellBook> IEnumerable<SpellBook>.GetEnumerator() {
-            return list.Where(i => i is UseableItem).Cast<UseableItem>().Select(i => i.GetSpellBook()).ToList().GetEnumerator();
+            return dict.Keys.GetEnumerator();
         }
     }
 }

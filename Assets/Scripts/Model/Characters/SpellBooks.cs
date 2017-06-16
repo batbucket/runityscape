@@ -1,9 +1,11 @@
-﻿using Scripts.Model.Spells;
+﻿using Scripts.Model.Interfaces;
+using Scripts.Model.Spells;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scripts.Model.Characters {
-    public class SpellBooks : IEnumerable<SpellBook> {
+    public class SpellBooks : IEnumerable<ISpellable> {
         public HashSet<SpellBook> Set;
 
         public SpellBooks() {
@@ -22,8 +24,8 @@ namespace Scripts.Model.Characters {
             return spell.BuildSpell(caster, target);
         }
 
-        IEnumerator<SpellBook> IEnumerable<SpellBook>.GetEnumerator() {
-            return Set.GetEnumerator();
+        IEnumerator<ISpellable> IEnumerable<ISpellable>.GetEnumerator() {
+            return Set.Cast<ISpellable>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator() {

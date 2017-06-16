@@ -7,6 +7,7 @@ using Scripts.Model.Spells;
 using UnityEngine;
 using Scripts.Model.Characters;
 using Scripts.Game.Defined.Spells;
+using Scripts.Model.Items;
 
 namespace Scripts.Game.Defined.Characters {
     public static class Statics {
@@ -21,7 +22,10 @@ namespace Scripts.Game.Defined.Characters {
             main.Array = Util.GetArray(
                 new Tuple(0, GenerateTargets(main, Statics.Attack, addPlay)),
                 new Tuple(1, GenerateSpellBooks(main, Owner.Spells, Owner.Spells.Set.Count, addPlay, Util.GetSprite("spell-book"), "Spell", "Cast a spell.")),
-                new Tuple(2, GenerateSpellBooks(main, Owner.Inventory, Owner.Inventory.Count, addPlay, Util.GetSprite("swap-bag"), "Item", "Use an item."))
+                new Tuple(2, GenerateSpellBooks(main, Owner.Inventory, Owner.Inventory.UniqueItemCount, addPlay, Util.GetSprite("swap-bag"),
+                    string.Format("Item ({0}/{1})", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.MaxCapacity),
+                    string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.MaxCapacity))
+                )
                 );
             battle.Actions = main.Array;
         }
@@ -40,29 +44,26 @@ namespace Scripts.Game.Defined.Characters {
             return grid;
         }
 
-        private Grid GenerateSpellBooks(Grid previous, IEnumerable<SpellBook> spellCollection, int count, Action<IPlayable> addFunc, Sprite sprite, string name, string description) {
+        private Grid GenerateSpellBooks(Grid previous, IEnumerable<ISpellable> spellCollection, int count, Action<IPlayable> addFunc, Sprite sprite, string name, string description) {
             Grid grid = GenerateBackableGrid(previous, sprite, count, name, description);
             int index = 1;
-            foreach (SpellBook mySb in spellCollection) {
-                SpellBook sb = mySb;
-                if (!sb.Equals(Statics.Attack)) {
-                    grid.Array[index++] = GenerateSpellProcess(grid, sb, addFunc);
+            foreach (ISpellable myS in spellCollection) {
+                ISpellable s = myS;
+                if (!s.Equals(Statics.Attack)) {
+                    grid.Array[index++] = GenerateSpellProcess(grid, s, addFunc);
                 }
             }
             return grid;
         }
 
-        private Process GenerateSpellProcess(Grid previous, SpellBook sb, Action<IPlayable> addFunc) {
-            return new Process(CreateDetailedSpellName(Owner.Stats, sb), sb.Icon, sb.CreateDescription(new SpellParams(Owner)),
+        private Process GenerateSpellProcess(Grid previous, ISpellable spell, Action<IPlayable> addFunc) {
+            SpellBook sb = spell.GetSpellBook();
+            return new Process(sb.GetDetailedName(new SpellParams(Owner)), sb.Icon, sb.CreateDescription(new SpellParams(Owner)),
                 () => {
                     if (sb.CasterHasResources(Owner.Stats)) {
                         GenerateTargets(previous, sb, addFunc).Invoke();
                     }
                 });
-        }
-
-        private string CreateDetailedSpellName(Stats caster, SpellBook sb) {
-            return Util.ColorString(sb.Name, sb.CasterHasResources(caster));
         }
 
         private Grid GenerateTargets(Grid previous, SpellBook sb, Action<IPlayable> addFunc) {

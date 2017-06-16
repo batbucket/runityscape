@@ -5,6 +5,7 @@ namespace Scripts.Model.Items {
     public enum Flag {
         SELLABLE,
         TRASHABLE,
-        USABLE
+        USABLE,
+        OCCUPIES_SPACE
     }
 }

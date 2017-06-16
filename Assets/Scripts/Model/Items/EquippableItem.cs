@@ -10,19 +10,28 @@ using Scripts.Game.Defined.Spells;
 namespace Scripts.Model.Items {
 
     public abstract class EquippableItem : UseableItem {
-        private const int STACK_LIMIT = 5;
 
         public readonly EquipType Type;
         public readonly IDictionary<StatType, int> Stats;
 
         private readonly SpellBook book;
 
-        public EquippableItem(Sprite sprite, EquipType type, int basePrice, int count, string name, string description)
-            : base(sprite, basePrice, count, STACK_LIMIT, TargetType.SINGLE_ALLY, name, description) {
+        private static readonly IDictionary<EquipType, Sprite> DEFAULT_ICONS = new Dictionary<EquipType, Sprite>() {
+            { EquipType.ARMOR, Util.GetSprite("shoulder-armor") },
+            { EquipType.WEAPON, Util.GetSprite("gladius") },
+            {EquipType.TRINKET, Util.GetSprite("gem-necklace") },
+            { EquipType.OFFHAND, Util.GetSprite("round-shield") }
+        };
+
+        public EquippableItem(Sprite sprite, EquipType type, int basePrice, string name, string description)
+            : base(sprite, basePrice, TargetType.SINGLE_ALLY, name, description) {
             this.Type = type;
             this.Stats = new SortedDictionary<StatType, int>();
             this.book = new CastEquipItem(this);
         }
+
+        public EquippableItem(EquipType type, int basePrice, string name, string description)
+            : this(GetDefaultSprite(type), type, basePrice, name, description) { }
 
         protected sealed override string DescriptionHelper {
             get {
@@ -46,6 +55,10 @@ namespace Scripts.Model.Items {
 
         protected override bool IsMeetOtherRequirements(SpellParams caster, SpellParams target) {
             return caster.Stats.State == Characters.State.ALIVE && target.Stats.State == Characters.State.ALIVE;
+        }
+
+        private static Sprite GetDefaultSprite(EquipType type) {
+            return DEFAULT_ICONS[type];
         }
     }
 }
