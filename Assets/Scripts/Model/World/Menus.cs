@@ -6,6 +6,9 @@ using Scripts.Presenter;
 using UnityEngine;
 using Scripts.View.Effects;
 using Scripts.View.ObjectPool;
+using Scripts.Game.Defined.Characters;
+using System;
+using Scripts.Game.Defined.Spells;
 
 namespace Scripts.Model.World {
 
@@ -27,23 +30,26 @@ namespace Scripts.Model.World {
             Grid submenu = new Grid("Go to submenu");
             Grid mainDebug = new Grid("Return to main menu");
 
-            Character kitsune = new CharacterList.Kitsune();
+            Character kitsune = new Kitsune();
 
             mainDebug.Array = new IButtonable[] {
                 Start,
-                new Process("Say", "Hello", () => Game.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox("Hello"))),
-                new Process("AttDisb", () => Game.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox(kitsune.Stats.AttributeDistribution))),
+                new Process("Say", "Hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox("Hello"))),
+                new Process("AttDisb", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox(kitsune.Stats.AttributeDistribution))),
                 new Process("hitsplat test", () => {
                     HitsplatView hpv = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
                     Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
-                    Game.Instance.StartCoroutine(hpv.Animation("Test", Color.cyan, Util.GetSprite("fox-head")));
+                    Presenter.Main.Instance.StartCoroutine(hpv.Animation("Test", Color.cyan, Util.GetSprite("fox-head")));
                 }),
-                new Battle("Battle Test", new Character[] { new CharacterList.Kitsune() }, new Character[] { new CharacterList.Kitsune() }),
+                new Battle("Battle Test", new Character[] { new Kitsune() }, new Character[] { new Kitsune() }),
+                new Process("UNcastables", () => {
+
+                    }),
                 submenu
             };
 
             submenu.Array = new IButtonable[] {
-                new Process("Say hello", () => Game.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox("Hello"))),
+                new Process("Say hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox("Hello"))),
                 mainDebug
             };
 

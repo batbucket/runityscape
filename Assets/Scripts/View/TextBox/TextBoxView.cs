@@ -116,7 +116,7 @@ namespace Scripts.View.TextBoxes {
                                     timer = 0;
                                     if (--charsPassedWithoutSound <= 0) {
                                         charsPassedWithoutSound = CHARS_FOR_SOUND;
-                                        Game.Instance.Sound.PlaySound(textBox.SoundLoc);
+                                        Presenter.Main.Instance.Sound.PlaySound(textBox.SoundLoc);
                                     }
                                 }
                             }

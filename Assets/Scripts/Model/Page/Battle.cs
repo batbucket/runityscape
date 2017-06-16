@@ -21,7 +21,7 @@ namespace Scripts.Model.Pages {
             foreach (Character c in right) {
                 Right.Add(c);
             }
-            OnEnter += () => Game.Instance.StartCoroutine(startBattle());
+            OnEnter += () => Presenter.Main.Instance.StartCoroutine(startBattle());
         }
 
         private bool IsResolved {

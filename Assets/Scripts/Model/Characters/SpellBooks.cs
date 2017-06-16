@@ -3,10 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Characters {
-    public class Spells {
+    public class SpellBooks : IEnumerable<SpellBook> {
         public HashSet<SpellBook> Set;
 
-        public Spells() {
+        public SpellBooks() {
             Set = new HashSet<SpellBook>();
         }
 
@@ -20,6 +20,14 @@ namespace Scripts.Model.Characters {
 
         public Spell CreateSpell(SpellBook spell, Character caster, Character target) {
             return spell.BuildSpell(caster, target);
+        }
+
+        IEnumerator<SpellBook> IEnumerable<SpellBook>.GetEnumerator() {
+            return Set.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return Set.GetEnumerator();
         }
     }
 }

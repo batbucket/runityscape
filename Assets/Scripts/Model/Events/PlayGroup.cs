@@ -1,4 +1,5 @@
-﻿using Scripts.Model.Characters;
+﻿using Scripts.Game.Defined.Spells;
+using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using System;
 using System.Collections;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Scripts.Model.Acts {
     public class PlayGroup : IPlayable {
-        public static SpellList.Wait Wait = new SpellList.Wait();
+        public static Wait Wait = new Wait();
 
         private IList<IPlayable> plays;
         private Spell spell;
@@ -23,12 +24,6 @@ namespace Scripts.Model.Acts {
         }
 
         public Spell MySpell {
-            get {
-                return spell;
-            }
-        }
-
-        public Spell Spell {
             get {
                 return spell;
             }

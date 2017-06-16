@@ -35,10 +35,10 @@ namespace Scripts.Model.Acts {
         }
 
         public Act(TextBox t) : this(
-            () => Game.Instance.TextBoxes.AddTextBox(t),
+            () => Presenter.Main.Instance.TextBoxes.AddTextBox(t),
             () => {
                 t.Effect = TextEffect.FADE_IN;
-                Game.Instance.TextBoxes.AddTextBox(t);
+                Presenter.Main.Instance.TextBoxes.AddTextBox(t);
             },
             () => t.IsDone,
             0.5f,
@@ -46,8 +46,8 @@ namespace Scripts.Model.Acts {
         }
 
         public Act(string imageLoc, string text) : this(
-            () => Game.Instance.Title.Play(imageLoc, text),
-            () => Game.Instance.Title.IsDone, 0.5f, false) {
+            () => Presenter.Main.Instance.Title.Play(imageLoc, text),
+            () => Presenter.Main.Instance.Title.IsDone, 0.5f, false) {
         }
 
         private Act(Action action, Func<bool> endCondition, float delay, bool reqUserAdv) {

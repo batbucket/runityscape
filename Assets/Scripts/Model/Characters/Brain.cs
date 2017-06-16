@@ -1,12 +1,11 @@
-﻿using Scripts.Model.Interfaces;
-using Scripts.Model.Pages;
+﻿using Scripts.Model.Pages;
 using System;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Characters {
     public abstract class Brain {
         public Character Owner;
-        public Spells Spells;
+        public SpellBooks Spells;
 
         protected ICollection<Character> allies;
         protected ICollection<Character> foes;

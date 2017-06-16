@@ -1,26 +1,37 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.Interfaces;
 using Scripts.Model.Stats;
 using Scripts.View.Portraits;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
+using System;
+using Scripts.Game.Defined.Spells;
+using Scripts.Game.Defined.Items.Consumables;
+using Scripts.Game.Defined.Items.Equipment;
 
 namespace Scripts.Model.Spells {
 
     public struct SpellParams {
         public readonly Characters.Stats Stats;
-        public readonly Characters.Spells Spells;
+        public readonly Characters.SpellBooks Spells;
         public readonly Characters.Buffs Buffs;
+        public readonly Characters.Inventory Inventory;
+        public readonly Characters.Equipment Equipment;
 
         public SpellParams(Character c) {
             this.Stats = c.Stats;
             this.Spells = c.Spells;
             this.Buffs = c.Buffs;
+            this.Inventory = c.Inventory;
+            this.Equipment = c.Equipment;
         }
     }
 
-    public abstract class SpellBook {
+    public abstract class SpellBook : ISpellable {
+        public static readonly HashSet<SpellBook> UNCASTABLES = new HashSet<SpellBook>() { new Attack(), new CastEquipItem(new PoisonArmor()), new CastUnequipItem(new PoisonArmor()), new UseItem(new Apple()) };
+
         public readonly string Name;
         public readonly Sprite Icon;
         public readonly TargetType TargetType;
@@ -32,9 +43,9 @@ namespace Scripts.Model.Spells {
         public int Cooldown;
         public bool IsSilenced;
 
-        public SpellBook(string spellName, string spriteLoc, TargetType target, SpellType spell, int castTime, int cooldown) {
+        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown) {
             this.Name = spellName;
-            this.Icon = Util.LoadIcon(spriteLoc);
+            this.Icon = sprite;
             this.Costs = new Dictionary<StatType, int>();
             this.TargetType = target;
             this.SpellType = spell;
@@ -42,23 +53,20 @@ namespace Scripts.Model.Spells {
             this.Cooldown = cooldown;
         }
 
+        public SpellBook(string spellName, string spriteLoc, TargetType target, SpellType spell, int castTime, int cooldown)
+            : this(spellName, Util.GetSprite(spriteLoc), target, spell, castTime, cooldown) { }
+
         public override bool Equals(object obj) {
-            SpellBook item = obj as SpellBook;
-
-            if (item == null) {
-                return false;
-            }
-
-            return this.Name == item.Name;
+            return GetType().Equals(obj.GetType());
         }
 
         public override int GetHashCode() {
-            return Name.GetHashCode();
+            return GetType().GetHashCode();
         }
 
-        public string CreateDescription(SpellParams caster) {
+        public virtual string CreateDescription(SpellParams caster) {
             return string.Format("{0}Target: {1}\nCost: {2}\n\n{3}",
-                CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n\n", Color.red),
+                CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n", Color.red),
                 TargetType.Name,
                 Costs.Count == 0 ? "None" : GetCommaSeparatedCosts(caster.Stats),
                 CreateDescriptionHelper(caster)
@@ -85,7 +93,8 @@ namespace Scripts.Model.Spells {
         }
 
         public bool IsCastable(SpellParams caster, SpellParams target) {
-            return CasterHasResources(caster.Stats) && IsMeetOtherCastRequirements(caster, target) && caster.Spells.HasSpellBook(this);
+            Util.Log(string.Format("Contains {0}? {1}", this.Name, UNCASTABLES.Contains(this)));
+            return CasterHasResources(caster.Stats) && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || UNCASTABLES.Contains(this));
         }
 
         public Spell BuildSpell(Character caster, Character target) {
@@ -128,6 +137,10 @@ namespace Scripts.Model.Spells {
             return new Spell(this, res, caster, target);
         }
 
+        public override string ToString() {
+            return base.ToString();
+        }
+
         protected virtual bool IsMeetOtherCastRequirements(SpellParams caster, SpellParams target) {
             return true;
         }
@@ -168,6 +181,10 @@ namespace Scripts.Model.Spells {
                     Util.ColorString(pair.Key.Name, pair.Key.Color));
             }
             return string.Join(", ", arr);
+        }
+
+        public SpellBook GetSpellBook() {
+            return this;
         }
     }
 }

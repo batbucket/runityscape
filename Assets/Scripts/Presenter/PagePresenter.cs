@@ -69,7 +69,7 @@ namespace Scripts.Presenter {
                 }
             };
             Page.TypeText = (t) => {
-                Game.Instance.TextBoxes.AddTextBox(t);
+                Main.Instance.TextBoxes.AddTextBox(t);
             };
         }
 
@@ -102,7 +102,7 @@ namespace Scripts.Presenter {
             textBoxHolder.ReturnChildren();
 
             // Stop any cutscenes
-            Game.Instance.StopCoroutine("Timeline");
+            Main.Instance.StopCoroutine("Timeline");
 
             // Renable the actiongrid in case if it was disabled
             // From Timelining

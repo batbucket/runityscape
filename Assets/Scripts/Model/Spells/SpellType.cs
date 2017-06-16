@@ -4,6 +4,6 @@
     /// Catagories of spells
     /// </summary>
     public enum SpellType {
-        OFFENSE, DEFENSE, BOOST, ACT, MERCY, OTHER
+        OFFENSE, DEFENSE, BOOST, ITEM, MERCY
     }
 }

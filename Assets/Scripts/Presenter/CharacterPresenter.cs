@@ -1,4 +1,5 @@
-﻿using Scripts.Model.Characters;
+﻿using Scripts.Game.Defined.SFXs;
+using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using Scripts.View.Portraits;
@@ -66,10 +67,14 @@ namespace Scripts.Presenter {
         private void SetupFuncs() {
             Character.Stats.AddSplat = (sd => AddHitsplat(sd));
             Character.Buffs.AddSplat = (sd => AddHitsplat(sd));
+            Character.Inventory.AddSplat = (sd => AddHitsplat(sd));
+            Character.Equipment.AddSplat = (sd => AddHitsplat(sd));
         }
 
         private void AddHitsplat(SplatDetails sd) {
-            PortraitView.StartCoroutine(SFXList.HitSplat(PortraitView.EffectsHolder, sd));
+            if (PortraitView != null) {
+                PortraitView.StartCoroutine(SFX.HitSplat(PortraitView.EffectsHolder, sd));
+            }
         }
     }
 }

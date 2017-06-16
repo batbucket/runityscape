@@ -23,5 +23,9 @@ namespace Scripts.Model.Stats {
         public static float GetDifference(StatType type, Characters.Stats a, Characters.Stats b) {
             return a.GetStatCount(type) - b.GetStatCount(type);
         }
+
+        public static string ShowSigns(int num) {
+            return num.ToString("+#;-#;0");
+        }
     }
 }

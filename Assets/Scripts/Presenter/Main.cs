@@ -20,17 +20,14 @@ using Scripts.Model.World;
 
 namespace Scripts.Presenter {
 
-    public class Game : MonoBehaviour {
-        private static Game instance;
+    public class Main : MonoBehaviour {
+        private static Main instance;
 
         [SerializeField]
         private ActionGridView actionGrid;
 
         [SerializeField]
         private EffectsManager effect;
-
-        [SerializeField]
-        private GoldView gold;
 
         [SerializeField]
         private HeaderView header;
@@ -55,7 +52,7 @@ namespace Scripts.Presenter {
         [SerializeField]
         private TitleView title;
 
-        public static Game Instance { get { return instance; } }
+        public static Main Instance { get { return instance; } }
 
         public SoundView Sound {
             get {

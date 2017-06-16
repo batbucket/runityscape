@@ -4,13 +4,13 @@ using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using System.Collections.Generic;
 
-public static class BuffList {
+namespace Scripts.Game.Defined.Spells {
     public class Poison : Buff {
         public Poison(SpellParams caster, SpellParams target) : base(2, caster, target, Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.") { }
 
         protected override IList<SpellEffect> OnEndOfTurnHelper() {
             return new SpellEffect[] {
-                new SpellEffectList.AddToModStat(Target.Stats, StatType.HEALTH, -1)
+                new AddToModStat(Target.Stats, StatType.HEALTH, -1)
             };
         }
     }

@@ -1,15 +1,9 @@
 ﻿using Scripts.Model.Interfaces;
-using Scripts.Model.Perks;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
-using Scripts.View.Effects;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using UnityEngine;
 
 namespace Scripts.Model.Characters {
 
@@ -24,26 +18,37 @@ namespace Scripts.Model.Characters {
         public readonly Stats Stats;
         public readonly Buffs Buffs;
         public readonly Look Look;
-        public readonly Spells Spells;
+        public readonly SpellBooks Spells;
         public readonly Brain Brain;
+        public readonly Inventory Inventory;
+        public readonly Equipment Equipment;
 
         public CharacterPresenter Presenter;
 
         private static int idCounter;
         private int id;
 
-        public Character(Stats stats, Look look, Brain brain, Spells spells) {
+        public Character(Stats stats, Look look, Brain brain, SpellBooks spells, Inventory inventory, Equipment equipment) {
             this.Stats = stats;
             this.Buffs = new Buffs();
             this.Brain = brain;
             this.Look = look;
             this.Spells = spells;
+            this.Inventory = inventory;
+            this.Equipment = equipment;
+
             Brain.Owner = this;
             Brain.Spells = this.Spells;
             Stats.Update(this);
+            Equipment.Inventory = inventory;
+            Equipment.Buffs = Buffs;
             Stats.InitializeResources();
+            Stats.GetEquipmentBonus = f => Equipment.GetBonus(f);
+            equipment.Owner = new SpellParams(this);
             this.id = idCounter++;
         }
+
+        public Character(Stats stats, Look look, Brain brain, SpellBooks spells) : this(stats, look, brain, spells, new Inventory(), new Equipment()) { }
 
         public TextBox Emote(string s) {
             return new TextBox(string.Format(s, this.Look.DisplayName));

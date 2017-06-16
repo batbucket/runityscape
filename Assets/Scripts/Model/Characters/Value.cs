@@ -1,6 +1,7 @@
-﻿namespace Scripts.Model.Stats {
+﻿namespace Scripts.Model.Characters {
     public enum Value {
+        MOD_AND_EQUIP,
         MOD,
-        MAX
+        MAX,
     }
 }

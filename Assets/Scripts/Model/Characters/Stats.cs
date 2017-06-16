@@ -8,10 +8,10 @@ using UnityEngine;
 
 namespace Scripts.Model.Characters {
     public class Stats {
-        private const string SHOW_SIGNS = "+#;-#;0";
 
         public readonly IDictionary<StatType, Stat> Dict;
 
+        public Func<StatType, int> GetEquipmentBonus;
         public Action<SplatDetails> AddSplat;
 
         public Stats() {
@@ -72,7 +72,7 @@ namespace Scripts.Model.Characters {
                     stat.Max += (int)amount;
                 }
             }
-            AddSplat(new SplatDetails(statType.DetermineColor(amount), amount.ToString(SHOW_SIGNS), statType.Sprite));
+            AddSplat(new SplatDetails(statType.DetermineColor(amount), StatUtil.ShowSigns((int)amount), statType.Sprite));
         }
 
         public void AddToStat(StatType statType, float amount) {
@@ -87,7 +87,7 @@ namespace Scripts.Model.Characters {
         }
 
         public int GetStatCount(params StatType[] statTypes) {
-            return GetStatCount(Value.MOD, statTypes);
+            return GetStatCount(Value.MOD_AND_EQUIP, statTypes);
         }
 
         public int GetStatCount(Value value, params StatType[] statTypes) {
@@ -98,6 +98,8 @@ namespace Scripts.Model.Characters {
                     Dict.TryGetValue(st, out stat);
                     if (value == Value.MOD) {
                         sum += (int)stat.Mod;
+                    } else if (value == Value.MOD_AND_EQUIP) {
+                        sum += ((int)stat.Mod + GetEquipmentBonus(st));
                     } else {
                         sum += stat.Max;
                     }
