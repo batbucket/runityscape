@@ -36,35 +36,48 @@ namespace Scripts.Model.Pages {
                 yield return startRound();
                 yield return new WaitForSeconds(1);
             }
-            AddText(string.Format("The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turns.", turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "left" : "right"));
+            AddText(string.Format("The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turns.", turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "right" : "left"));
         }
 
         private IEnumerator startRound() {
             AddText(string.Format(Util.ColorString("<Turn {0} START>", Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();
             List<Character> chars = GetAll();
-            HashSet<Character> set = new HashSet<Character>();
+            HashSet<Character> playerActionSet = new HashSet<Character>();
+
+            yield return DetermineCharacterActions(chars, plays, playerActionSet);
+            yield return PerformActions(plays);
+            yield return GoThroughBuffs(chars);
+            EndRound();
+        }
+
+        private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
             AddText(string.Format(Util.ColorString("<Setup Phase>", Color.grey)));
             for (int i = 0; i < chars.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 Character c = chars[i];
                 if (c.Stats.State == State.ALIVE) {
                     AddText(string.Format("<color=yellow>{0}</color> is thinking...", c.Look.DisplayName));
+                    bool isActionTaken = false;
                     c.Brain.PageSetup(this);
                     c.Brain.DetermineAction((p) => {
-                        if (!set.Contains(c)) {
+                        if (!playerActionSet.Contains(c)) {
                             plays.Add(p);
-                            set.Add(c);
+                            playerActionSet.Add(c);
                             ClearActionGrid();
+                            isActionTaken = true;
                         } else {
                             Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
                         }
                     });
-                    while (plays.Count <= i) {
+                    while (!isActionTaken) {
                         yield return null;
                     }
                 }
             }
+        }
+
+        private IEnumerator PerformActions(List<IPlayable> plays) {
             plays.Sort();
             AddText(string.Format(Util.ColorString("<Action Phase>", Color.grey)));
             for (int i = 0; i < plays.Count; i++) {
@@ -90,6 +103,9 @@ namespace Scripts.Model.Pages {
                     }
                 }
             }
+        }
+
+        private IEnumerator GoThroughBuffs(IList<Character> chars) {
             //End of round buff interactions
             AddText(string.Format(Util.ColorString("<Buff Phase>", Color.grey)));
             foreach (Character c in chars) {
@@ -113,6 +129,9 @@ namespace Scripts.Model.Pages {
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
                 }
             }
+        }
+
+        private void EndRound() {
             AddText(string.Format(Util.ColorString("<Turn {0} END>", Color.grey), turnCount));
             turnCount++;
         }

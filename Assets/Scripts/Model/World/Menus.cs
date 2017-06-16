@@ -41,7 +41,7 @@ namespace Scripts.Model.World {
                     Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
                     Presenter.Main.Instance.StartCoroutine(hpv.Animation("Test", Color.cyan, Util.GetSprite("fox-head")));
                 }),
-                new Battle("Battle Test", new Character[] { new Kitsune() }, new Character[] { new Kitsune() }),
+                new Battle("Battle Test", new Character[] { new Kitsune(), new Kitsune()  }, new Character[] { new Kitsune(), new Kitsune() }),
                 new Process("UNcastables", () => {
 
                     }),

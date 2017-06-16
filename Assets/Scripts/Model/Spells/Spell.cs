@@ -22,10 +22,10 @@ namespace Scripts.Model.Spells {
 
         public string SpellText {
             get {
-                return string.Format("[{0}] uses <color=yellow>[{1}]</color>{2}.{3}",
+                return string.Format("<color=yellow>{0}</color> uses <color=cyan>{1}</color>{2}.{3}",
                   Caster.Look.DisplayName,
                   Book.Name,
-                  Caster.Equals(Target) ? string.Empty : string.Format(" on [{0}]", Target.Look.DisplayName),
+                  Caster.Equals(Target) ? string.Empty : string.Format(" on <color=yellow>{0}</color>", Target.Look.DisplayName),
                   Result.Type.Text
               );
             }
