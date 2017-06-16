@@ -2,6 +2,7 @@
 using Scripts.Model.Interfaces;
 using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
+using Scripts.View.ObjectPool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Scripts.Model.Pages {
     public class Page : IButtonable {
         public static Action<Page> ChangePageFunc;
         public static Action<Page> UpdateGridUI;
-        public static Action<TextBox> TypeText;
+        public static Func<TextBox, PooledBehaviour> TypeText;
 
         public ICollection<Character> Left;
         public string Location;
@@ -132,7 +133,7 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        public void AddText(Character c, string s) {
+        public PooledBehaviour AddText(Character c, string s) {
             bool side = GetSide(c);
             TextBox t = null;
             if (!side) {
@@ -140,11 +141,11 @@ namespace Scripts.Model.Pages {
             } else {
                 t = new RightBox(c.Look.Sprite, s, c.Look.TextColor);
             }
-            TypeText(t);
+            return TypeText(t);
         }
 
-        public void AddText(string s) {
-            TypeText(new TextBox(s));
+        public PooledBehaviour AddText(string s) {
+            return TypeText(new TextBox(s));
         }
 
         /// <summary>
@@ -169,7 +170,7 @@ namespace Scripts.Model.Pages {
                     int index = 0;
                     foreach (Character c in cPair.Value) {
                         if (characters.Contains(c)) {
-                            c.Look.Suffix = Util.IntToLetter(index++);
+                            c.Look.Suffix = string.Format("{0}", index++);
                         }
                     }
                 } else {
