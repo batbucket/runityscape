@@ -20,6 +20,16 @@ namespace Scripts.Model.Spells {
             this.Target = target;
         }
 
+        public string SpellDeclareText {
+            get {
+                return string.Format("<color=yellow>{0}</color> will use <color=cyan>{1}</color>{2}.",
+                  Caster.Look.DisplayName,
+                  Book.Name,
+                  Caster.Equals(Target) ? string.Empty : string.Format(" on <color=yellow>{0}</color>", Target.Look.DisplayName)
+              );
+            }
+        }
+
         public string SpellText {
             get {
                 return string.Format("<color=yellow>{0}</color> uses <color=cyan>{1}</color>{2}.{3}",

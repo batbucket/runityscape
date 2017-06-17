@@ -1,5 +1,6 @@
 ﻿using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
+using Scripts.Model.Spells;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
 using System.Collections;
@@ -59,16 +60,27 @@ namespace Scripts.Model.Pages {
         }
 
         private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
+            ICollection<PooledBehaviour> declarations = new List<PooledBehaviour>();
             for (int i = 0; i < chars.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 Character c = chars[i];
+
                 if (c.Stats.State == State.ALIVE) {
                     PooledBehaviour textbox = null;
-                    if (c.Brain is Game.Defined.Characters.Player) {
+
+                    // Only show when player controlled is asked to make a move
+                    bool brainIsPlayer = (c.Brain is Game.Defined.Characters.Player);
+
+                    // Helps show user which character is doing stuff
+                    if (brainIsPlayer) {
                         textbox = AddText(string.Format(PLAYER_QUESTION, c.Look.DisplayName));
                     }
+
+                    // Wait until this is true until we ask the next character what action they want to perform
                     bool isActionTaken = false;
                     c.Brain.PageSetup(this);
+
+                    // Pass to the Brain a func that lets that lets them pass us what action they want to take
                     c.Brain.DetermineAction((p) => {
                         if (!playerActionSet.Contains(c)) {
                             plays.Add(p);
@@ -79,12 +91,23 @@ namespace Scripts.Model.Pages {
                             Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
                         }
                     });
-                    while (!isActionTaken) {
-                        yield return null;
+
+                    // Wait until they choose a move. (This so the player can wait as long as they want)
+                    yield return new WaitWhile(() => !isActionTaken);
+
+                    ObjectPoolManager.Instance.Return(textbox); // Remove "What will X do?" textbox, reduce clutter
+
+                    if (brainIsPlayer) {
+                        Spell spell = plays.Last().MySpell;
+                        declarations.Add(AddText(spell.SpellDeclareText)); // "X will do Y" helper textbox
                     }
 
-                    ObjectPoolManager.Instance.Return(textbox);
                 }
+            }
+
+            // Remove all "X will do Y" texts
+            foreach (PooledBehaviour pb in declarations) {
+                ObjectPoolManager.Instance.Return(pb);
             }
         }
 
