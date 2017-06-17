@@ -49,7 +49,7 @@ namespace Scripts.Model.Items {
         }
 
         public bool IsUsable(SpellParams caster, SpellParams target) {
-            return true; // currentCount > 0 && IsMeetOtherRequirements(caster, target);
+            return caster.Stats.State == Characters.State.ALIVE;
         }
 
         public override bool Equals(object obj) {

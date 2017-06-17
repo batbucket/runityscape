@@ -93,22 +93,28 @@ namespace Scripts.Model.Pages {
             for (int i = 0; i < plays.Count; i++) {
                 yield return new WaitForSeconds(0.25f);
                 IPlayable play = plays[i];
-                if (play.IsPlayable) { // Death check
-                    AddText(play.Text);
+
+                // Dead characters cannot unleash spells
+                if (play.MySpell.Caster.Stats.State == State.ALIVE) { // Death check
+                    bool wasPlayable = play.IsPlayable;
                     yield return play.Play();
+                    AddText(play.Text);
 
-                    Character caster = play.MySpell.Caster;
-                    Character target = play.MySpell.Target;
+                    // If play didn't occur (e.g the target became dead before its cast, don't announce death)
+                    if (wasPlayable) {
+                        Character caster = play.MySpell.Caster;
+                        Character target = play.MySpell.Target;
 
-                    // Caster somehow kills themself, don't say they died twice
-                    if (caster.Equals(target) && caster.Stats.State == State.DEAD) {
-                        AddText(string.Format(CHARACTER_DEATH, play.MySpell.Caster.Look.DisplayName));
-                    } else {
-                        if (caster.Stats.State == State.DEAD) {
+                        // Caster somehow kills themself, don't say they died twice
+                        if (caster.Equals(target) && caster.Stats.State == State.DEAD) {
                             AddText(string.Format(CHARACTER_DEATH, play.MySpell.Caster.Look.DisplayName));
-                        }
-                        if (target.Stats.State == State.DEAD) {
-                            AddText(string.Format(CHARACTER_DEATH, play.MySpell.Target.Look.DisplayName));
+                        } else {
+                            if (caster.Stats.State == State.DEAD) {
+                                AddText(string.Format(CHARACTER_DEATH, play.MySpell.Caster.Look.DisplayName));
+                            }
+                            if (target.Stats.State == State.DEAD) {
+                                AddText(string.Format(CHARACTER_DEATH, play.MySpell.Target.Look.DisplayName));
+                            }
                         }
                     }
                 }

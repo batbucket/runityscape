@@ -33,7 +33,7 @@ namespace Scripts.Model.Spells {
 
         public bool IsPlayable {
             get {
-                return Caster.Stats.State == State.ALIVE;
+                return Book.IsCastable(new SpellParams(Caster), new SpellParams(Target));
             }
         }
 
@@ -70,13 +70,18 @@ namespace Scripts.Model.Spells {
         }
 
         private IEnumerator Cast() {
-            IList<IEnumerator> sfx = Result.SFX;
-            for (int i = 0; i < sfx.Count; i++) {
-                yield return sfx[i];
-            }
-            foreach (SpellEffect mySE in Result.Effects) {
-                SpellEffect se = mySE;
-                se.CauseEffect();
+            if (IsPlayable) {
+                IList<IEnumerator> sfx = Result.SFX;
+                for (int i = 0; i < sfx.Count; i++) {
+                    yield return sfx[i];
+                }
+                foreach (SpellEffect mySE in Result.Effects) {
+                    SpellEffect se = mySE;
+                    se.CauseEffect();
+                }
+            } else {
+                // Unplayable due to cast requirements becoming failed AFTER target selection due to a spellcast before this one
+                Result.Type = ResultType.FAILED;
             }
         }
 
