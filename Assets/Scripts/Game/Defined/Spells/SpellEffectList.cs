@@ -37,31 +37,53 @@ namespace Scripts.Game.Defined.Spells {
         }
     }
 
-    public class EquipItemEffect : SpellEffect {
-        private Equipment target;
-        private EquippableItem item;
+    public struct EquipParams {
+        public readonly Inventory Caster;
+        public readonly Equipment Target;
+        public readonly EquippableItem Item;
 
-        public EquipItemEffect(Equipment target, EquippableItem item) : base(SpellEffectType.EQUIP_ITEM, 1) {
-            this.target = target;
-            this.item = item;
+        public EquipParams(Inventory caster, Equipment target, EquippableItem item) {
+            this.Caster = caster;
+            this.Target = target;
+            this.Item = item;
+        }
+    }
+
+    public class EquipItemEffect : SpellEffect {
+        private EquipParams ep;
+
+        public EquipItemEffect(EquipParams ep) : base(SpellEffectType.EQUIP_ITEM, 1) {
+            this.ep = ep;
         }
 
         public override void CauseEffect() {
-            target.AddEquip(item);
+            ep.Target.AddEquip(ep.Caster, ep.Item);
         }
     }
 
     public class UnequipItemEffect : SpellEffect {
-        private Equipment target;
-        private EquipType itemType;
+        private EquipParams ep;
 
-        public UnequipItemEffect(Equipment target, EquipType itemType) : base(SpellEffectType.EQUIP_ITEM, 1) {
-            this.target = target;
-            this.itemType = itemType;
+        public UnequipItemEffect(EquipParams ep) : base(SpellEffectType.EQUIP_ITEM, 1) {
+            this.ep = ep;
         }
 
         public override void CauseEffect() {
-            target.RemoveEquip(itemType);
+            ep.Target.RemoveEquip(ep.Caster, ep.Item.Type);
+        }
+    }
+
+    public class ConsumeItemEffect : SpellEffect {
+        private Inventory caster;
+        private Item item;
+
+        public ConsumeItemEffect(Item item, Inventory caster) : base(SpellEffectType.CONSUME_ITEM, 1) {
+            this.caster = caster;
+            this.item = item;
+        }
+
+        public override void CauseEffect() {
+            caster.Remove(item, 1);
         }
     }
 }

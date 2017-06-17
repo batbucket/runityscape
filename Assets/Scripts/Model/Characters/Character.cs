@@ -40,7 +40,6 @@ namespace Scripts.Model.Characters {
             Brain.Owner = this;
             Brain.Spells = this.Spells;
             Stats.Update(this);
-            Equipment.Inventory = inventory;
             Equipment.Buffs = Buffs;
             Stats.InitializeResources();
             Stats.GetEquipmentBonus = f => Equipment.GetBonus(f);

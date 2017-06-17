@@ -14,7 +14,6 @@ namespace Scripts.Model.Characters {
 
     public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable> {
         public readonly IDictionary<EquipType, EquippableItem> Dict;
-        public Inventory Inventory;
         public Buffs Buffs;
         public SpellParams Owner;
         public Action<SplatDetails> AddSplat;
@@ -32,10 +31,10 @@ namespace Scripts.Model.Characters {
             this.AddSplat = ((p) => { });
         }
 
-        public void AddEquip(EquippableItem e) {
-            Inventory.Remove(e);
+        public void AddEquip(Inventory inv, EquippableItem e) {
+            inv.Remove(e);
             if (Contains(e.Type)) {
-                RemoveEquip(e.Type);
+                RemoveEquip(inv, e.Type);
             }
 
             Buff buff = e.CreateBuff(Owner);
@@ -53,14 +52,14 @@ namespace Scripts.Model.Characters {
             AddSplat(new SplatDetails(Color.green, "+", e.Icon));
         }
 
-        public void RemoveEquip(EquipType type) {
+        public void RemoveEquip(Inventory inv, EquipType type) {
             Util.Assert(Dict.ContainsKey(type), "No equipment in slot.");
             EquippableItem itemToRemove = Dict[type];
 
             Buff buffToRemove = itemBuffs[itemToRemove];
             itemBuffs.Remove(itemToRemove);
 
-            Inventory.Add(itemToRemove);
+            inv.Add(itemToRemove);
             Dict.Remove(itemToRemove.Type);
             Buffs.RemoveBuff(RemovalType.TIMED_OUT, buffToRemove);
 

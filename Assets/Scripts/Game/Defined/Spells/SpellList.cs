@@ -90,34 +90,38 @@ namespace Scripts.Game.Defined.Spells {
         }
 
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
-            return !target.Equipment.Contains(equip.Type) || target.Inventory.IsAddable(target.Equipment.PeekItem(equip.Type));
+            return !target.Equipment.Contains(equip.Type) || caster.Inventory.IsAddable(target.Equipment.PeekItem(equip.Type));
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(target.Equipment, equip)
+                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip))
                 };
         }
     }
 
     public class CastUnequipItem : ItemSpellbook {
-        private EquippableItem equip;
+        private Inventory caster;
+        private Equipment targetEq;
+        private new EquippableItem item;
 
-        public CastUnequipItem(EquippableItem equip) : base(equip) {
-            this.equip = equip;
+        public CastUnequipItem(Inventory caster, Equipment targetEq, EquippableItem item) : base(item) {
+            this.caster = caster;
+            this.targetEq = targetEq;
+            this.item = item;
         }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\nUnequip [{1}] from the [{2}] equipment slot.", equip.Description, equip.Name, equip.Type);
+            return string.Format("{0}\n\nUnequip [{1}] from the [{2}] equipment slot.", item.Description, item.Name, item.Type);
         }
 
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
-            return target.Equipment.Contains(equip.Type) || target.Inventory.IsAddable(equip);
+            return target.Equipment.Contains(item.Type) || caster.Inventory.IsAddable(item);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(target.Equipment, equip)
+                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, item))
                 };
         }
     }
@@ -134,7 +138,13 @@ namespace Scripts.Game.Defined.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
-            return consume.GetEffects(caster, target);
+            IList<SpellEffect> itemEffects = consume.GetEffects(caster, target);
+            SpellEffect[] allEffects = new SpellEffect[itemEffects.Count + 1];
+            allEffects[0] = new ConsumeItemEffect(consume, caster.Inventory);
+            for (int i = 0; i < itemEffects.Count; i++) {
+                allEffects[i + 1] = itemEffects[i];
+            }
+            return allEffects;
         }
     }
 

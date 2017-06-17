@@ -49,7 +49,7 @@ namespace Scripts.Model.Items {
         }
 
         public bool IsUsable(SpellParams caster, SpellParams target) {
-            return caster.Stats.State == Characters.State.ALIVE;
+            return caster.Stats.State == Characters.State.ALIVE && caster.Inventory.HasItem(this);
         }
 
         public override bool Equals(object obj) {

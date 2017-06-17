@@ -88,6 +88,10 @@ namespace Scripts.Model.Pages {
             }
         }
 
+        private bool CharacterCanCast(Character c) {
+            return c.Stats.State == State.ALIVE;
+        }
+
         private IEnumerator PerformActions(List<IPlayable> plays) {
             plays.Sort();
             for (int i = 0; i < plays.Count; i++) {
@@ -95,7 +99,7 @@ namespace Scripts.Model.Pages {
                 IPlayable play = plays[i];
 
                 // Dead characters cannot unleash spells
-                if (play.MySpell.Caster.Stats.State == State.ALIVE) { // Death check
+                if (CharacterCanCast(play.MySpell.Caster)) { // Death check
                     bool wasPlayable = play.IsPlayable;
                     yield return play.Play();
                     AddText(play.Text);
