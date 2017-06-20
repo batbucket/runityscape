@@ -113,7 +113,7 @@ namespace Scripts.Model.Characters {
                 list.Add(new InventorySave.ItemCount { Count = pair.Value, Item = new ItemSave(pair.Key.GetType()) });
             }
 
-            return new InventorySave(capacity, list.ToArray());
+            return new InventorySave(capacity, list);
         }
 
         public void InitFromSaveObject(InventorySave saveObject) {

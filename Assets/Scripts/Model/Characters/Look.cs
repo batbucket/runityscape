@@ -18,11 +18,10 @@ namespace Scripts.Model.Characters {
 
         private string suffix;
         private Sprite sprite;
-        private string spriteLoc;
 
         public Look() {
             this.Name = "Default";
-            this.SpriteLoc = "fox-head";
+            this.sprite = Util.GetSprite("fox-head");
             this.tooltip = string.Empty;
             this.check = string.Empty;
             this.breed = Breed.UNKNOWN;
@@ -39,12 +38,8 @@ namespace Scripts.Model.Characters {
             get {
                 return sprite;
             }
-        }
-
-        public string SpriteLoc {
-            set {
-                this.spriteLoc = value;
-                sprite = Util.LoadIcon(value);
+            protected set {
+                this.sprite = value;
             }
         }
 
@@ -72,12 +67,12 @@ namespace Scripts.Model.Characters {
         }
 
         public LookSave GetSaveObject() {
-            return new LookSave(Name, spriteLoc, textColor, check, tooltip, breed);
+            return new LookSave(Name, sprite, textColor, check, tooltip, breed);
         }
 
         public void InitFromSaveObject(LookSave saveObject) {
             this.Name = saveObject.Name;
-            this.spriteLoc = saveObject.SpriteLoc;
+            this.sprite = saveObject.Sprite;
             this.textColor = saveObject.TextColor;
             this.check = saveObject.Check;
             this.tooltip = saveObject.Tooltip;

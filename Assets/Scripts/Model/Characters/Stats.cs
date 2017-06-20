@@ -166,7 +166,7 @@ namespace Scripts.Model.Characters {
                 Stat stat = pair.Value;
                 list.Add(stat.GetSaveObject());
             }
-            return new CharacterStatsSave(list.ToArray());
+            return new CharacterStatsSave(list);
         }
 
         public void InitFromSaveObject(CharacterStatsSave saveObject) {

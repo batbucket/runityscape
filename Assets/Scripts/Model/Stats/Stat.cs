@@ -55,7 +55,7 @@ namespace Scripts.Model.Stats {
         public virtual void Update(Character c) { }
 
         public StatSave GetSaveObject() {
-            StatSave save = new StatSave(GetType(), mod, max);
+            StatSave save = new StatSave(new StatTypeSave(Type), GetType(), mod, max);
             return save;
         }
 

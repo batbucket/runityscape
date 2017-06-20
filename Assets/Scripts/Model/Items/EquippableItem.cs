@@ -7,10 +7,12 @@ using UnityEngine;
 using Scripts.Model.Buffs;
 using Scripts.Game.Defined.Spells;
 using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Items {
 
-    public abstract class EquippableItem : UseableItem {
+    public abstract class EquippableItem : UseableItem, ISaveable<EquipItemSave> {
 
         public readonly EquipType Type;
         public readonly IDictionary<StatType, int> Stats;
@@ -60,6 +62,14 @@ namespace Scripts.Model.Items {
 
         private static Sprite GetDefaultSprite(EquipType type) {
             return DEFAULT_ICONS[type];
+        }
+
+        EquipItemSave ISaveable<EquipItemSave>.GetSaveObject() {
+            return new EquipItemSave(new EquipTypeSave(Type), GetType());
+        }
+
+        public void InitFromSaveObject(EquipItemSave saveObject) {
+            // Nothing
         }
     }
 }

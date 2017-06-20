@@ -52,7 +52,7 @@ namespace Scripts.Model.Characters {
             foreach (SpellBook s in this) {
                 books.Add(new SpellbookSave(s.GetType()));
             }
-            return new CharacterSpellBooksSave(books.ToArray());
+            return new CharacterSpellBooksSave(books);
         }
 
         public void InitFromSaveObject(CharacterSpellBooksSave saveObject) {

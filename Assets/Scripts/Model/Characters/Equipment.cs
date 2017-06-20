@@ -9,21 +9,23 @@ using Scripts.Model.Buffs;
 using Scripts.Model.Spells;
 using Scripts.Presenter;
 using Scripts.Model.Interfaces;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
 
-    public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable> {
+    public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<EquipmentSave> {
         public Action<Buff> AddBuff;
         public Action<Buff> RemoveBuff;
         public SpellParams Owner;
         public Action<SplatDetails> AddSplat;
 
-        private readonly IDictionary<EquipType, EquippableItem> dict;
+        private readonly IDictionary<EquipType, EquippableItem> equipped;
         private readonly IDictionary<EquippableItem, Buff> itemBuffs;
         private readonly IDictionary<StatType, int> statBonuses;
 
         public Equipment() {
-            this.dict = new Dictionary<EquipType, EquippableItem>();
+            this.equipped = new Dictionary<EquipType, EquippableItem>();
             this.statBonuses = new Dictionary<StatType, int>();
             this.AddBuff = ((a) => { });
             this.RemoveBuff = ((a) => { });
@@ -46,7 +48,7 @@ namespace Scripts.Model.Characters {
                 AddBuff(buff);
             }
 
-            dict.Add(e.Type, e);
+            equipped.Add(e.Type, e);
             foreach (KeyValuePair<StatType, int> pair in e.Stats) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] += pair.Value;
@@ -56,14 +58,14 @@ namespace Scripts.Model.Characters {
         }
 
         public void RemoveEquip(Inventory inv, EquipType type) {
-            Util.Assert(dict.ContainsKey(type), "No equipment in slot.");
-            EquippableItem itemToRemove = dict[type];
+            Util.Assert(equipped.ContainsKey(type), "No equipment in slot.");
+            EquippableItem itemToRemove = equipped[type];
 
             Buff buffToRemove = itemBuffs[itemToRemove];
             itemBuffs.Remove(itemToRemove);
 
             inv.Add(itemToRemove);
-            dict.Remove(itemToRemove.Type);
+            equipped.Remove(itemToRemove.Type);
             RemoveBuff(buffToRemove);
 
             foreach (KeyValuePair<StatType, int> pair in itemToRemove.Stats) {
@@ -75,7 +77,7 @@ namespace Scripts.Model.Characters {
         }
 
         public EquippableItem PeekItem(EquipType type) {
-            return dict[type];
+            return equipped[type];
         }
 
         public int GetBonus(StatType type) {
@@ -83,19 +85,50 @@ namespace Scripts.Model.Characters {
         }
 
         public bool Contains(EquipType type) {
-            return dict.ContainsKey(type);
+            return equipped.ContainsKey(type);
         }
 
         IEnumerator IEnumerable.GetEnumerator() {
-            return dict.Values.GetEnumerator();
+            return equipped.Values.GetEnumerator();
         }
 
         IEnumerator<EquippableItem> IEnumerable<EquippableItem>.GetEnumerator() {
-            return dict.Values.GetEnumerator();
+            return equipped.Values.GetEnumerator();
         }
 
         IEnumerator<ISpellable> IEnumerable<ISpellable>.GetEnumerator() {
-            return dict.Values.Select(e => e.GetSpellBook()).Cast<ISpellable>().ToList().GetEnumerator();
+            return equipped.Values.Select(e => e.GetSpellBook()).Cast<ISpellable>().ToList().GetEnumerator();
+        }
+
+        public EquipmentSave GetSaveObject() {
+            List<EquipItemSave> equips = new List<EquipItemSave>();
+            foreach (ISaveable<EquipItemSave> eq in equipped.Values) {
+                equips.Add(eq.GetSaveObject());
+            }
+
+            List<EquipmentSave.EquipBonus> bonuses = new List<EquipmentSave.EquipBonus>();
+            foreach (KeyValuePair<StatType, int> pair in statBonuses) {
+                bonuses.Add(new EquipmentSave.EquipBonus() { Stat = IDs.Stats.Get(pair.Key), Bonus = pair.Value });
+            }
+
+            // TODO buffs
+            return new EquipmentSave(equips, bonuses);
+        }
+
+        public void InitFromSaveObject(EquipmentSave saveObject) {
+            foreach (EquipItemSave save in saveObject.Equipped) {
+                EquippableItem eq = save.ObjectFromID();
+                eq.InitFromSaveObject(save);
+                equipped.Add(save.EquipTypeSave.Restore(), eq);
+            }
+
+            foreach (EquipmentSave.EquipBonus bonus in saveObject.Bonuses) {
+                StatType type = IDs.Stats.Get(bonus.Stat);
+                int count = bonus.Bonus;
+                this.statBonuses.Add(type, count);
+            }
+
+            // TODO buffs
         }
     }
 }
