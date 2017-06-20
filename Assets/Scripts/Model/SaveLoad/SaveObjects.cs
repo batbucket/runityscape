@@ -4,9 +4,11 @@ using Scripts.Model.Items;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.Model.SaveLoad.SaveObjects {
+
     [Serializable]
     public class IdSaveObject<T> {
         private string classID;
@@ -22,12 +24,42 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     }
 
     [Serializable]
-    public sealed class StatSave : IdSaveObject<Stat> {
+    public abstract class TypeSafeEnumSave<T> {
+        public string Id;
 
+        public TypeSafeEnumSave(string id) {
+            this.Id = id;
+        }
+
+        public abstract T Restore();
+    }
+
+    [Serializable]
+    public class StatTypeSave : TypeSafeEnumSave<StatType> {
+        public StatTypeSave(StatType st) : base(IDs.Stats.Get(st)) { }
+
+        public override StatType Restore() {
+            return IDs.Stats.Get(Id);
+        }
+    }
+
+    [Serializable]
+    public class EquipTypeSave : TypeSafeEnumSave<EquipType> {
+        public EquipTypeSave(EquipType type) : base(IDs.Equips.Get(type)) { }
+
+        public override EquipType Restore() {
+            return IDs.Equips.Get(Id);
+        }
+    }
+
+    [Serializable]
+    public sealed class StatSave : IdSaveObject<Stat> {
+        public StatTypeSave StatType;
         public int Mod;
         public int Max;
 
-        public StatSave(Type type, int mod, int max) : base(type) {
+        public StatSave(StatTypeSave statType, Type type, int mod, int max) : base(type) {
+            this.StatType = statType;
             this.Mod = mod;
             this.Max = max;
         }
@@ -35,15 +67,9 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
 
     [Serializable]
     public sealed class CharacterStatsSave {
-        [Serializable]
-        public struct EquipBonus {
-            public string Stat;
-            public int Bonus;
-        }
+        public List<StatSave> Stats;
 
-        public StatSave[] Stats;
-
-        public CharacterStatsSave(StatSave[] stats) {
+        public CharacterStatsSave(List<StatSave> stats) {
             this.Stats = stats;
         }
     }
@@ -55,9 +81,9 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
 
     [Serializable]
     public sealed class CharacterSpellBooksSave {
-        public SpellbookSave[] Books;
+        public List<SpellbookSave> Books;
 
-        public CharacterSpellBooksSave(SpellbookSave[] books) {
+        public CharacterSpellBooksSave(List<SpellbookSave> books) {
             this.Books = books;
         }
     }
@@ -81,11 +107,11 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         }
 
         public int InventoryCapacity;
-        public ItemCount[] Items;
+        public List<ItemCount> Items;
 
         public InventorySave(
             int inventoryCapacity,
-            ItemCount[] items) {
+            List<ItemCount> items) {
 
             this.InventoryCapacity = inventoryCapacity;
             this.Items = items;
@@ -95,15 +121,15 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     [Serializable]
     public sealed class LookSave {
         public string Name;
-        public string SpriteLoc;
+        public Sprite Sprite;
         public Color TextColor;
         public string Check;
         public string Tooltip;
         public Breed Breed;
 
-        public LookSave(string name, string spriteLoc, Color text, string check, string tooltip, Breed breed) {
+        public LookSave(string name, Sprite sprite, Color text, string check, string tooltip, Breed breed) {
             this.Name = name;
-            this.SpriteLoc = spriteLoc;
+            this.Sprite = sprite;
             this.TextColor = text;
             this.Check = check;
             this.Tooltip = tooltip;
@@ -112,7 +138,29 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     }
 
     [Serializable]
-    public sealed class EquippableItemSave {
+    public sealed class EquipItemSave : IdSaveObject<EquippableItem> {
+        public EquipTypeSave EquipTypeSave;
 
+        public EquipItemSave(EquipTypeSave equipTypeSave, Type type) : base(type) {
+            this.EquipTypeSave = equipTypeSave;
+        }
+    }
+
+    [Serializable]
+    public sealed class EquipmentSave {
+        [Serializable]
+        public struct EquipBonus {
+            public string Stat;
+            public int Bonus;
+        }
+
+        public List<EquipItemSave> Equipped;
+        // TODO Item buffs
+        public List<EquipBonus> Bonuses;
+
+        public EquipmentSave(List<EquipItemSave> equipped, List<EquipBonus> bonuses) {
+            this.Equipped = equipped;
+            this.Bonuses = bonuses;
+        }
     }
 }

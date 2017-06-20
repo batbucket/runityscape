@@ -32,6 +32,11 @@ namespace Scripts.Model.SaveLoad {
             }
         }
 
+        /// <summary>
+        /// Lazy initialization for initables because the set refuses to initialize
+        /// before callers call its add method if I initialize it in the fields.
+        /// </summary>
+        /// <param name="init">Initable content for Main.cs to load.</param>
         public static void AddInit(IInitable init) {
             if (initables == null) {
                 initables = new HashSet<IInitable>();

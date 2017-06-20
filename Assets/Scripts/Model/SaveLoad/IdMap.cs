@@ -4,6 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Scripts.Model.SaveLoad {
+
+    /// <summary>
+    /// Mapping of Types with strings so that we can call the constructor of derived classes
+    /// when we load a save.
+    /// </summary>
+    /// <typeparam name="T">Type being mapped to a string.</typeparam>
     public abstract class IdMap<T> : IEnumerable<KeyValuePair<T, string>>, IInitable {
         protected Map<T, string> map;
 
