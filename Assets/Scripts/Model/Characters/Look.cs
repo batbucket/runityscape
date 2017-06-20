@@ -1,22 +1,62 @@
-﻿using System.Collections;
+﻿using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Scripts.Game.Defined.Characters;
 
 namespace Scripts.Model.Characters {
 
-    public class Look {
+    public class Look : ISaveable<LookSave> {
         public string Name;
-        public Sprite Sprite;
-        public string Check;
-        public Color TextColor;
+
+        protected Color textColor;
+        protected string check;
+        protected string tooltip;
+        protected Breed breed;
 
         private string suffix;
+        private Sprite sprite;
+        private string spriteLoc;
 
         public Look() {
             this.Name = "Default";
-            this.Sprite = Util.LoadIcon("fox-head");
-            this.Check = "Placeholder";
-            this.TextColor = Color.white;
+            this.SpriteLoc = "fox-head";
+            this.tooltip = string.Empty;
+            this.check = string.Empty;
+            this.breed = Breed.UNKNOWN;
+            this.textColor = Color.white;
+        }
+
+        public Breed Breed {
+            get {
+                return breed;
+            }
+        }
+
+        public Sprite Sprite {
+            get {
+                return sprite;
+            }
+        }
+
+        public string SpriteLoc {
+            set {
+                this.spriteLoc = value;
+                sprite = Util.LoadIcon(value);
+            }
+        }
+
+        public string Tooltip {
+            get {
+                return tooltip;
+            }
+        }
+        public Color TextColor {
+            get {
+                return textColor;
+            }
         }
 
         public string DisplayName {
@@ -29,6 +69,19 @@ namespace Scripts.Model.Characters {
             set {
                 suffix = value;
             }
+        }
+
+        public LookSave GetSaveObject() {
+            return new LookSave(Name, spriteLoc, textColor, check, tooltip, breed);
+        }
+
+        public void InitFromSaveObject(LookSave saveObject) {
+            this.Name = saveObject.Name;
+            this.spriteLoc = saveObject.SpriteLoc;
+            this.textColor = saveObject.TextColor;
+            this.check = saveObject.Check;
+            this.tooltip = saveObject.Tooltip;
+            this.breed = saveObject.Breed;
         }
     }
 }

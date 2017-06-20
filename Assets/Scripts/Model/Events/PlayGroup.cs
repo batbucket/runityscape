@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Defined.Spells;
+﻿using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Game.Defined.Spells;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using System;

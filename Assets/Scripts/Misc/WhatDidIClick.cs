@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WhatDidIClick : MonoBehaviour {
     [SerializeField]
-    private Camera camera;
+    private new Camera camera;
 
     public void Update() {
         if (Input.GetKeyDown(KeyCode.Mouse0)) {

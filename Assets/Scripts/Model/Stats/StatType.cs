@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Scripts.Model.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Model.Stats {
@@ -7,51 +10,20 @@ namespace Scripts.Model.Stats {
     /// <summary>
     /// Type-safe enum representing the various stat types in the game.
     /// </summary>
-    public sealed class StatType : IComparable<StatType> {
-        public static readonly IDictionary<BoundType, Bounds> AttributeBounds = new Dictionary<BoundType, Bounds>() {
+    public sealed class StatType : IComparable<StatType>, INameable {
+
+        private static readonly HashSet<StatType> allTypes = new HashSet<StatType>();
+        private static readonly IDictionary<BoundType, Bounds> attributeBounds = new Dictionary<BoundType, Bounds>() {
             { BoundType.RESOURCE, new Bounds(0, 10000) },
             { BoundType.ASSIGNABLE, new Bounds(0, 999) },
             { BoundType.LEVEL, new Bounds(0, 100) }
         };
 
-        public readonly Bounds Bounds;
-        public readonly string Name;
-        public readonly Sprite Sprite;
-        public readonly string Description;
-        public readonly Color Color;
-        public readonly Color NegativeColor;
-
-        private readonly int order;
-        private static int orderCounter;
-
-        private StatType(
-            BoundType boundType,
-            string name,
-            string spriteLoc,
-            string description,
-            Color color,
-            Color negativeColor) {
-            AttributeBounds.TryGetValue(boundType, out Bounds);
-            this.Name = Util.ColorString(name, color);
-            this.Sprite = Util.LoadIcon(spriteLoc);
-            this.Description = description;
-            this.Color = color;
-            this.order = orderCounter++;
-            this.NegativeColor = negativeColor;
-        }
-
-        private StatType(
-            BoundType boundType,
-            string name,
-            string spriteLoc,
-            string description,
-            Color color) : this(boundType, name, spriteLoc, description, color, Color.grey) { }
-
         public static readonly StatType LEVEL = new StatType(BoundType.LEVEL,
-                                                                       "Level",
-                                                                       "fox-head",
-                                                                       "Current level of power.",
-                                                                       Color.white);
+                                                       "Level",
+                                                       "fox-head",
+                                                       "Current level of power.",
+                                                       Color.white);
 
         public static readonly StatType STRENGTH = new StatType(BoundType.ASSIGNABLE,
                                                                           "Strength",
@@ -117,7 +89,7 @@ namespace Scripts.Model.Stats {
                                                                     Color.white);
 
         public static readonly StatType DEATH_EXP = new StatType(BoundType.RESOURCE,
-                                                                    "Experience",
+                                                                    "Death experience",
                                                                     "fox-head",
                                                                     "Needed to level up.",
                                                                     Color.white);
@@ -125,12 +97,58 @@ namespace Scripts.Model.Stats {
         public static readonly HashSet<StatType> RESOURCES = new HashSet<StatType>() { HEALTH, SKILL, MANA, CHARGE, CORRUPTION, EXPERIENCE };
         public static readonly HashSet<StatType> RESTORED = new HashSet<StatType>() { HEALTH, MANA };
 
+        public readonly Bounds Bounds;
+        public readonly string Name;
+        public readonly Sprite Sprite;
+        public readonly string Description;
+        public readonly Color Color;
+        public readonly Color NegativeColor;
+
+        private readonly int order;
+        private static int orderCounter;
+
+        private StatType(
+            BoundType boundType,
+            string name,
+            string spriteLoc,
+            string description,
+            Color color,
+            Color negativeColor) {
+            attributeBounds.TryGetValue(boundType, out Bounds);
+            this.Name = Util.ColorString(name, color);
+            this.Sprite = Util.LoadIcon(spriteLoc);
+            this.Description = description;
+            this.Color = color;
+            this.order = orderCounter++;
+            this.NegativeColor = negativeColor;
+            allTypes.Add(this);
+        }
+
+        private StatType(
+            BoundType boundType,
+            string name,
+            string spriteLoc,
+            string description,
+            Color color) : this(boundType, name, spriteLoc, description, color, Color.grey) { }
+
+        public static ReadOnlyCollection<StatType> AllTypes {
+            get {
+                return new ReadOnlyCollection<StatType>(allTypes.ToArray());
+            }
+        }
+
+        string INameable.Name {
+            get {
+                return Name;
+            }
+        }
+
         public override bool Equals(object obj) {
             return this == obj;
         }
 
         public override int GetHashCode() {
-            return this.Name.GetHashCode();
+            return this.Name.GetHashCode() ^ Color.GetHashCode();
         }
 
         public Color DetermineColor(float value) {

@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using Scripts.Model.Buffs;
 using Scripts.Game.Defined.Spells;
+using Scripts.Game.Defined.Serialized.Spells;
 
 namespace Scripts.Model.Items {
 

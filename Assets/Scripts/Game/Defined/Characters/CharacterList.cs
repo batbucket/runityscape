@@ -1,6 +1,7 @@
 ﻿using Scripts.Game.Defined.Characters.StartingSpells;
-using Scripts.Game.Defined.Items.Consumables;
-using Scripts.Game.Defined.Items.Equipment;
+using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Game.Defined.Serialized.Items.Consumables;
+using Scripts.Game.Defined.Serialized.Items.Equipment;
 using Scripts.Game.Defined.StartingStats;
 using Scripts.Model.Characters;
 

@@ -8,7 +8,7 @@ namespace Scripts.Model.Items {
 
     public class BasicItem : Item {
 
-        public BasicItem(Sprite icon, int basePrice, int count, int maxCount, string name, string description)
+        public BasicItem(Sprite icon, int basePrice, int maxCount, string name, string description)
             : base(icon, basePrice, TargetType.NONE, name, description) { }
 
         protected sealed override string DescriptionHelper {

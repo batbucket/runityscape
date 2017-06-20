@@ -1,5 +1,7 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.SaveLoad.SaveObjects;
 using UnityEngine;
+using Scripts.Model.SaveLoad;
 
 namespace Scripts.Model.Stats {
 
@@ -8,20 +10,20 @@ namespace Scripts.Model.Stats {
     /// Think strength, agility, intelligence
     /// These values have a lesser and greater cap
     /// </summary>
-    public abstract class Stat {
+    public abstract class Stat : ISaveable<StatSave> {
 
         public readonly StatType Type;
 
-        private float mod;
+        private int mod;
         private int max;
 
-        public Stat(float mod, int max, StatType type) {
+        public Stat(int mod, int max, StatType type) {
             this.mod = mod;
             this.max = max;
             this.Type = type;
         }
 
-        public float Mod {
+        public int Mod {
             get {
                 return mod;
             }
@@ -30,7 +32,7 @@ namespace Scripts.Model.Stats {
             }
         }
 
-        public void SetMod(float amount, bool isObeyMaxCap) {
+        public void SetMod(int amount, bool isObeyMaxCap) {
             if (isObeyMaxCap) {
                 mod = Mathf.Clamp(amount, Type.Bounds.Low, Max);
             } else {
@@ -51,5 +53,15 @@ namespace Scripts.Model.Stats {
         /// Update the values of this Stat
         /// </summary>
         public virtual void Update(Character c) { }
+
+        public StatSave GetSaveObject() {
+            StatSave save = new StatSave(GetType(), mod, max);
+            return save;
+        }
+
+        public void InitFromSaveObject(StatSave saveObject) {
+            this.mod = saveObject.Mod;
+            this.max = saveObject.Max;
+        }
     }
 }

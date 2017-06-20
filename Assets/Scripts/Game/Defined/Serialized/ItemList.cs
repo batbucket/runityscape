@@ -4,8 +4,9 @@ using Scripts.Model.Items;
 using Scripts.Model.Stats;
 using Scripts.Game.Defined.Spells;
 using Scripts.Model.Buffs;
+using Scripts.Game.Defined.Serialized.Spells;
 
-namespace Scripts.Game.Defined.Items.Consumables {
+namespace Scripts.Game.Defined.Serialized.Items.Consumables {
     public class Apple : ConsumableItem {
         private const int HEALING_AMOUNT = 5;
 
@@ -17,7 +18,7 @@ namespace Scripts.Game.Defined.Items.Consumables {
     }
 }
 
-namespace Scripts.Game.Defined.Items.Equipment {
+namespace Scripts.Game.Defined.Serialized.Items.Equipment {
     public class PoisonArmor : EquippableItem {
         public PoisonArmor() : base(EquipType.ARMOR, 10, "Poisoned Armor", "This doesn't look safe.") {
             Stats.Add(StatType.VITALITY, 3);
@@ -31,8 +32,8 @@ namespace Scripts.Game.Defined.Items.Equipment {
     }
 }
 
-namespace Scripts.Game.Defined.Items.Misc {
+namespace Scripts.Game.Defined.Serialized.Items.Misc {
     public class Money : BasicItem {
-        public Money(int count) : base(Util.GetSprite("fox-head"), 0, count, 99999, "Drop", "Drop of water, typically used as currency. Drinking it is not advised.") { }
+        public Money() : base(Util.GetSprite("fox-head"), 0, int.MaxValue, "Drop", "Drop of water, typically used as currency. Drinking it is not advised.") { }
     }
 }

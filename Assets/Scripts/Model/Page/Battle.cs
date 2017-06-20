@@ -1,4 +1,5 @@
-﻿using Scripts.Model.Buffs;
+﻿using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using Scripts.Presenter;
@@ -69,7 +70,7 @@ namespace Scripts.Model.Pages {
                     PooledBehaviour textbox = null;
 
                     // Only show when player controlled is asked to make a move
-                    bool brainIsPlayer = (c.Brain is Game.Defined.Characters.Player);
+                    bool brainIsPlayer = (c.Brain is Player);
 
                     // Helps show user which character is doing stuff
                     if (brainIsPlayer) {

@@ -155,13 +155,8 @@ namespace Scripts.View.Portraits {
 
                     // Move resource prefab to appropraite location, resources are ordered.
                     ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
-                    int index = rvs.Length - 1;
 
-                    //// BubbleSort. We use this to move ResourceViews to their appropriate positions. (For example, LIFE is always the topmost resourceview)
-                    //while (index - 1 >= 0 && rv.Type.CompareTo(rvs[index - 1].Type) < 0) {
-                    //    Util.Swap(rvs[index].gameObject, rvs[index - 1].gameObject);
-                    //    index--;
-                    //}
+                    // Sort everything so HP bar doesn't show up under mana, and etc.
                     Array.Sort(rvs);
                 } else {
                     rv = ResourceViews[resourceType].resourceView;

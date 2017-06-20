@@ -1,10 +1,13 @@
-﻿using Scripts.Model.Spells;
+﻿using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
+using Scripts.Model.Spells;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Scripts.Model.Items {
 
-    public abstract class Item {
+    public abstract class Item : ISaveable<ItemSave> {
         public static readonly HashSet<Flag> STANDARD_FLAGS = new HashSet<Flag>() { Flag.SELLABLE, Flag.TRASHABLE };
 
         public readonly string Name;
@@ -62,6 +65,12 @@ namespace Scripts.Model.Items {
 
         protected abstract bool IsMeetOtherRequirements(SpellParams caster, SpellParams target);
 
+        public ItemSave GetSaveObject() {
+            return new ItemSave(GetType());
+        }
 
+        public void InitFromSaveObject(ItemSave saveObject) {
+            // Nothing
+        }
     }
 }

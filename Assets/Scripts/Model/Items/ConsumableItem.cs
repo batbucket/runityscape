@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Scripts.Game.Defined.Spells;
+using Scripts.Game.Defined.Serialized.Spells;
 
 namespace Scripts.Model.Items {
 

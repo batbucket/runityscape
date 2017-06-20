@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.Interfaces;
 using Scripts.Model.Processes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -17,6 +18,14 @@ using WindowsInput;
  */
 
 public static class Util {
+
+    public static T TypeToObject<T>(Type type) {
+        return (T)Activator.CreateInstance(type);
+    }
+
+    public static Type StringToType(string s) {
+        return Type.GetType(s);
+    }
 
     /// <summary>
     /// From https://stackoverflow.com/questions/12172162/how-to-insert-item-into-list-in-order
@@ -366,5 +375,9 @@ public static class Util {
             return attributes[0].Description;
         else
             return value.ToString();
+    }
+
+    public static TKey GetKey<TKey>(this Dictionary<TKey, string> dictionary, string value) {
+        return dictionary.FirstOrDefault(x => x.Value.Equals(value)).Key;
     }
 }

@@ -5,22 +5,24 @@ using System;
 using System.Collections;
 using Scripts.Presenter;
 using UnityEngine;
-using Scripts.Model.Spells;
 using Scripts.Model.Interfaces;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
 
-    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable> {
-        private const int CAPACITY = 10;
+    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
+        private const int INITIAL_CAPACITY = 10;
 
         public Action<SplatDetails> AddSplat;
 
         private IDictionary<Item, int> dict;
-        private int size;
+        private int capacity;
 
         public Inventory() {
             this.dict = new Dictionary<Item, int>();
             this.AddSplat = ((p) => { });
+            this.capacity = INITIAL_CAPACITY;
         }
 
         public int TotalOccupiedSpace {
@@ -41,9 +43,13 @@ namespace Scripts.Model.Characters {
             }
         }
 
-        public int MaxCapacity {
+        public int Capacity {
             get {
-                return CAPACITY;
+                return capacity;
+            }
+            set {
+                Util.Assert(value >= 0, "Value must be nonnegative.");
+                capacity = value;
             }
         }
 
@@ -78,7 +84,7 @@ namespace Scripts.Model.Characters {
         }
 
         public bool IsAddable(Item item, int count = 0) {
-            return !item.HasFlag(Items.Flag.OCCUPIES_SPACE) || TotalOccupiedSpace < CAPACITY;
+            return !item.HasFlag(Items.Flag.OCCUPIES_SPACE) || TotalOccupiedSpace < INITIAL_CAPACITY;
         }
 
         public bool IsRemovable(Item item, int count = 0) {
@@ -99,6 +105,24 @@ namespace Scripts.Model.Characters {
 
         IEnumerator<Item> IEnumerable<Item>.GetEnumerator() {
             return dict.Keys.GetEnumerator();
+        }
+
+        public InventorySave GetSaveObject() {
+            List<InventorySave.ItemCount> list = new List<InventorySave.ItemCount>();
+            foreach (KeyValuePair<Item, int> pair in dict) {
+                list.Add(new InventorySave.ItemCount { Count = pair.Value, Item = new ItemSave(pair.Key.GetType()) });
+            }
+
+            return new InventorySave(capacity, list.ToArray());
+        }
+
+        public void InitFromSaveObject(InventorySave saveObject) {
+            this.capacity = saveObject.InventoryCapacity;
+            foreach (InventorySave.ItemCount save in saveObject.Items) {
+                Item item = save.Item.ObjectFromID();
+                item.InitFromSaveObject(save.Item);
+                dict.Add(item, save.Count);
+            }
         }
     }
 }

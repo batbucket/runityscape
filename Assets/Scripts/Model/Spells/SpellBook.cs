@@ -4,12 +4,9 @@ using Scripts.Model.Stats;
 using Scripts.View.Portraits;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
-using System;
-using Scripts.Game.Defined.Spells;
-using Scripts.Game.Defined.Items.Consumables;
-using Scripts.Game.Defined.Items.Equipment;
+using Scripts.Model.SaveLoad.SaveObjects;
+using Scripts.Model.SaveLoad;
 
 namespace Scripts.Model.Spells {
 
@@ -29,7 +26,7 @@ namespace Scripts.Model.Spells {
         }
     }
 
-    public abstract class SpellBook : ISpellable {
+    public abstract class SpellBook : ISpellable, ISaveable<SpellbookSave> {
 
         public readonly string Name;
         public readonly Sprite Icon;
@@ -38,9 +35,9 @@ namespace Scripts.Model.Spells {
         public readonly IDictionary<StatType, int> Costs;
         public readonly int Priority;
 
-        public int CastTime;
-        public int Cooldown;
-        public bool IsSilenced;
+        public readonly int CastTime;
+        public readonly int Cooldown;
+        public readonly bool IsSilenced;
 
         protected readonly HashSet<Flag> flags;
 
@@ -116,9 +113,6 @@ namespace Scripts.Model.Spells {
         }
 
         public Spell ForceSpell(Character caster, Character target) {
-            Characters.Stats casterStats = caster.Stats;
-            Characters.Stats targetStats = target.Stats;
-
             Result res = new Result();
             if (IsHit(new SpellParams(caster), new SpellParams(target))) {
                 res.AddSFX(GetHitSFX(caster.Presenter.PortraitView, target.Presenter.PortraitView));
@@ -190,6 +184,14 @@ namespace Scripts.Model.Spells {
 
         public virtual string GetDetailedName(SpellParams caster) {
             return Util.ColorString(Name, CasterHasResources(caster.Stats));
+        }
+
+        public SpellbookSave GetSaveObject() {
+            return new SpellbookSave(GetType());
+        }
+
+        public void InitFromSaveObject(SpellbookSave saveObject) {
+            // Spellbook doesn't need anything restored!
         }
     }
 }

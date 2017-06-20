@@ -17,6 +17,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using Scripts.Model.World;
+using Scripts.Game.Pages;
+using Scripts.Model.SaveLoad;
 
 namespace Scripts.Presenter {
 
@@ -80,6 +82,8 @@ namespace Scripts.Presenter {
 
             Menus menus = new Menus();
             pagePresenter.Page = menus.Start;
+
+            IDs.Init();
         }
 
         private void Update() {

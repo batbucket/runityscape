@@ -15,12 +15,12 @@ namespace Scripts.Model.Characters {
     /// </summary>
     public class Character : IComparable<Character> {
 
-        public readonly Stats Stats;
+        public readonly Stats Stats; // g
         public readonly Buffs Buffs;
-        public readonly Look Look;
-        public readonly SpellBooks Spells;
-        public readonly Brain Brain;
-        public readonly Inventory Inventory;
+        public readonly Look Look; // g
+        public readonly SpellBooks Spells; // g
+        public readonly Brain Brain; // g
+        public readonly Inventory Inventory; // g
         public readonly Equipment Equipment;
 
         public CharacterPresenter Presenter;
@@ -40,7 +40,8 @@ namespace Scripts.Model.Characters {
             Brain.Owner = this;
             Brain.Spells = this.Spells;
             Stats.Update(this);
-            Equipment.Buffs = Buffs;
+            Equipment.AddBuff = b => Buffs.AddBuff(b);
+            Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
             Stats.InitializeResources();
             Stats.GetEquipmentBonus = f => Equipment.GetBonus(f);
             equipment.Owner = new SpellParams(this);

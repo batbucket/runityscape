@@ -68,71 +68,80 @@ namespace Scripts.View.TextBoxes {
                     break;
 
                 case TextEffect.FADE_IN:
-                    text.text = textBox.RawText;
-                    float alpha = 0;
-                    while (alpha < 1) {
-                        alpha += Time.deltaTime * 3;
-                        Util.SetOutlineAlpha(outline, alpha);
-                        Util.SetTextAlpha(text, alpha);
-                        yield return null;
-                    }
+                    yield return FadeIn(textBox);
                     break;
 
                 case TextEffect.TYPE:
-                    string[] currentTextArray = new string[textBox.TextArray.Length];
-                    bool[] taggedText = new bool[currentTextArray.Length];
-
-                    // Prescreen and enable all html tags and spaces
-                    for (int i = 0; i < currentTextArray.Length; i++) {
-                        if (Regex.IsMatch(textBox.TextArray[i], "(<.*?>)")) {
-                            currentTextArray[i] = textBox.TextArray[i];
-                            taggedText[i] = true;
-                        }
-                    }
-                    float timer = 0;
-                    int index = 0;
-                    int charsPassedWithoutSound = 0;
-                    text.text = string.Join("", currentTextArray);
-                    string wrapper = "\u2007"; // Wordwrapped space
-                    while (index < textBox.TextArray.Length) {
-                        // Type out letters every time we reach the timePerLetter time.
-                        if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
-                            if (!taggedText[index]) {
-                                //Preset forward characters to ensure wrapping
-                                if (!string.Equals(currentTextArray[index], wrapper)) {
-                                    int start = index;
-
-                                    //Don't overshoot, only make one word, and don't replace any tagged text
-                                    while (start < textBox.TextArray.Length && !textBox.TextArray[start].Equals(" ") && !taggedText[start]) {
-                                        currentTextArray[start++] = wrapper;
-                                    }
-                                }
-
-                                // Update the currently showing text
-                                currentTextArray[index] = textBox.TextArray[index];
-
-                                //Don't reset timer or make sound on spaces
-                                if (!Regex.IsMatch(textBox.TextArray[index], " ")) {
-                                    timer = 0;
-                                    if (--charsPassedWithoutSound <= 0) {
-                                        charsPassedWithoutSound = CHARS_FOR_SOUND;
-                                        Presenter.Main.Instance.Sound.PlaySound(textBox.SoundLoc);
-                                    }
-                                }
-                            }
-
-                            // Update the text that is visible to the user
-                            text.text = string.Join("", currentTextArray);
-                            index++;
-                        }
-                        yield return null;
-                    }
+                    yield return TypeWriter(textBox);
                     break;
             }
 
             textBox.IsDone = true;
             if (callBack != null) {
                 callBack.Invoke();
+            }
+        }
+
+        private IEnumerator FadeIn(TextBox textBox) {
+            text.text = textBox.RawText;
+            float alpha = 0;
+            while (alpha < 1) {
+                alpha += Time.deltaTime * 3;
+                Util.SetOutlineAlpha(outline, alpha);
+                Util.SetTextAlpha(text, alpha);
+                yield return null;
+            }
+        }
+
+        private IEnumerator TypeWriter(TextBox textBox) {
+
+            string[] currentTextArray = new string[textBox.TextArray.Length];
+            bool[] taggedText = new bool[currentTextArray.Length];
+
+            // Prescreen and enable all html tags and spaces
+            for (int i = 0; i < currentTextArray.Length; i++) {
+                if (Regex.IsMatch(textBox.TextArray[i], "(<.*?>)")) {
+                    currentTextArray[i] = textBox.TextArray[i];
+                    taggedText[i] = true;
+                }
+            }
+            float timer = 0;
+            int index = 0;
+            int charsPassedWithoutSound = 0;
+            text.text = string.Join("", currentTextArray);
+            string wrapper = "\u2007"; // Wordwrapped space
+            while (index < textBox.TextArray.Length) {
+                // Type out letters every time we reach the timePerLetter time.
+                if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
+                    if (!taggedText[index]) {
+                        //Preset forward characters to ensure wrapping
+                        if (!string.Equals(currentTextArray[index], wrapper)) {
+                            int start = index;
+
+                            //Don't overshoot, only make one word, and don't replace any tagged text
+                            while (start < textBox.TextArray.Length && !textBox.TextArray[start].Equals(" ") && !taggedText[start]) {
+                                currentTextArray[start++] = wrapper;
+                            }
+                        }
+
+                        // Update the currently showing text
+                        currentTextArray[index] = textBox.TextArray[index];
+
+                        //Don't reset timer or make sound on spaces
+                        if (!Regex.IsMatch(textBox.TextArray[index], " ")) {
+                            timer = 0;
+                            if (--charsPassedWithoutSound <= 0) {
+                                charsPassedWithoutSound = CHARS_FOR_SOUND;
+                                Presenter.Main.Instance.Sound.PlaySound(textBox.SoundLoc);
+                            }
+                        }
+                    }
+
+                    // Update the text that is visible to the user
+                    text.text = string.Join("", currentTextArray);
+                    index++;
+                }
+                yield return null;
             }
         }
     }

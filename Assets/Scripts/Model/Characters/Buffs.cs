@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Scripts.Model.Characters {
     public enum RemovalType {
         TIMED_OUT,
-        DISPELL
+        DISPELL,
     }
 
     public class Buffs {

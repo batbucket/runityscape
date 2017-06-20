@@ -10,7 +10,7 @@ using Scripts.Game.Defined.Characters;
 using System;
 using Scripts.Game.Defined.Spells;
 
-namespace Scripts.Model.World {
+namespace Scripts.Game.Pages {
 
     public class Menus {
         public Page Start;
@@ -34,8 +34,8 @@ namespace Scripts.Model.World {
 
             mainDebug.Array = new IButtonable[] {
                 Start,
-                new Process("Say", "Hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox("Hello"))),
-                new Process("AttDisb", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox(kitsune.Stats.AttributeDistribution))),
+                new Process("Say", "Hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox("Hello"))),
+                new Process("AttDisb", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox(kitsune.Stats.AttributeDistribution))),
                 new Process("hitsplat test", () => {
                     HitsplatView hpv = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
                     Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
@@ -49,7 +49,7 @@ namespace Scripts.Model.World {
             };
 
             submenu.Array = new IButtonable[] {
-                new Process("Say hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBoxes.TextBox("Hello"))),
+                new Process("Say hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox("Hello"))),
                 mainDebug
             };
 

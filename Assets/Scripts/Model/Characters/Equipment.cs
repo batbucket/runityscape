@@ -13,17 +13,20 @@ using Scripts.Model.Interfaces;
 namespace Scripts.Model.Characters {
 
     public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable> {
-        public readonly IDictionary<EquipType, EquippableItem> Dict;
-        public Buffs Buffs;
+        public Action<Buff> AddBuff;
+        public Action<Buff> RemoveBuff;
         public SpellParams Owner;
         public Action<SplatDetails> AddSplat;
 
+        private readonly IDictionary<EquipType, EquippableItem> dict;
         private readonly IDictionary<EquippableItem, Buff> itemBuffs;
         private readonly IDictionary<StatType, int> statBonuses;
 
         public Equipment() {
-            this.Dict = new Dictionary<EquipType, EquippableItem>();
+            this.dict = new Dictionary<EquipType, EquippableItem>();
             this.statBonuses = new Dictionary<StatType, int>();
+            this.AddBuff = ((a) => { });
+            this.RemoveBuff = ((a) => { });
             foreach (StatType s in StatType.ASSIGNABLES) {
                 statBonuses.Add(s, 0);
             }
@@ -40,10 +43,10 @@ namespace Scripts.Model.Characters {
             Buff buff = e.CreateBuff(Owner);
             if (buff != null) {
                 itemBuffs.Add(e, buff);
-                Buffs.AddBuff(buff);
+                AddBuff(buff);
             }
 
-            Dict.Add(e.Type, e);
+            dict.Add(e.Type, e);
             foreach (KeyValuePair<StatType, int> pair in e.Stats) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] += pair.Value;
@@ -53,15 +56,15 @@ namespace Scripts.Model.Characters {
         }
 
         public void RemoveEquip(Inventory inv, EquipType type) {
-            Util.Assert(Dict.ContainsKey(type), "No equipment in slot.");
-            EquippableItem itemToRemove = Dict[type];
+            Util.Assert(dict.ContainsKey(type), "No equipment in slot.");
+            EquippableItem itemToRemove = dict[type];
 
             Buff buffToRemove = itemBuffs[itemToRemove];
             itemBuffs.Remove(itemToRemove);
 
             inv.Add(itemToRemove);
-            Dict.Remove(itemToRemove.Type);
-            Buffs.RemoveBuff(RemovalType.TIMED_OUT, buffToRemove);
+            dict.Remove(itemToRemove.Type);
+            RemoveBuff(buffToRemove);
 
             foreach (KeyValuePair<StatType, int> pair in itemToRemove.Stats) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
@@ -72,7 +75,7 @@ namespace Scripts.Model.Characters {
         }
 
         public EquippableItem PeekItem(EquipType type) {
-            return Dict[type];
+            return dict[type];
         }
 
         public int GetBonus(StatType type) {
@@ -80,19 +83,19 @@ namespace Scripts.Model.Characters {
         }
 
         public bool Contains(EquipType type) {
-            return Dict.ContainsKey(type);
+            return dict.ContainsKey(type);
         }
 
         IEnumerator IEnumerable.GetEnumerator() {
-            return Dict.Values.GetEnumerator();
+            return dict.Values.GetEnumerator();
         }
 
         IEnumerator<EquippableItem> IEnumerable<EquippableItem>.GetEnumerator() {
-            return Dict.Values.GetEnumerator();
+            return dict.Values.GetEnumerator();
         }
 
         IEnumerator<ISpellable> IEnumerable<ISpellable>.GetEnumerator() {
-            return Dict.Values.Select(e => e.GetSpellBook()).Cast<ISpellable>().ToList().GetEnumerator();
+            return dict.Values.Select(e => e.GetSpellBook()).Cast<ISpellable>().ToList().GetEnumerator();
         }
     }
 }

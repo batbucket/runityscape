@@ -7,9 +7,9 @@ namespace Scripts.Game.Defined.Characters {
     public class KitsuneLook : Look {
         public KitsuneLook() : base() {
             this.Name = "Kitsune";
-            this.Sprite = Util.GetSprite("fox-head");
-            this.Check = "Humanoid fox creature. Those tails don't look very friendly...";
-            this.TextColor = Color.magenta;
+            this.SpriteLoc = "fox-head";
+            this.tooltip = "Humanoid fox creature. Those tails don't look very friendly...";
+            this.textColor = Color.magenta;
         }
     }
 }

@@ -8,23 +8,22 @@ using UnityEngine;
 using Scripts.Model.Characters;
 using Scripts.Game.Defined.Spells;
 using Scripts.Model.Items;
+using Scripts.Game.Defined.Serialized.Spells;
 
-namespace Scripts.Game.Defined.Characters {
-    public static class Statics {
-        public static readonly Attack Attack = new Attack();
-    }
+namespace Scripts.Game.Defined.Serialized.Characters {
 
     public class Player : Brain {
+        public static readonly Attack Attack = new Attack();
         private Battle battle;
 
         public override void DetermineAction(Action<IPlayable> addPlay) {
             Grid main = new Grid("Back");
             main.Array = Util.GetArray(
-                new Tuple(0, GenerateTargets(main, Statics.Attack, addPlay)),
-                new Tuple(1, GenerateSpellBooks(main, Owner.Spells, Owner.Spells.Set.Count, addPlay, Util.GetSprite("spell-book"), "Spell", "Cast a spell.")),
+                new Tuple(0, GenerateTargets(main, Attack, addPlay)),
+                new Tuple(1, GenerateSpellBooks(main, Owner.Spells, Owner.Spells.Count, addPlay, Util.GetSprite("spell-book"), "Spell", "Cast a spell.")),
                 new Tuple(2, GenerateSpellBooks(main, Owner.Inventory, Owner.Inventory.UniqueItemCount, addPlay, Util.GetSprite("swap-bag"),
-                    string.Format("Item ({0}/{1})", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.MaxCapacity),
-                    string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.MaxCapacity))
+                    string.Format("Item ({0}/{1})", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.Capacity),
+                    string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.Capacity))
                 )
                 );
             battle.Actions = main.Array;
@@ -49,7 +48,7 @@ namespace Scripts.Game.Defined.Characters {
             int index = 1;
             foreach (ISpellable myS in spellCollection) {
                 ISpellable s = myS;
-                if (!s.Equals(Statics.Attack)) {
+                if (!s.Equals(Attack)) {
                     grid.Array[index++] = GenerateSpellProcess(grid, s, addFunc);
                 }
             }
@@ -106,8 +105,10 @@ namespace Scripts.Game.Defined.Characters {
     }
 
     public class DebugAI : Brain {
+        public static readonly Attack Attack = new Attack();
+
         public override void DetermineAction(Action<IPlayable> addPlay) {
-            addPlay(Spells.CreateSpell(Statics.Attack, Owner, foes.PickRandom()));
+            addPlay(Spells.CreateSpell(Attack, Owner, foes.PickRandom()));
         }
     }
 }

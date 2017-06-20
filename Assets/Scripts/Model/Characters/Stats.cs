@@ -1,30 +1,38 @@
-﻿using Scripts.Model.Spells;
+﻿using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Stats;
 using Scripts.Presenter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 
 namespace Scripts.Model.Characters {
-    public class Stats {
-
-        public readonly IDictionary<StatType, Stat> Dict;
+    public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave> {
 
         public Func<StatType, int> GetEquipmentBonus;
         public Action<SplatDetails> AddSplat;
 
+        private readonly IDictionary<StatType, Stat> dict;
+
         public Stats() {
-            this.Dict = new Dictionary<StatType, Stat>();
+            this.dict = new Dictionary<StatType, Stat>();
             this.AddSplat = (a => { });
             SetDefaultStats();
             SetDefaultResources();
         }
 
+        public StatType[] Resources {
+            get {
+                return dict.Keys.Where(k => StatType.RESOURCES.Contains(k)).ToArray();
+            }
+        }
+
         public string AttributeDistribution {
             get {
                 List<string> s = new List<string>();
-                foreach (KeyValuePair<StatType, Stat> pair in Dict) {
+                foreach (KeyValuePair<StatType, Stat> pair in dict) {
                     s.Add(string.Format("{0} {1}/{2}", pair.Key.Name, pair.Value.Mod, pair.Value.Max));
                 }
                 return string.Format("{0}.", string.Join(", ", s.ToArray()));
@@ -42,13 +50,13 @@ namespace Scripts.Model.Characters {
         }
 
         public void AddStat(Stat stat) {
-            this.Dict.Add(stat.Type, stat);
+            this.dict.Add(stat.Type, stat);
             AddSplat(new SplatDetails(stat.Type.Color, "+", stat.Type.Sprite));
         }
 
-        public void SetToStat(StatType statType, Value value, float amount) {
+        public void SetToStat(StatType statType, Value value, int amount) {
             if (HasStat(statType) && amount != 0) {
-                Stat stat = Dict[statType];
+                Stat stat = dict[statType];
                 if (value == Value.MOD) {
                     stat.Mod = amount;
                 } else {
@@ -58,14 +66,14 @@ namespace Scripts.Model.Characters {
             AddSplat(new SplatDetails(statType.DetermineColor(amount), string.Format("={0}", amount), statType.Sprite));
         }
 
-        public void SetToStat(StatType statType, float amount) {
+        public void SetToStat(StatType statType, int amount) {
             SetToStat(statType, Value.MAX, amount);
             SetToStat(statType, Value.MOD, amount);
         }
 
-        public void AddToStat(StatType statType, Value value, float amount) {
+        public void AddToStat(StatType statType, Value value, int amount) {
             if (HasStat(statType) && amount != 0) {
-                Stat stat = Dict[statType];
+                Stat stat = dict[statType];
                 if (value == Value.MOD) {
                     stat.Mod += amount;
                 } else {
@@ -75,14 +83,14 @@ namespace Scripts.Model.Characters {
             AddSplat(new SplatDetails(statType.DetermineColor(amount), StatUtil.ShowSigns((int)amount), statType.Sprite));
         }
 
-        public void AddToStat(StatType statType, float amount) {
+        public void AddToStat(StatType statType, int amount) {
             AddToStat(statType, Value.MAX, amount);
             AddToStat(statType, Value.MOD, amount);
         }
 
         public bool HasStat(StatType statType) {
             Stat stat;
-            Dict.TryGetValue(statType, out stat);
+            dict.TryGetValue(statType, out stat);
             return stat != null;
         }
 
@@ -95,7 +103,7 @@ namespace Scripts.Model.Characters {
             foreach (StatType st in statTypes) {
                 if (HasStat(st)) {
                     Stat stat;
-                    Dict.TryGetValue(st, out stat);
+                    dict.TryGetValue(st, out stat);
                     if (value == Value.MOD) {
                         sum += (int)stat.Mod;
                     } else if (value == Value.MOD_AND_EQUIP) {
@@ -109,7 +117,7 @@ namespace Scripts.Model.Characters {
         }
 
         public void Update(Character c) {
-            ICollection<Stat> stats = Dict.Values;
+            ICollection<Stat> stats = dict.Values;
             foreach (Stat stat in stats) {
                 stat.Update(c);
             }
@@ -124,7 +132,7 @@ namespace Scripts.Model.Characters {
         }
 
         public void InitializeResources() {
-            ICollection<Stat> stats = Dict.Values;
+            ICollection<Stat> stats = dict.Values;
             foreach (Stat stat in stats) {
                 if (StatType.RESTORED.Contains(stat.Type)) {
                     stat.Mod = stat.Max;
@@ -144,5 +152,29 @@ namespace Scripts.Model.Characters {
             this.AddStat(new Health(0, 0));
         }
 
+        IEnumerator<KeyValuePair<StatType, Stat>> IEnumerable<KeyValuePair<StatType, Stat>>.GetEnumerator() {
+            return dict.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return dict.GetEnumerator();
+        }
+
+        public CharacterStatsSave GetSaveObject() {
+            List<StatSave> list = new List<StatSave>();
+            foreach (KeyValuePair<StatType, Stat> pair in dict) {
+                Stat stat = pair.Value;
+                list.Add(stat.GetSaveObject());
+            }
+            return new CharacterStatsSave(list.ToArray());
+        }
+
+        public void InitFromSaveObject(CharacterStatsSave saveObject) {
+            foreach (StatSave save in saveObject.Stats) {
+                Stat stat = save.ObjectFromID();
+                stat.InitFromSaveObject(save);
+                dict.Add(stat.Type, stat);
+            }
+        }
     }
 }

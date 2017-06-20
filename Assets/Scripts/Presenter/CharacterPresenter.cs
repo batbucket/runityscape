@@ -34,10 +34,10 @@ namespace Scripts.Presenter {
             SetupFuncs();
 
             //Attempt to set ResourceViews
-            PortraitView.SetResources(Character.Stats.Dict.Keys.Where(k => StatType.RESOURCES.Contains(k)).ToArray());
+            PortraitView.SetResources(Character.Stats.Resources);
 
             //Update ResourceViews' values
-            foreach (KeyValuePair<StatType, Stat> pair in Character.Stats.Dict) {
+            foreach (KeyValuePair<StatType, Stat> pair in Character.Stats) {
                 if (PortraitView != null && PortraitView.ResourceViews.ContainsKey(pair.Key)) {
                     ResourceView rv = PortraitView.ResourceViews[pair.Key].resourceView;
                     StatType resType = pair.Key;
