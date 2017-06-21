@@ -29,7 +29,7 @@ namespace Scripts.Model.SaveLoad {
         protected void Init() {
             Util.Log("Starting init for " + typeof(T).ToString());
             InitHelper();
-            IsAllIncluded();
+            Util.Assert(IsAllIncluded(), "Some elements missing!");
             Util.Log(string.Format("{0} initialized with {1} elements.", typeof(T).ToString(), map.ACollection.Count));
         }
 
