@@ -24,7 +24,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
-            return new IEnumerator[] { SFX.Melee(caster.Image.gameObject, target.Image.gameObject, 0.5f, "Attack_0") };
+            return new IEnumerator[] { SFX.Melee(caster.Image.gameObject, target.Image.gameObject, 0.5f, "Slash_0") };
         }
 
         protected override bool IsHit(SpellParams caster, SpellParams target) {
@@ -74,7 +74,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
-            return new SpellEffect[] { new AddBuff(target.Buffs, new Poison(caster, target)) };
+            return new SpellEffect[] { new AddBuff(target.Buffs, new Poison()) };
         }
     }
 }

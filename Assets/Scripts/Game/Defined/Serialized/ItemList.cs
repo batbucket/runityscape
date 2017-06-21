@@ -25,8 +25,8 @@ namespace Scripts.Game.Defined.Serialized.Items.Equipment {
             Stats.Add(StatType.AGILITY, -1);
         }
 
-        public override Buff CreateBuff(SpellParams target) {
-            return new Poison(target, target);
+        public override Buff CreateBuff() {
+            return new Poison();
         }
 
     }
