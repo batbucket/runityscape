@@ -9,24 +9,30 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.Model.Buffs {
+    public struct BuffParams {
+        public Characters.Stats Caster;
+        public int CasterId;
+    }
 
-    public abstract class Buff : IComparable<Buff>, ISaveable<BuffSave> {
+    public abstract class Buff : IComparable<Buff>, ISaveable<PartialBuffSave> {
         public readonly Sprite Sprite;
         public readonly string Name;
         public readonly string Description;
 
-        public Characters.Stats Caster;
-
+        private Characters.Stats caster;
         private int turnsRemaining;
         private bool isDefinite;
         private static int idCount;
-        private int id;
+        private int buffId;
+        private int casterId;
+
+        private bool isCasterSet;
 
         public Buff(Sprite sprite, string name, string description) {
             this.Sprite = sprite;
             this.Name = name;
             this.Description = description;
-            this.id = idCount++;
+            this.buffId = idCount++;
         }
 
         public Buff(int duration, Sprite sprite, string name, string description) {
@@ -34,9 +40,18 @@ namespace Scripts.Model.Buffs {
             this.Sprite = sprite;
             this.Name = name;
             this.Description = description;
-            this.id = idCount++;
+            this.buffId = idCount++;
             this.turnsRemaining = duration;
             this.isDefinite = true;
+        }
+
+        public BuffParams Caster {
+            set {
+                Util.Assert(!isCasterSet, "Attempted to set caster twice.");
+                this.caster = value.Caster;
+                this.casterId = value.CasterId;
+                isCasterSet = true;
+            }
         }
 
         public bool IsTimedOut {
@@ -85,7 +100,7 @@ namespace Scripts.Model.Buffs {
         }
 
         public override int GetHashCode() {
-            return this.id;
+            return this.buffId;
         }
 
         public int CompareTo(Buff other) {
@@ -119,20 +134,12 @@ namespace Scripts.Model.Buffs {
             }
         }
 
-        public BuffSave GetSaveObject() {
-            return new BuffSave(turnsRemaining, Caster.GetSaveObject(), GetType());
+        public PartialBuffSave GetSaveObject() {
+            return new PartialBuffSave(turnsRemaining, caster.GetSaveObject(), casterId, GetType());
         }
 
-        public void InitFromSaveObject(BuffSave saveObject) {
-            this.turnsRemaining = saveObject.TurnsRemaining;
-
-            // Clone stats if no reference is possible
-            if (saveObject.Type == BuffSave.CasterType.NOT_IN_PARTY) {
-                Characters.Stats stats = new Characters.Stats();
-                stats.InitFromSaveObject(saveObject.StatCopy);
-
-                this.Caster = stats;
-            }
+        public void InitFromSaveObject(PartialBuffSave saveObject) {
+            Util.Assert(false, "Unable to Init Buff from SaveObject here. Please setup in Party instead.");
         }
     }
 }

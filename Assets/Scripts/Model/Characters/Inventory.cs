@@ -119,7 +119,7 @@ namespace Scripts.Model.Characters {
         public void InitFromSaveObject(InventorySave saveObject) {
             this.capacity = saveObject.InventoryCapacity;
             foreach (InventorySave.ItemCount save in saveObject.Items) {
-                Item item = save.Item.ObjectFromID();
+                Item item = save.Item.CreateObjectFromID();
                 item.InitFromSaveObject(save.Item);
                 dict.Add(item, save.Count);
             }

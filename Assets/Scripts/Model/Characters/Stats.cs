@@ -171,7 +171,7 @@ namespace Scripts.Model.Characters {
 
         public void InitFromSaveObject(CharacterStatsSave saveObject) {
             foreach (StatSave save in saveObject.Stats) {
-                Stat stat = save.ObjectFromID();
+                Stat stat = save.CreateObjectFromID();
                 stat.InitFromSaveObject(save);
                 dict.Add(stat.Type, stat);
             }

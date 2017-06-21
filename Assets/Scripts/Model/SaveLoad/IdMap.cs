@@ -37,6 +37,10 @@ namespace Scripts.Model.SaveLoad {
             map.Add(t, id);
         }
 
+        /// <summary>
+        /// Use reflection to ensure that everything in the category is included.
+        /// </summary>
+        /// <returns>True if all elements are included in the map.</returns>
         protected abstract bool IsAllIncluded();
 
         protected abstract void InitHelper();

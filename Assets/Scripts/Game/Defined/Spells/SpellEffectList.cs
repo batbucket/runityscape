@@ -27,9 +27,10 @@ namespace Scripts.Game.Defined.Spells {
         private readonly Buff buff;
         private readonly Buffs target;
 
-        public AddBuff(Buffs target, Buff buff) : base(SpellEffectType.ADD_BUFF, 1) {
+        public AddBuff(BuffParams caster, Buffs target, Buff buff) : base(SpellEffectType.ADD_BUFF, 1) {
             this.target = target;
             this.buff = buff;
+            this.buff.Caster = caster;
         }
 
         public override void CauseEffect() {

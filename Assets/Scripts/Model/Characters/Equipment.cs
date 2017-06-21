@@ -116,7 +116,7 @@ namespace Scripts.Model.Characters {
 
         public void InitFromSaveObject(EquipmentSave saveObject) {
             foreach (EquipItemSave save in saveObject.Equipped) {
-                EquippableItem eq = save.ObjectFromID();
+                EquippableItem eq = save.CreateObjectFromID();
                 eq.InitFromSaveObject(save);
                 equipped.Add(save.EquipTypeSave.Restore(), eq);
             }

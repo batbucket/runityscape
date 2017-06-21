@@ -11,13 +11,15 @@ using Scripts.Model.SaveLoad;
 namespace Scripts.Model.Spells {
 
     public struct SpellParams {
-        public readonly Characters.Stats Stats;
-        public readonly Characters.SpellBooks Spells;
-        public readonly Characters.Buffs Buffs;
-        public readonly Characters.Inventory Inventory;
-        public readonly Characters.Equipment Equipment;
+        public int CharacterId;
+        public Characters.Stats Stats;
+        public Characters.SpellBooks Spells;
+        public Characters.Buffs Buffs;
+        public Characters.Inventory Inventory;
+        public Characters.Equipment Equipment;
 
         public SpellParams(Character c) {
+            this.CharacterId = c.Id;
             this.Stats = c.Stats;
             this.Spells = c.Spells;
             this.Buffs = c.Buffs;

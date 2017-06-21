@@ -16,7 +16,10 @@ namespace Scripts.Model.Characters {
         DISPEL,
     }
 
-    public class Buffs : IEnumerable<Buff>, ISaveable<CharacterBuffsSave> {
+    /// <summary>
+    /// Represents Buffs on a certain character.
+    /// </summary>
+    public class Buffs : IEnumerable<Buff>, ISaveable<PartialCharacterBuffsSave> {
 
         public Stats Stats;
         public Action<SplatDetails> AddSplat;
@@ -58,16 +61,12 @@ namespace Scripts.Model.Characters {
             return set.GetEnumerator();
         }
 
-        public CharacterBuffsSave GetSaveObject() {
-            return new CharacterBuffsSave(set.Select(b => b.GetSaveObject()).ToList());
+        public PartialCharacterBuffsSave GetSaveObject() {
+            return new PartialCharacterBuffsSave(set.Select(b => b.GetSaveObject()).ToList());
         }
 
-        public void InitFromSaveObject(CharacterBuffsSave saveObject) {
-            foreach (BuffSave bs in saveObject.BuffSaves) {
-                Buff buff = bs.ObjectFromID();
-                buff.InitFromSaveObject(bs);
-                set.Add(buff);
-            }
+        public void InitFromSaveObject(PartialCharacterBuffsSave saveObject) {
+            Util.Assert(false, "Unable to setup here. Please setup in Party.");
         }
     }
 }

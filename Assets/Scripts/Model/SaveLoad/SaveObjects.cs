@@ -6,20 +6,21 @@ using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Model.SaveLoad.SaveObjects {
 
     [Serializable]
     public class IdSaveObject<T> {
-        private string classID;
+        public string ClassId;
 
         public IdSaveObject(Type type) {
-            this.classID = IDs.Types.Get(type);
+            this.ClassId = IDs.Types.Get(type);
         }
 
-        public T ObjectFromID() {
-            Type type = IDs.Types.Get(classID);
+        public T CreateObjectFromID() {
+            Type type = IDs.Types.Get(ClassId);
             return Util.TypeToObject<T>(type);
         }
     }
@@ -165,64 +166,141 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         }
     }
 
+    // Needed so we can put a constraint on BuffSave, which has a generic param
+    public interface IBuffSave { }
+
     [Serializable]
-    public sealed class BuffSave : IdSaveObject<Buff> {
-        public enum CasterType {
-            UNDEFINED,
-            IN_PARTY,
-            NOT_IN_PARTY,
-        }
-
-        public CasterType Type;
+    public abstract class BuffSave : IdSaveObject<Buff>, IBuffSave {
         public int TurnsRemaining;
-        public CharacterStatsSave StatCopy;
-        public int PartyIndex;
 
-        public BuffSave(int turnsRemaining, CharacterStatsSave casterCopy, Type type) : base(type) {
+        public BuffSave(Type type, int turnsRemaining) : base(type) {
             this.TurnsRemaining = turnsRemaining;
-            this.StatCopy = casterCopy;
+        }
+    }
 
-            // Assume caster is not in party during construction
-            this.Type = CasterType.UNDEFINED;
-            this.PartyIndex = -1;
+    // Not serializable
+    public sealed class PartialBuffSave : BuffSave {
+        public Type Type;
+        public CharacterStatsSave StatCopy;
+        public int CasterCharacterId;
+
+        public PartialBuffSave(int turnsRemaining, CharacterStatsSave casterCopy, int casterId, Type type) : base(type, turnsRemaining) {
+            this.StatCopy = casterCopy;
+            this.CasterCharacterId = casterId;
+            this.Type = type;
         }
     }
 
     [Serializable]
-    public sealed class CharacterBuffsSave {
-        public List<BuffSave> BuffSaves;
+    public sealed class FullBuffSave : BuffSave {
+        public const int CASTER_NOT_IN_PARTY = -1;
 
-        public CharacterBuffsSave(List<BuffSave> buffSaves) {
+        public int PartyIndex;
+        public StatSave Stats;
+
+        public FullBuffSave(Type type, int turnsRemaining, int partyIndex) : base(type, turnsRemaining) {
+            this.PartyIndex = partyIndex;
+            this.Stats = null;
+        }
+
+        public FullBuffSave(Type type, int turnsRemaining, StatSave stats) : base(type, turnsRemaining) {
+            this.PartyIndex = CASTER_NOT_IN_PARTY;
+            this.Stats = stats;
+        }
+
+        public bool IsCasterInParty {
+            get {
+                return PartyIndex >= 0;
+            }
+        }
+    }
+
+    // Needed so we can put a constraint on CharacterBuffsSave, which has a generic param
+    public interface ICharacterBuffsSave { }
+
+    /// <typeparam name="T">Type in list.</typeparam>
+    [Serializable]
+    public abstract class CharacterBuffsSave<T> : ICharacterBuffsSave where T : BuffSave {
+        public List<T> BuffSaves;
+
+        public CharacterBuffsSave(List<T> buffSaves) {
             this.BuffSaves = buffSaves;
         }
     }
 
+    // Not serializable
+    public sealed class PartialCharacterBuffsSave : CharacterBuffsSave<PartialBuffSave> {
+        public PartialCharacterBuffsSave(List<PartialBuffSave> buffSaves) : base(buffSaves) { }
+    }
+
     [Serializable]
-    public sealed class CharacterSave {
+    public sealed class FullCharacterBuffsSave : CharacterBuffsSave<FullBuffSave> {
+        public FullCharacterBuffsSave(List<FullBuffSave> buffSaves) : base(buffSaves) { }
+    }
+
+    /// <typeparam name="T">Type of BuffsSave used</typeparam>
+    [Serializable]
+    public abstract class CharacterSave<T> where T : ICharacterBuffsSave {
         public CharacterStatsSave Stats;
-        public CharacterBuffsSave Buffs;
+        public T Buffs;
         public LookSave Look;
         public CharacterSpellBooksSave Spells;
         public BrainSave Brain;
-        public InventorySave Inventory;
+        // Party shares an inventory, so we associate it with the party
         public EquipmentSave Equipment;
 
         public CharacterSave(
             CharacterStatsSave stats,
-            CharacterBuffsSave buffs,
+            T buffs,
             LookSave look,
             CharacterSpellBooksSave spells,
             BrainSave brain,
-            InventorySave inventory,
-            EquipmentSave equipment
-            ) {
+            EquipmentSave equipment) {
             this.Stats = stats;
             this.Buffs = buffs;
             this.Look = look;
             this.Spells = spells;
             this.Brain = brain;
-            this.Inventory = inventory;
             this.Equipment = equipment;
+        }
+    }
+
+    // Not serializable
+    public sealed class PartialCharacterSave : CharacterSave<PartialCharacterBuffsSave> {
+        public PartialCharacterSave(
+            CharacterStatsSave stats,
+            PartialCharacterBuffsSave buffs,
+            LookSave look,
+            CharacterSpellBooksSave spells,
+            BrainSave brain,
+            EquipmentSave equipment
+            )
+            : base(stats, buffs, look, spells, brain, equipment) {
+        }
+    }
+
+    [Serializable]
+    public sealed class FullCharacterSave : CharacterSave<FullCharacterBuffsSave> {
+        public FullCharacterSave(
+            CharacterStatsSave stats,
+            FullCharacterBuffsSave buffs,
+            LookSave look,
+            CharacterSpellBooksSave spells,
+            BrainSave brain,
+            EquipmentSave equipment
+            )
+            : base(stats, buffs, look, spells, brain, equipment) {
+        }
+    }
+
+    [Serializable]
+    public sealed class PartySave {
+        public List<FullCharacterSave> Characters;
+        public InventorySave Inventory;
+
+        public PartySave(List<FullCharacterSave> characters, InventorySave inventory) {
+            this.Characters = characters;
+            this.Inventory = inventory;
         }
     }
 }

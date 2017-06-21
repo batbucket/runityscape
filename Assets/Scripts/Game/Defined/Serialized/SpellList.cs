@@ -8,6 +8,7 @@ using Scripts.Model.Spells;
 using Scripts.Game.Defined.SFXs;
 using Scripts.Model.Characters;
 using Scripts.Game.Defined.Spells;
+using Scripts.Model.Buffs;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -74,7 +75,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
-            return new SpellEffect[] { new AddBuff(target.Buffs, new Poison()) };
+            return new SpellEffect[] { new AddBuff(new BuffParams() { Caster = caster.Stats, CasterId = caster.CharacterId }, target.Buffs, new Poison()) };
         }
     }
 }

@@ -99,6 +99,10 @@ namespace Scripts.Model.SaveLoad {
             return assembly.GetTypes().Where(t => t.Namespace != null && !Regex.IsMatch(t.ToString(), "\\+|\\<|\\>|_") && t.Namespace.Contains(nameSpace)).ToArray();
         }
 
+        /// <summary>
+        /// I N T E G R A T I O N    T E S T I N G !
+        /// All classes within the namespace must be in the map.
+        /// </summary>
         private bool IsEntireNamespaceIdentified() {
             Type[] types = GetTypesInNamespace(Assembly.GetExecutingAssembly(), "Scripts.Game.Defined.Serialized");
             bool isEverythingIncludedInMap = true;

@@ -57,7 +57,7 @@ namespace Scripts.Model.Characters {
 
         public void InitFromSaveObject(CharacterSpellBooksSave saveObject) {
             foreach (SpellbookSave save in saveObject.Books) {
-                SpellBook sb = save.ObjectFromID();
+                SpellBook sb = save.CreateObjectFromID();
                 set.Add(sb);
             }
         }

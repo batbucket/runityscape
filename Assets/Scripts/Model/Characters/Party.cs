@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Characters {
@@ -8,89 +11,37 @@ namespace Scripts.Model.Characters {
     /// Everyone's inventory references the leader's inventory upon
     /// being added to a party.
     /// </summary>
-    public class Party : IList<Character> {
-        public Character Leader;
-        public IList<Character> Members; // Leader also counts as a member
-
-        public int Count {
-            get {
-                return Members.Count;
-            }
-        }
-
-        public bool IsReadOnly {
-            get {
-                return Members.IsReadOnly;
-            }
-        }
-
-        public Character this[int index] {
-            get {
-                return Members[index];
-            }
-
-            set {
-                Members[index] = value;
-            }
-        }
+    public class Party : IEnumerable<Character>, ISaveable<PartySave> {
+        private HashSet<Character> members;
+        private Inventory shared;
 
         public Party() {
-            this.Leader = null;
-            this.Members = new List<Character>();
+            this.members = new HashSet<Character>();
+            this.shared = new Inventory();
         }
 
-        public Party(Character pc) : this(pc, new Character[0]) {
+        public void AddMember(Character c) {
+            this.members.Add(c);
         }
 
-        public Party(Character leader, IList<Character> followers) {
-            this.Leader = leader;
-            this.Members = new List<Character>();
-            Members.Add(leader);
-            foreach (Character c in followers) {
-                this.Add(c);
-            }
+        public PartySave GetSaveObject() {
+            throw new NotImplementedException();
         }
 
-        public int IndexOf(Character item) {
-            return Members.IndexOf(item);
+        public void InitFromSaveObject(PartySave saveObject) {
+            throw new NotImplementedException();
         }
 
-        public void Insert(int index, Character item) {
-            Members.Insert(index, item);
+        public void RemoveMember(Character c) {
+            members.Remove(c);
         }
 
-        public void RemoveAt(int index) {
-            Members.RemoveAt(index);
-        }
-
-        public void Add(Character item) {
-            if (!Members.Contains(item)) {
-                Members.Add(item);
-            }
-        }
-
-        public void Clear() {
-            Members.Clear();
-        }
-
-        public bool Contains(Character item) {
-            return Members.Contains(item);
-        }
-
-        public void CopyTo(Character[] array, int arrayIndex) {
-            Members.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(Character item) {
-            return Members.Remove(item);
-        }
-
-        public IEnumerator<Character> GetEnumerator() {
-            return Members.GetEnumerator();
+        IEnumerator<Character> IEnumerable<Character>.GetEnumerator() {
+            return members.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator() {
-            return Members.GetEnumerator();
+            return members.GetEnumerator();
         }
     }
 }

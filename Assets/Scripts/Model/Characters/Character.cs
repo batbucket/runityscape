@@ -15,13 +15,14 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : IComparable<Character>, ISaveable<CharacterSave> {
+    public class Character : IComparable<Character>, ISaveable<PartialCharacterSave> {
+        public const int UNKNOWN_ID = -1;
 
         public readonly Stats Stats;
         public readonly Buffs Buffs;
         public readonly Look Look;
         public readonly SpellBooks Spells;
-        public readonly Brain Brain;
+        public Brain Brain;
         public readonly Inventory Inventory;
         public readonly Equipment Equipment;
 
@@ -51,6 +52,12 @@ namespace Scripts.Model.Characters {
         }
 
         public Character(Stats stats, Look look, Brain brain, SpellBooks spells) : this(stats, look, brain, spells, new Inventory(), new Equipment()) { }
+
+        public int Id {
+            get {
+                return id;
+            }
+        }
 
         public TextBox Emote(string s) {
             return new TextBox(string.Format(s, this.Look.DisplayName));
@@ -84,12 +91,19 @@ namespace Scripts.Model.Characters {
             }
         }
 
-        public CharacterSave GetSaveObject() {
-            throw new NotImplementedException();
+        public PartialCharacterSave GetSaveObject() {
+            return new PartialCharacterSave(
+                Stats.GetSaveObject(),
+                Buffs.GetSaveObject(),
+                Look.GetSaveObject(),
+                Spells.GetSaveObject(),
+                Brain.GetSaveObject(),
+                Equipment.GetSaveObject()
+                );
         }
 
-        public void InitFromSaveObject(CharacterSave saveObject) {
-            throw new NotImplementedException();
+        public void InitFromSaveObject(PartialCharacterSave saveObject) {
+            Util.Assert(false, "Initialize in party.");
         }
     }
 }
