@@ -48,7 +48,7 @@ namespace Scripts.Presenter {
             }
 
             //TODO Buff stuff
-            PortraitView.SetBuffs(Character.Buffs.Collection
+            PortraitView.SetBuffs(Character.Buffs
                 .Select(b =>
                 new PortraitView.BuffParams {
                     id = b.GetHashCode(),
