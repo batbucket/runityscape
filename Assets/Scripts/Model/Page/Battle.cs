@@ -154,13 +154,12 @@ namespace Scripts.Model.Pages {
             foreach (Character c in chars) {
                 yield return new WaitForSeconds(0.25f);
                 Characters.Buffs buffs = c.Buffs;
-                ICollection<Buff> buffCollection = buffs.Collection;
                 IList<Buff> timedOut = new List<Buff>();
-                foreach (Buff myB in buffCollection) {
+                foreach (Buff myB in buffs) {
                     yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
                     AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
-                    b.OnEndOfTurn();
+                    b.OnEndOfTurn(c.Stats);
                     if (b.IsTimedOut) {
                         timedOut.Add(b);
                     }

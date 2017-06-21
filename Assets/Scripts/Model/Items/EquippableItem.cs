@@ -48,7 +48,7 @@ namespace Scripts.Model.Items {
             }
         }
 
-        public virtual Buff CreateBuff(SpellParams target) {
+        public virtual Buff CreateBuff() {
             return null;
         }
 

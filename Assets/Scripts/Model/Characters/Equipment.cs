@@ -17,7 +17,6 @@ namespace Scripts.Model.Characters {
     public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<EquipmentSave> {
         public Action<Buff> AddBuff;
         public Action<Buff> RemoveBuff;
-        public SpellParams Owner;
         public Action<SplatDetails> AddSplat;
 
         private readonly IDictionary<EquipType, EquippableItem> equipped;
@@ -42,7 +41,7 @@ namespace Scripts.Model.Characters {
                 RemoveEquip(inv, e.Type);
             }
 
-            Buff buff = e.CreateBuff(Owner);
+            Buff buff = e.CreateBuff();
             if (buff != null) {
                 itemBuffs.Add(e, buff);
                 AddBuff(buff);

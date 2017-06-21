@@ -1,4 +1,6 @@
 ﻿using Scripts.Model.Interfaces;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
@@ -13,14 +15,14 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : IComparable<Character> {
+    public class Character : IComparable<Character>, ISaveable<CharacterSave> {
 
-        public readonly Stats Stats; // g
+        public readonly Stats Stats;
         public readonly Buffs Buffs;
-        public readonly Look Look; // g
-        public readonly SpellBooks Spells; // g
-        public readonly Brain Brain; // g
-        public readonly Inventory Inventory; // g
+        public readonly Look Look;
+        public readonly SpellBooks Spells;
+        public readonly Brain Brain;
+        public readonly Inventory Inventory;
         public readonly Equipment Equipment;
 
         public CharacterPresenter Presenter;
@@ -41,10 +43,10 @@ namespace Scripts.Model.Characters {
             Brain.Spells = this.Spells;
             Stats.Update(this);
             Equipment.AddBuff = b => Buffs.AddBuff(b);
-            Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
+            Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.DISPEL, b);
             Stats.InitializeResources();
             Stats.GetEquipmentBonus = f => Equipment.GetBonus(f);
-            equipment.Owner = new SpellParams(this);
+            Buffs.Stats = Stats;
             this.id = idCounter++;
         }
 
@@ -80,6 +82,14 @@ namespace Scripts.Model.Characters {
             } else {
                 return diff;
             }
+        }
+
+        public CharacterSave GetSaveObject() {
+            throw new NotImplementedException();
+        }
+
+        public void InitFromSaveObject(CharacterSave saveObject) {
+            throw new NotImplementedException();
         }
     }
 }

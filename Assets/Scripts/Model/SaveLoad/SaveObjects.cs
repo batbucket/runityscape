@@ -1,4 +1,5 @@
 ﻿using Scripts.Game.Defined.Characters;
+using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
 using Scripts.Model.Spells;
@@ -161,6 +162,67 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public EquipmentSave(List<EquipItemSave> equipped, List<EquipBonus> bonuses) {
             this.Equipped = equipped;
             this.Bonuses = bonuses;
+        }
+    }
+
+    [Serializable]
+    public sealed class BuffSave : IdSaveObject<Buff> {
+        public enum CasterType {
+            UNDEFINED,
+            IN_PARTY,
+            NOT_IN_PARTY,
+        }
+
+        public CasterType Type;
+        public int TurnsRemaining;
+        public CharacterStatsSave StatCopy;
+        public int PartyIndex;
+
+        public BuffSave(int turnsRemaining, CharacterStatsSave casterCopy, Type type) : base(type) {
+            this.TurnsRemaining = turnsRemaining;
+            this.StatCopy = casterCopy;
+
+            // Assume caster is not in party during construction
+            this.Type = CasterType.UNDEFINED;
+            this.PartyIndex = -1;
+        }
+    }
+
+    [Serializable]
+    public sealed class CharacterBuffsSave {
+        public List<BuffSave> BuffSaves;
+
+        public CharacterBuffsSave(List<BuffSave> buffSaves) {
+            this.BuffSaves = buffSaves;
+        }
+    }
+
+    [Serializable]
+    public sealed class CharacterSave {
+        public CharacterStatsSave Stats;
+        public CharacterBuffsSave Buffs;
+        public LookSave Look;
+        public CharacterSpellBooksSave Spells;
+        public BrainSave Brain;
+        public InventorySave Inventory;
+        public EquipmentSave Equipment;
+
+        public CharacterSave(
+            CharacterStatsSave stats,
+            CharacterBuffsSave buffs,
+            LookSave look,
+            CharacterSpellBooksSave spells,
+            BrainSave brain,
+            InventorySave inventory,
+            EquipmentSave equipment
+            ) {
+            this.Stats = stats;
+            this.Buffs = buffs;
+            this.Look = look;
+            this.Spells = spells;
+            this.Brain = brain;
+            this.Inventory = inventory;
+            this.Equipment = equipment;
         }
     }
 }

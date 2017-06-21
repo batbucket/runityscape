@@ -1,4 +1,6 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
 using Scripts.Presenter;
 using System;
@@ -8,33 +10,27 @@ using UnityEngine;
 
 namespace Scripts.Model.Buffs {
 
-    public abstract class Buff : IComparable<Buff> {
+    public abstract class Buff : IComparable<Buff>, ISaveable<BuffSave> {
         public readonly Sprite Sprite;
         public readonly string Name;
         public readonly string Description;
 
-        public readonly SpellParams Caster;
-        public readonly SpellParams Target;
+        public Characters.Stats Caster;
 
-        private GameObject hitsplatsHolder;
         private int turnsRemaining;
         private bool isDefinite;
         private static int idCount;
         private int id;
 
-        public Buff(SpellParams caster, SpellParams target, Sprite sprite, string name, string description) {
-            this.Caster = caster;
-            this.Target = target;
+        public Buff(Sprite sprite, string name, string description) {
             this.Sprite = sprite;
             this.Name = name;
             this.Description = description;
             this.id = idCount++;
         }
 
-        public Buff(int duration, SpellParams caster, SpellParams target, Sprite sprite, string name, string description) {
+        public Buff(int duration, Sprite sprite, string name, string description) {
             Util.Assert(duration > 0, "Duration must be positive.");
-            this.Caster = caster;
-            this.Target = target;
             this.Sprite = sprite;
             this.Name = name;
             this.Description = description;
@@ -61,27 +57,27 @@ namespace Scripts.Model.Buffs {
             }
         }
 
-        public void OnApply() {
-            PerformSpellEffects(OnApplyHelper());
+        public void OnApply(Characters.Stats owner) {
+            PerformSpellEffects(OnApplyHelper(owner));
         }
 
-        public void OnEndOfTurn() {
-            PerformSpellEffects(OnEndOfTurnHelper());
+        public void OnEndOfTurn(Characters.Stats owner) {
+            PerformSpellEffects(OnEndOfTurnHelper(owner));
             if (isDefinite) {
                 turnsRemaining--;
             }
         }
 
-        public void React(Spell s) {
-            PerformSpellEffects(ReactHelper(s));
+        public void React(Spell s, Characters.Stats owner) {
+            PerformSpellEffects(ReactHelper(s, owner));
         }
 
-        public void OnTimeOut() {
-            PerformSpellEffects(OnTimeOutHelper());
+        public void OnTimeOut(Characters.Stats owner) {
+            PerformSpellEffects(OnTimeOutHelper(owner));
         }
 
-        public void OnDispell() {
-            PerformSpellEffects(OnDispellHelper());
+        public void OnDispell(Characters.Stats owner) {
+            PerformSpellEffects(OnDispellHelper(owner));
         }
 
         public override bool Equals(object obj) {
@@ -96,23 +92,23 @@ namespace Scripts.Model.Buffs {
             return this.turnsRemaining - other.turnsRemaining;
         }
 
-        protected virtual IList<SpellEffect> OnApplyHelper() {
+        protected virtual IList<SpellEffect> OnApplyHelper(Characters.Stats owner) {
             return new SpellEffect[0];
         }
 
-        protected virtual IList<SpellEffect> OnEndOfTurnHelper() {
+        protected virtual IList<SpellEffect> OnEndOfTurnHelper(Characters.Stats owner) {
             return new SpellEffect[0];
         }
 
-        protected virtual IList<SpellEffect> ReactHelper(Spell s) {
+        protected virtual IList<SpellEffect> ReactHelper(Spell s, Characters.Stats owner) {
             return new SpellEffect[0];
         }
 
-        protected virtual IList<SpellEffect> OnTimeOutHelper() {
+        protected virtual IList<SpellEffect> OnTimeOutHelper(Characters.Stats owner) {
             return new SpellEffect[0];
         }
 
-        protected virtual IList<SpellEffect> OnDispellHelper() {
+        protected virtual IList<SpellEffect> OnDispellHelper(Characters.Stats owner) {
             return new SpellEffect[0];
         }
 
@@ -120,6 +116,22 @@ namespace Scripts.Model.Buffs {
             foreach (SpellEffect mySE in list) {
                 SpellEffect se = mySE;
                 se.CauseEffect();
+            }
+        }
+
+        public BuffSave GetSaveObject() {
+            return new BuffSave(turnsRemaining, Caster.GetSaveObject(), GetType());
+        }
+
+        public void InitFromSaveObject(BuffSave saveObject) {
+            this.turnsRemaining = saveObject.TurnsRemaining;
+
+            // Clone stats if no reference is possible
+            if (saveObject.Type == BuffSave.CasterType.NOT_IN_PARTY) {
+                Characters.Stats stats = new Characters.Stats();
+                stats.InitFromSaveObject(saveObject.StatCopy);
+
+                this.Caster = stats;
             }
         }
     }
