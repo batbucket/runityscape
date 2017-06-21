@@ -17,7 +17,7 @@ namespace Scripts.View.Effects {
 
         private static readonly Vector2 FINAL_SIZE = new Vector2(1, 1);
 
-        private static readonly Vector2 INITIAL_SIZE = new Vector2(1.5f, 1.5f);
+        private static readonly Vector2 INITIAL_SIZE = new Vector2(3f, 3f);
 
         [SerializeField]
         private Text text;
