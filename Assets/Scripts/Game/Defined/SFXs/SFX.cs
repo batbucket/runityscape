@@ -28,7 +28,7 @@ namespace Scripts.Game.Defined.SFXs {
             Vector2 moverOriginalPos = mover.transform.position;
             yield return MoveTowards(mover, destination, duration / 3);
             Presenter.Main.Instance.Sound.PlaySound(soundLoc);
-            yield return Shake(destination, 10, duration / 3);
+            yield return Shake(destination, 100, duration / 3);
             yield return MoveBack(mover, moverOriginalPos, duration / 3);
 
             Util.Parent(mover, parent);
@@ -45,7 +45,7 @@ namespace Scripts.Game.Defined.SFXs {
             Vector3 destinationPos = destination.transform.position;
             float width = destination.GetComponent<RectTransform>().rect.width;
 
-            // Do position corrections so we end up next to the icon instead of on top of it
+            // Do position corrections so we end up next to the icon instead of on top of it, but the mover needs to be on the inner side always
 
             // Mover ---- Destination,
             if (mover.transform.position.x < destinationPos.x) {
