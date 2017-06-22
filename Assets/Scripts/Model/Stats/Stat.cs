@@ -10,7 +10,7 @@ namespace Scripts.Model.Stats {
     /// Think strength, agility, intelligence
     /// These values have a lesser and greater cap
     /// </summary>
-    public abstract class Stat : ISaveable<StatSave> {
+    public abstract class Stat : ISaveable<StatSave, StatSave> {
 
         public readonly StatType Type;
 
