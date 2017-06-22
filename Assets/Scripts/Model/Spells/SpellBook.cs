@@ -28,7 +28,7 @@ namespace Scripts.Model.Spells {
         }
     }
 
-    public abstract class SpellBook : ISpellable, ISaveable<SpellbookSave> {
+    public abstract class SpellBook : ISpellable, ISaveable<SpellbookSave, SpellbookSave> {
 
         public readonly string Name;
         public readonly Sprite Icon;

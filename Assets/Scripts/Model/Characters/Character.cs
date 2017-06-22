@@ -15,7 +15,7 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : IComparable<Character>, ISaveable<PartialCharacterSave> {
+    public class Character : IComparable<Character>, ISaveable<PartialCharacterSave, FullCharacterSave> {
         public const int UNKNOWN_ID = -1;
 
         public readonly Stats Stats;
@@ -52,6 +52,12 @@ namespace Scripts.Model.Characters {
         }
 
         public Character(Stats stats, Look look, Brain brain, SpellBooks spells) : this(stats, look, brain, spells, new Inventory(), new Equipment()) { }
+
+        /// <summary>
+        /// Used in serialization for parties
+        /// </summary>
+        /// <param name="inventory">Reference to the shared inventory</param>
+        public Character(Inventory inventory) : this(new Stats(), new Look(), new Game.Defined.Serialized.Characters.Player(), new SpellBooks(), inventory, new Equipment()) { }
 
         public int Id {
             get {
@@ -93,6 +99,7 @@ namespace Scripts.Model.Characters {
 
         public PartialCharacterSave GetSaveObject() {
             return new PartialCharacterSave(
+                this.id,
                 Stats.GetSaveObject(),
                 Buffs.GetSaveObject(),
                 Look.GetSaveObject(),
@@ -102,8 +109,18 @@ namespace Scripts.Model.Characters {
                 );
         }
 
-        public void InitFromSaveObject(PartialCharacterSave saveObject) {
-            Util.Assert(false, "Initialize in party.");
+        public void InitFromSaveObject(FullCharacterSave saveObject) {
+            // No special classes - set fields
+            this.Stats.InitFromSaveObject(saveObject.Stats);
+            this.Look.InitFromSaveObject(saveObject.Look);
+            this.Spells.InitFromSaveObject(saveObject.Spells);
+            this.Equipment.InitFromSaveObject(saveObject.Equipment);
+
+            // Must replace class
+            Brain brain = saveObject.Brain.CreateObjectFromID();
+            this.Brain = brain;
+
+            // Buffs and inventory must be setup in Party!
         }
     }
 }

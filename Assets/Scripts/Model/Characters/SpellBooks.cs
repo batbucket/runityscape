@@ -8,7 +8,7 @@ using Scripts.Model.Stats;
 using Scripts.Model.SaveLoad;
 
 namespace Scripts.Model.Characters {
-    public class SpellBooks : IEnumerable<ISpellable>, ISaveable<CharacterSpellBooksSave> {
+    public class SpellBooks : IEnumerable<ISpellable>, ISaveable<CharacterSpellBooksSave, CharacterSpellBooksSave> {
         private readonly HashSet<SpellBook> set;
 
         public SpellBooks() {

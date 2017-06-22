@@ -19,12 +19,16 @@ namespace Scripts.Model.Characters {
     /// <summary>
     /// Represents Buffs on a certain character.
     /// </summary>
-    public class Buffs : IEnumerable<Buff>, ISaveable<PartialCharacterBuffsSave> {
+    public class Buffs : IEnumerable<Buff>, ISaveable<PartialCharacterBuffsSave, FullCharacterBuffsSave> {
 
         public Stats Stats;
         public Action<SplatDetails> AddSplat;
 
         private HashSet<Buff> set;
+
+        // Temporary fields used in serializable, will be null otherwise
+        private List<Character> partyMembers;
+        private bool isSetupTempFieldsBefore;
 
         public Buffs() {
             set = new HashSet<Buff>();
@@ -65,8 +69,33 @@ namespace Scripts.Model.Characters {
             return new PartialCharacterBuffsSave(set.Select(b => b.GetSaveObject()).ToList());
         }
 
-        public void InitFromSaveObject(PartialCharacterBuffsSave saveObject) {
-            Util.Assert(false, "Unable to setup here. Please setup in Party.");
+        public void InitFromSaveObject(FullCharacterBuffsSave saveObject) {
+            foreach (FullBuffSave bs in saveObject.BuffSaves) {
+                Buff b = bs.CreateObjectFromID();
+                b.InitFromSaveObject(bs);
+
+                Stats caster = null;
+                int id = 0;
+                if (bs.IsCasterInParty) {
+                    Character character = partyMembers[bs.PartyIndex];
+                    caster = character.Stats;
+                    id = character.Id;
+                } else {
+                    caster = new Stats();
+                    caster.InitFromSaveObject(bs.Stats);
+                    id = Character.UNKNOWN_ID;
+                }
+                b.Caster = new BuffParams() { Caster = caster, CasterId = id };
+
+                set.Add(b);
+            }
+            partyMembers = null;
+        }
+
+        public void SetupTemporarySaveFields(List<Character> partyMembers) {
+            Util.Assert(!isSetupTempFieldsBefore, "This function is only callable once when the object is being loaded.");
+            this.partyMembers = partyMembers;
+            isSetupTempFieldsBefore = true;
         }
     }
 }

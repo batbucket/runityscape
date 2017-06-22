@@ -8,7 +8,7 @@ using Scripts.Game.Defined.Characters;
 
 namespace Scripts.Model.Characters {
 
-    public class Look : ISaveable<LookSave> {
+    public class Look : ISaveable<LookSave, LookSave> {
         public string Name;
 
         protected Color textColor;

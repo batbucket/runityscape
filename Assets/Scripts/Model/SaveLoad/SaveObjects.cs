@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Collections;
 
 namespace Scripts.Model.SaveLoad.SaveObjects {
 
@@ -196,14 +197,14 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public const int CASTER_NOT_IN_PARTY = -1;
 
         public int PartyIndex;
-        public StatSave Stats;
+        public CharacterStatsSave Stats;
 
         public FullBuffSave(Type type, int turnsRemaining, int partyIndex) : base(type, turnsRemaining) {
             this.PartyIndex = partyIndex;
             this.Stats = null;
         }
 
-        public FullBuffSave(Type type, int turnsRemaining, StatSave stats) : base(type, turnsRemaining) {
+        public FullBuffSave(Type type, int turnsRemaining, CharacterStatsSave stats) : base(type, turnsRemaining) {
             this.PartyIndex = CASTER_NOT_IN_PARTY;
             this.Stats = stats;
         }
@@ -220,11 +221,19 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
 
     /// <typeparam name="T">Type in list.</typeparam>
     [Serializable]
-    public abstract class CharacterBuffsSave<T> : ICharacterBuffsSave where T : BuffSave {
+    public abstract class CharacterBuffsSave<T> : IEnumerable<T>, ICharacterBuffsSave where T : BuffSave {
         public List<T> BuffSaves;
 
         public CharacterBuffsSave(List<T> buffSaves) {
             this.BuffSaves = buffSaves;
+        }
+
+        public IEnumerator<T> GetEnumerator() {
+            return BuffSaves.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return BuffSaves.GetEnumerator();
         }
     }
 
@@ -267,7 +276,10 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
 
     // Not serializable
     public sealed class PartialCharacterSave : CharacterSave<PartialCharacterBuffsSave> {
+        public int Id;
+
         public PartialCharacterSave(
+            int id,
             CharacterStatsSave stats,
             PartialCharacterBuffsSave buffs,
             LookSave look,
@@ -276,6 +288,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
             EquipmentSave equipment
             )
             : base(stats, buffs, look, spells, brain, equipment) {
+            this.Id = id;
         }
     }
 

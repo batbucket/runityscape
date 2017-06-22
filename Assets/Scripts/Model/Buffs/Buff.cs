@@ -14,7 +14,7 @@ namespace Scripts.Model.Buffs {
         public int CasterId;
     }
 
-    public abstract class Buff : IComparable<Buff>, ISaveable<PartialBuffSave> {
+    public abstract class Buff : IComparable<Buff>, ISaveable<PartialBuffSave, FullBuffSave> {
         public readonly Sprite Sprite;
         public readonly string Name;
         public readonly string Description;
@@ -138,8 +138,9 @@ namespace Scripts.Model.Buffs {
             return new PartialBuffSave(turnsRemaining, caster.GetSaveObject(), casterId, GetType());
         }
 
-        public void InitFromSaveObject(PartialBuffSave saveObject) {
-            Util.Assert(false, "Unable to Init Buff from SaveObject here. Please setup in Party instead.");
+        public void InitFromSaveObject(FullBuffSave saveObject) {
+            this.turnsRemaining = saveObject.TurnsRemaining;
+            // Setup caster and id in party!
         }
     }
 }

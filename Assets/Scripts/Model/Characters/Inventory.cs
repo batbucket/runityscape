@@ -11,7 +11,7 @@ using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
 
-    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
+    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable>, ISaveable<InventorySave, InventorySave> {
         private const int INITIAL_CAPACITY = 10;
 
         public Action<SplatDetails> AddSplat;

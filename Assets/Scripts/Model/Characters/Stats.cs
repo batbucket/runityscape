@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Scripts.Model.Characters {
-    public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave> {
+    public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave, CharacterStatsSave> {
 
         public Func<StatType, int> GetEquipmentBonus;
         public Action<SplatDetails> AddSplat;

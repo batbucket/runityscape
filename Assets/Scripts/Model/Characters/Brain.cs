@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Characters {
-    public abstract class Brain : ISaveable<BrainSave> {
+    public abstract class Brain : ISaveable<BrainSave, BrainSave> {
         public Character Owner;
         public SpellBooks Spells;
 

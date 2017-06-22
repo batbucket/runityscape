@@ -14,7 +14,7 @@ using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
 
-    public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<EquipmentSave> {
+    public class Equipment : IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<EquipmentSave, EquipmentSave> {
         public Action<Buff> AddBuff;
         public Action<Buff> RemoveBuff;
         public Action<SplatDetails> AddSplat;
@@ -101,7 +101,7 @@ namespace Scripts.Model.Characters {
 
         public EquipmentSave GetSaveObject() {
             List<EquipItemSave> equips = new List<EquipItemSave>();
-            foreach (ISaveable<EquipItemSave> eq in equipped.Values) {
+            foreach (ISaveable<EquipItemSave, EquipItemSave> eq in equipped.Values) {
                 equips.Add(eq.GetSaveObject());
             }
 

@@ -12,7 +12,7 @@ using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Items {
 
-    public abstract class EquippableItem : UseableItem, ISaveable<EquipItemSave> {
+    public abstract class EquippableItem : UseableItem, ISaveable<EquipItemSave, EquipItemSave> {
 
         public readonly EquipType Type;
         public readonly IDictionary<StatType, int> Stats;
@@ -64,7 +64,7 @@ namespace Scripts.Model.Items {
             return DEFAULT_ICONS[type];
         }
 
-        EquipItemSave ISaveable<EquipItemSave>.GetSaveObject() {
+        EquipItemSave ISaveable<EquipItemSave, EquipItemSave>.GetSaveObject() {
             return new EquipItemSave(new EquipTypeSave(Type), GetType());
         }
 
