@@ -19,6 +19,11 @@ using WindowsInput;
 
 public static class Util {
 
+    public static bool IsDictionariesEqual<A, B>(IDictionary<A, B> dic1, IDictionary<A, B> dic2) {
+        return (dic1 == dic2) ||
+             (dic1.Count == dic2.Count && !dic1.Except(dic2).Any());
+    }
+
     public static T TypeToObject<T>(Type type) {
         return (T)Activator.CreateInstance(type);
     }

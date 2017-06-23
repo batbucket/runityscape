@@ -15,7 +15,7 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : IComparable<Character>, ISaveable<PartialCharacterSave, FullCharacterSave> {
+    public class Character : IComparable<Character>, ISaveable<CharacterSave> {
         public const int UNKNOWN_ID = -1;
 
         public readonly Stats Stats;
@@ -23,7 +23,7 @@ namespace Scripts.Model.Characters {
         public readonly Look Look;
         public readonly SpellBooks Spells;
         public Brain Brain;
-        public readonly Inventory Inventory;
+        public Inventory Inventory;
         public readonly Equipment Equipment;
 
         public CharacterPresenter Presenter;
@@ -74,11 +74,23 @@ namespace Scripts.Model.Characters {
         }
 
         public override bool Equals(object obj) {
-            return this == obj;
+            var item = obj as Character;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.Stats.Equals(item.Stats)
+                && this.Buffs.Equals(item.Buffs)
+                && this.Look.Equals(item.Look)
+                && this.Spells.Equals(item.Spells)
+                && this.Brain.Equals(item.Brain)
+                && this.Inventory.Equals(item.Inventory)
+                && this.Equipment.Equals(item.Equipment);
         }
 
         public override int GetHashCode() {
-            return id;
+            return 0;
         }
 
         public virtual void OnBattleStart() {
@@ -97,8 +109,8 @@ namespace Scripts.Model.Characters {
             }
         }
 
-        public PartialCharacterSave GetSaveObject() {
-            return new PartialCharacterSave(
+        public CharacterSave GetSaveObject() {
+            return new CharacterSave(
                 this.id,
                 Stats.GetSaveObject(),
                 Buffs.GetSaveObject(),
@@ -109,7 +121,7 @@ namespace Scripts.Model.Characters {
                 );
         }
 
-        public void InitFromSaveObject(FullCharacterSave saveObject) {
+        public void InitFromSaveObject(CharacterSave saveObject) {
             // No special classes - set fields
             this.Stats.InitFromSaveObject(saveObject.Stats);
             this.Look.InitFromSaveObject(saveObject.Look);

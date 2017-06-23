@@ -19,7 +19,7 @@ namespace Scripts.Model.Characters {
     /// <summary>
     /// Represents Buffs on a certain character.
     /// </summary>
-    public class Buffs : IEnumerable<Buff>, ISaveable<PartialCharacterBuffsSave, FullCharacterBuffsSave> {
+    public class Buffs : IEnumerable<Buff>, ISaveable<CharacterBuffsSave> {
 
         public Stats Stats;
         public Action<SplatDetails> AddSplat;
@@ -31,11 +31,12 @@ namespace Scripts.Model.Characters {
         private bool isSetupTempFieldsBefore;
 
         public Buffs() {
-            set = new HashSet<Buff>();
+            set = new HashSet<Buff>(new IdentityEqualityComparer<Buff>());
             this.AddSplat = (a => { });
         }
 
         public void AddBuff(Buff buff) {
+            Util.Assert(buff.BuffCaster != null, "Buff's caster is null.");
             buff.OnApply(Stats);
             set.Add(buff);
             AddSplat(new SplatDetails(Color.white, string.Format("+{0}", buff.Name), buff.Sprite));
@@ -65,29 +66,27 @@ namespace Scripts.Model.Characters {
             return set.GetEnumerator();
         }
 
-        public PartialCharacterBuffsSave GetSaveObject() {
-            return new PartialCharacterBuffsSave(set.Select(b => b.GetSaveObject()).ToList());
+        public CharacterBuffsSave GetSaveObject() {
+            return new CharacterBuffsSave(set.Select(b => b.GetSaveObject()).ToList());
         }
 
-        public void InitFromSaveObject(FullCharacterBuffsSave saveObject) {
-            foreach (FullBuffSave bs in saveObject.BuffSaves) {
-                Buff b = bs.CreateObjectFromID();
-                b.InitFromSaveObject(bs);
+        public override bool Equals(object obj) {
+            var item = obj as Buffs;
 
-                Stats caster = null;
-                int id = 0;
-                if (bs.IsCasterInParty) {
-                    Character character = partyMembers[bs.PartyIndex];
-                    caster = character.Stats;
-                    id = character.Id;
-                } else {
-                    caster = new Stats();
-                    caster.InitFromSaveObject(bs.Stats);
-                    id = Character.UNKNOWN_ID;
-                }
-                b.Caster = new BuffParams() { Caster = caster, CasterId = id };
+            if (item == null) {
+                return false;
+            }
 
-                set.Add(b);
+            return new HashSet<Buff>(set).SetEquals(new HashSet<Buff>(item.set));
+        }
+
+        public override int GetHashCode() {
+            return 0;
+        }
+
+        public void InitFromSaveObject(CharacterBuffsSave saveObject) {
+            foreach (BuffSave bs in saveObject.BuffSaves) {
+                set.Add(CharacterBuffsSave.SetupBuffCasterFromSave(bs, partyMembers));
             }
             partyMembers = null;
         }

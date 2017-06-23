@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Characters {
-    public abstract class Brain : ISaveable<BrainSave, BrainSave> {
+    public abstract class Brain : ISaveable<BrainSave> {
         public Character Owner;
         public SpellBooks Spells;
 
@@ -25,6 +25,20 @@ namespace Scripts.Model.Characters {
         }
 
         public abstract void DetermineAction(Action<IPlayable> addPlay);
+
+        public override bool Equals(object obj) {
+            var item = obj as Brain;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.GetType().Equals(item.GetType());
+        }
+
+        public override int GetHashCode() {
+            return 0;
+        }
 
         public BrainSave GetSaveObject() {
             return new BrainSave(GetType());

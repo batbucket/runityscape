@@ -9,6 +9,7 @@ using Scripts.View.ObjectPool;
 using Scripts.Game.Defined.Characters;
 using System;
 using Scripts.Game.Defined.Spells;
+using Scripts.Game.Defined.Serialized.Spells;
 
 namespace Scripts.Game.Pages {
 
@@ -42,9 +43,6 @@ namespace Scripts.Game.Pages {
                     Presenter.Main.Instance.StartCoroutine(hpv.Animation("Test", Color.cyan, Util.GetSprite("fox-head")));
                 }),
                 new Battle("Battle Test", new Character[] { new Kitsune(), new Kitsune()  }, new Character[] { new Kitsune(), new Kitsune() }),
-                new Process("UNcastables", () => {
-
-                    }),
                 submenu
             };
 

@@ -37,38 +37,36 @@ namespace Scripts.Model.World.Serialization {
             Util.Log("Saves deleted.");
         }
 
-        //public static void Load(int saveIndex, string successMessage = null) {
-        //    string json = null;
-        //    try {
-        //        string encryptedSave = GetSaveValue(saveIndex);
-        //        json = Encrypter.Decrypt(encryptedSave, EncryptKey);
-        //    } catch (Exception e) {
-        //        Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.Color(e.ToString(), Color.red)));
-        //        //TODO return null;
-        //    }
-        //    if (!string.IsNullOrEmpty(successMessage)) {
-        //        Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.Color(successMessage, Color.cyan)));
-        //    }
-        //    GameSave gameSave = JsonUtility.FromJson<GameSave>(json);
-        //    //Camp camp = gameSave.Restore();
+        public static T Load<T>(int saveIndex, bool isEncrypted, string successMessage = null) {
+            string json = null;
+            try {
+                string encryptedSave = GetSaveValue(saveIndex);
+                json = Encrypter.Decrypt(encryptedSave, EncryptKey);
+            } catch (Exception e) {
+                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(e.ToString(), Color.red)));
+                //TODO return null;
+            }
+            if (!string.IsNullOrEmpty(successMessage)) {
+                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(successMessage, Color.cyan)));
+            }
+            T load = JsonUtility.FromJson<T>(json);
 
-        //    return camp;
-        //}
+            return load;
+        }
 
-        //public static void Save(Camp camp, int saveIndex, string successMessage = null) {
-        //    GameSave gameSave = new GameSave(camp);
-        //    string json = JsonUtility.ToJson(gameSave);
-        //    try {
-        //        string encryptedJson = Encrypter.Encrypt(json, EncryptKey);
-        //        SetSave(saveIndex, encryptedJson);
-        //    } catch (Exception e) {
-        //        Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.Color(e.ToString(), Color.red)));
-        //        return;
-        //    }
-        //    if (!string.IsNullOrEmpty(successMessage)) {
-        //        Game.Instance.TextBoxes.AddTextBox(new TextBox(Util.Color(successMessage, Color.cyan)));
-        //    }
-        //}
+        public static void Save(object saveObject, bool isEncrypted, int saveIndex, string successMessage = null) {
+            string json = JsonUtility.ToJson(saveObject);
+            try {
+                string encryptedJson = Encrypter.Encrypt(json, EncryptKey);
+                SetSave(saveIndex, encryptedJson);
+            } catch (Exception e) {
+                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(e.ToString(), Color.red)));
+                return;
+            }
+            if (!string.IsNullOrEmpty(successMessage)) {
+                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(successMessage, Color.green)));
+            }
+        }
 
         public static void DeleteSave(int index, string successMessage = null) {
             try {

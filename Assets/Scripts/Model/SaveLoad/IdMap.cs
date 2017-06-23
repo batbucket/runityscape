@@ -26,22 +26,21 @@ namespace Scripts.Model.SaveLoad {
             return map.Get(s);
         }
 
+        /// <summary>
+        /// Use reflection to ensure that everything in the category is included.
+        /// </summary>
+        /// <returns>True if all elements are included in the map.</returns>
+        public abstract bool IsAllIncluded();
+
         protected void Init() {
             Util.Log("Starting init for " + typeof(T).ToString());
             InitHelper();
-            Util.Assert(IsAllIncluded(), "Some elements missing!");
             Util.Log(string.Format("{0} initialized with {1} elements.", typeof(T).ToString(), map.ACollection.Count));
         }
 
         protected void Add(T t, string id) {
             map.Add(t, id);
         }
-
-        /// <summary>
-        /// Use reflection to ensure that everything in the category is included.
-        /// </summary>
-        /// <returns>True if all elements are included in the map.</returns>
-        protected abstract bool IsAllIncluded();
 
         protected abstract void InitHelper();
 

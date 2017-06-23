@@ -6,8 +6,8 @@
     /// </summary>
     /// <typeparam name="S">Object to save to</typeparam>
     /// <typeparam name="L">Object to load from</typeparam>
-    public interface ISaveable<S, L> {
+    public interface ISaveable<S> {
         S GetSaveObject();
-        void InitFromSaveObject(L saveObject);
+        void InitFromSaveObject(S saveObject);
     }
 }

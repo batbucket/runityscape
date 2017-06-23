@@ -7,7 +7,7 @@ using System;
 
 namespace Scripts.Model.Items {
 
-    public abstract class Item : ISaveable<ItemSave, ItemSave> {
+    public abstract class Item : ISaveable<ItemSave> {
         public static readonly HashSet<Flag> STANDARD_FLAGS = new HashSet<Flag>() { Flag.SELLABLE, Flag.TRASHABLE };
 
         public readonly string Name;

@@ -11,7 +11,7 @@ using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
 
-    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable>, ISaveable<InventorySave, InventorySave> {
+    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
         private const int INITIAL_CAPACITY = 10;
 
         public Action<SplatDetails> AddSplat;
@@ -93,6 +93,21 @@ namespace Scripts.Model.Characters {
 
         public int GetCount(Item item) {
             return dict[item];
+        }
+
+        public override bool Equals(object obj) {
+            var item = obj as Inventory;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.capacity.Equals(item.capacity)
+                && Util.IsDictionariesEqual(this.dict, item.dict);
+        }
+
+        public override int GetHashCode() {
+            return 0;
         }
 
         IEnumerator IEnumerable.GetEnumerator() {

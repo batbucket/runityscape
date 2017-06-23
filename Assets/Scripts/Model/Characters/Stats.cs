@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Scripts.Model.Characters {
-    public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave, CharacterStatsSave> {
+    public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave> {
 
         public Func<StatType, int> GetEquipmentBonus;
         public Action<SplatDetails> AddSplat;
@@ -123,6 +123,20 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public override bool Equals(object obj) {
+            var item = obj as Stats;
+
+            if (item == null) {
+                return false;
+            }
+
+            return Util.IsDictionariesEqual<StatType, Stat>(this.dict, item.dict);
+        }
+
+        public override int GetHashCode() {
+            return 0;
+        }
+
         protected void InitializeStats(int level, int str, int agi, int intel, int vit) {
             SetToStat(StatType.LEVEL, Value.MOD, level);
             SetToStat(StatType.STRENGTH, str);
@@ -170,6 +184,7 @@ namespace Scripts.Model.Characters {
         }
 
         public void InitFromSaveObject(CharacterStatsSave saveObject) {
+            dict.Clear();
             foreach (StatSave save in saveObject.Stats) {
                 Stat stat = save.CreateObjectFromID();
                 stat.InitFromSaveObject(save);

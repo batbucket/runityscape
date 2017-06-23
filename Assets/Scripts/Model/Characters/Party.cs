@@ -4,6 +4,7 @@ using Scripts.Model.SaveLoad.SaveObjects;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Scripts.Model.Characters {
@@ -13,56 +14,56 @@ namespace Scripts.Model.Characters {
     /// Everyone's inventory references the leader's inventory upon
     /// being added to a party.
     /// </summary>
-    public class Party : IEnumerable<Character>, ISaveable<PartySave, PartySave> {
-        private HashSet<Character> members;
-        private Inventory shared;
+    public class Party : IEnumerable<Character>, ISaveable<PartySave> {
+        public HashSet<Character> members;
+        public Inventory shared;
 
         public Party() {
-            this.members = new HashSet<Character>();
+            this.members = new HashSet<Character>(new IdentityEqualityComparer<Character>());
             this.shared = new Inventory();
+        }
+
+        public ICollection<Character> Collection {
+            get {
+                return new ReadOnlyCollection<Character>(members.ToList());
+            }
         }
 
         public void AddMember(Character c) {
             this.members.Add(c);
+            c.Inventory = shared;
         }
 
         public PartySave GetSaveObject() {
             InventorySave inventory = shared.GetSaveObject();
-            List<PartialCharacterSave> mems = members.Select(c => c.GetSaveObject()).ToList();
-            List<FullCharacterSave> fullChars = new List<FullCharacterSave>();
+            List<CharacterSave> mems = members.Select(c => c.GetSaveObject()).ToList();
 
             // Go through all characters
             for (int i = 0; i < mems.Count; i++) {
-                PartialCharacterSave c = mems[i];
-                List<FullBuffSave> buffList = new List<FullBuffSave>();
+                CharacterSave c = mems[i];
 
                 //Go through particular character's buffs
-                foreach (PartialBuffSave pb in c.Buffs) {
-                    FullBuffSave fb = null;
+                foreach (BuffSave pb in c.Buffs) {
                     bool isPartyMemberFound = false;
 
                     // Search party list to see if any party member is the caster
-                    for (int j = 0; j < mems.Count && !isPartyMemberFound; i++) {
+                    for (int j = 0; j < mems.Count && !isPartyMemberFound; j++) {
 
                         // Id match -- Party ref mode
                         if (mems[j].Id.Equals(pb.CasterCharacterId)) {
-                            fb = new FullBuffSave(pb.Type, pb.TurnsRemaining, j);
+                            pb.SetupAsCasterInParty(j);
                             isPartyMemberFound = true;
                         }
                     }
 
                     // No member found, -- Use stat values mode
                     if (!isPartyMemberFound) {
-                        fb = new FullBuffSave(pb.Type, pb.TurnsRemaining, pb.StatCopy);
+                        pb.SetupAsCasterNotInParty();
                     }
-
-                    buffList.Add(fb);
                 }
-
-                fullChars.Add(new FullCharacterSave(c.Stats, new FullCharacterBuffsSave(buffList), c.Look, c.Spells, c.Brain, c.Equipment));
             }
 
-            return new PartySave(fullChars, inventory);
+            return new PartySave(mems, inventory);
         }
 
         public void InitFromSaveObject(PartySave saveObject) {
@@ -73,7 +74,7 @@ namespace Scripts.Model.Characters {
 
             // Setup everything EXCEPT buffs
             for (int i = 0; i < saveObject.Characters.Count; i++) {
-                FullCharacterSave charSave = saveObject.Characters[i];
+                CharacterSave charSave = saveObject.Characters[i];
                 Character restored = new Character(this.shared); // Inventory
                 restored.InitFromSaveObject(charSave); // Everything else but buffs
 
@@ -84,13 +85,35 @@ namespace Scripts.Model.Characters {
             // memList index should match saveObject.Characters index!
             for (int i = 0; i < memList.Count; i++) {
                 Character c = memList[i];
+                c.Equipment.SetupTemporarySaveFields(memList);
+                c.Equipment.InitFromSaveObject(saveObject.Characters[i].Equipment);
                 c.Buffs.SetupTemporarySaveFields(memList);
                 c.Buffs.InitFromSaveObject(saveObject.Characters[i].Buffs); // Assumes matching indices
+            }
+
+            foreach (Character c in memList) {
+                members.Add(c);
             }
         }
 
         public void RemoveMember(Character c) {
             members.Remove(c);
+        }
+
+        public override bool Equals(object obj) {
+            var item = obj as Party;
+
+            if (item == null) {
+                return false;
+            }
+            HashSet<Character> thisSet = new HashSet<Character>(members);
+            HashSet<Character> thatSet = new HashSet<Character>(item.members);
+
+            return this.shared.Equals(item.shared) && thisSet.SetEquals(thatSet);
+        }
+
+        public override int GetHashCode() {
+            return 0;
         }
 
         IEnumerator<Character> IEnumerable<Character>.GetEnumerator() {

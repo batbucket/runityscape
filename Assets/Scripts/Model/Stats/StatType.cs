@@ -1,4 +1,6 @@
 ﻿using Scripts.Model.Interfaces;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,9 +12,9 @@ namespace Scripts.Model.Stats {
     /// <summary>
     /// Type-safe enum representing the various stat types in the game.
     /// </summary>
-    public sealed class StatType : IComparable<StatType>, INameable {
+    public sealed class StatType : IComparable<StatType>, INameable, ISaveable<StatTypeSave> {
 
-        private static readonly HashSet<StatType> allTypes = new HashSet<StatType>();
+        private static readonly HashSet<StatType> allTypes = new HashSet<StatType>(new IdentityEqualityComparer<StatType>());
         private static readonly IDictionary<BoundType, Bounds> attributeBounds = new Dictionary<BoundType, Bounds>() {
             { BoundType.RESOURCE, new Bounds(0, 10000) },
             { BoundType.ASSIGNABLE, new Bounds(0, 999) },
@@ -131,7 +133,7 @@ namespace Scripts.Model.Stats {
             string description,
             Color color) : this(boundType, name, spriteLoc, description, color, Color.grey) { }
 
-        public static ReadOnlyCollection<StatType> AllTypes {
+        public static ICollection<StatType> AllTypes {
             get {
                 return new ReadOnlyCollection<StatType>(allTypes.ToArray());
             }
@@ -165,6 +167,14 @@ namespace Scripts.Model.Stats {
 
         public int CompareTo(StatType other) {
             return this.order.CompareTo(other.order);
+        }
+
+        public StatTypeSave GetSaveObject() {
+            return new StatTypeSave(this);
+        }
+
+        public void InitFromSaveObject(StatTypeSave saveObject) {
+            // Nothing
         }
     }
 }

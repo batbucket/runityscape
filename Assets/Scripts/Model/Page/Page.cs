@@ -28,8 +28,8 @@ namespace Scripts.Model.Pages {
         public Page(string location) {
             this.Location = location;
             this.grid = new IButtonable[Grid.DEFAULT_BUTTON_COUNT];
-            this.Left = new HashSet<Character>();
-            this.Right = new HashSet<Character>();
+            this.Left = new HashSet<Character>(new IdentityEqualityComparer<Character>());
+            this.Right = new HashSet<Character>(new IdentityEqualityComparer<Character>());
             this.OnEnter = () => { };
         }
 

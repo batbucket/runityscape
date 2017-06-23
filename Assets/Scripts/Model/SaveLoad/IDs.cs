@@ -25,11 +25,15 @@ namespace Scripts.Model.SaveLoad {
         public static EnumMap<EquipType> Equips = new EnumMap<EquipType>(EquipType.AllTypes);
 
         private static HashSet<IInitable> initables;
+        private static bool isInited;
 
         public static void Init() {
-            foreach (IInitable init in initables) {
-                init.Init();
+            if (!isInited) {
+                foreach (IInitable init in initables) {
+                    init.Init();
+                }
             }
+            isInited = true;
         }
 
         /// <summary>
@@ -54,7 +58,7 @@ namespace Scripts.Model.SaveLoad {
             Brains();
         }
 
-        protected override bool IsAllIncluded() {
+        public override bool IsAllIncluded() {
             return IsEntireNamespaceIdentified() && IsDictTypesContainDefaultConstructor();
         }
 
@@ -100,7 +104,6 @@ namespace Scripts.Model.SaveLoad {
         }
 
         /// <summary>
-        /// I N T E G R A T I O N    T E S T I N G !
         /// All classes within the namespace must be in the map.
         /// </summary>
         private bool IsEntireNamespaceIdentified() {
@@ -136,14 +139,14 @@ namespace Scripts.Model.SaveLoad {
             this.all = all;
         }
 
+        public override bool IsAllIncluded() {
+            return IsAllTypesIncluded();
+        }
+
         protected override void InitHelper() {
             foreach (T item in all) {
                 Add(item, item.Name);
             }
-        }
-
-        protected override bool IsAllIncluded() {
-            return IsAllTypesIncluded();
         }
 
         private bool IsAllTypesIncluded() {

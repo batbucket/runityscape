@@ -14,7 +14,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
     public class Agility : Stat {
         public Agility(int mod, int max) : base(mod, max, StatType.AGILITY) { }
 
-        public Agility() : base(0, 0, StatType.STRENGTH) { }
+        public Agility() : base(0, 0, StatType.AGILITY) { }
     }
 
     public class Intellect : Stat {

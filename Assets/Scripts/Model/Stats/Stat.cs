@@ -10,7 +10,7 @@ namespace Scripts.Model.Stats {
     /// Think strength, agility, intelligence
     /// These values have a lesser and greater cap
     /// </summary>
-    public abstract class Stat : ISaveable<StatSave, StatSave> {
+    public abstract class Stat : ISaveable<StatSave> {
 
         public readonly StatType Type;
 
@@ -49,13 +49,30 @@ namespace Scripts.Model.Stats {
             }
         }
 
+        public override bool Equals(object obj) {
+            var item = obj as Stat;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.GetType().Equals(item.GetType())
+                && this.Type.Equals(item.Type)
+                && this.mod.Equals(item.mod)
+                && this.max.Equals(item.max);
+        }
+
+        public override int GetHashCode() {
+            return Type.GetHashCode();
+        }
+
         /// <summary>
         /// Update the values of this Stat
         /// </summary>
         public virtual void Update(Character c) { }
 
         public StatSave GetSaveObject() {
-            StatSave save = new StatSave(new StatTypeSave(Type), GetType(), mod, max);
+            StatSave save = new StatSave(Type.GetSaveObject(), GetType(), mod, max);
             return save;
         }
 

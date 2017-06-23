@@ -8,7 +8,7 @@ using Scripts.Game.Defined.Characters;
 
 namespace Scripts.Model.Characters {
 
-    public class Look : ISaveable<LookSave, LookSave> {
+    public class Look : ISaveable<LookSave> {
         public string Name;
 
         protected Color textColor;
@@ -64,6 +64,25 @@ namespace Scripts.Model.Characters {
             set {
                 suffix = value;
             }
+        }
+
+        public override bool Equals(object obj) {
+            var item = obj as Look;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.Name.Equals(item.Name)
+                && this.textColor.Equals(item.textColor)
+                && this.tooltip.Equals(item.tooltip)
+                && this.breed.Equals(item.breed)
+                && this.sprite.Equals(item.sprite)
+                && this.check.Equals(item.check);
+        }
+
+        public override int GetHashCode() {
+            return base.GetHashCode();
         }
 
         public LookSave GetSaveObject() {

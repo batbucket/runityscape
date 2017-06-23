@@ -1,4 +1,6 @@
 ﻿using Scripts.Model.Interfaces;
+using Scripts.Model.SaveLoad;
+using Scripts.Model.SaveLoad.SaveObjects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,8 +8,8 @@ using System.Linq;
 
 namespace Scripts.Model.Items {
 
-    public sealed class EquipType : IComparable<EquipType>, INameable {
-        private static readonly HashSet<EquipType> allTypes = new HashSet<EquipType>();
+    public sealed class EquipType : IComparable<EquipType>, INameable, ISaveable<EquipTypeSave> {
+        private static readonly HashSet<EquipType> allTypes = new HashSet<EquipType>(new IdentityEqualityComparer<EquipType>());
 
         public static readonly EquipType WEAPON = new EquipType("Weapon");
         public static readonly EquipType OFFHAND = new EquipType("Offhand");
@@ -25,7 +27,7 @@ namespace Scripts.Model.Items {
             allTypes.Add(this);
         }
 
-        public static ReadOnlyCollection<EquipType> AllTypes {
+        public static ICollection<EquipType> AllTypes {
             get {
                 return new ReadOnlyCollection<EquipType>(allTypes.ToArray());
             }
@@ -51,6 +53,14 @@ namespace Scripts.Model.Items {
 
         int IComparable<EquipType>.CompareTo(EquipType other) {
             return this.Name.CompareTo(other.Name);
+        }
+
+        public EquipTypeSave GetSaveObject() {
+            return new EquipTypeSave(this);
+        }
+
+        public void InitFromSaveObject(EquipTypeSave saveObject) {
+            // Nothing
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Scripts.Model.Buffs {
         public int CasterId;
     }
 
-    public abstract class Buff : IComparable<Buff>, ISaveable<PartialBuffSave, FullBuffSave> {
+    public abstract class Buff : IComparable<Buff>, ISaveable<BuffSave> {
         public readonly Sprite Sprite;
         public readonly string Name;
         public readonly string Description;
@@ -45,12 +45,30 @@ namespace Scripts.Model.Buffs {
             this.isDefinite = true;
         }
 
+        public int TurnsRemaining {
+            get {
+                return turnsRemaining;
+            }
+        }
+
         public BuffParams Caster {
             set {
                 Util.Assert(!isCasterSet, "Attempted to set caster twice.");
                 this.caster = value.Caster;
                 this.casterId = value.CasterId;
                 isCasterSet = true;
+            }
+        }
+
+        public Characters.Stats BuffCaster {
+            get {
+                return caster;
+            }
+        }
+
+        public int CasterId {
+            get {
+                return casterId;
             }
         }
 
@@ -96,11 +114,19 @@ namespace Scripts.Model.Buffs {
         }
 
         public override bool Equals(object obj) {
-            return this == obj;
+            var item = obj as Buff;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.GetType().Equals(item.GetType())
+                && this.turnsRemaining.Equals(item.turnsRemaining)
+                && this.caster.Equals(item.caster);
         }
 
         public override int GetHashCode() {
-            return this.buffId;
+            return Name.GetHashCode() ^ Description.GetHashCode();
         }
 
         public int CompareTo(Buff other) {
@@ -134,11 +160,11 @@ namespace Scripts.Model.Buffs {
             }
         }
 
-        public PartialBuffSave GetSaveObject() {
-            return new PartialBuffSave(turnsRemaining, caster.GetSaveObject(), casterId, GetType());
+        public BuffSave GetSaveObject() {
+            return new BuffSave(turnsRemaining, caster.GetSaveObject(), casterId, GetType());
         }
 
-        public void InitFromSaveObject(FullBuffSave saveObject) {
+        public void InitFromSaveObject(BuffSave saveObject) {
             this.turnsRemaining = saveObject.TurnsRemaining;
             // Setup caster and id in party!
         }

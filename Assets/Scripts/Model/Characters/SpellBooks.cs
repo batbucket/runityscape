@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Scripts.Model.Stats;
 using Scripts.Model.SaveLoad;
+using System;
 
 namespace Scripts.Model.Characters {
-    public class SpellBooks : IEnumerable<ISpellable>, ISaveable<CharacterSpellBooksSave, CharacterSpellBooksSave> {
+    public class SpellBooks : IEnumerable<ISpellable>, IEnumerable<SpellBook>, ISaveable<CharacterSpellBooksSave> {
         private readonly HashSet<SpellBook> set;
 
         public SpellBooks() {
@@ -28,6 +29,7 @@ namespace Scripts.Model.Characters {
         }
 
         public void AddSpellBook(SpellBook s) {
+            Util.Assert(s.HasFlag(Flag.CASTER_REQUIRES_SPELL), "Uncastable spell.");
             set.Add(s);
         }
 
@@ -47,19 +49,38 @@ namespace Scripts.Model.Characters {
             return set.GetEnumerator();
         }
 
+        public override bool Equals(object obj) {
+            var item = obj as SpellBooks;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.set.SetEquals(item.set);
+        }
+
+        public override int GetHashCode() {
+            return 0;
+        }
+
         public CharacterSpellBooksSave GetSaveObject() {
-            List<SpellbookSave> books = new List<SpellbookSave>();
-            foreach (SpellBook s in this) {
-                books.Add(new SpellbookSave(s.GetType()));
+            List<SpellBookSave> books = new List<SpellBookSave>();
+            IEnumerable<SpellBook> enumer = this;
+            foreach (SpellBook s in enumer) {
+                books.Add(new SpellBookSave(s.GetType()));
             }
             return new CharacterSpellBooksSave(books);
         }
 
         public void InitFromSaveObject(CharacterSpellBooksSave saveObject) {
-            foreach (SpellbookSave save in saveObject.Books) {
+            foreach (SpellBookSave save in saveObject.Books) {
                 SpellBook sb = save.CreateObjectFromID();
                 set.Add(sb);
             }
+        }
+
+        IEnumerator<SpellBook> IEnumerable<SpellBook>.GetEnumerator() {
+            return set.GetEnumerator();
         }
     }
 }

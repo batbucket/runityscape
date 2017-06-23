@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.SaveLoad;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Scripts.Model.Spells {
 
@@ -28,7 +30,7 @@ namespace Scripts.Model.Spells {
         }
     }
 
-    public abstract class SpellBook : ISpellable, ISaveable<SpellbookSave, SpellbookSave> {
+    public abstract class SpellBook : ISpellable, ISaveable<SpellBookSave> {
 
         public readonly string Name;
         public readonly Sprite Icon;
@@ -39,7 +41,7 @@ namespace Scripts.Model.Spells {
 
         public readonly int CastTime;
         public readonly int Cooldown;
-        public readonly bool IsSilenced;
+        public readonly bool IsSilenced; // TODO SAVE THIS
 
         protected readonly HashSet<Flag> flags;
 
@@ -58,11 +60,22 @@ namespace Scripts.Model.Spells {
             : this(spellName, Util.GetSprite(spriteLoc), target, spell, castTime, cooldown) { }
 
         public override bool Equals(object obj) {
-            return GetType().Equals(obj.GetType());
+            var item = obj as SpellBook;
+
+            if (item == null) {
+                return false;
+            }
+
+            return this.GetType().Equals(item.GetType())
+                && this.IsSilenced.Equals(item.IsSilenced);
         }
 
         public override int GetHashCode() {
             return GetType().GetHashCode();
+        }
+
+        public bool HasFlag(Flag f) {
+            return flags.Contains(f);
         }
 
         public virtual string CreateDescription(SpellParams caster) {
@@ -188,11 +201,11 @@ namespace Scripts.Model.Spells {
             return Util.ColorString(Name, CasterHasResources(caster.Stats));
         }
 
-        public SpellbookSave GetSaveObject() {
-            return new SpellbookSave(GetType());
+        public SpellBookSave GetSaveObject() {
+            return new SpellBookSave(GetType());
         }
 
-        public void InitFromSaveObject(SpellbookSave saveObject) {
+        public void InitFromSaveObject(SpellBookSave saveObject) {
             // Spellbook doesn't need anything restored!
         }
     }

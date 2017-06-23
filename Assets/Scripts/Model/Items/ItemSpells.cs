@@ -21,7 +21,7 @@ namespace Scripts.Model.Items {
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip))
+                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip), new Buffs.BuffParams() { Caster = caster.Stats, CasterId = caster.CharacterId })
                 };
         }
     }
@@ -47,7 +47,7 @@ namespace Scripts.Model.Items {
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, item))
+                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, item), new Buffs.BuffParams() { Caster = caster.Stats, CasterId = caster.CharacterId})
                 };
         }
     }

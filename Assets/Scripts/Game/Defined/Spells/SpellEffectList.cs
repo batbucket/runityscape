@@ -52,13 +52,15 @@ namespace Scripts.Game.Defined.Spells {
 
     public class EquipItemEffect : SpellEffect {
         private EquipParams ep;
+        private BuffParams bp;
 
-        public EquipItemEffect(EquipParams ep) : base(SpellEffectType.EQUIP_ITEM, 1) {
+        public EquipItemEffect(EquipParams ep, BuffParams bp) : base(SpellEffectType.EQUIP_ITEM, 1) {
             this.ep = ep;
+            this.bp = bp;
         }
 
         public override void CauseEffect() {
-            ep.Target.AddEquip(ep.Caster, ep.Item);
+            ep.Target.AddEquip(ep.Caster, bp, ep.Item);
         }
     }
 

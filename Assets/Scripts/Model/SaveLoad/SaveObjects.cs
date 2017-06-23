@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Collections;
+using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.SaveLoad.SaveObjects {
 
@@ -69,25 +70,41 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     }
 
     [Serializable]
-    public sealed class CharacterStatsSave {
+    public sealed class CharacterStatsSave : IEnumerable<StatSave> {
         public List<StatSave> Stats;
 
         public CharacterStatsSave(List<StatSave> stats) {
             this.Stats = stats;
         }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return Stats.GetEnumerator();
+        }
+
+        IEnumerator<StatSave> IEnumerable<StatSave>.GetEnumerator() {
+            return Stats.GetEnumerator();
+        }
     }
 
     [Serializable]
-    public sealed class SpellbookSave : IdSaveObject<SpellBook> {
-        public SpellbookSave(Type type) : base(type) { }
+    public sealed class SpellBookSave : IdSaveObject<SpellBook> {
+        public SpellBookSave(Type type) : base(type) { }
     }
 
     [Serializable]
-    public sealed class CharacterSpellBooksSave {
-        public List<SpellbookSave> Books;
+    public sealed class CharacterSpellBooksSave : IEnumerable<SpellBookSave> {
+        public List<SpellBookSave> Books;
 
-        public CharacterSpellBooksSave(List<SpellbookSave> books) {
+        public CharacterSpellBooksSave(List<SpellBookSave> books) {
             this.Books = books;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return Books.GetEnumerator();
+        }
+
+        IEnumerator<SpellBookSave> IEnumerable<SpellBookSave>.GetEnumerator() {
+            return Books.GetEnumerator();
         }
     }
 
@@ -102,7 +119,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     }
 
     [Serializable]
-    public sealed class InventorySave {
+    public sealed class InventorySave : IEnumerable<InventorySave.ItemCount> {
         [Serializable]
         public struct ItemCount {
             public ItemSave Item;
@@ -118,6 +135,14 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
 
             this.InventoryCapacity = inventoryCapacity;
             this.Items = items;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() {
+            return Items.GetEnumerator();
+        }
+
+        public IEnumerator<ItemCount> GetEnumerator() {
+            return Items.GetEnumerator();
         }
     }
 
@@ -150,108 +175,129 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     }
 
     [Serializable]
-    public sealed class EquipmentSave {
+    public class EquipmentSave : IEnumerable<EquipItemSave>, IEnumerable<EquipmentSave.EquipBonus> {
         [Serializable]
         public struct EquipBonus {
-            public string Stat;
+            public StatTypeSave Stat;
             public int Bonus;
+        }
+        [Serializable]
+        public class EquipBuff {
+            public EquipTypeSave EquipType;
+            public BuffSave Buff;
         }
 
         public List<EquipItemSave> Equipped;
-        // TODO Item buffs
+        public List<EquipBuff> Buffs;
         public List<EquipBonus> Bonuses;
 
-        public EquipmentSave(List<EquipItemSave> equipped, List<EquipBonus> bonuses) {
+        public EquipmentSave(List<EquipItemSave> equipped, List<EquipBuff> buffs, List<EquipBonus> bonuses) {
             this.Equipped = equipped;
+            this.Buffs = buffs;
             this.Bonuses = bonuses;
         }
-    }
 
-    // Needed so we can put a constraint on BuffSave, which has a generic param
-    public interface IBuffSave { }
+        IEnumerator<EquipItemSave> IEnumerable<EquipItemSave>.GetEnumerator() {
+            return Equipped.GetEnumerator();
+        }
 
-    [Serializable]
-    public abstract class BuffSave : IdSaveObject<Buff>, IBuffSave {
-        public int TurnsRemaining;
+        IEnumerator IEnumerable.GetEnumerator() {
+            return Equipped.GetEnumerator();
+        }
 
-        public BuffSave(Type type, int turnsRemaining) : base(type) {
-            this.TurnsRemaining = turnsRemaining;
+        IEnumerator<EquipBonus> IEnumerable<EquipBonus>.GetEnumerator() {
+            return Bonuses.GetEnumerator();
         }
     }
 
-    // Not serializable
-    public sealed class PartialBuffSave : BuffSave {
-        public Type Type;
+    [Serializable]
+    public class BuffSave : IdSaveObject<Buff> {
+        public enum SaveType {
+            UNKNOWN = 0,
+            CASTER_IN_PARTY,
+            CASTER_NOT_IN_PARTY
+        }
+
+        public SaveType Type;
+        public int TurnsRemaining;
         public CharacterStatsSave StatCopy;
         public int CasterCharacterId;
 
-        public PartialBuffSave(int turnsRemaining, CharacterStatsSave casterCopy, int casterId, Type type) : base(type, turnsRemaining) {
-            this.StatCopy = casterCopy;
+        public int PartyIndex; // Setup in Party
+
+        public BuffSave(int turnsRemaining, CharacterStatsSave statCopy, int casterId, Type type) : base(type) {
+            this.TurnsRemaining = turnsRemaining;
+            this.StatCopy = statCopy;
             this.CasterCharacterId = casterId;
-            this.Type = type;
+            this.PartyIndex = -1;
         }
-    }
 
-    [Serializable]
-    public sealed class FullBuffSave : BuffSave {
-        public const int CASTER_NOT_IN_PARTY = -1;
-
-        public int PartyIndex;
-        public CharacterStatsSave Stats;
-
-        public FullBuffSave(Type type, int turnsRemaining, int partyIndex) : base(type, turnsRemaining) {
+        public void SetupAsCasterInParty(int partyIndex) {
+            this.Type = SaveType.CASTER_IN_PARTY;
             this.PartyIndex = partyIndex;
-            this.Stats = null;
+            this.StatCopy = null;
+            this.CasterCharacterId = Character.UNKNOWN_ID;
         }
 
-        public FullBuffSave(Type type, int turnsRemaining, CharacterStatsSave stats) : base(type, turnsRemaining) {
-            this.PartyIndex = CASTER_NOT_IN_PARTY;
-            this.Stats = stats;
-        }
-
-        public bool IsCasterInParty {
-            get {
-                return PartyIndex >= 0;
-            }
+        public void SetupAsCasterNotInParty() {
+            this.Type = SaveType.CASTER_NOT_IN_PARTY;
+            this.PartyIndex = -1;
+            this.CasterCharacterId = Character.UNKNOWN_ID;
         }
     }
-
-    // Needed so we can put a constraint on CharacterBuffsSave, which has a generic param
-    public interface ICharacterBuffsSave { }
 
     /// <typeparam name="T">Type in list.</typeparam>
     [Serializable]
-    public abstract class CharacterBuffsSave<T> : IEnumerable<T>, ICharacterBuffsSave where T : BuffSave {
-        public List<T> BuffSaves;
+    public class CharacterBuffsSave : IEnumerable<BuffSave> {
+        public List<BuffSave> BuffSaves;
 
-        public CharacterBuffsSave(List<T> buffSaves) {
+        public CharacterBuffsSave(List<BuffSave> buffSaves) {
             this.BuffSaves = buffSaves;
         }
 
-        public IEnumerator<T> GetEnumerator() {
-            return BuffSaves.GetEnumerator();
+        public static Buff SetupBuffCasterFromSave(BuffSave bs, List<Character> partyMembers) {
+            Buff b = bs.CreateObjectFromID();
+            b.InitFromSaveObject(bs);
+
+            Characters.Stats caster = null;
+            int id = 0;
+            switch (bs.Type) {
+                case BuffSave.SaveType.CASTER_IN_PARTY:
+                    Util.Assert(bs.PartyIndex >= 0, "Party index is negative.");
+                    Character character = partyMembers[bs.PartyIndex];
+                    caster = character.Stats;
+                    id = character.Id;
+                    break;
+                case BuffSave.SaveType.CASTER_NOT_IN_PARTY:
+                    Util.Assert(bs.StatCopy != null, "Statcopy is null.");
+                    caster = new Characters.Stats();
+                    caster.InitFromSaveObject(bs.StatCopy);
+                    id = Character.UNKNOWN_ID;
+                    break;
+                default:
+                    Util.Assert(false, "Unknown SaveType");
+                    break;
+            }
+            b.Caster = new BuffParams() { Caster = caster, CasterId = id };
+
+            return b;
         }
 
         IEnumerator IEnumerable.GetEnumerator() {
             return BuffSaves.GetEnumerator();
         }
-    }
 
-    // Not serializable
-    public sealed class PartialCharacterBuffsSave : CharacterBuffsSave<PartialBuffSave> {
-        public PartialCharacterBuffsSave(List<PartialBuffSave> buffSaves) : base(buffSaves) { }
-    }
-
-    [Serializable]
-    public sealed class FullCharacterBuffsSave : CharacterBuffsSave<FullBuffSave> {
-        public FullCharacterBuffsSave(List<FullBuffSave> buffSaves) : base(buffSaves) { }
+        IEnumerator<BuffSave> IEnumerable<BuffSave>.GetEnumerator() {
+            return BuffSaves.GetEnumerator();
+        }
     }
 
     /// <typeparam name="T">Type of BuffsSave used</typeparam>
     [Serializable]
-    public abstract class CharacterSave<T> where T : ICharacterBuffsSave {
+    public class CharacterSave {
+        public int Id;
         public CharacterStatsSave Stats;
-        public T Buffs;
+        public CharacterBuffsSave Buffs;
         public LookSave Look;
         public CharacterSpellBooksSave Spells;
         public BrainSave Brain;
@@ -259,12 +305,14 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public EquipmentSave Equipment;
 
         public CharacterSave(
+            int id,
             CharacterStatsSave stats,
-            T buffs,
+            CharacterBuffsSave buffs,
             LookSave look,
             CharacterSpellBooksSave spells,
             BrainSave brain,
             EquipmentSave equipment) {
+            this.Id = id;
             this.Stats = stats;
             this.Buffs = buffs;
             this.Look = look;
@@ -274,44 +322,12 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         }
     }
 
-    // Not serializable
-    public sealed class PartialCharacterSave : CharacterSave<PartialCharacterBuffsSave> {
-        public int Id;
-
-        public PartialCharacterSave(
-            int id,
-            CharacterStatsSave stats,
-            PartialCharacterBuffsSave buffs,
-            LookSave look,
-            CharacterSpellBooksSave spells,
-            BrainSave brain,
-            EquipmentSave equipment
-            )
-            : base(stats, buffs, look, spells, brain, equipment) {
-            this.Id = id;
-        }
-    }
-
-    [Serializable]
-    public sealed class FullCharacterSave : CharacterSave<FullCharacterBuffsSave> {
-        public FullCharacterSave(
-            CharacterStatsSave stats,
-            FullCharacterBuffsSave buffs,
-            LookSave look,
-            CharacterSpellBooksSave spells,
-            BrainSave brain,
-            EquipmentSave equipment
-            )
-            : base(stats, buffs, look, spells, brain, equipment) {
-        }
-    }
-
     [Serializable]
     public sealed class PartySave {
-        public List<FullCharacterSave> Characters;
+        public List<CharacterSave> Characters;
         public InventorySave Inventory;
 
-        public PartySave(List<FullCharacterSave> characters, InventorySave inventory) {
+        public PartySave(List<CharacterSave> characters, InventorySave inventory) {
             this.Characters = characters;
             this.Inventory = inventory;
         }
