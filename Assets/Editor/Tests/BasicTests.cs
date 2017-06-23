@@ -360,5 +360,38 @@ public class BasicTests {
             Assert.AreEqual(party, party2);
             Assert.AreSame(party.Collection.ToList()[1].Stats, party.Collection.ToList()[2].Buffs.ToList()[0].BuffCaster);
         }
+
+        [Test, Timeout(2000)]
+        public void SaveLoadDoesNotMaintainsReferencesForNonPartyMemberCastedBuffs() {
+            Party party = new Party();
+            Kitsune dummy = new Kitsune();
+            Kitsune buffCaster = new Kitsune();
+            Kitsune buffRecipient = new Kitsune();
+
+            Poison poison = new Poison();
+            Util.Log("BuffcasterID: " + buffCaster.Id);
+            poison.Caster = new BuffParams() { Caster = buffCaster.Stats, CasterId = buffCaster.Id };
+
+            buffRecipient.Buffs.AddBuff(poison);
+
+            party.AddMember(dummy);
+            party.AddMember(new Kitsune());
+            party.AddMember(buffRecipient);
+
+            PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
+
+            Party party2 = new Party();
+            party2.InitFromSaveObject(retrieved);
+
+            List<Character> a = party.ToList();
+            List<Character> b = party.ToList();
+
+            Character caster = b[1];
+            Character target = b[2];
+
+            Assert.IsTrue(party.Equals(party2));
+            Assert.AreEqual(party, party2);
+            Assert.AreNotSame(party.Collection.ToList()[1].Stats, party.Collection.ToList()[2].Buffs.ToList()[0].BuffCaster);
+        }
     }
 }
