@@ -2,6 +2,7 @@
 using Scripts.Presenter;
 using Scripts.View.Effects;
 using Scripts.View.ObjectPool;
+using Scripts.View.Tooltip;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Scripts.View.Portraits {
     /// This class represents a Portrait viewable
     /// on either the left or right side of the screen.
     /// </summary>
-    public class PortraitView : PooledBehaviour {
+    public class PortraitView : PooledBehaviour, ITippable {
         public CharacterPresenter Presenter;
 
         [SerializeField]
@@ -40,6 +41,9 @@ namespace Scripts.View.Portraits {
         [SerializeField]
         private GameObject resourcesHolder;
 
+        [SerializeField]
+        private Tooltip.Tip tip;
+
         public GameObject BuffsHolder { get { return buffsHolder; } }
 
         /// <summary>
@@ -63,11 +67,22 @@ namespace Scripts.View.Portraits {
         public IDictionary<StatType, ResourceBundle> ResourceViews { get; private set; }
         public Sprite Sprite { get { return iconImage.sprite; } set { iconImage.sprite = value; } }
 
+        Tip ITippable.Tip {
+            get {
+                return tip;
+            }
+        }
+
+        public void SetTip(Sprite sprite, string title, string body) {
+            tip.Setup(sprite, title, body);
+        }
+
         public override void Reset() {
             PortraitName = "";
             PortraitText.color = Color.white;
             Image.color = Color.white;
             Image.enabled = true;
+            tip.Reset();
 
             ResourceView[] rvs = resourcesHolder.GetComponentsInChildren<ResourceView>();
             BuffView[] bvs = buffsHolder.GetComponentsInChildren<BuffView>();

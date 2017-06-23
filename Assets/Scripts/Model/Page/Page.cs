@@ -16,7 +16,7 @@ namespace Scripts.Model.Pages {
         public static Func<TextBox, PooledBehaviour> TypeText;
 
         public ICollection<Character> Left;
-        public string Location;
+        public readonly string Location;
         public string Music;
         public ICollection<Character> Right;
         public string Body;
@@ -146,6 +146,18 @@ namespace Scripts.Model.Pages {
 
         public PooledBehaviour AddText(string s) {
             return TypeText(new TextBox(s));
+        }
+
+        public override int GetHashCode() {
+            return Location.GetHashCode();
+        }
+
+        public override bool Equals(object obj) {
+            Page item = obj as Page;
+            if (item == null) {
+                return false;
+            }
+            return item.Location.Equals(this.Location);
         }
 
         /// <summary>

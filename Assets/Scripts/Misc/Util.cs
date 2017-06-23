@@ -385,4 +385,12 @@ public static class Util {
     public static TKey GetKey<TKey>(this Dictionary<TKey, string> dictionary, string value) {
         return dictionary.FirstOrDefault(x => x.Value.Equals(value)).Key;
     }
+    public static string GetDescription(this Enum value) {
+        FieldInfo field = value.GetType().GetField(value.ToString());
+        object[] attribs = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
+        if (attribs.Length > 0) {
+            return ((DescriptionAttribute)attribs[0]).Description;
+        }
+        return string.Empty;
+    }
 }

@@ -81,7 +81,7 @@ namespace Scripts.Presenter {
             pagePresenter = new PagePresenter(mainMenu, textBoxHolder, actionGrid, leftPortraits, rightPortraits, header, sound);
 
             Menus menus = new Menus();
-            pagePresenter.Page = menus.Start;
+            pagePresenter.Page = menus.Root;
 
             IDs.Init();
         }

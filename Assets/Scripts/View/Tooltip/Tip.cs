@@ -38,5 +38,17 @@ namespace Scripts.View.Tooltip {
                 body = value;
             }
         }
+
+        public void Setup(Sprite sprite, string title, string body) {
+            this.sprite = sprite;
+            this.title = title;
+            this.body = body;
+        }
+
+        public void Reset() {
+            this.sprite = null;
+            this.title = string.Empty;
+            this.body = string.Empty;
+        }
     }
 }

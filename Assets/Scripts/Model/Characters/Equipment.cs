@@ -92,7 +92,7 @@ namespace Scripts.Model.Characters {
         }
 
         public int GetBonus(StatType type) {
-            return statBonuses[type];
+            return statBonuses.ContainsKey(type) ? statBonuses[type] : 0;
         }
 
         public bool Contains(EquipType type) {

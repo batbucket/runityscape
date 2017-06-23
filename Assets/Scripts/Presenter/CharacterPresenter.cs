@@ -33,6 +33,13 @@ namespace Scripts.Presenter {
         public void Tick() {
             SetupFuncs();
 
+            // Setup Tooltip
+            PortraitView.SetTip(Character.Look.Sprite, Character.Look.Name,
+                string.Format("Level {0} {1}\n<color=grey>{2}</color>",
+                Character.Stats.GetStatCount(StatType.LEVEL),
+                Character.Look.Breed.GetDescription(),
+                Character.Look.Tooltip));
+
             //Attempt to set ResourceViews
             PortraitView.SetResources(Character.Stats.Resources);
 

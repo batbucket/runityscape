@@ -54,6 +54,10 @@ namespace Scripts.Model.Characters {
             AddSplat(new SplatDetails(stat.Type.Color, "+", stat.Type.Sprite));
         }
 
+        protected void RemoveStat(StatType type) {
+            this.dict.Remove(type);
+        }
+
         public void SetToStat(StatType statType, Value value, int amount) {
             if (HasStat(statType) && amount != 0) {
                 Stat stat = dict[statType];
