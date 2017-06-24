@@ -55,7 +55,7 @@ namespace Scripts.Model.Stats {
 
         public static readonly StatType HEALTH = new StatType(BoundType.RESOURCE,
                                                               "Health",
-                                                              "health-normal",
+                                                              "hearts",
                                                               "Life state. Most units enter a deathlike state when their health reaches zero.",
                                                               Color.green,
                                                               Color.red);
