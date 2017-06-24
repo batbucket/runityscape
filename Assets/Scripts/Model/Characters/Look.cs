@@ -73,7 +73,8 @@ namespace Scripts.Model.Characters {
                 return false;
             }
 
-            return this.Name.Equals(item.Name)
+            return
+                this.Name.Equals(item.Name)
                 && this.textColor.Equals(item.textColor)
                 && this.tooltip.Equals(item.tooltip)
                 && this.breed.Equals(item.breed)
