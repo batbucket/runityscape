@@ -18,10 +18,12 @@ namespace Scripts.Game.Pages {
     public class Menus : PageGroup {
         public const int DEBUGGING = 1;
         public const int CREDITS = 2;
+        public const int NEW_GAME = 3;
 
         public Menus() : base(new Page("Main Menu")) {
             Register(DEBUGGING, new Page("Debug"));
             Register(CREDITS, new Page("Credits"));
+            Register(NEW_GAME, new Page("New Game"));
             StartPage();
             DebugPage();
             CreditsPage();
@@ -78,6 +80,8 @@ namespace Scripts.Game.Pages {
         private void CreditsPage() {
             Page page =
                 BasicPage(CREDITS, ROOT_INDEX);
+
+            // Characters
             page.AddCharacters(false, new CreditsDummy(Breed.CREATOR, 5, "eternal", "spell-book", "programmer, design, and writing.\nlikes lowercase a little <i>too</i> much."));
             page.AddCharacters(false, new CreditsDummy(Breed.TESTER, 5, "Duperman", "shiny-apple", "Once explored the Amazon."));
             page.AddCharacters(false, new CreditsDummy(Breed.TESTER, 99, "Rohan", "swap-bag", "Best hunter in the critically acclaimed game\n\'Ace Prunes 3\'"));
@@ -85,6 +89,24 @@ namespace Scripts.Game.Pages {
             page.AddCharacters(true, new CreditsDummy(Breed.TESTER, 5, "One of Vishal's friends", "hourglass", "Name forgotten, but not gone."));
             page.AddCharacters(true, new CreditsDummy(Breed.TESTER, 5, "cjdudeman14", "tentacles-skull", "Open beta tester. Bug slayer. Attempted to kill that which is unkillable."));
             page.AddCharacters(true, new CreditsDummy(Breed.COMMENTER, 5, "UnserZeitMrGlinko", "gladius", "\"more talking!﻿\" ~UZMG"));
+
+            page.OnEnter += () => {
+                page.AddText(
+                    "Tools: Made with Unity and the NUnit testing framework.",
+                    "Music: Sourced from OpenGameArt.",
+                    "Sound Effects: Sourced from Freesound, SoundBible, and OpenGameArt.",
+                    "Icons: Sourced from http://Game-icons.net.",
+                    "Fonts: Determination Mono (Main), Hachicro (Hitsplats), Mars Needs C. (Bar text)"
+                    );
+            };
+        }
+
+        private void NewGamePage() {
+            Page page = BasicPage(NEW_GAME, ROOT_INDEX
+
+                );
+            page.HasInputField = true;
+            page.Body = "";
         }
     }
 

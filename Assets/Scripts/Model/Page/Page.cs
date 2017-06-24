@@ -22,14 +22,15 @@ namespace Scripts.Model.Pages {
         public string Body;
         public Sprite Icon;
         public Action OnEnter;
+        public bool HasInputField;
 
         private IButtonable[] grid;
 
         public Page(string location) {
             this.Location = location;
             this.grid = new IButtonable[Grid.DEFAULT_BUTTON_COUNT];
-            this.Left = new HashSet<Character>(new IdentityEqualityComparer<Character>());
-            this.Right = new HashSet<Character>(new IdentityEqualityComparer<Character>());
+            this.Left = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
+            this.Right = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
             this.OnEnter = () => { };
         }
 
@@ -85,6 +86,12 @@ namespace Scripts.Model.Pages {
             ICollection<Character> mySet = !isRightSide ? Left : Right;
             foreach (Character c in chars) {
                 mySet.Add(c);
+            }
+        }
+
+        public void AddText(params string[] texts) {
+            foreach (string s in texts) {
+                AddText(s);
             }
         }
 

@@ -15,7 +15,7 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : IComparable<Character>, ISaveable<CharacterSave> {
+    public class Character : IComparable<Character>, ISaveable<CharacterSave>, IIdNumberable {
         public const int UNKNOWN_ID = -1;
 
         public readonly Stats Stats;

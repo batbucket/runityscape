@@ -31,7 +31,7 @@ namespace Scripts.Model.Characters {
         private bool isSetupTempFieldsBefore;
 
         public Buffs() {
-            set = new HashSet<Buff>(new IdentityEqualityComparer<Buff>());
+            set = new HashSet<Buff>(new IdNumberEqualityComparer<Buff>());
             this.AddSplat = (a => { });
         }
 
@@ -39,7 +39,7 @@ namespace Scripts.Model.Characters {
             Util.Assert(buff.BuffCaster != null, "Buff's caster is null.");
             buff.OnApply(Stats);
             set.Add(buff);
-            AddSplat(new SplatDetails(Color.white, string.Format("+{0}", buff.Name), buff.Sprite));
+            AddSplat(new SplatDetails(Color.green, string.Format("+"), buff.Sprite));
         }
 
         public void RemoveBuff(RemovalType type, Buff buff) {
@@ -55,7 +55,7 @@ namespace Scripts.Model.Characters {
                     break;
             }
             set.Remove(buff);
-            AddSplat(new SplatDetails(Color.grey, string.Format("-{0}", buff.Name), buff.Sprite));
+            AddSplat(new SplatDetails(Color.red, string.Format("-"), buff.Sprite));
         }
 
         IEnumerator<Buff> IEnumerable<Buff>.GetEnumerator() {

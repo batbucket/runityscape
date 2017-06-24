@@ -60,7 +60,7 @@ namespace Scripts.Model.Characters {
                 dict.Add(itemToAdd, 0);
             }
             dict[itemToAdd] += count;
-            AddSplat(new SplatDetails(Color.green, string.Format("+{0}x", count), itemToAdd.Icon));
+            AddSplat(new SplatDetails(Color.green, string.Format("+{0}", count), itemToAdd.Icon));
         }
 
         public bool HasItem(Item item) {

@@ -1,4 +1,5 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.Interfaces;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
@@ -14,7 +15,7 @@ namespace Scripts.Model.Buffs {
         public int CasterId;
     }
 
-    public abstract class Buff : IComparable<Buff>, ISaveable<BuffSave> {
+    public abstract class Buff : IComparable<Buff>, ISaveable<BuffSave>, IIdNumberable {
         public readonly Sprite Sprite;
         public readonly string Name;
         public readonly string Description;
@@ -48,6 +49,12 @@ namespace Scripts.Model.Buffs {
         public int TurnsRemaining {
             get {
                 return turnsRemaining;
+            }
+        }
+
+        public int Id {
+            get {
+                return buffId;
             }
         }
 

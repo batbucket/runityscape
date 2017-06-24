@@ -56,7 +56,7 @@ namespace Scripts.View.Portraits {
         }
 
         private void Start() {
-            this.CharacterViews = new Dictionary<Character, PortraitBundle>();
+            this.CharacterViews = new Dictionary<Character, PortraitBundle>(new IdNumberEqualityComparer<Character>());
             ObjectPoolManager.Instance.Register(portraitPrefab, 10);
         }
 

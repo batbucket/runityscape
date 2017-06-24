@@ -31,6 +31,8 @@ namespace Scripts.View.Effects {
             image.gameObject.SetActive(sprite != null);
             text.color = c;
             text.text = s;
+            image.color = c;
+
             float timer = 0;
             float accel = 0;
             while ((timer += Time.deltaTime * accel) < TIME_UPSIZED) {

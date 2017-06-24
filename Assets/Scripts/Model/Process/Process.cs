@@ -18,6 +18,14 @@ namespace Scripts.Model.Processes {
                Action action,
                Func<bool> condition = null) : this(name, null, null, action, condition) { }
 
+
+        /// <summary>
+        /// Dummy Process for indicating something
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        public Process(string name, string description) : this(name, description, () => { }) { }
+
         /// <summary>
         /// Spriteless constructor
         /// </summary>

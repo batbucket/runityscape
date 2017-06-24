@@ -52,7 +52,7 @@ namespace Scripts.Model.Pages {
             AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();
             List<Character> chars = GetAll();
-            HashSet<Character> playerActionSet = new HashSet<Character>(new IdentityEqualityComparer<Character>());
+            HashSet<Character> playerActionSet = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
 
             yield return DetermineCharacterActions(chars, plays, playerActionSet);
             yield return PerformActions(plays);

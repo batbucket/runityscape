@@ -76,8 +76,6 @@ namespace Scripts.Presenter {
 
         public void Tick() {
             Page.Tick();
-            //actionGrid.ClearAll();
-            //actionGrid.SetButtonAttributes(Page.Grid);
             header.Location = Page.Location;
             SetCharacterPresenters(Page.Left, left);
             SetCharacterPresenters(Page.Right, right);
@@ -111,6 +109,11 @@ namespace Scripts.Presenter {
 
             if (!string.IsNullOrEmpty(page.Body)) {
                 AddTextBox(new TextBox(page.Body));
+            }
+
+            actionGrid.IsEnabled = !page.HasInputField;
+            if (page.HasInputField) {
+                textBoxHolder.AddInputBox();
             }
 
             actionGrid.ClearAll();
