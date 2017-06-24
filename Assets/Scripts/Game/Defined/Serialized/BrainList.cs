@@ -18,14 +18,14 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
         public override void DetermineAction(Action<IPlayable> addPlay) {
             Grid main = new Grid("Back");
-            main.Array = Util.GetArray(
-                new Tuple(0, GenerateTargets(main, Attack, addPlay)),
-                new Tuple(1, GenerateSpellBooks(main, Owner.Spells, Owner.Spells.Count, addPlay, Util.GetSprite("spell-book"), "Spell", "Cast a spell.")),
-                new Tuple(2, GenerateSpellBooks(main, Owner.Inventory, Owner.Inventory.UniqueItemCount, addPlay, Util.GetSprite("swap-bag"),
+            main.Array = new IButtonable[] {
+                GenerateTargets(main, Attack, addPlay),
+                GenerateSpellBooks(main, Owner.Spells, Owner.Spells.Count, addPlay, Util.GetSprite("spell-book"), "Spell", "Cast a spell."),
+                GenerateSpellBooks(main, Owner.Inventory, Owner.Inventory.UniqueItemCount, addPlay, Util.GetSprite("swap-bag"),
                     string.Format("Item ({0}/{1})", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.Capacity),
-                    string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.Capacity))
-                )
-                );
+                    string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", Owner.Inventory.TotalOccupiedSpace, Owner.Inventory.Capacity)),
+                GenerateUnequipGrid(main, addPlay)
+                };
             battle.Actions = main.Array;
         }
 
@@ -89,6 +89,26 @@ namespace Scripts.Game.Defined.Serialized.Characters {
                                         addFunc(Spells.CreateSpell(sb, this.Owner, target));
                                     }
                                 });
+        }
+
+        private Grid GenerateUnequipGrid(Grid previous, Action<IPlayable> addPlay) {
+            Grid grid = GenerateBackableGrid(previous, Util.GetSprite("shoulder-armor"), EquipType.AllTypes.Count, "Equipment", "Manage equipped items.");
+            int index = 1;
+
+            foreach (EquipType myET in EquipType.AllTypes) {
+                EquipType et = myET;
+                Process p = null;
+                Equipment eq = Owner.Equipment;
+                if (Owner.Equipment.Contains(et)) {
+                    CastUnequipItem unequip = new CastUnequipItem(Owner.Inventory, Owner.Equipment, eq.PeekItem(et));
+                    p = new Process(unequip.Name, unequip.CreateDescription(new SpellParams(Owner)),
+                        () => addPlay(Spells.CreateSpell(unequip, Owner, Owner)));
+                } else {
+                    p = new Process(Util.ColorString(et.Name, Color.grey), "No item is equipped in this slot. Items can be equipped via the inventory menu.");
+                }
+                grid.Array[index] = p;
+            }
+            return grid;
         }
 
         private string CreateDetailedTargetName(Character target, SpellBook sb) {
