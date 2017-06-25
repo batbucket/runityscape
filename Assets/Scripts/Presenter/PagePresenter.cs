@@ -30,6 +30,8 @@ namespace Scripts.Presenter {
         private HeaderView header;
         private SoundView sound;
 
+        private Func<string> GetInputFunc;
+
         private IList<CharacterPresenter> characterPresenters;
 
         private InputBoxView inputBox;
@@ -77,6 +79,7 @@ namespace Scripts.Presenter {
         public void Tick() {
             Page.Tick();
             header.Location = Page.Location;
+            actionGrid.SetButtonAttributes(page.Actions);
             SetCharacterPresenters(Page.Left, left);
             SetCharacterPresenters(Page.Right, right);
             TickCharacterPresenters(Page.Left);
@@ -105,15 +108,18 @@ namespace Scripts.Presenter {
 
             // Renable the actiongrid in case if it was disabled
             // From Timelining
-            actionGrid.IsEnabled = true;
 
             if (!string.IsNullOrEmpty(page.Body)) {
                 AddTextBox(new TextBox(page.Body));
             }
 
-            actionGrid.IsEnabled = !page.HasInputField;
+            actionGrid.IsEnabled = true;
+            actionGrid.IsHotKeysEnabled = !page.HasInputField;
             if (page.HasInputField) {
-                textBoxHolder.AddInputBox();
+                InputBoxView ibv = textBoxHolder.AddInputBox();
+                GetInputFunc = () => ibv.Input;
+            } else {
+                GetInputFunc = () => string.Empty;
             }
 
             actionGrid.ClearAll();
@@ -124,9 +130,9 @@ namespace Scripts.Presenter {
             Tick();
         }
 
-        public PooledBehaviour AddTextBox(TextBox t, Action callBack = null) {
+        public PooledBehaviour AddTextBox(TextBox t) {
             textBoxHolder.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
-            return textBoxHolder.AddTextBox(t, callBack);
+            return textBoxHolder.AddTextBox(t);
         }
 
         private void SetCharacterPresenters(ICollection<Character> characters, PortraitHolderView portraitHolder) {
@@ -139,6 +145,7 @@ namespace Scripts.Presenter {
         }
 
         private void TickCharacterPresenters(ICollection<Character> characters) {
+            page.Input = GetInputFunc.Invoke();
             foreach (Character c in characters) {
                 c.Presenter.Tick();
             }

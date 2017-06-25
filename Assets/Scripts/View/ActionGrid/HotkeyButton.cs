@@ -44,6 +44,8 @@ namespace Scripts.View.ActionGrid {
         [SerializeField]
         private Text text;
 
+        private bool isHotkeyEnabled;
+
         public IButtonable Buttonable {
             set {
                 text.text = value.ButtonText;
@@ -93,6 +95,12 @@ namespace Scripts.View.ActionGrid {
             }
         }
 
+        public bool IsHotkeyEnabled {
+            set {
+                this.isHotkeyEnabled = value;
+            }
+        }
+
         public override void Reset() {
             Hotkey = KeyCode.None;
             icon.sprite = null;
@@ -123,7 +131,8 @@ namespace Scripts.View.ActionGrid {
 
         // Update is called once per frame
         private void Update() {
-            if (Input.GetKeyDown(this.Hotkey)) {
+            hotkeyText.gameObject.SetActive(isHotkeyEnabled);
+            if (Input.GetKeyDown(this.Hotkey) && isHotkeyEnabled) {
                 button.onClick.Invoke();
             }
         }
