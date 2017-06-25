@@ -82,7 +82,6 @@ namespace Scripts.Presenter {
 
             Menus menus = new Menus();
             pagePresenter.Page = menus.Root;
-
             IDs.Init();
         }
 

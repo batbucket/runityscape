@@ -6,6 +6,7 @@ using Scripts.Game.Defined.Serialized.Items.Equipment;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Defined.StartingStats;
+using Scripts.Model.Acts;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
@@ -13,6 +14,7 @@ using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
+using Scripts.Model.TextBoxes;
 using Scripts.Model.World.Serialization;
 using System;
 using System.Collections.Generic;
@@ -21,6 +23,7 @@ using UnityEngine;
 
 [TestFixture]
 public class BasicTests {
+
     [TestFixture]
     public class IDTableTests {
         [OneTimeSetUp]

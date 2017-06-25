@@ -94,7 +94,6 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         private Grid GenerateUnequipGrid(Grid previous, Action<IPlayable> addPlay) {
             Grid grid = GenerateBackableGrid(previous, Util.GetSprite("shoulder-armor"), EquipType.AllTypes.Count, "Equipment", "Manage equipped items.");
             int index = 1;
-
             foreach (EquipType myET in EquipType.AllTypes) {
                 EquipType et = myET;
                 Process p = null;
@@ -104,9 +103,9 @@ namespace Scripts.Game.Defined.Serialized.Characters {
                     p = new Process(unequip.Name, unequip.CreateDescription(new SpellParams(Owner)),
                         () => addPlay(Spells.CreateSpell(unequip, Owner, Owner)));
                 } else {
-                    p = new Process(Util.ColorString(et.Name, Color.grey), "No item is equipped in this slot. Items can be equipped via the inventory menu.");
+                    p = new Process(Util.ColorString(et.Name, Color.grey), et.Sprite, "No item is equipped in this slot. Items can be equipped via the inventory menu.");
                 }
-                grid.Array[index] = p;
+                grid.Array[index++] = p;
             }
             return grid;
         }
@@ -118,6 +117,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         private Process GenerateBack(Grid previous) {
             return new Process(
                 "Back",
+                Util.GetSprite("plain-arrow"),
                 "Go back to the previous menu.",
                 () => previous.Invoke()
                 );
