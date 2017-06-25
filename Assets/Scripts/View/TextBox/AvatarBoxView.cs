@@ -18,14 +18,15 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private TextBoxView textBoxView;
 
+        public Sprite Sprite {
+            set {
+                avatar.sprite = value;
+            }
+        }
+
         public override void Reset() {
             textBoxView.Reset();
             avatar.sprite = null;
-        }
-
-        public void WriteText(AvatarBox a, Action callBack = null) {
-            avatar.sprite = a.Sprite;
-            textBoxView.WriteText(a, callBack);
         }
     }
 }

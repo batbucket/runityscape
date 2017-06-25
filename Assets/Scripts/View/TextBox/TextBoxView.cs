@@ -18,7 +18,14 @@ namespace Scripts.View.TextBoxes {
         /// <summary>
         /// Used to fast forward through the text writing.
         /// </summary>
-        public bool IsSkip;
+        public bool IsSkip {
+            private get {
+                return isSkip;
+            }
+            set {
+                isSkip = value;
+            }
+        }
 
         [SerializeField]
         private Image background;
@@ -43,6 +50,8 @@ namespace Scripts.View.TextBoxes {
 
         private float TextAlpha { set { Util.SetTextAlpha(text, value); } }
 
+        private bool isSkip;
+
         public override void Reset() {
             text.text = "";
             text.color = Color.white;
@@ -55,11 +64,11 @@ namespace Scripts.View.TextBoxes {
         /// </summary>
         /// <param name="textBox">Textbox to type out</param>
         /// <param name="callBack">Action to be called after textbox finishes typing</param>
-        public virtual void WriteText(TextBox textBox, Action callBack = null) {
-            StartCoroutine(TypeWriter(text, textBox, callBack));
+        public virtual void WriteText(TextBox textBox) {
+            StartCoroutine(TypeWriter(text, textBox));
         }
 
-        private IEnumerator TypeWriter(Text text, TextBox textBox, Action callBack) {
+        private IEnumerator TypeWriter(Text text, TextBox textBox) {
             text.color = textBox.Color;
 
             switch (textBox.Effect) {
@@ -77,9 +86,6 @@ namespace Scripts.View.TextBoxes {
             }
 
             textBox.IsDone = true;
-            if (callBack != null) {
-                callBack.Invoke();
-            }
         }
 
         private IEnumerator FadeIn(TextBox textBox) {
@@ -110,7 +116,10 @@ namespace Scripts.View.TextBoxes {
             int charsPassedWithoutSound = 0;
             text.text = string.Join("", currentTextArray);
             string wrapper = "\u2007"; // Wordwrapped space
-            while (index < textBox.TextArray.Length) {
+
+            bool hasSkipOccurred = false;
+            while (index < textBox.TextArray.Length && !hasSkipOccurred) {
+
                 // Type out letters every time we reach the timePerLetter time.
                 if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                     if (!taggedText[index]) {
@@ -140,6 +149,11 @@ namespace Scripts.View.TextBoxes {
                     // Update the text that is visible to the user
                     text.text = string.Join("", currentTextArray);
                     index++;
+
+                    if (IsSkip) {
+                        hasSkipOccurred = true;
+                        yield return FadeIn(textBox);
+                    }
                 }
                 yield return null;
             }

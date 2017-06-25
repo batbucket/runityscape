@@ -10,6 +10,7 @@ namespace Scripts.Model.TextBoxes {
     /// Represents a box with text inside it.
     /// </summary>
     public class TextBox {
+        private TextBoxView view;
         private Color color;
         private TextEffect effect;
         private string rawText;
@@ -19,6 +20,7 @@ namespace Scripts.Model.TextBoxes {
 
         public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) { }
 
+        public TextBox(Color c, string text) : this(text, c, TextEffect.FADE_IN, "Blip_0", 0) { }
         protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
             this.textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
             this.rawText = text;
@@ -37,8 +39,21 @@ namespace Scripts.Model.TextBoxes {
         public float TimePerLetter { get { return timePerLetter; } }
         public virtual TextBoxType Type { get { return TextBoxType.TEXT; } }
 
-        public virtual void Write(GameObject textBoxPrefab, Action callBack) {
-            textBoxPrefab.GetComponent<TextBoxView>().WriteText(this, callBack);
+        public void SetupPrefab(GameObject textBoxPrefab) {
+            this.view = textBoxPrefab.GetComponent<TextBoxView>();
+            SetupHelper(textBoxPrefab);
+        }
+
+        protected virtual void SetupHelper(GameObject textBoxPrefab) {
+
+        }
+
+        public void Write() {
+            view.WriteText(this);
+        }
+
+        public void Skip() {
+            view.IsSkip = true;
         }
     }
 }

@@ -4,26 +4,41 @@ using System;
 using UnityEngine;
 
 namespace Scripts.Model.TextBoxes {
+    public enum Side {
+        LEFT,
+        RIGHT
+    }
 
     /// <summary>
     /// Represents a textbox with a character portrait window to one of the sides.
     /// </summary>
-    public abstract class AvatarBox : TextBox {
+    public class AvatarBox : TextBox {
         protected const float TEXT_SPEED = 0.01f;
 
         public readonly Sprite Sprite;
+        private readonly TextBoxType type;
 
-        public AvatarBox(Sprite sprite,
-                         string text,
+        public AvatarBox(Side side,
+                         Sprite sprite,
                          Color color,
-                         string soundLocation,
-                         float timePerLetter)
-                         : base(text, color, TextEffect.TYPE, "Blip_0", timePerLetter) {
+                         string text)
+                         : base(text, color, TextEffect.TYPE, "Blip_0", TEXT_SPEED) {
             this.Sprite = sprite;
+            if (side == Side.LEFT) {
+                type = TextBoxType.LEFT;
+            } else {
+                type = TextBoxType.RIGHT;
+            }
         }
 
-        public override void Write(GameObject avatarBoxPrefab, Action callBack) {
-            avatarBoxPrefab.GetComponent<AvatarBoxView>().WriteText(this, callBack);
+        public override TextBoxType Type {
+            get {
+                return this.type;
+            }
+        }
+
+        protected override void SetupHelper(GameObject textBoxPrefab) {
+            textBoxPrefab.GetComponent<AvatarBoxView>().Sprite = Sprite;
         }
     }
 }

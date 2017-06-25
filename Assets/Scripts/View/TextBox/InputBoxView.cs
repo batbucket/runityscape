@@ -15,7 +15,7 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private InputField inputField;
 
-        public string Input { get { return inputField.text; } set { inputField.text = value; } }
+        public string Input { get { return inputField.text; } }
 
         public override void Reset() {
             inputField.text = "";
