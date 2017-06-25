@@ -37,6 +37,14 @@ namespace Scripts.View.ActionGrid {
             }
         }
 
+        public bool IsHotKeysEnabled {
+            set {
+                foreach (HotkeyButton b in buttons) {
+                    b.IsHotkeyEnabled = value;
+                }
+            }
+        }
+
         public void ClearAll() {
             for (int i = 0; i < buttons.Count; i++) {
                 ObjectPoolManager.Instance.Return(buttons[i]);

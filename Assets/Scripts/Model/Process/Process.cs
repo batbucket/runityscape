@@ -27,6 +27,13 @@ namespace Scripts.Model.Processes {
         public Process(string name, string description) : this(name, description, () => { }) { }
 
         /// <summary>
+        /// Dummy Process for indicating something
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="description"></param>
+        public Process(string name, Sprite sprite, string description) : this(name, sprite, description, () => { }) { }
+
+        /// <summary>
         /// Spriteless constructor
         /// </summary>
         public Process(string name,
