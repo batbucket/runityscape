@@ -5,24 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UnityEngine;
 
 namespace Scripts.Model.Items {
 
     public sealed class EquipType : IComparable<EquipType>, INameable, ISaveable<EquipTypeSave> {
         private static readonly HashSet<EquipType> allTypes = new HashSet<EquipType>(new IdentityEqualityComparer<EquipType>());
 
-        public static readonly EquipType WEAPON = new EquipType("Weapon");
-        public static readonly EquipType OFFHAND = new EquipType("Offhand");
-        public static readonly EquipType ARMOR = new EquipType("Armor");
-        public static readonly EquipType TRINKET = new EquipType("Trinket");
+        public static readonly EquipType WEAPON = new EquipType("Weapon", "gladius");
+        public static readonly EquipType OFFHAND = new EquipType("Offhand", "round-shield");
+        public static readonly EquipType ARMOR = new EquipType("Armor", "shoulder-armor");
+        public static readonly EquipType TRINKET = new EquipType("Trinket", "gem-necklace");
 
         private static int idCounter;
 
         public readonly string Name;
+        public readonly Sprite Sprite;
         private int id;
 
-        private EquipType(string name) {
+        private EquipType(string name, string iconLoc) {
             this.Name = name;
+            this.Sprite = Util.GetSprite(iconLoc);
             this.id = idCounter++;
             allTypes.Add(this);
         }

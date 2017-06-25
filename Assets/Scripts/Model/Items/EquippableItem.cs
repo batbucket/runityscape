@@ -19,13 +19,6 @@ namespace Scripts.Model.Items {
 
         private readonly SpellBook book;
 
-        private static readonly IDictionary<EquipType, Sprite> DEFAULT_ICONS = new Dictionary<EquipType, Sprite>() {
-            { EquipType.ARMOR, Util.GetSprite("shoulder-armor") },
-            { EquipType.WEAPON, Util.GetSprite("gladius") },
-            {EquipType.TRINKET, Util.GetSprite("gem-necklace") },
-            { EquipType.OFFHAND, Util.GetSprite("round-shield") }
-        };
-
         public EquippableItem(Sprite sprite, EquipType type, int basePrice, string name, string description)
             : base(sprite, basePrice, TargetType.SINGLE_ALLY, name, description) {
             this.Type = type;
@@ -61,7 +54,7 @@ namespace Scripts.Model.Items {
         }
 
         private static Sprite GetDefaultSprite(EquipType type) {
-            return DEFAULT_ICONS[type];
+            return type.Sprite;
         }
 
         EquipItemSave ISaveable<EquipItemSave>.GetSaveObject() {
