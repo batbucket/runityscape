@@ -393,4 +393,7 @@ public static class Util {
         }
         return string.Empty;
     }
+    public static bool EqualsIgnoreCase(this char a, char b) {
+        return char.ToLower(a) == char.ToLower(b);
+    }
 }

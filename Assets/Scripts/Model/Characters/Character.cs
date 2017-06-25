@@ -65,10 +65,6 @@ namespace Scripts.Model.Characters {
             }
         }
 
-        public TextBox Emote(string s) {
-            return new TextBox(string.Format(s, this.Look.DisplayName));
-        }
-
         public void Update() {
             Stats.Update(this);
         }
