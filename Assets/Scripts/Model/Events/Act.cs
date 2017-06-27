@@ -43,13 +43,12 @@ namespace Scripts.Model.Acts {
                 lastIndex = i;
                 bool isStepped = false;
                 Act act = acts[i];
-                grid.Array = new IButtonable[] {
-                    new Process("Skip", "Skip the current event.", () => act.SkipAct()),
-                    null
+                grid.List = new IButtonable[] {
+                    new Process("Skip", "Skip the current event.", () => act.SkipAct())
                 };
                 yield return act.Play();
                 if (i < acts.Length - 1) {
-                    grid.Array = new IButtonable[] {
+                    grid.List = new IButtonable[] {
                     new Process("Step", "Advance to the next event.", () => isStepped = true),
                     new Process("Skip All", "Skip the current scene.", () => isSkipAll = true)
                 };

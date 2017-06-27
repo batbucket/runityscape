@@ -60,15 +60,7 @@ namespace Scripts.Model.Items {
         public Dummy(BasicItem basic) : base(basic) { }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\n<color=grey>This item cannot be directly used and does not take up inventory space.</color>", item.Description);
-        }
-
-        protected override bool IsMeetOtherPreTargetRequirements() {
-            return false;
-        }
-
-        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
-            return false;
+            return string.Format("{0}\n\n<color=grey>This item cannot be used on a target and does not take up inventory space.</color>", item.Description);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
@@ -99,6 +91,24 @@ namespace Scripts.Model.Items {
 
         protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
             return new IEnumerator[] { SFX.PlaySound("Zip_0") };
+        }
+    }
+
+    public class TossItem : ItemSpellBook {
+        private Inventory inventory;
+
+        public TossItem(Item item, Inventory inventory) : base(item, "Toss " + item.Name) {
+            this.inventory = inventory;
+        }
+
+        public override string CreateDescriptionHelper(SpellParams caster) {
+            return string.Format("{0}\n\nRemove one of this item from the inventory.", item.Description);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            return new SpellEffect[] {
+                new ConsumeItemEffect(item, inventory)
+            };
         }
     }
 }

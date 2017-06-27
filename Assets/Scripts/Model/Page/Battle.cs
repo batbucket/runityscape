@@ -30,7 +30,10 @@ namespace Scripts.Model.Pages {
             foreach (Character c in right) {
                 Right.Add(c);
             }
-            OnEnter += () => Presenter.Main.Instance.StartCoroutine(startBattle());
+            OnEnter += () => {
+                Presenter.Main.Instance.StartCoroutine(startBattle());
+                OnEnter = () => { };
+            };
         }
 
         private bool IsResolved {

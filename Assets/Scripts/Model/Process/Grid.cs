@@ -1,18 +1,19 @@
 ﻿using System;
 using Scripts.Model.Interfaces;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace Scripts.Model.Processes {
     public class Grid : IButtonable {
         public const int DEFAULT_BUTTON_COUNT = 16;
-        public static Action<IButtonable[]> ChangeGridFunc;
+        public static Action<IList<IButtonable>> ChangeGridFunc;
 
         public string Text;
         public string Tooltip;
         public Sprite Icon;
         public Func<bool> Condition;
         public Action OnEnter;
-        public IButtonable[] Array;
+        public IList<IButtonable> List;
 
         public Grid(string text) {
             this.Text = text;
@@ -20,17 +21,7 @@ namespace Scripts.Model.Processes {
             this.Icon = null;
             this.Condition = () => true;
             OnEnter = () => { };
-            this.Array = new IButtonable[0];
-        }
-
-        public Grid(Grid back, string text, params IButtonable[] content) : this(text) {
-            this.Array = new IButtonable[content.Length + 1];
-            Array[0] = back;
-
-            int index = 1;
-            foreach (IButtonable ib in content) {
-                Array[index++] = ib;
-            }
+            this.List = new List<IButtonable>();
         }
 
         public string ButtonText {
@@ -58,8 +49,7 @@ namespace Scripts.Model.Processes {
         }
 
         public void Invoke() {
-            OnEnter();
-            ChangeGridFunc.Invoke(Array);
+            ChangeGridFunc.Invoke(List);
         }
     }
 }

@@ -93,7 +93,7 @@ namespace Scripts.Game.Pages {
             debug.AddCharacters(Side.LEFT, kitsune);
             int level = 0;
 
-            mainDebug.Array = new IButtonable[] {
+            mainDebug.List = new IButtonable[] {
                 Get(ROOT_INDEX),
                 new Process("Say", "Hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox("Hello"))),
                 new Process("AttDisb", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox(kitsune.Stats.LongAttributeDistribution))),
@@ -113,13 +113,13 @@ namespace Scripts.Game.Pages {
                 submenu
             };
 
-            submenu.Array = new IButtonable[] {
+            submenu.List = new IButtonable[] {
                 new Process("Say hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox("Hello"))),
                 mainDebug
             };
 
             debug.AddCharacters(Side.LEFT, kitsune);
-            debug.Actions = mainDebug.Array;
+            debug.Actions = mainDebug.List;
         }
 
         private void CreditsPage() {

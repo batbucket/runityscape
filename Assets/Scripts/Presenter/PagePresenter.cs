@@ -95,7 +95,8 @@ namespace Scripts.Presenter {
             if (overrideGrid == null) {
                 actionGrid.SetButtonAttributes(page.Actions);
             } else {
-                actionGrid.SetButtonAttributes(overrideGrid.Array);
+                actionGrid.ClearAll();
+                actionGrid.SetButtonAttributes(overrideGrid.List);
             }
             SetCharacterPresenters(Page.Left, left);
             SetCharacterPresenters(Page.Right, right);

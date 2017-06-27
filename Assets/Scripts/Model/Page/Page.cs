@@ -37,14 +37,14 @@ namespace Scripts.Model.Pages {
             this.Input = string.Empty;
         }
 
-        public IButtonable[] Actions {
+        public IList<IButtonable> Actions {
             set {
                 IButtonable[] set = null;
-                if (value.Length < Grid.DEFAULT_BUTTON_COUNT) {
+                if (value.Count < Grid.DEFAULT_BUTTON_COUNT) {
                     set = new IButtonable[Grid.DEFAULT_BUTTON_COUNT];
-                    Array.Copy(value, set, value.Length);
+                    Array.Copy(value.ToArray(), set, value.Count);
                 } else {
-                    set = value;
+                    set = value.ToArray();
                 }
                 this.grid = set;
                 UpdateGridUI.Invoke(this);

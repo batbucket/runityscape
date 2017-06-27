@@ -28,11 +28,10 @@ namespace Scripts.Game.Pages {
                         new SpellParams(c),
                         null,
                         inventory,
-                        inventory.UniqueItemCount,
                         playable => {
                             Main.Instance.StartCoroutine(PerformInOrder(p, playable, () => p.OnEnter()));
                         })
-                        .Array;
+                        .List;
             };
         }
 

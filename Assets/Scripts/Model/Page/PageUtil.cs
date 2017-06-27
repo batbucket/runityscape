@@ -20,7 +20,6 @@ namespace Scripts.Model.Pages {
             SpellParams owner,
             SpellBook excluded,
             IEnumerable<ISpellable> spellCollection,
-            int count,
             Action<IPlayable> addPlay
             ) {
             return GenerateSpellableGrid(
@@ -29,7 +28,6 @@ namespace Scripts.Model.Pages {
                 owner,
                 excluded,
                 spellCollection,
-                count,
                 addPlay,
                 SPELLBOOK,
                 "Spells",
@@ -42,7 +40,6 @@ namespace Scripts.Model.Pages {
             SpellParams owner,
             SpellBook excluded,
             IEnumerable<ISpellable> spellCollection,
-            int count,
             Action<IPlayable> addPlay
             ) {
             return GenerateSpellableGrid(
@@ -51,7 +48,6 @@ namespace Scripts.Model.Pages {
                 owner,
                 excluded,
                 spellCollection,
-                count,
                 addPlay,
                 INVENTORY,
                 string.Format("Items ({0}/{1})", owner.Inventory.TotalOccupiedSpace, owner.Inventory.Capacity),
@@ -59,13 +55,13 @@ namespace Scripts.Model.Pages {
                 );
         }
 
-        public static Grid GenerateBackableGrid(IButtonable previous, Sprite icon, int size, string name, string tooltip) {
+        public static Grid GenerateBackableGrid(IButtonable previous, Sprite icon, string name, string tooltip) {
             Grid grid = new Grid(name);
             grid.Icon = icon;
             grid.Tooltip = tooltip;
-            IButtonable[] buttons = new IButtonable[size + 1];
-            buttons[0] = GenerateBack(previous);
-            grid.Array = buttons;
+            List<IButtonable> buttons = new List<IButtonable>();
+            buttons.Add(GenerateBack(previous));
+            grid.List = buttons;
             return grid;
         }
 
@@ -75,45 +71,57 @@ namespace Scripts.Model.Pages {
             SpellParams owner,
             SpellBook excluded,
             IEnumerable<ISpellable> spellCollection,
-            int count,
             Action<IPlayable> addPlay,
             Sprite sprite,
             string name,
             string description) {
 
-            Grid grid = GenerateBackableGrid(previous, sprite, count, name, description);
+            Grid grid = GenerateBackableGrid(previous, sprite, name, description);
 
-            int index = 1;
             foreach (ISpellable myS in spellCollection) {
                 ISpellable s = myS;
                 if (!s.Equals(excluded)) {
-                    grid.Array[index++] = GenerateSpellProcess(p, grid, owner, s, addPlay);
+                    grid.List.Add(GenerateSpellProcess(p, grid, owner, s, addPlay));
                 }
             }
+
             return grid;
         }
 
-        public static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spell, Action<IPlayable> handlePlayable) {
-            SpellBook sb = spell.GetSpellBook();
+        public static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
+            SpellBook sb = spellable.GetSpellBook();
             return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
                 () => {
                     if (sb.IsMeetPreTargetRequirements(owner.Stats)) {
-                        GenerateTargets(p, previous, owner, sb, handlePlayable).Invoke();
+                        GenerateTargets(p, previous, owner, spellable, handlePlayable).Invoke();
                     }
                 });
         }
 
-        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, SpellBook sb, Action<IPlayable> handlePlayable) {
+        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
+            SpellBook sb = spellable.GetSpellBook();
             ICollection<Character> targets = sb.TargetType.GetTargets(owner.Character, p);
-            Grid grid = GenerateBackableGrid(previous, sb.Icon, targets.Count, sb.Name, sb.CreateDescription(owner));
+            Grid grid = GenerateBackableGrid(previous, sb.Icon, sb.Name, sb.CreateDescription(owner));
 
             grid.Icon = sb.Icon;
 
-            int index = 1;
             foreach (Character myTarget in targets) {
                 SpellParams target = new SpellParams(myTarget);
-                grid.Array[index++] = GenerateTargetProcess(previous, owner, target, sb, handlePlayable);
+                grid.List.Add(GenerateTargetProcess(previous, owner, target, sb, handlePlayable));
 
+            }
+            Item item = spellable as Item;
+            if (item != null && item.HasFlag(Items.Flag.TRASHABLE)) {
+                grid.List.Add(
+                    new Process(
+                        string.Format("Toss {0}", item.Name),
+                        string.Format("Throw away {0}.", item.Name),
+                        () => {
+                            handlePlayable(
+                                owner.Spells.CreateSpell(new TossItem(item, owner.Inventory), owner, owner)
+                                );
+                        }
+                        ));
             }
             return grid;
         }
@@ -131,8 +139,8 @@ namespace Scripts.Model.Pages {
         }
 
         public static Grid GenerateUnequipGrid(IButtonable previous, SpellParams owner, Action<IPlayable> handlePlayable) {
-            Grid grid = GenerateBackableGrid(previous, Util.GetSprite("shoulder-armor"), EquipType.AllTypes.Count, "Equipment", "Manage equipped items.");
-            int index = 1;
+            Grid grid = GenerateBackableGrid(previous, Util.GetSprite("shoulder-armor"), "Equipment", "Manage equipped items.");
+
             foreach (EquipType myET in EquipType.AllTypes) {
                 EquipType et = myET;
                 Process p = null;
@@ -148,7 +156,7 @@ namespace Scripts.Model.Pages {
                 } else {
                     p = new Process(Util.ColorString(et.Name, Color.grey), et.Sprite, "No item is equipped in this slot. Items can be equipped via the inventory menu.");
                 }
-                grid.Array[index++] = p;
+                grid.List.Add(p);
             }
             return grid;
         }
