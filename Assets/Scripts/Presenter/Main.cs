@@ -74,6 +74,12 @@ namespace Scripts.Presenter {
             }
         }
 
+        public PagePresenter PagePresenter {
+            get {
+                return pagePresenter;
+            }
+        }
+
         private void Start() {
             instance = this;
 

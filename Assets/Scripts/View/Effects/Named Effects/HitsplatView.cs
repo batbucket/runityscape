@@ -42,6 +42,8 @@ namespace Scripts.View.Effects {
                 accel += ACCEL_RATE;
                 yield return null;
             }
+            text.transform.localScale = FINAL_SIZE;
+            image.transform.localScale = FINAL_SIZE;
 
             float timer2 = 0;
             while ((timer2 += Time.deltaTime) < TIME_BEFORE_DECAY) {
@@ -62,8 +64,8 @@ namespace Scripts.View.Effects {
 
         public override void Reset() {
             text.text = string.Empty;
-            text.transform.localScale = new Vector3(1, 1, 1);
-            image.transform.localScale = new Vector3(1, 1, 1);
+            text.transform.localScale = INITIAL_SIZE;
+            image.transform.localScale = INITIAL_SIZE;
             text.color = Color.white;
             image.color = Color.white;
         }

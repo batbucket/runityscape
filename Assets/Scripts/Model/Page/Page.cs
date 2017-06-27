@@ -5,6 +5,7 @@ using Scripts.Model.TextBoxes;
 using Scripts.View.ObjectPool;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 
@@ -85,6 +86,13 @@ namespace Scripts.Model.Pages {
         }
 
         public void AddCharacters(Side side, params Character[] chars) {
+            ICollection<Character> mySet = (side == Side.LEFT) ? Left : Right;
+            foreach (Character c in chars) {
+                mySet.Add(c);
+            }
+        }
+
+        public void AddCharacters(Side side, ICollection<Character> chars) {
             ICollection<Character> mySet = (side == Side.LEFT) ? Left : Right;
             foreach (Character c in chars) {
                 mySet.Add(c);

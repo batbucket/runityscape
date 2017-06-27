@@ -1,4 +1,5 @@
 ﻿using Scripts.Model.Interfaces;
+using Scripts.Model.Pages;
 using System;
 using UnityEngine;
 
@@ -91,6 +92,15 @@ namespace Scripts.Model.Processes {
             if (IsInvokable) {
                 action.Invoke();
             }
+        }
+
+        public static Process GetBackProcess(Page previous) {
+            return new Process(
+                "Back",
+                Util.GetSprite("plain-arrow"),
+                "Return to the previous page.",
+                () => previous.Invoke()
+                );
         }
 
         protected virtual bool isInvokable() {
