@@ -115,7 +115,7 @@ namespace Scripts.Model.Characters {
         }
 
         IEnumerator<ISpellable> IEnumerable<ISpellable>.GetEnumerator() {
-            return dict.Keys.Where(i => i is UseableItem).Cast<ISpellable>().ToList().GetEnumerator();
+            return dict.Keys.Cast<ISpellable>().ToList().GetEnumerator();
         }
 
         IEnumerator<Item> IEnumerable<Item>.GetEnumerator() {

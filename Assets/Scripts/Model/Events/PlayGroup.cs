@@ -13,7 +13,7 @@ namespace Scripts.Model.Acts {
         private IList<IPlayable> plays;
         private Spell spell;
 
-        public PlayGroup(Character caster) {
+        public PlayGroup(SpellParams caster) {
             plays = new List<IPlayable>();
             spell = Wait.ForceSpell(caster, caster);
         }

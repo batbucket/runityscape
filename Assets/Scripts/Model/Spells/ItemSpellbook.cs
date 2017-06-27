@@ -5,18 +5,24 @@ using UnityEngine;
 using Scripts.Model.Characters;
 
 namespace Scripts.Model.Spells {
-    public abstract class ItemSpellbook : SpellBook {
+    public abstract class ItemSpellBook : SpellBook {
         protected Item item;
 
-        public ItemSpellbook(Item item) : base(item.Name, item.Icon, item.Target, SpellType.ITEM, 0, 0) {
+        public ItemSpellBook(Item item) : base(item.Name, item.Icon, item.Target, SpellType.ITEM, 0, 0) {
             this.item = item;
             flags.Remove(Flag.CASTER_REQUIRES_SPELL);
         }
 
         public override string GetDetailedName(SpellParams caster) {
             int count = caster.Inventory.GetCount(item);
+
+            Color color = Color.white;
+            if (!IsMeetPreTargetRequirements(caster.Stats)) {
+                color = Color.grey;
+            }
+
             return string.Format("{0}{1}",
-                Name,
+                Util.ColorString(Name, color),
                 count > 1 ? string.Format("({0})", count) : string.Empty
                 );
         }

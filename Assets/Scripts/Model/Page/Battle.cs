@@ -112,7 +112,7 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private bool CharacterCanCast(Character c) {
+        private bool CharacterCanCast(SpellParams c) {
             return c.Stats.State == State.ALIVE;
         }
 
@@ -130,8 +130,8 @@ namespace Scripts.Model.Pages {
 
                     // If play didn't occur (e.g the target became dead before its cast, don't announce death)
                     if (wasPlayable) {
-                        Character caster = play.MySpell.Caster;
-                        Character target = play.MySpell.Target;
+                        SpellParams caster = play.MySpell.Caster;
+                        SpellParams target = play.MySpell.Target;
 
                         // Caster somehow kills themself, don't say they died twice
                         if (caster.Equals(target) && caster.Stats.State == State.DEAD) {

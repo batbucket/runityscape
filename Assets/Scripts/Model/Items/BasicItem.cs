@@ -11,6 +11,10 @@ namespace Scripts.Model.Items {
         public BasicItem(Sprite icon, int basePrice, int maxCount, string name, string description)
             : base(icon, basePrice, TargetType.NONE, name, description) { }
 
+        public override SpellBook GetSpellBook() {
+            return new Dummy(this);
+        }
+
         protected sealed override string DescriptionHelper {
             get {
                 return string.Empty;

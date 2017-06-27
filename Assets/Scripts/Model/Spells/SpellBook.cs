@@ -14,19 +14,25 @@ namespace Scripts.Model.Spells {
 
     public struct SpellParams {
         public int CharacterId;
+        public Character Character;
+        public Characters.Look Look;
         public Characters.Stats Stats;
         public Characters.SpellBooks Spells;
         public Characters.Buffs Buffs;
         public Characters.Inventory Inventory;
         public Characters.Equipment Equipment;
+        public PortraitView Portrait;
 
         public SpellParams(Character c) {
             this.CharacterId = c.Id;
+            this.Character = c;
+            this.Look = c.Look;
             this.Stats = c.Stats;
             this.Spells = c.Spells;
             this.Buffs = c.Buffs;
             this.Inventory = c.Inventory;
             this.Equipment = c.Equipment;
+            this.Portrait = c.Presenter.PortraitView;
         }
     }
 
@@ -41,7 +47,7 @@ namespace Scripts.Model.Spells {
 
         public readonly int CastTime;
         public readonly int Cooldown;
-        public readonly bool IsSilenced; // TODO SAVE THIS
+        public readonly bool IsSilenced;
 
         protected readonly HashSet<Flag> flags;
 
@@ -87,11 +93,19 @@ namespace Scripts.Model.Spells {
                 );
         }
 
-        public string CreateTargetDescription(Character caster, Character target) {
-            return string.Format("{0} will use {1} on {2}.\n\n{3}", caster.Look.DisplayName, this.Name, target.Look.DisplayName, CreateDescription(new SpellParams(caster)));
+        public string CreateTargetDescription(SpellParams caster, SpellParams target) {
+            return string.Format("{0} will use {1} on {2}.\n\n{3}", caster.Look.DisplayName, this.Name, target.Look.DisplayName, CreateDescription(caster));
         }
 
         public abstract string CreateDescriptionHelper(SpellParams caster);
+
+        public bool IsMeetPreTargetRequirements(Characters.Stats caster) {
+            return CasterHasResources(caster) && IsMeetOtherPreTargetRequirements();
+        }
+
+        protected virtual bool IsMeetOtherPreTargetRequirements() {
+            return true;
+        }
 
         public bool CasterHasResource(StatType stat, Characters.Stats caster) {
             return caster.GetStatCount(Characters.Stats.Get.MOD, stat) >= Costs[stat];
@@ -110,13 +124,13 @@ namespace Scripts.Model.Spells {
             return !IsSilenced && CasterHasResources(caster.Stats) && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || !flags.Contains(Flag.CASTER_REQUIRES_SPELL));
         }
 
-        public Spell BuildSpell(Character caster, Character target) {
+        public Spell BuildSpell(SpellParams caster, SpellParams target) {
             Util.Assert(
-                IsCastable(new SpellParams(caster), new SpellParams(target)),
+                IsCastable(caster, target),
                 string.Format(
                 "Attempted to cast spell without requirements fulfilled. Resources={0}, OtherRequirements={1}."
                 , CasterHasResources(caster.Stats),
-                IsMeetOtherCastRequirements(new SpellParams(caster), new SpellParams(target))
+                IsMeetOtherCastRequirements(caster, target)
                 ));
 
             // Consume resources
@@ -127,21 +141,21 @@ namespace Scripts.Model.Spells {
             return ForceSpell(caster, target);
         }
 
-        public Spell ForceSpell(Character caster, Character target) {
+        public Spell ForceSpell(SpellParams caster, SpellParams target) {
             Result res = new Result();
-            if (IsHit(new SpellParams(caster), new SpellParams(target))) {
-                res.AddSFX(GetHitSFX(caster.Presenter.PortraitView, target.Presenter.PortraitView));
-                if (IsCritical(new SpellParams(caster), new SpellParams(target))) {
+            if (IsHit(caster, target)) {
+                res.AddSFX(GetHitSFX(caster.Portrait, target.Portrait));
+                if (IsCritical(caster, target)) {
                     res.Type = ResultType.CRITICAL;
-                    res.Effects = GetCriticalEffects(new SpellParams(caster), new SpellParams(target));
+                    res.Effects = GetCriticalEffects(caster, target);
                 } else {
                     res.Type = ResultType.HIT;
-                    res.Effects = GetHitEffects(new SpellParams(caster), new SpellParams(target));
+                    res.Effects = GetHitEffects(caster, target);
                 }
             } else {
-                res.AddSFX(GetMissSFX(caster.Presenter.PortraitView, target.Presenter.PortraitView));
+                res.AddSFX(GetMissSFX(caster.Portrait, target.Portrait));
                 res.Type = ResultType.MISS;
-                res.Effects = GetMissEffects(new SpellParams(caster), new SpellParams(target));
+                res.Effects = GetMissEffects(caster, target);
             }
 
             return new Spell(this, res, caster, target);

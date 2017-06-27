@@ -8,10 +8,10 @@ using Scripts.Model.TextBoxes;
 using System.Collections.Generic;
 
 namespace Scripts.Game.Pages {
-    public class LevelUp : PageGroup {
+    public class LevelUpPages : PageGroup {
         private const int LEVEL_UP_STAT_SELECTION = 1;
 
-        public LevelUp(Page previous, Character c) : base(new Page(c.Look.DisplayName)) {
+        public LevelUpPages(Page previous, Character c) : base(new Page(c.Look.DisplayName)) {
             Register(LEVEL_UP_STAT_SELECTION, new Page(c.Look.DisplayName));
             SetupRoot(previous, c);
 

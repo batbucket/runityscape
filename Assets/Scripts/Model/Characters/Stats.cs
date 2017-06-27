@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Scripts.Model.Characters {
 
-    public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave> {
+    public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave>, IComparable<Stats> {
         public enum Set {
             MOD,
             MOD_UNBOUND,
@@ -227,6 +227,15 @@ namespace Scripts.Model.Characters {
                 Stat stat = save.CreateObjectFromID();
                 stat.InitFromSaveObject(save);
                 dict.Add(stat.Type, stat);
+            }
+        }
+
+        public int CompareTo(Stats other) {
+            int diff = StatUtil.GetDifference(StatType.AGILITY, this, other);
+            if (diff == 0) {
+                return (Util.IsChance(.5) ? -1 : 1);
+            } else {
+                return diff;
             }
         }
     }

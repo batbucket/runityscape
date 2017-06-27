@@ -10,10 +10,10 @@ namespace Scripts.Model.Spells {
     public class Spell : IPlayable, IComparable<Spell> {
         public readonly SpellBook Book;
         public readonly Result Result;
-        public readonly Character Caster;
-        public readonly Character Target;
+        public readonly SpellParams Caster;
+        public readonly SpellParams Target;
 
-        public Spell(SpellBook book, Result result, Character caster, Character target) {
+        public Spell(SpellBook book, Result result, SpellParams caster, SpellParams target) {
             this.Book = book;
             this.Result = result;
             this.Caster = caster;
@@ -43,7 +43,7 @@ namespace Scripts.Model.Spells {
 
         public bool IsPlayable {
             get {
-                return Book.IsCastable(new SpellParams(Caster), new SpellParams(Target));
+                return Book.IsCastable(Caster, Target);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Scripts.Model.Spells {
         public int CompareTo(Spell other) {
             int diff = other.Book.Priority - this.Book.Priority;
             if (diff == 0) {
-                return this.Caster.CompareTo(other.Caster);
+                return this.Caster.Stats.CompareTo(other.Caster.Stats);
             } else {
                 return diff;
             }

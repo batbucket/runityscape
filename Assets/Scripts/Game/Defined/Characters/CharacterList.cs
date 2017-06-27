@@ -3,6 +3,7 @@ using Scripts.Game.Defined.Characters.StartingSpells;
 using Scripts.Game.Defined.Serialized.Characters;
 using Scripts.Game.Defined.Serialized.Items.Consumables;
 using Scripts.Game.Defined.Serialized.Items.Equipment;
+using Scripts.Game.Defined.Serialized.Items.Misc;
 using Scripts.Game.Defined.StartingStats;
 using Scripts.Game.Undefined.StartingStats;
 using Scripts.Model.Characters;
@@ -15,6 +16,7 @@ namespace Scripts.Game.Defined.Characters {
             this.Inventory.Add(new Apple());
             this.Inventory.Add(new Apple());
             this.Inventory.Add(new PoisonArmor());
+            this.Inventory.Add(new Money(), 100);
         }
     }
 

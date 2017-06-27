@@ -37,7 +37,7 @@ namespace Scripts.Model.Characters {
             return set.Contains(s);
         }
 
-        public Spell CreateSpell(SpellBook spell, Character caster, Character target) {
+        public Spell CreateSpell(SpellBook spell, SpellParams caster, SpellParams target) {
             return spell.BuildSpell(caster, target);
         }
 

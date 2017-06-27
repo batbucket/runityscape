@@ -30,8 +30,8 @@ namespace Scripts.Model.Spells {
 
         public static HashSet<TargetType> SINGLE_TARGET_OPTIONS = new HashSet<TargetType>(new IdentityEqualityComparer<TargetType>()) { SELF, SINGLE_ALLY, SINGLE_ENEMY, ANY };
 
-        public ICollection<Character> GetTargets(Character caster, Battle b) {
-            return getFunc.Invoke(caster, b);
+        public ICollection<Character> GetTargets(Character caster, Page p) {
+            return getFunc.Invoke(caster, p);
         }
 
     }

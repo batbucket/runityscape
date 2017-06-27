@@ -32,7 +32,7 @@ namespace Scripts.Game.Pages {
         private void SetupCamp() {
             Page p = Get(ROOT_INDEX);
             p.Actions = new IButtonable[] {
-                new LevelUp(Root, party.Default)
+                new LevelUpPages(Root, party.Default)
             };
             p.AddCharacters(Side.LEFT, party.Collection);
         }

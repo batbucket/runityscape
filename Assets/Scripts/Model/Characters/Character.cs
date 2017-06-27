@@ -15,7 +15,7 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : IComparable<Character>, ISaveable<CharacterSave>, IIdNumberable {
+    public class Character : ISaveable<CharacterSave>, IIdNumberable {
         public const int UNKNOWN_ID = -1;
 
         public readonly Stats Stats;
@@ -94,15 +94,6 @@ namespace Scripts.Model.Characters {
 
         public virtual void OnKill() {
 
-        }
-
-        public int CompareTo(Character other) {
-            int diff = StatUtil.GetDifference(StatType.AGILITY, this.Stats, other.Stats);
-            if (diff == 0) {
-                return (Util.IsChance(.5) ? -1 : 1);
-            } else {
-                return diff;
-            }
         }
 
         public CharacterSave GetSaveObject() {

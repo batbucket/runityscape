@@ -4,10 +4,11 @@ using Scripts.Model.Spells;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Scripts.Model.Interfaces;
 
 namespace Scripts.Model.Items {
 
-    public abstract class Item : ISaveable<ItemSave> {
+    public abstract class Item : ISaveable<ItemSave>, ISpellable {
         public static readonly HashSet<Flag> STANDARD_FLAGS = new HashSet<Flag>() { Flag.SELLABLE, Flag.TRASHABLE };
 
         public readonly string Name;
@@ -56,7 +57,11 @@ namespace Scripts.Model.Items {
         }
 
         public override bool Equals(object obj) {
-            return GetType().Equals(obj.GetType());
+            Item item = obj as Item;
+            if (item == null) {
+                return false;
+            }
+            return GetType().Equals(item.GetType());
         }
 
         public override int GetHashCode() {
@@ -72,5 +77,7 @@ namespace Scripts.Model.Items {
         public void InitFromSaveObject(ItemSave saveObject) {
             // Nothing
         }
+
+        public abstract SpellBook GetSpellBook();
     }
 }

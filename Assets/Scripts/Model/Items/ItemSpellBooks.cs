@@ -5,9 +5,10 @@ using System.Collections.Generic;
 using Scripts.View.Portraits;
 using System.Collections;
 using Scripts.Game.Defined.SFXs;
+using System;
 
 namespace Scripts.Model.Items {
-    public class CastEquipItem : ItemSpellbook {
+    public class CastEquipItem : ItemSpellBook {
         private EquippableItem equip;
 
         public CastEquipItem(EquippableItem equip) : base(equip) {
@@ -29,7 +30,7 @@ namespace Scripts.Model.Items {
         }
     }
 
-    public class CastUnequipItem : ItemSpellbook {
+    public class CastUnequipItem : ItemSpellBook {
         private Inventory caster;
         private Equipment targetEq;
         private new EquippableItem item;
@@ -55,7 +56,27 @@ namespace Scripts.Model.Items {
         }
     }
 
-    public class UseItem : ItemSpellbook {
+    public class Dummy : ItemSpellBook {
+        public Dummy(BasicItem basic) : base(basic) { }
+
+        public override string CreateDescriptionHelper(SpellParams caster) {
+            return string.Format("{0}\n\n<color=grey>This item cannot be directly used and does not take up inventory space.</color>", item.Description);
+        }
+
+        protected override bool IsMeetOtherPreTargetRequirements() {
+            return false;
+        }
+
+        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+            return false;
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            return new SpellEffect[0];
+        }
+    }
+
+    public class UseItem : ItemSpellBook {
         private readonly ConsumableItem consume;
 
         public UseItem(ConsumableItem consume) : base(consume) {
