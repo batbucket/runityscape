@@ -94,12 +94,12 @@ namespace Scripts.Model.Spells {
         public abstract string CreateDescriptionHelper(SpellParams caster);
 
         public bool CasterHasResource(StatType stat, Characters.Stats caster) {
-            return caster.GetStatCount(stat) >= Costs[stat];
+            return caster.GetStatCount(Characters.Stats.Get.MOD, stat) >= Costs[stat];
         }
 
         public bool CasterHasResources(Characters.Stats caster) {
             foreach (KeyValuePair<StatType, int> stat in Costs) {
-                if (caster.GetStatCount(Value.MOD, stat.Key) < stat.Value) {
+                if (caster.GetStatCount(Characters.Stats.Get.MOD, stat.Key) < stat.Value) {
                     return false;
                 }
             }
@@ -121,7 +121,7 @@ namespace Scripts.Model.Spells {
 
             // Consume resources
             foreach (KeyValuePair<StatType, int> pair in Costs) {
-                caster.Stats.AddToStat(pair.Key, -pair.Value);
+                caster.Stats.AddToStat(pair.Key, Characters.Stats.Set.MOD, -pair.Value);
             }
 
             return ForceSpell(caster, target);
