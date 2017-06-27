@@ -2,6 +2,9 @@
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using System.Collections.Generic;
+using Scripts.View.Portraits;
+using System.Collections;
+using Scripts.Game.Defined.SFXs;
 
 namespace Scripts.Model.Items {
     public class CastEquipItem : ItemSpellbook {
@@ -71,6 +74,10 @@ namespace Scripts.Model.Items {
                 allEffects[i + 1] = itemEffects[i];
             }
             return allEffects;
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
+            return new IEnumerator[] { SFX.PlaySound("Zip_0") };
         }
     }
 }
