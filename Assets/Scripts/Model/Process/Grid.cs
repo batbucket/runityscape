@@ -23,6 +23,16 @@ namespace Scripts.Model.Processes {
             this.Array = new IButtonable[0];
         }
 
+        public Grid(Grid back, string text, params IButtonable[] content) : this(text) {
+            this.Array = new IButtonable[content.Length + 1];
+            Array[0] = back;
+
+            int index = 1;
+            foreach (IButtonable ib in content) {
+                Array[index++] = ib;
+            }
+        }
+
         public string ButtonText {
             get {
                 return Text;
