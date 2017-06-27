@@ -17,6 +17,12 @@ namespace Scripts.Game.Defined.Characters {
             this.Inventory.Add(new PoisonArmor());
         }
     }
+
+    public class Hero : Character {
+        public Hero(string name) : base(new HeroStats(), new HeroLook(name), new Player(), new HeroSpells()) {
+
+        }
+    }
 }
 
 namespace Scripts.Game.Undefined.Characters {

@@ -71,7 +71,6 @@ namespace Scripts.Model.SaveLoad {
             Add<Health>("hp");
             Add<Skill>("sk");
             Add<Experience>("exp");
-            Add<Level>("lvl");
         }
 
         private void Spells() {

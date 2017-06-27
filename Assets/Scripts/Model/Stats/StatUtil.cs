@@ -20,8 +20,8 @@ namespace Scripts.Model.Stats {
     }
 
     public static class StatUtil {
-        public static float GetDifference(StatType type, Characters.Stats a, Characters.Stats b) {
-            return a.GetStatCount(type) - b.GetStatCount(type);
+        public static int GetDifference(StatType type, Characters.Stats a, Characters.Stats b) {
+            return a.GetStatCount(Characters.Stats.Get.MOD_AND_EQUIP, type) - b.GetStatCount(Characters.Stats.Get.MOD_AND_EQUIP, type);
         }
 
         public static string ShowSigns(int num) {

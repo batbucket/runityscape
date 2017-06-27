@@ -16,38 +16,31 @@ namespace Scripts.Model.Stats {
 
         private static readonly HashSet<StatType> allTypes = new HashSet<StatType>(new IdentityEqualityComparer<StatType>());
         private static readonly IDictionary<BoundType, Bounds> attributeBounds = new Dictionary<BoundType, Bounds>() {
-            { BoundType.RESOURCE, new Bounds(0, 10000) },
-            { BoundType.ASSIGNABLE, new Bounds(0, 999) },
-            { BoundType.LEVEL, new Bounds(0, 100) }
+            { BoundType.RESOURCE, new Bounds(0, int.MaxValue) },
+            { BoundType.ASSIGNABLE, new Bounds(0, 100) },
         };
-
-        public static readonly StatType LEVEL = new StatType(BoundType.LEVEL,
-                                                       "Level",
-                                                       "fox-head",
-                                                       "Current level of power.",
-                                                       Color.white);
 
         public static readonly StatType STRENGTH = new StatType(BoundType.ASSIGNABLE,
                                                                           "Strength",
-                                                                          "fox-head",
+                                                                          "fist",
                                                                           "Increases basic attack damage.",
                                                                           Color.red);
 
         public static readonly StatType INTELLECT = new StatType(BoundType.ASSIGNABLE,
                                                                            "Intellect",
-                                                                           "fox-head",
+                                                                           "light-bulb",
                                                                            "Increases spell effects.",
                                                                            Color.blue);
 
         public static readonly StatType AGILITY = new StatType(BoundType.ASSIGNABLE,
                                                                          "Agility",
-                                                                         "fox-head",
+                                                                         "power-lightning",
                                                                          "Increases critical hit rate and accuracy.",
                                                                          Color.green);
 
         public static readonly StatType VITALITY = new StatType(BoundType.ASSIGNABLE,
                                                                           "Vitality",
-                                                                          "fox-head",
+                                                                          "health-normal",
                                                                           "Increases Health.",
                                                                           Color.yellow);
 
@@ -56,7 +49,7 @@ namespace Scripts.Model.Stats {
         public static readonly StatType HEALTH = new StatType(BoundType.RESOURCE,
                                                               "Health",
                                                               "hearts",
-                                                              "Life state. Most units enter a deathlike state when their health reaches zero.",
+                                                              "Life state. Units are defeated if this reaches 0.",
                                                               Color.green,
                                                               Color.red);
 

@@ -13,6 +13,15 @@ namespace Scripts.Game.Defined.Characters {
             this.textColor = Color.magenta;
         }
     }
+
+    public class HeroLook : Look {
+        public HeroLook(string name) : base() {
+            this.Name = name;
+            this.Sprite = Util.GetSprite("health-normal");
+            this.tooltip = string.Empty;
+            this.textColor = Color.white;
+        }
+    }
 }
 
 namespace Scripts.Game.Undefined.Characters {

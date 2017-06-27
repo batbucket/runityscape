@@ -72,9 +72,13 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     [Serializable]
     public sealed class CharacterStatsSave : IEnumerable<StatSave> {
         public List<StatSave> Stats;
+        public int Level;
+        public int StatBonusCount;
 
-        public CharacterStatsSave(List<StatSave> stats) {
+        public CharacterStatsSave(int level, int statBonusCount, List<StatSave> stats) {
             this.Stats = stats;
+            this.Level = level;
+            this.StatBonusCount = statBonusCount;
         }
 
         IEnumerator IEnumerable.GetEnumerator() {

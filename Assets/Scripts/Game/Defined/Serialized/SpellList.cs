@@ -40,14 +40,14 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Value.MOD, StatType.STRENGTH), .25f)),
+                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH), .25f)),
                     new AddToModStat(caster.Stats, StatType.SKILL, 1)
                 };
         }
 
         protected override IList<SpellEffect> GetCriticalEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Value.MOD, StatType.STRENGTH) * CRITICAL_MULTIPLIER, .25f)),
+                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * CRITICAL_MULTIPLIER, .25f)),
                     new AddToModStat(caster.Stats, StatType.SKILL, 2)
                 };
         }

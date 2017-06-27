@@ -97,7 +97,7 @@ namespace Scripts.Model.Characters {
         }
 
         public int CompareTo(Character other) {
-            int diff = other.Stats.GetStatCount(Value.MOD, StatType.AGILITY) - this.Stats.GetStatCount(Value.MOD, StatType.AGILITY);
+            int diff = StatUtil.GetDifference(StatType.AGILITY, this.Stats, other.Stats);
             if (diff == 0) {
                 return (Util.IsChance(.5) ? -1 : 1);
             } else {

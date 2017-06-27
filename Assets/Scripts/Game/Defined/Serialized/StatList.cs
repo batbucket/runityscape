@@ -1,5 +1,6 @@
 ﻿using Scripts.Model.Characters;
 using Scripts.Model.Stats;
+using Scripts.Presenter;
 using System.Linq;
 
 using UnityEngine;
@@ -37,7 +38,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         public Health() : base(0, 0, StatType.HEALTH) { }
 
         public override void Update(Character holderOfThisAttribute) {
-            this.Max = holderOfThisAttribute.Stats.GetStatCount(Value.MOD, StatType.VITALITY) * VIT_TO_HEALTH;
+            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.MOD, StatType.VITALITY) * VIT_TO_HEALTH;
         }
     }
 
@@ -52,21 +53,37 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
     }
 
     public class Experience : Stat {
-        public Experience(int mod, int max) : base(mod, max, StatType.EXPERIENCE) { }
+        public Experience(int mod) : base(mod, 0, StatType.EXPERIENCE) { }
 
         public Experience() : base(0, 0, StatType.EXPERIENCE) { }
         public override void Update(Character c) {
-            Max = 1 + (int)Mathf.Pow(2, c.Stats.GetStatCount(Value.MOD, StatType.LEVEL));
+            Max = GetExpForLevel(c.Stats.Level);
+            if (c.Stats.CanLevelUp) {
+                DoLevelUp(c.Stats);
+                Main.Instance.Sound.PlaySound("orchestra");
+            }
         }
-    }
 
-    public class Level : Stat {
-        public Level(int mod) : base(mod, StatType.LEVEL.Bounds.High, StatType.LEVEL) { }
+        public static int GetExpForLevel(int level) {
+            return 1 + (int)Mathf.Pow(2, level);
+        }
 
-        public Level() : base(0, StatType.LEVEL.Bounds.High, StatType.LEVEL) { }
+        public static int GetExpDiffForLevel(int levelCurrent, int levelNext) {
+            return GetExpForLevel(levelNext) - GetExpForLevel(levelCurrent);
+        }
 
-        public override void Update(Character c) {
+        private void DoLevelUp(Stats stats) {
+            Mod = 0;
+            stats.StatPoints++;
+            stats.Level++;
+            stats.AddSplat(new Presenter.SplatDetails(Color.white, "LEVEL+"));
+            DoLevelUpStatBoost(stats, 1);
+        }
 
+        private static void DoLevelUpStatBoost(Stats stats, int amount) {
+            foreach (StatType assignable in StatType.ASSIGNABLES) {
+                stats.AddToStat(assignable, Stats.Set.MAX, amount);
+            }
         }
     }
 }
