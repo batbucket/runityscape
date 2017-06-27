@@ -19,7 +19,7 @@ namespace Scripts.Game.Defined.Spells {
         }
 
         public override void CauseEffect() {
-            target.AddToStat(affected, Model.Characters.Value.MOD, Value);
+            target.AddToStat(affected, Stats.Set.MOD, Value);
         }
     }
 
