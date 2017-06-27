@@ -45,7 +45,7 @@ namespace Scripts.Game.Pages {
         private Process ExpHack(Character c) {
             return new Process(
                 "Exp HACK!",
-                () => c.Stats.AddToStat(StatType.EXPERIENCE, Stats.Set.MOD, 1)
+                () => c.Stats.AddToStat(StatType.EXPERIENCE, Stats.Set.MOD_UNBOUND, 10)
                 );
         }
 
@@ -79,7 +79,7 @@ namespace Scripts.Game.Pages {
             }
 
             if (c.Stats.StatPoints > 0) {
-                p.AddText("Select a stat to increase.");
+                p.AddText(string.Format("Select a stat to increase.\nPoints remaining: {0}.", c.Stats.StatPoints));
             } else {
                 p.AddText(string.Format("{0} has no stat points to spend.", c.Look.DisplayName));
             }
@@ -90,13 +90,13 @@ namespace Scripts.Game.Pages {
             return new Process(
                 st.Name,
                 st.Sprite,
-                string.Format("Add a point in this stat.\n{0}\n{1}",
+                string.Format("Add a point in\n{0}\n{1}",
                     st.Name,
                     st.Description),
                 () => {
                     stats.StatPoints--;
                     stats.AddToStat(st, Stats.Set.MAX, 1);
-                    p.AddText(string.Format("Maximum {0} was increased to {1}.", st.Name, stats.GetStatCount(Stats.Get.MAX, st)));
+                    p.AddText(string.Format("Maximum {0} was increased to {1}.\nPoints remaining: {2}.", st.Name, stats.GetStatCount(Stats.Get.MAX, st), stats.StatPoints));
                 },
                 () => stats.StatPoints > 0
                 );

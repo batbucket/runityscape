@@ -1,5 +1,7 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.Pages;
 using Scripts.Model.Stats;
+using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
 using System.Linq;
 
@@ -59,7 +61,15 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         public override void Update(Character c) {
             Max = GetExpForLevel(c.Stats.Level);
             if (c.Stats.CanLevelUp) {
-                DoLevelUp(c.Stats);
+                int timesLeveledUp = 0;
+                while (c.Stats.CanLevelUp) {
+                    timesLeveledUp++;
+                    RemoveExperienceForLevelUp(c.Stats);
+                }
+                Stats stats = c.Stats;
+                stats.AddSplat(new Presenter.SplatDetails(Color.white, string.Format("LVL+{0}", timesLeveledUp)));
+                DoLevelUpStatBoost(stats, timesLeveledUp);
+                Page.TypeText(new TextBox(string.Format("<color=yellow>{0}</color> has gained <color=cyan>{1}</color> point(s) for stat allocation.", c.Look.DisplayName, timesLeveledUp)));
                 Main.Instance.Sound.PlaySound("orchestra");
             }
         }
@@ -72,12 +82,11 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
             return GetExpForLevel(levelNext) - GetExpForLevel(levelCurrent);
         }
 
-        private void DoLevelUp(Stats stats) {
-            Mod = 0;
-            stats.StatPoints++;
+        private void RemoveExperienceForLevelUp(Stats stats) {
+            SetMod(Mod - Max, false);
             stats.Level++;
-            stats.AddSplat(new Presenter.SplatDetails(Color.white, "LEVEL+"));
-            DoLevelUpStatBoost(stats, 1);
+            stats.StatPoints++;
+            Max = GetExpForLevel(stats.Level);
         }
 
         private static void DoLevelUpStatBoost(Stats stats, int amount) {
