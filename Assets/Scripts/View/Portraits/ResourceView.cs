@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.Stats;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ namespace Scripts.View.Portraits {
     /// This class represents a bar and its display
     /// on a CharacterView, representing their resources.
     /// </summary>
-    public class ResourceView : PooledBehaviour {
+    public class ResourceView : PooledBehaviour, IComparable<ResourceView> {
         public StatType Type;
 
         /// <summary>
@@ -98,6 +99,10 @@ namespace Scripts.View.Portraits {
                 BarScale = numerator / denominator;
             }
             tip.Body = string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, Type.Description);
+        }
+
+        int IComparable<ResourceView>.CompareTo(ResourceView other) {
+            return this.Type.CompareTo(other.Type);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Scripts.Presenter {
             // Setup Tooltip
             PortraitView.SetTip(Character.Look.Sprite, Character.Look.Name,
                 string.Format("Level {0} {1}\n<color=grey>{2}</color>",
-                Character.Stats.GetStatCount(StatType.LEVEL),
+                Character.Stats.Level,
                 Character.Look.Breed.GetDescription(),
                 Character.Look.Tooltip));
 
@@ -79,7 +79,7 @@ namespace Scripts.Presenter {
         }
 
         private void AddHitsplat(SplatDetails sd) {
-            if (PortraitView != null) {
+            if (PortraitView != null && PortraitView.isActiveAndEnabled) {
                 PortraitView.StartCoroutine(SFX.HitSplat(PortraitView.EffectsHolder, sd));
             }
         }

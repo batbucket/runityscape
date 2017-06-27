@@ -1,5 +1,6 @@
 ﻿using Script.View.Tooltip;
 using Scripts.Model.Characters;
+using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
@@ -22,6 +23,7 @@ namespace Scripts.Presenter {
     /// </summary>
     public class PagePresenter {
         private Page page;
+        private Grid overrideGrid;
 
         private TextBoxHolderView textBoxHolder;
         private ActionGridView actionGrid;
@@ -44,9 +46,17 @@ namespace Scripts.Presenter {
             this.header = header;
             this.sound = sound;
             this.characterPresenters = new List<CharacterPresenter>();
-
             InitializeFunctions();
             this.Page = initial;
+        }
+
+        public Grid Override {
+            set {
+                this.overrideGrid = value;
+            }
+            get {
+                return overrideGrid;
+            }
         }
 
         public Page Page {
@@ -79,7 +89,11 @@ namespace Scripts.Presenter {
         public void Tick() {
             Page.Tick();
             header.Location = Page.Location;
-            actionGrid.SetButtonAttributes(page.Actions);
+            if (overrideGrid == null) {
+                actionGrid.SetButtonAttributes(page.Actions);
+            } else {
+                actionGrid.SetButtonAttributes(overrideGrid.Array);
+            }
             SetCharacterPresenters(Page.Left, left);
             SetCharacterPresenters(Page.Right, right);
             TickCharacterPresenters(Page.Left);
@@ -106,9 +120,6 @@ namespace Scripts.Presenter {
             // Stop any cutscenes
             Main.Instance.StopCoroutine("Timeline");
 
-            // Renable the actiongrid in case if it was disabled
-            // From Timelining
-
             if (!string.IsNullOrEmpty(page.Body)) {
                 AddTextBox(new TextBox(page.Body));
             }
@@ -123,8 +134,6 @@ namespace Scripts.Presenter {
             }
 
             actionGrid.ClearAll();
-            actionGrid.SetButtonAttributes(Page.Actions);
-
             page.OnEnter.Invoke();
 
             Tick();
