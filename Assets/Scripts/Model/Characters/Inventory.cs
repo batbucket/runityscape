@@ -76,7 +76,7 @@ namespace Scripts.Model.Characters {
                     dict.Remove(itemToRemove);
                 }
 
-                AddSplat(new SplatDetails(Color.red, string.Format("-{0}x", count), itemToRemove.Icon));
+                AddSplat(new SplatDetails(Color.red, string.Format("-{0}", count), itemToRemove.Icon));
 
             } else {
                 Util.Assert(false, "Unable to find item.");
