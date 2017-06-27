@@ -2,6 +2,7 @@
 using Scripts.Presenter;
 using Scripts.View.Effects;
 using Scripts.View.ObjectPool;
+using Scripts.View.Sounds;
 using System.Collections;
 using UnityEngine;
 
@@ -13,6 +14,11 @@ namespace Scripts.Game.Defined.SFXs {
             HitsplatView hp = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
             Util.Parent(hp.gameObject, parent);
             return hp.Animation(s, c, sprite);
+        }
+
+        public static IEnumerator PlaySound(string soundLoc) {
+            Main.Instance.Sound.PlaySound(soundLoc);
+            yield break;
         }
 
         public static IEnumerator HitSplat(GameObject parent, SplatDetails splat) {
