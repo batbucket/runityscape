@@ -24,7 +24,7 @@ namespace Scripts.Game.Pages {
             Page p = Get(ROOT_INDEX);
             p.OnEnter = () => {
                 List<IButtonable> actions = new List<IButtonable>();
-                actions.Add(previous);
+                actions.Add(PageUtil.GenerateBack(previous));
                 actions.Add(GetSendPlayerToPointAllocationPageProcess(c));
                 actions.Add(ExpHack(c));
                 DisplayStats(p, c);

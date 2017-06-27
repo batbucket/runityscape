@@ -1,4 +1,7 @@
-﻿using Scripts.Model.Buffs;
+﻿using Scripts.Game.Defined.Serialized.Items.Consumables;
+using Scripts.Game.Defined.Serialized.Items.Equipment;
+using Scripts.Game.Defined.Serialized.Items.Misc;
+using Scripts.Model.Buffs;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using System;
@@ -21,6 +24,13 @@ namespace Scripts.Model.Characters {
         public Party() {
             this.members = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
             this.shared = new Inventory();
+
+            this.shared.Add(new Apple());
+            this.shared.Add(new Apple());
+            this.shared.Add(new Apple());
+            this.shared.Add(new Apple());
+            this.shared.Add(new PoisonArmor());
+            this.shared.Add(new Money(), 100);
         }
 
         public Character Default {

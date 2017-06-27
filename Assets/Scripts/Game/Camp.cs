@@ -9,6 +9,7 @@ using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
+using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -31,10 +32,13 @@ namespace Scripts.Game.Pages {
 
         private void SetupCamp() {
             Page p = Get(ROOT_INDEX);
-            p.Actions = new IButtonable[] {
-                new LevelUpPages(Root, party.Default)
+            p.OnEnter = () => {
+                p.Actions = new IButtonable[] {
+                new LevelUpPages(Root, party.Default),
+                new InventoryPages(p, party.Default, party.shared)
             };
-            p.AddCharacters(Side.LEFT, party.Collection);
+                p.AddCharacters(Side.LEFT, party.Collection);
+            };
         }
 
         private Page CampOption(int index, List<IButtonable> buttons) {

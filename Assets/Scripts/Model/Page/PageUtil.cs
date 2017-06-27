@@ -16,7 +16,7 @@ namespace Scripts.Model.Pages {
 
         public static Grid GenerateSpellBooks(
             Page p,
-            Grid previous,
+            IButtonable previous,
             SpellParams owner,
             SpellBook excluded,
             IEnumerable<ISpellable> spellCollection,
@@ -36,9 +36,9 @@ namespace Scripts.Model.Pages {
                 "Cast a spell.");
         }
 
-        public static Grid GenerateUseableItems(
+        public static Grid GenerateItems(
             Page p,
-            Grid previous,
+            IButtonable previous,
             SpellParams owner,
             SpellBook excluded,
             IEnumerable<ISpellable> spellCollection,
@@ -59,7 +59,7 @@ namespace Scripts.Model.Pages {
                 );
         }
 
-        public static Grid GenerateBackableGrid(Grid previous, Sprite icon, int size, string name, string tooltip) {
+        public static Grid GenerateBackableGrid(IButtonable previous, Sprite icon, int size, string name, string tooltip) {
             Grid grid = new Grid(name);
             grid.Icon = icon;
             grid.Tooltip = tooltip;
@@ -71,7 +71,7 @@ namespace Scripts.Model.Pages {
 
         public static Grid GenerateSpellableGrid(
             Page p,
-            Grid previous,
+            IButtonable previous,
             SpellParams owner,
             SpellBook excluded,
             IEnumerable<ISpellable> spellCollection,
@@ -82,6 +82,7 @@ namespace Scripts.Model.Pages {
             string description) {
 
             Grid grid = GenerateBackableGrid(previous, sprite, count, name, description);
+
             int index = 1;
             foreach (ISpellable myS in spellCollection) {
                 ISpellable s = myS;
@@ -92,7 +93,7 @@ namespace Scripts.Model.Pages {
             return grid;
         }
 
-        public static Process GenerateSpellProcess(Page p, Grid previous, SpellParams owner, ISpellable spell, Action<IPlayable> handlePlayable) {
+        public static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spell, Action<IPlayable> handlePlayable) {
             SpellBook sb = spell.GetSpellBook();
             return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
                 () => {
@@ -102,7 +103,7 @@ namespace Scripts.Model.Pages {
                 });
         }
 
-        public static Grid GenerateTargets(Page p, Grid previous, SpellParams owner, SpellBook sb, Action<IPlayable> handlePlayable) {
+        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, SpellBook sb, Action<IPlayable> handlePlayable) {
             ICollection<Character> targets = sb.TargetType.GetTargets(owner.Character, p);
             Grid grid = GenerateBackableGrid(previous, sb.Icon, targets.Count, sb.Name, sb.CreateDescription(owner));
 
@@ -117,7 +118,7 @@ namespace Scripts.Model.Pages {
             return grid;
         }
 
-        public static Process GenerateTargetProcess(Grid previous, SpellParams owner, SpellParams target, SpellBook sb, Action<IPlayable> handlePlayable) {
+        public static Process GenerateTargetProcess(IButtonable previous, SpellParams owner, SpellParams target, SpellBook sb, Action<IPlayable> handlePlayable) {
             return new Process(CreateDetailedTargetName(owner, target, sb),
                                 target.Look.Sprite,
                                 sb.CreateTargetDescription(owner, target),
@@ -129,7 +130,7 @@ namespace Scripts.Model.Pages {
                                 });
         }
 
-        public static Grid GenerateUnequipGrid(Grid previous, SpellParams owner, Action<IPlayable> handlePlayable) {
+        public static Grid GenerateUnequipGrid(IButtonable previous, SpellParams owner, Action<IPlayable> handlePlayable) {
             Grid grid = GenerateBackableGrid(previous, Util.GetSprite("shoulder-armor"), EquipType.AllTypes.Count, "Equipment", "Manage equipped items.");
             int index = 1;
             foreach (EquipType myET in EquipType.AllTypes) {

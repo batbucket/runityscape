@@ -10,16 +10,16 @@ namespace Scripts.Model.Processes {
         public string Text;
         public string Tooltip;
         public Sprite Icon;
-        public Action Action;
         public Func<bool> Condition;
+        public Action OnEnter;
         public IButtonable[] Array;
 
         public Grid(string text) {
             this.Text = text;
             this.Tooltip = "";
             this.Icon = null;
-            this.Action = () => { };
             this.Condition = () => true;
+            OnEnter = () => { };
             this.Array = new IButtonable[0];
         }
 
@@ -58,6 +58,7 @@ namespace Scripts.Model.Processes {
         }
 
         public void Invoke() {
+            OnEnter();
             ChangeGridFunc.Invoke(Array);
         }
     }

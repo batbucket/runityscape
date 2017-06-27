@@ -22,7 +22,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             main.Array = new IButtonable[] {
                 PageUtil.GenerateTargets(battle, main, ownerParams, Attack, addPlay),
                 PageUtil.GenerateSpellBooks(battle, main, ownerParams, Attack, ownerParams.Spells, ownerParams.Spells.Count, addPlay),
-                PageUtil.GenerateUseableItems(battle, main, ownerParams, null, ownerParams.Inventory, ownerParams.Inventory.UniqueItemCount, addPlay),
+                PageUtil.GenerateItems(battle, main, ownerParams, null, ownerParams.Inventory, ownerParams.Inventory.UniqueItemCount, addPlay),
                 PageUtil.GenerateUnequipGrid(main, ownerParams, addPlay)
             };
             battle.Actions = main.Array;

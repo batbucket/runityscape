@@ -71,7 +71,10 @@ namespace Scripts.Presenter {
         }
 
         private void InitializeFunctions() {
-            Grid.ChangeGridFunc = (a => Page.Actions = a);
+            Grid.ChangeGridFunc = (a => {
+                Page.Actions = a;
+            }
+            );
             Page.ChangePageFunc = (p => {
                 Page = p;
             });

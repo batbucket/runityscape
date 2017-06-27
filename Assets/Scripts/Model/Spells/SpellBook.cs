@@ -21,7 +21,11 @@ namespace Scripts.Model.Spells {
         public Characters.Buffs Buffs;
         public Characters.Inventory Inventory;
         public Characters.Equipment Equipment;
-        public PortraitView Portrait;
+        public PortraitView Portrait {
+            get {
+                return Character.Presenter.PortraitView;
+            }
+        }
 
         public SpellParams(Character c) {
             this.CharacterId = c.Id;
@@ -32,7 +36,6 @@ namespace Scripts.Model.Spells {
             this.Buffs = c.Buffs;
             this.Inventory = c.Inventory;
             this.Equipment = c.Equipment;
-            this.Portrait = c.Presenter.PortraitView;
         }
     }
 
