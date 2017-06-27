@@ -8,8 +8,10 @@ namespace Scripts.Model.Items {
 
     public class BasicItem : Item {
 
-        public BasicItem(Sprite icon, int basePrice, int maxCount, string name, string description)
-            : base(icon, basePrice, TargetType.NONE, name, description) { }
+        public BasicItem(Sprite icon, int basePrice, string name, string description)
+            : base(icon, basePrice, TargetType.NONE, name, description) {
+
+        }
 
         public override SpellBook GetSpellBook() {
             return new Dummy(this);

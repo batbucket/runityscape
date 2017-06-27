@@ -111,7 +111,7 @@ namespace Scripts.Model.Pages {
 
             }
             Item item = spellable as Item;
-            if (item != null && item.HasFlag(Items.Flag.TRASHABLE)) {
+            if (item != null && item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {
                 grid.List.Add(
                     new Process(
                         string.Format("Toss {0}", item.Name),

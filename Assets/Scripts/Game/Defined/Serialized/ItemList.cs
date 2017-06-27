@@ -34,6 +34,6 @@ namespace Scripts.Game.Defined.Serialized.Items.Equipment {
 
 namespace Scripts.Game.Defined.Serialized.Items.Misc {
     public class Money : BasicItem {
-        public Money() : base(Util.GetSprite("fox-head"), 0, int.MaxValue, "Drop", "Drop of water, typically used as currency. Drinking it is not advised.") { }
+        public Money() : base(Util.GetSprite("fox-head"), 0, "Drop", "Drop of water, typically used as currency. Drinking it is not advised.") { }
     }
 }

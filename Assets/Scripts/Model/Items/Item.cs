@@ -9,7 +9,6 @@ using Scripts.Model.Interfaces;
 namespace Scripts.Model.Items {
 
     public abstract class Item : ISaveable<ItemSave>, ISpellable {
-        public static readonly HashSet<Flag> STANDARD_FLAGS = new HashSet<Flag>() { Flag.SELLABLE, Flag.TRASHABLE };
 
         public readonly string Name;
         public readonly Sprite Icon;
@@ -21,9 +20,6 @@ namespace Scripts.Model.Items {
 
         public Item(Sprite icon, int basePrice, TargetType target, string name, string description) {
             this.flags = new HashSet<Flag>();
-            foreach (Flag f in STANDARD_FLAGS) {
-                flags.Add(f);
-            }
             this.BasePrice = basePrice;
             this.Target = target;
             this.Name = name;

@@ -10,7 +10,6 @@ namespace Scripts.Model.Items {
     public abstract class UseableItem : Item {
         public UseableItem(Sprite sprite, int basePrice, TargetType target, string name, string description)
             : base(sprite, basePrice, target, name, description) {
-            flags.Add(Flag.USABLE);
             flags.Add(Flag.OCCUPIES_SPACE);
         }
     }
