@@ -23,6 +23,12 @@ namespace Scripts.Model.Characters {
             this.shared = new Inventory();
         }
 
+        public Character Default {
+            get {
+                return members.FirstOrDefault();
+            }
+        }
+
         public ICollection<Character> Collection {
             get {
                 return new ReadOnlyCollection<Character>(members.ToList());
