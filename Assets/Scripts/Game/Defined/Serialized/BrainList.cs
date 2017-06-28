@@ -21,9 +21,9 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             SpellParams ownerParams = new SpellParams(Owner);
             main.List = new IButtonable[] {
                 PageUtil.GenerateTargets(battle, main, ownerParams, Attack, addPlay),
-                PageUtil.GenerateSpellBooks(battle, main, ownerParams, Attack, ownerParams.Spells, addPlay),
-                PageUtil.GenerateItems(battle, main, ownerParams, null, ownerParams.Inventory, addPlay),
-                PageUtil.GenerateUnequipGrid(main, ownerParams, addPlay)
+                PageUtil.GenerateSpellBooks(battle, main, ownerParams, Attack, addPlay),
+                PageUtil.GenerateItems(battle, main, ownerParams, addPlay),
+                PageUtil.GenerateEquipmentGrid(main, ownerParams, addPlay)
             };
             battle.Actions = main.List;
         }

@@ -1,60 +1,50 @@
-﻿using Scripts.Game.Defined.Serialized.Spells;
-using Scripts.Model.Characters;
+﻿using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Items;
 using Scripts.Model.Processes;
 using Scripts.Model.Spells;
+using Scripts.Presenter;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.Model.Pages {
+
     public static class PageUtil {
+        public static readonly Sprite EQUIPMENT = Util.GetSprite("battle-gear");
+        public static readonly Sprite INVENTORY = Util.GetSprite("knapsack");
         public static readonly Sprite SPELLBOOK = Util.GetSprite("spell-book");
-        public static readonly Sprite INVENTORY = Util.GetSprite("swap-bag");
-        public static readonly Sprite EQUIPMENT = Util.GetSprite("shoulder-armor");
 
-        public static Grid GenerateSpellBooks(
-            Page p,
-            IButtonable previous,
-            SpellParams owner,
-            SpellBook excluded,
-            IEnumerable<ISpellable> spellCollection,
-            Action<IPlayable> addPlay
-            ) {
-            return GenerateSpellableGrid(
-                p,
-                previous,
-                owner,
-                excluded,
-                spellCollection,
-                addPlay,
-                SPELLBOOK,
-                "Spells",
-                "Cast a spell.");
-        }
-
-        public static Grid GenerateItems(
-            Page p,
-            IButtonable previous,
-            SpellParams owner,
-            SpellBook excluded,
-            IEnumerable<ISpellable> spellCollection,
-            Action<IPlayable> addPlay
-            ) {
-            return GenerateSpellableGrid(
-                p,
-                previous,
-                owner,
-                excluded,
-                spellCollection,
-                addPlay,
-                INVENTORY,
-                string.Format("Items ({0}/{1})", owner.Inventory.TotalOccupiedSpace, owner.Inventory.Capacity),
-                string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", owner.Inventory.TotalOccupiedSpace, owner.Inventory.Capacity)
+        /// <summary>
+        /// Create a Back Process, which is used
+        /// to leave a subgrid.
+        /// </summary>
+        /// <param name="previous"></param>
+        /// <returns></returns>
+        public static Process GenerateBack(IButtonable previous) {
+            return new Process(
+                "Back",
+                Util.GetSprite("plain-arrow"),
+                string.Format("Go back to {0}.", previous.ButtonText),
+                () => previous.Invoke()
                 );
         }
 
+        public static Action<IPlayable> GetOutOfBattlePlayableHandler(Page page) {
+            return (ip) => {
+                Main.Instance.StartCoroutine(PerformInOrder(page, ip, page.OnEnter));
+            };
+        }
+
+        /// <summary>
+        /// Create a subgrid that can be left to a main grid.
+        /// </summary>
+        /// <param name="previous">Content to go back to</param>
+        /// <param name="icon">Icon on the Button leading to this submenu</param>
+        /// <param name="name">Name on the button leading to this submenu</param>
+        /// <param name="tooltip">Description on the button leading to this submenu</param>
+        /// <returns></returns>
         public static Grid GenerateBackableGrid(IButtonable previous, Sprite icon, string name, string tooltip) {
             Grid grid = new Grid(name);
             grid.Icon = icon;
@@ -65,39 +55,74 @@ namespace Scripts.Model.Pages {
             return grid;
         }
 
-        public static Grid GenerateSpellableGrid(
+        /// <summary>
+        /// Generates a grid with inventory items
+        /// to use
+        /// </summary>
+        /// <param name="p">Page the owner is on</param>
+        /// <param name="previous">Main grid</param>
+        /// <param name="owner">Owner of the inventory</param>
+        /// <param name="addPlay">IPlayable handler</param>
+        /// <returns></returns>
+        public static Grid GenerateItems(
+                    Page p,
+                    IButtonable previous,
+                    SpellParams owner,
+                    Action<IPlayable> addPlay
+                    ) {
+            return GenerateSpellableGrid(
+                p,
+                previous,
+                owner,
+                null,
+                owner.Inventory,
+                addPlay,
+                INVENTORY,
+                string.Format("Items ({0}/{1})", owner.Inventory.TotalOccupiedSpace, owner.Inventory.Capacity),
+                string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", owner.Inventory.TotalOccupiedSpace, owner.Inventory.Capacity)
+                );
+        }
+
+        /// <summary>
+        /// Generate a Grid containing all SpellBooks
+        /// in Characters.SpellBooks
+        /// </summary>
+        /// <param name="p">Page the Owner is on</param>
+        /// <param name="previous">Previous IButtonable you want this Grid to go back to</param>
+        /// <param name="owner">Owner of the SpellBooks</param>
+        /// <param name="excluded">SpellBook to exclude, typically 'Attack'</param>
+        /// <param name="spellCollection">SpellBooks owned by Owner</param>
+        /// <param name="addPlay">Chosen action handler</param>
+        /// <returns></returns>
+        public static Grid GenerateSpellBooks(
             Page p,
             IButtonable previous,
             SpellParams owner,
             SpellBook excluded,
-            IEnumerable<ISpellable> spellCollection,
-            Action<IPlayable> addPlay,
-            Sprite sprite,
-            string name,
-            string description) {
-
-            Grid grid = GenerateBackableGrid(previous, sprite, name, description);
-
-            foreach (ISpellable myS in spellCollection) {
-                ISpellable s = myS;
-                if (!s.Equals(excluded)) {
-                    grid.List.Add(GenerateSpellProcess(p, grid, owner, s, addPlay));
-                }
-            }
-
-            return grid;
+            Action<IPlayable> addPlay
+            ) {
+            return GenerateSpellableGrid(
+                p,
+                previous,
+                owner,
+                excluded,
+                owner.Spells,
+                addPlay,
+                SPELLBOOK,
+                "Spells",
+                "Cast a spell.");
         }
 
-        public static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
-            SpellBook sb = spellable.GetSpellBook();
-            return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
-                () => {
-                    if (sb.IsMeetPreTargetRequirements(owner.Stats)) {
-                        GenerateTargets(p, previous, owner, spellable, handlePlayable).Invoke();
-                    }
-                });
-        }
-
+        /// <summary>
+        /// Creates a subGrid containing all possible targets
+        /// of spellable
+        /// </summary>
+        /// <param name="p">Page that owner is on</param>
+        /// <param name="previous">supergrid containing a list of possible ISpellables to use</param>
+        /// <param name="owner">User of the Spellable</param>
+        /// <param name="spellable">Spellable to use on target</param>
+        /// <param name="handlePlayable">Playable handler</param>
+        /// <returns></returns>
         public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
             SpellBook sb = spellable.GetSpellBook();
             ICollection<Character> targets = sb.TargetType.GetTargets(owner.Character, p);
@@ -108,13 +133,12 @@ namespace Scripts.Model.Pages {
             foreach (Character myTarget in targets) {
                 SpellParams target = new SpellParams(myTarget);
                 grid.List.Add(GenerateTargetProcess(previous, owner, target, sb, handlePlayable));
-
             }
             Item item = spellable as Item;
             if (item != null && item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {
                 grid.List.Add(
                     new Process(
-                        string.Format("Toss {0}", item.Name),
+                        string.Format("Drop"),
                         string.Format("Throw away {0}.", item.Name),
                         () => {
                             handlePlayable(
@@ -126,9 +150,73 @@ namespace Scripts.Model.Pages {
             return grid;
         }
 
-        public static Process GenerateTargetProcess(IButtonable previous, SpellParams owner, SpellParams target, SpellBook sb, Action<IPlayable> handlePlayable) {
-            return new Process(CreateDetailedTargetName(owner, target, sb),
-                                target.Look.Sprite,
+        /// <summary>
+        /// Creates a subgrid containing user's equipment
+        /// </summary>
+        /// <param name="previous">supergrid</param>
+        /// <param name="owner">Owner of the equipment</param>
+        /// <param name="handlePlayable">Playable handler</param>
+        /// <returns></returns>
+        public static Grid GenerateEquipmentGrid(IButtonable previous, SpellParams owner, Action<IPlayable> handlePlayable) {
+            Grid grid = GenerateBackableGrid(previous, EQUIPMENT, "Equipment", "Manage equipped items.");
+
+            foreach (EquipType myET in EquipType.AllTypes) {
+                EquipType et = myET;
+                IButtonable ib = null;
+                Equipment eq = owner.Equipment;
+                if (owner.Equipment.Contains(et)) {
+                    CastUnequipItem unequip = new CastUnequipItem(owner.Inventory, owner.Equipment, eq.PeekItem(et));
+                    ib = GetUnequipProcess(unequip, owner, grid, handlePlayable);
+                } else {
+                    ib = GetEquipGrid(owner, et, owner.Inventory, grid, handlePlayable);
+                }
+                grid.List.Add(ib);
+            }
+            return grid;
+        }
+
+        private static string CreateDetailedTargetName(SpellParams owner, SpellParams target, SpellBook sb) {
+            return Util.ColorString(target.Look.DisplayName, sb.IsCastable(owner, target));
+        }
+
+        private static Grid GenerateSpellableGrid(
+                                                    Page p,
+                    IButtonable previous,
+                    SpellParams owner,
+                    SpellBook excluded,
+                    IEnumerable<ISpellable> spellCollection,
+                    Action<IPlayable> addPlay,
+                    Sprite sprite,
+                    string name,
+                    string description) {
+            Grid grid = GenerateBackableGrid(previous, sprite, name, description);
+
+            foreach (ISpellable myS in spellCollection) {
+                ISpellable s = myS;
+                if (!s.Equals(excluded)) {
+                    grid.List.Add(GenerateSpellProcess(p, grid, owner, s, addPlay));
+                }
+            }
+
+            return grid;
+        }
+        private static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
+            SpellBook sb = spellable.GetSpellBook();
+            return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
+                () => {
+                    if (sb.IsMeetPreTargetRequirements(owner.Stats)) {
+                        GenerateTargets(p, previous, owner, spellable, handlePlayable).Invoke();
+                    }
+                });
+        }
+
+        private static Process GenerateTargetProcess(IButtonable previous, SpellParams owner, SpellParams target, SpellBook sb, Action<IPlayable> handlePlayable) {
+            return GenerateTargetProcessHelper(previous, owner, target, sb, handlePlayable, CreateDetailedTargetName(owner, target, sb), target.Look.Sprite);
+        }
+
+        private static Process GenerateTargetProcessHelper(IButtonable previous, SpellParams owner, SpellParams target, SpellBook sb, Action<IPlayable> handlePlayable, string name, Sprite icon) {
+            return new Process(name,
+                               icon,
                                 sb.CreateTargetDescription(owner, target),
                                 () => {
                                     if (sb.IsCastable(owner, target)) {
@@ -138,40 +226,46 @@ namespace Scripts.Model.Pages {
                                 });
         }
 
-        public static Grid GenerateUnequipGrid(IButtonable previous, SpellParams owner, Action<IPlayable> handlePlayable) {
-            Grid grid = GenerateBackableGrid(previous, Util.GetSprite("shoulder-armor"), "Equipment", "Manage equipped items.");
-
-            foreach (EquipType myET in EquipType.AllTypes) {
-                EquipType et = myET;
-                Process p = null;
-                Equipment eq = owner.Equipment;
-                if (owner.Equipment.Contains(et)) {
-                    CastUnequipItem unequip = new CastUnequipItem(owner.Inventory, owner.Equipment, eq.PeekItem(et));
-                    p = new Process(unequip.Name, unequip.CreateDescription(owner),
-                        () => {
-                            handlePlayable(owner.Spells.CreateSpell(unequip, owner, owner));
-                            previous.Invoke();
-                        }
-                            );
-                } else {
-                    p = new Process(Util.ColorString(et.Name, Color.grey), et.Sprite, "No item is equipped in this slot. Items can be equipped via the inventory menu.");
+        private static Grid GetEquipGrid(SpellParams owner, EquipType et, Inventory inv, IButtonable previous, Action<IPlayable> handlePlayable) {
+            Grid grid = GenerateBackableGrid(
+                previous,
+                et.Sprite,
+                Util.ColorString(et.Name, Color.grey),
+                string.Format("Equip an item in the <color=yellow>{0}</color> equipment slot.", et.Name)
+                );
+            foreach (EquippableItem ei in inv as IEnumerable<EquippableItem>) {
+                if (ei.Type.Equals(et)) {
+                    grid.List.Add(GenerateTargetProcessHelper(previous, owner, owner, new CastEquipItem(ei), handlePlayable, ei.Name, ei.Icon));
                 }
-                grid.List.Add(p);
             }
             return grid;
         }
 
-        public static string CreateDetailedTargetName(SpellParams owner, SpellParams target, SpellBook sb) {
-            return Util.ColorString(target.Look.DisplayName, sb.IsCastable(owner, target));
+        private static Process GetUnequipProcess(CastUnequipItem unequipSpell, SpellParams owner, IButtonable previous, Action<IPlayable> handlePlayable) {
+            return new Process(unequipSpell.Name, unequipSpell.Icon, unequipSpell.CreateDescription(owner),
+                        () => {
+                            handlePlayable(owner.Spells.CreateSpell(unequipSpell, owner, owner));
+                            previous.Invoke();
+                        }
+                        );
         }
 
-        public static Process GenerateBack(IButtonable previous) {
-            return new Process(
-                "Back",
-                Util.GetSprite("plain-arrow"),
-                string.Format("Go back to {0}.", previous.ButtonText),
-                () => previous.Invoke()
-                );
+        /// <summary>
+        /// There's a slight delay to Play()'s effects occurring, so we wait for
+        /// Play() to be completely finished, and then perform our action.
+        ///
+        /// If we don't do this, then item counts won't be updated since it'll go in this order:
+        /// Play coroutine started
+        /// Item buttons get setup
+        /// Used item is decremented in count by 1
+        /// </summary>
+        /// <param name="en">PlayGroup</param>
+        /// <param name="a">Action to perform after PlayGroup is finished.</param>
+        /// <returns></returns>
+        private static IEnumerator PerformInOrder(Page page, IPlayable play, Action postAction) {
+            yield return play.Play();
+            page.AddText(play.Text);
+            postAction.Invoke();
         }
     }
 }

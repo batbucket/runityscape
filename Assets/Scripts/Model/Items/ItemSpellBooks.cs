@@ -20,7 +20,7 @@ namespace Scripts.Model.Items {
         }
 
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
-            return !target.Equipment.Contains(equip.Type) || caster.Inventory.IsAddable(target.Equipment.PeekItem(equip.Type));
+            return caster.Inventory.HasItem(equip) && (!target.Equipment.Contains(equip.Type) || caster.Inventory.IsAddable(target.Equipment.PeekItem(equip.Type)));
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
@@ -46,12 +46,12 @@ namespace Scripts.Model.Items {
         }
 
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
-            return target.Equipment.Contains(item.Type) || caster.Inventory.IsAddable(item);
+            return target.Equipment.Contains(item.Type) && caster.Inventory.IsAddable(item);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, item), new Buffs.BuffParams() { Caster = caster.Stats, CasterId = caster.CharacterId})
+                    new UnequipItemEffect(new EquipParams(caster.Inventory, target.Equipment, item))
                 };
         }
     }
@@ -89,6 +89,10 @@ namespace Scripts.Model.Items {
             return allEffects;
         }
 
+        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+            return caster.Inventory.HasItem(consume);
+        }
+
         protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
             return new IEnumerator[] { SFX.PlaySound("Zip_0") };
         }
@@ -103,6 +107,10 @@ namespace Scripts.Model.Items {
 
         public override string CreateDescriptionHelper(SpellParams caster) {
             return string.Format("{0}\n\nDrops one of this item from the inventory.", item.Description);
+        }
+
+        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+            return caster.Inventory.HasItem(item);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {

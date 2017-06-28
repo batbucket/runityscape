@@ -11,7 +11,7 @@ using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
 
-    public class Inventory : IEnumerable<Item>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
+    public class Inventory : IEnumerable<Item>, IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
         private const int INITIAL_CAPACITY = 10;
 
         public Action<SplatDetails> AddSplat;
@@ -138,6 +138,10 @@ namespace Scripts.Model.Characters {
                 item.InitFromSaveObject(save.Item);
                 dict.Add(item, save.Count);
             }
+        }
+
+        IEnumerator<EquippableItem> IEnumerable<EquippableItem>.GetEnumerator() {
+            return dict.Keys.Where(i => i is EquippableItem).Cast<EquippableItem>().GetEnumerator();
         }
     }
 }

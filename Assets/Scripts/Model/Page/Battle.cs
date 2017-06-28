@@ -13,12 +13,18 @@ namespace Scripts.Model.Pages {
 
     public class Battle : Page {
         private const string BATTLE_START = "The battle begins.";
-        private const string ROUND_START = "Turn {0}";
-        private const string PLAYER_QUESTION = "What will <color=yellow>{0}</color> do?";
-        private const string RESOLVED = "The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turn(s).";
-        private const string CHARACTER_DEATH = "<color=yellow>{0}</color> has been <color=red>defeated.</color>.";
+
         private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=yellow>{1}</color>.";
+
         private const string BUFF_FADE = "<color=yellow>{0}</color>'s {1} fades.";
+
+        private const string CHARACTER_DEATH = "<color=yellow>{0}</color> has been <color=red>defeated</color>.";
+
+        private const string PLAYER_QUESTION = "What will <color=yellow>{0}</color> do?";
+
+        private const string RESOLVED = "The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turn(s).";
+
+        private const string ROUND_START = "Turn {0}";
 
         private int turnCount;
 
@@ -35,32 +41,14 @@ namespace Scripts.Model.Pages {
                 OnEnter = () => { };
             };
         }
-
         private bool IsResolved {
             get {
                 return Left.All(c => c.Stats.State == State.DEAD) || Right.All(c => c.Stats.State == State.DEAD);
             }
         }
 
-        private IEnumerator startBattle() {
-            AddText(BATTLE_START);
-            while (!IsResolved) {
-                yield return startRound();
-                yield return new WaitForSeconds(1);
-            }
-            AddText(string.Format(RESOLVED, turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "right" : "left"));
-        }
-
-        private IEnumerator startRound() {
-            AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
-            List<IPlayable> plays = new List<IPlayable>();
-            List<Character> chars = GetAll();
-            HashSet<Character> playerActionSet = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
-
-            yield return DetermineCharacterActions(chars, plays, playerActionSet);
-            yield return PerformActions(plays);
-            yield return GoThroughBuffs(chars);
-            EndRound();
+        private bool CharacterCanCast(SpellParams c) {
+            return c.Stats.State == State.ALIVE;
         }
 
         private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
@@ -89,7 +77,6 @@ namespace Scripts.Model.Pages {
                         if (!playerActionSet.Contains(c)) {
                             plays.Add(p);
                             playerActionSet.Add(c);
-                            ClearActionGrid();
                             isActionTaken = true;
                         } else {
                             Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
@@ -98,6 +85,7 @@ namespace Scripts.Model.Pages {
 
                     // Wait until they choose a move. (This so the player can wait as long as they want)
                     yield return new WaitWhile(() => !isActionTaken);
+                    ClearActionGrid();
 
                     ObjectPoolManager.Instance.Return(textbox); // Remove "What will X do?" textbox, reduce clutter
 
@@ -115,8 +103,32 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private bool CharacterCanCast(SpellParams c) {
-            return c.Stats.State == State.ALIVE;
+        private void EndRound() {
+            turnCount++;
+        }
+
+        private IEnumerator GoThroughBuffs(IList<Character> chars) {
+            //End of round buff interactions
+            foreach (Character c in chars) {
+                yield return new WaitForSeconds(0.25f);
+                Characters.Buffs buffs = c.Buffs;
+                IList<Buff> timedOut = new List<Buff>();
+                foreach (Buff myB in buffs) {
+                    yield return new WaitForSeconds(0.1f);
+                    Buff b = myB;
+                    AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
+                    b.OnEndOfTurn(c.Stats);
+                    if (b.IsTimedOut) {
+                        timedOut.Add(b);
+                    }
+                }
+                foreach (Buff myB in timedOut) {
+                    yield return new WaitForSeconds(0.1f);
+                    Buff b = myB;
+                    AddText(string.Format(BUFF_FADE, c.Look.DisplayName, b.Name));
+                    buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
+                }
+            }
         }
 
         private IEnumerator PerformActions(List<IPlayable> plays) {
@@ -152,32 +164,25 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private IEnumerator GoThroughBuffs(IList<Character> chars) {
-            //End of round buff interactions
-            foreach (Character c in chars) {
-                yield return new WaitForSeconds(0.25f);
-                Characters.Buffs buffs = c.Buffs;
-                IList<Buff> timedOut = new List<Buff>();
-                foreach (Buff myB in buffs) {
-                    yield return new WaitForSeconds(0.1f);
-                    Buff b = myB;
-                    AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
-                    b.OnEndOfTurn(c.Stats);
-                    if (b.IsTimedOut) {
-                        timedOut.Add(b);
-                    }
-                }
-                foreach (Buff myB in timedOut) {
-                    yield return new WaitForSeconds(0.1f);
-                    Buff b = myB;
-                    AddText(string.Format(BUFF_FADE, c.Look.DisplayName, b.Name));
-                    buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
-                }
+        private IEnumerator startBattle() {
+            AddText(BATTLE_START);
+            while (!IsResolved) {
+                yield return startRound();
+                yield return new WaitForSeconds(1);
             }
+            AddText(string.Format(RESOLVED, turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "right" : "left"));
         }
 
-        private void EndRound() {
-            turnCount++;
+        private IEnumerator startRound() {
+            AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
+            List<IPlayable> plays = new List<IPlayable>();
+            List<Character> chars = GetAll();
+            HashSet<Character> playerActionSet = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
+
+            yield return DetermineCharacterActions(chars, plays, playerActionSet);
+            yield return PerformActions(plays);
+            yield return GoThroughBuffs(chars);
+            EndRound();
         }
     }
 }

@@ -20,37 +20,16 @@ namespace Scripts.Game.Pages {
         private void Inventory(Page previous, Character c, Inventory inventory) {
             Page p = Get(ROOT_INDEX);
             p.AddCharacters(Side.LEFT, c);
+            p.Icon = PageUtil.INVENTORY;
             p.OnEnter = () => {
                 p.AddText(string.Format("{0}/{1} spaces used.", inventory.TotalOccupiedSpace, inventory.Capacity));
                 p.Actions = PageUtil.GenerateItems(
                         p,
                         previous,
                         new SpellParams(c),
-                        null,
-                        inventory,
-                        playable => {
-                            Main.Instance.StartCoroutine(PerformInOrder(p, playable, () => p.OnEnter()));
-                        })
+                        PageUtil.GetOutOfBattlePlayableHandler(p))
                         .List;
             };
-        }
-
-        /// <summary>
-        /// There's a slight delay to Play()'s effects occurring, so we wait for
-        /// Play() to be completely finished, and then perform our action.
-        ///
-        /// If we don't do this, then item counts won't be updated since it'll go in this order:
-        /// Play coroutine started
-        /// Item buttons get setup
-        /// Used item is decremented in count by 1
-        /// </summary>
-        /// <param name="en">PlayGroup</param>
-        /// <param name="a">Action to perform after PlayGroup is finished.</param>
-        /// <returns></returns>
-        private IEnumerator PerformInOrder(Page page, IPlayable play, Action postAction) {
-            yield return play.Play();
-            page.AddText(play.Text);
-            postAction.Invoke();
         }
     }
 }

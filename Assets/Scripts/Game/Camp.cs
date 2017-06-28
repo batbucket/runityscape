@@ -7,6 +7,7 @@ using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
+using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
@@ -35,7 +36,8 @@ namespace Scripts.Game.Pages {
             p.OnEnter = () => {
                 p.Actions = new IButtonable[] {
                 new LevelUpPages(Root, party.Default),
-                new InventoryPages(p, party.Default, party.shared)
+                new InventoryPages(p, party.Default, party.shared),
+                new EquipmentPages(p, new SpellParams(party.Default))
             };
                 p.AddCharacters(Side.LEFT, party.Collection);
             };

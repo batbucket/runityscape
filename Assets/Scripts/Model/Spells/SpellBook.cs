@@ -217,7 +217,7 @@ namespace Scripts.Model.Spells {
         }
 
         public virtual string GetDetailedName(SpellParams caster) {
-            return Util.ColorString(string.Format("{0} {1}", Verb, Name), CasterHasResources(caster.Stats));
+            return Util.ColorString(string.Format("{0}", Name), CasterHasResources(caster.Stats));
         }
 
         public SpellBookSave GetSaveObject() {
