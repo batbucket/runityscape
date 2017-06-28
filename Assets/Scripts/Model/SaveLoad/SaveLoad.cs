@@ -83,15 +83,14 @@ namespace Scripts.Game.Serialization {
             PostMessage("Saved successfully to slot {0}.", saveIndex);
         }
 
-        public static void DeleteSave(int index, string successMessage = null) {
+        public static void DeleteSave(int index) {
             try {
                 PlayerPrefs.DeleteKey(GetSaveKey(index));
             } catch (Exception e) {
                 PostMessage(Util.ColorString(e.ToString(), Color.red));
+                return;
             }
-            if (!string.IsNullOrEmpty(successMessage)) {
-                PostMessage(Util.ColorString(successMessage, Color.cyan));
-            }
+            PostMessage(string.Format("Save file {0} was deleted.", index));
         }
 
         public static string SaveFileDisplay(string name, int level) {
