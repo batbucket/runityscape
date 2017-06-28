@@ -15,7 +15,7 @@ namespace Scripts.Model.Pages {
         private const string BATTLE_START = "The battle begins.";
         private const string ROUND_START = "Turn {0}";
         private const string PLAYER_QUESTION = "What will <color=yellow>{0}</color> do?";
-        private const string RESOLVED = "The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turns.";
+        private const string RESOLVED = "The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turn(s).";
         private const string CHARACTER_DEATH = "<color=yellow>{0}</color> has been <color=red>defeated.</color>.";
         private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=yellow>{1}</color>.";
         private const string BUFF_FADE = "<color=yellow>{0}</color>'s {1} fades.";

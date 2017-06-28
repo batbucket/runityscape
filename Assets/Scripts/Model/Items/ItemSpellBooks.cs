@@ -11,12 +11,12 @@ namespace Scripts.Model.Items {
     public class CastEquipItem : ItemSpellBook {
         private EquippableItem equip;
 
-        public CastEquipItem(EquippableItem equip) : base(equip) {
+        public CastEquipItem(EquippableItem equip) : base(equip, "Equip") {
             this.equip = equip;
         }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\nEquip [{1}] in a target's [{2}] equipment slot.", equip.Description, equip.Name, equip.Type);
+            return string.Format("{0}\n\nEquip <color=yellow>{1}</color> in a target's <color=yellow>{2}</color> equipment slot.", equip.Description, equip.Name, equip.Type);
         }
 
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
@@ -35,14 +35,14 @@ namespace Scripts.Model.Items {
         private Equipment targetEq;
         private new EquippableItem item;
 
-        public CastUnequipItem(Inventory caster, Equipment targetEq, EquippableItem item) : base(item) {
+        public CastUnequipItem(Inventory caster, Equipment targetEq, EquippableItem item) : base(item, "Unequip") {
             this.caster = caster;
             this.targetEq = targetEq;
             this.item = item;
         }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\nUnequip [{1}] from the [{2}] equipment slot.", item.Description, item.Name, item.Type);
+            return string.Format("{0}\n\nUnequip <color=yellow>{1}</color> from the <color=yellow>{2}</color> equipment slot.", item.Description, item.Name, item.Type);
         }
 
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
@@ -57,10 +57,10 @@ namespace Scripts.Model.Items {
     }
 
     public class Dummy : ItemSpellBook {
-        public Dummy(BasicItem basic) : base(basic) { }
+        public Dummy(BasicItem basic) : base(basic, string.Empty) { }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\n<color=grey>This item cannot be used on a target and does not take up inventory space.</color>", item.Description);
+            return string.Format("{0}", item.Description);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
@@ -71,12 +71,12 @@ namespace Scripts.Model.Items {
     public class UseItem : ItemSpellBook {
         private readonly ConsumableItem consume;
 
-        public UseItem(ConsumableItem consume) : base(consume) {
+        public UseItem(ConsumableItem consume) : base(consume, "Use") {
             this.consume = consume;
         }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\nUse [{1}] on a target.", item.Description, item.Name);
+            return string.Format("{0}\n\nUse <color=yellow>{1}</color> on a target.", item.Description, item.Name);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
@@ -97,12 +97,12 @@ namespace Scripts.Model.Items {
     public class TossItem : ItemSpellBook {
         private Inventory inventory;
 
-        public TossItem(Item item, Inventory inventory) : base(item, "Toss " + item.Name) {
+        public TossItem(Item item, Inventory inventory) : base(item, "Drop") {
             this.inventory = inventory;
         }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\nRemove one of this item from the inventory.", item.Description);
+            return string.Format("{0}\n\nDrops one of this item from the inventory.", item.Description);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {

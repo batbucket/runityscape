@@ -22,8 +22,9 @@ namespace Scripts.Model.Spells {
 
         public string SpellDeclareText {
             get {
-                return string.Format("<color=yellow>{0}</color> will use <color=cyan>{1}</color>{2}.",
+                return string.Format("<color=yellow>{0}</color> will {1} <color=cyan>{2}</color>{3}.",
                   Caster.Look.DisplayName,
+                  Book.Verb.ToLower(),
                   Book.Name,
                   Caster.Equals(Target) ? string.Empty : string.Format(" on <color=yellow>{0}</color>", Target.Look.DisplayName)
               );
@@ -32,8 +33,9 @@ namespace Scripts.Model.Spells {
 
         public string SpellText {
             get {
-                return string.Format("<color=yellow>{0}</color> uses <color=cyan>{1}</color>{2}.{3}",
+                return string.Format("<color=yellow>{0}</color> {1} <color=cyan>{2}</color>{3}.{4}",
                   Caster.Look.DisplayName,
+                  Book.Verb.ToLower() + 's',
                   Book.Name,
                   Caster.Equals(Target) ? string.Empty : string.Format(" on <color=yellow>{0}</color>", Target.Look.DisplayName),
                   Result.Type.Text

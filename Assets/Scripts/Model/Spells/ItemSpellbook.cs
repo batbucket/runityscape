@@ -8,9 +8,9 @@ namespace Scripts.Model.Spells {
     public abstract class ItemSpellBook : SpellBook {
         protected Item item;
 
-        public ItemSpellBook(Item item) : this(item, item.Name) { }
+        public ItemSpellBook(Item item, string verb) : this(item, item.Name, verb) { }
 
-        public ItemSpellBook(Item item, string name) : base(name, item.Icon, item.Target, SpellType.ITEM, 0, 0) {
+        public ItemSpellBook(Item item, string name, string verb) : base(name, item.Icon, item.Target, SpellType.ITEM, 0, 0, verb) {
             this.item = item;
             flags.Remove(Flag.CASTER_REQUIRES_SPELL);
         }
