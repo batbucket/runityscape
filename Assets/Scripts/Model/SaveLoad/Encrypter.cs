@@ -6,7 +6,7 @@ using System.Security;
 using System.Text;
 using System;
 
-namespace Scripts.Model.World.Serialization {
+namespace Scripts.Game.Serialization {
 
     /// <summary>
     /// Modified slightly from
@@ -40,7 +40,7 @@ namespace Scripts.Model.World.Serialization {
         }
 
         /// <span class="code-SummaryComment"><summary></span>
-        /// Decrypt a crypted string.
+        /// Decrypt an encrypted string.
         /// <span class="code-SummaryComment"></summary></span>
         /// <span class="code-SummaryComment"><param name="cryptedString">The crypted string.</param></span>
         /// <span class="code-SummaryComment"><returns>The decrypted string.</returns></span>

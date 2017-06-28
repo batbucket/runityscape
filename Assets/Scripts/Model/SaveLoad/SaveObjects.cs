@@ -10,6 +10,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections;
 using Scripts.Model.SaveLoad.SaveObjects;
+using Scripts.Game.Serialized;
 
 namespace Scripts.Model.SaveLoad.SaveObjects {
 
@@ -334,6 +335,17 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public PartySave(List<CharacterSave> characters, InventorySave inventory) {
             this.Characters = characters;
             this.Inventory = inventory;
+        }
+    }
+
+    [Serializable]
+    public sealed class GameSave {
+        public Flags Flags;
+        public PartySave Party;
+
+        public GameSave(PartySave party, Flags flags) {
+            this.Party = party;
+            this.Flags = flags;
         }
     }
 }

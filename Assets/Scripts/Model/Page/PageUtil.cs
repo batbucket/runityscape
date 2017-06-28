@@ -17,6 +17,27 @@ namespace Scripts.Model.Pages {
         public static readonly Sprite SPELLBOOK = Util.GetSprite("spell-book");
 
         /// <summary>
+        /// Creates a Grid asking if the user wants to perform a task.
+        /// </summary>
+        /// <param name="current">Page grid is on</param>
+        /// <param name="previous">Previous buttonable</param>
+        /// <param name="confirm">Process serving as the confirm button</param>
+        /// <param name="name">Name of this grid</param>
+        /// <param name="tooltip">Tooltip of this grid</param>
+        /// <param name="confirmationQuestion">Question to ask when grid is entered.</param>
+        /// <returns></returns>
+        public static Grid GetConfirmationGrid(Page current, IButtonable previous, Process confirm, string name, string tooltip, string confirmationQuestion) {
+            Grid g = new Grid(name);
+            g.Tooltip = tooltip;
+            g.OnEnter += () => {
+                current.AddText(confirmationQuestion);
+            };
+            g.List.Add(PageUtil.GenerateBack(previous));
+            g.List.Add(confirm);
+            return g;
+        }
+
+        /// <summary>
         /// Create a Back Process, which is used
         /// to leave a subgrid.
         /// </summary>
@@ -45,7 +66,7 @@ namespace Scripts.Model.Pages {
         /// <param name="name">Name on the button leading to this submenu</param>
         /// <param name="tooltip">Description on the button leading to this submenu</param>
         /// <returns></returns>
-        public static Grid GenerateBackableGrid(IButtonable previous, Sprite icon, string name, string tooltip) {
+        private static Grid GenerateBackableGrid(IButtonable previous, Sprite icon, string name, string tooltip) {
             Grid grid = new Grid(name);
             grid.Icon = icon;
             grid.Tooltip = tooltip;
@@ -180,7 +201,7 @@ namespace Scripts.Model.Pages {
         }
 
         private static Grid GenerateSpellableGrid(
-                                                    Page p,
+                    Page p,
                     IButtonable previous,
                     SpellParams owner,
                     SpellBook excluded,

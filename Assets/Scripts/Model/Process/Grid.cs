@@ -6,7 +6,13 @@ using System.Collections.Generic;
 namespace Scripts.Model.Processes {
     public class Grid : IButtonable {
         public const int DEFAULT_BUTTON_COUNT = 16;
-        public static Action<IList<IButtonable>> ChangeGridFunc;
+
+        public static Action<IList<IButtonable>> ChangeGridFunc {
+            set {
+                changeGridFunc = value;
+            }
+        }
+        private static Action<IList<IButtonable>> changeGridFunc;
 
         public string Text;
         public string Tooltip;
@@ -49,7 +55,8 @@ namespace Scripts.Model.Processes {
         }
 
         public void Invoke() {
-            ChangeGridFunc.Invoke(List);
+            changeGridFunc.Invoke(List);
+            this.OnEnter();
         }
     }
 }

@@ -1,11 +1,10 @@
-﻿using Scripts.Model.TextBoxes;
+﻿using Scripts.Model.SaveLoad.SaveObjects;
+using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
 using System;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 
-namespace Scripts.Model.World.Serialization {
+namespace Scripts.Game.Serialization {
 
     /// <summary>
     /// Utility class that allows saving and loading of data saved as JSONs.
@@ -13,6 +12,12 @@ namespace Scripts.Model.World.Serialization {
     /// and store them in PlayerPrefs.
     /// </summary>
     public static class SaveLoad {
+#if UNITY_EDITOR
+        public const bool IS_ENCRYPT_VALUES = false;
+#else
+        public const bool IS_ENCRYPT_VALUES = true;
+#endif
+
         public const int MAX_SAVE_FILES = 10;
         private const string SAVE_PREFIX = "save_";
 
@@ -23,6 +28,12 @@ namespace Scripts.Model.World.Serialization {
             get {
                 TextAsset ta = Resources.Load<TextAsset>(string.Format("{0}/{1}", ENCRYPT_FOLDER_NAME, ENCRYPT_FILE_NAME));
                 return ta.text;
+            }
+        }
+
+        public static void PrintSaves() {
+            for (int i = 0; i < MAX_SAVE_FILES; i++) {
+                PostMessage("Save index {0}\n{1}", GetSaveKey(i), GetSaveValue(i));
             }
         }
 
@@ -37,45 +48,49 @@ namespace Scripts.Model.World.Serialization {
             Util.Log("Saves deleted.");
         }
 
-        public static T Load<T>(int saveIndex, bool isEncrypted, string successMessage = null) {
+        public static GameSave Load(int saveIndex, bool isEncrypted) {
             string json = null;
             try {
-                string encryptedSave = GetSaveValue(saveIndex);
-                json = Encrypter.Decrypt(encryptedSave, EncryptKey);
+                string saveValue = GetSaveValue(saveIndex);
+                if (isEncrypted) {
+                    json = DecryptString(saveValue);
+                } else {
+                    json = saveValue;
+                }
             } catch (Exception e) {
                 Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(e.ToString(), Color.red)));
-                //TODO return null;
+                return null;
             }
-            if (!string.IsNullOrEmpty(successMessage)) {
-                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(successMessage, Color.cyan)));
-            }
-            T load = JsonUtility.FromJson<T>(json);
-
+            GameSave load = JsonUtility.FromJson<GameSave>(json);
+            PostMessage("Load from {0} was successful.", saveIndex);
             return load;
         }
 
-        public static void Save(object saveObject, bool isEncrypted, int saveIndex, string successMessage = null) {
+        public static void Save(GameSave saveObject, bool isEncrypted, int saveIndex) {
             string json = JsonUtility.ToJson(saveObject);
             try {
-                string encryptedJson = Encrypter.Encrypt(json, EncryptKey);
-                SetSave(saveIndex, encryptedJson);
+                string modified = string.Empty;
+                if (isEncrypted) {
+                    modified = EncryptString(json);
+                } else {
+                    modified = json;
+                }
+                SetSave(saveIndex, modified);
             } catch (Exception e) {
-                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(e.ToString(), Color.red)));
+                PostMessage(Util.ColorString(e.ToString(), Color.red));
                 return;
             }
-            if (!string.IsNullOrEmpty(successMessage)) {
-                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(successMessage, Color.green)));
-            }
+            PostMessage("Saved successfully to slot {0}.", saveIndex);
         }
 
         public static void DeleteSave(int index, string successMessage = null) {
             try {
                 PlayerPrefs.DeleteKey(GetSaveKey(index));
             } catch (Exception e) {
-                Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(e.ToString(), Color.red)));
+                PostMessage(Util.ColorString(e.ToString(), Color.red));
             }
             if (!string.IsNullOrEmpty(successMessage)) {
-                Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(successMessage, Color.cyan)));
+                PostMessage(Util.ColorString(successMessage, Color.cyan));
             }
         }
 
@@ -101,6 +116,10 @@ namespace Scripts.Model.World.Serialization {
 
         private static string GetSaveValue(int index) {
             return PlayerPrefs.GetString(GetSaveKey(index));
+        }
+
+        private static void PostMessage(string message, params object[] args) {
+            Presenter.Main.Instance.TextBoxes.AddTextBox(new TextBox(string.Format(message, args)));
         }
     }
 }

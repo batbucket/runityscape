@@ -16,6 +16,8 @@ using Scripts.Model.TextBoxes;
 using Scripts.Model.Acts;
 using Scripts.Model.Stats;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Game.Serialized;
+using Scripts.Game.Serialization;
 
 namespace Scripts.Game.Pages {
 
@@ -47,10 +49,13 @@ namespace Scripts.Game.Pages {
 
         private void StartPage() {
             Page start = Get(ROOT_INDEX);
-            start.Actions = new IButtonable[] {
+            start.OnEnter = () => {
+                start.Actions = new IButtonable[] {
                 Get(NEW_GAME),
-                Get(DEBUGGING),
-                Get(CREDITS)
+                Get(CREDITS),
+                new LoadPages(start),
+                Get(DEBUGGING)
+                };
             };
         }
 
@@ -64,7 +69,10 @@ namespace Scripts.Game.Pages {
                         IntroVoice("Arise once more and bring us to egress..."),
                         new TextAct("You feel like you are being dragged off somewhere..."),
                         new ActionAct(() => {
-                            Camp camp = new Camp(name);
+                            Party party = new Party();
+                            Flags flags = new Flags();
+                            party.AddMember(new Hero(name));
+                            Camp camp = new Camp(party, flags);
                             camp.Root.OnEnter += () => {
                                 ActUtil.SetupScene(camp.Root,
                                     new TextAct("You wake up in the middle of a nicely set up campsite with a tent, fire, and backpack."),
@@ -110,6 +118,8 @@ namespace Scripts.Game.Pages {
                     Page.TypeText(new TextBox(string.Format("For level {0}-{1}: {2} exp", level, level + 1, Experience.GetExpDiffForLevel(level, level + 1))));
                     level++;
                 }),
+                new Process("ALL saves", () => SaveLoad.PrintSaves()),
+                new Process("DELET all saves", () => SaveLoad.DeleteAllSaves()),
                 submenu
             };
 
