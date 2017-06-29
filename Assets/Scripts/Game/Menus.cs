@@ -74,14 +74,17 @@ namespace Scripts.Game.Pages {
                             Flags flags = new Flags();
                             party.AddMember(new Hero(name));
                             Camp camp = new Camp(party, flags);
+                            bool wasCalled = false;
                             camp.Root.OnEnter += () => {
-                                ActUtil.SetupScene(camp.Root,
-                                    new TextAct("You wake up in the middle of a nicely set up campsite with a tent, fire, and backpack."),
-                                    new TextAct("As you scan your surroundings for who brought you here, a <color=magenta>moving figure</color> far away catches your eye."),
-                                    new TextAct("You stand up to get a better view of them, but they have already disappeared."),
-                                    new TextAct("Near where you initially spotted them, you see the ruins of some town.")
-                                    );
-                                camp.Root.OnEnter = () => { };
+                                if (!wasCalled) {
+                                    wasCalled = true;
+                                    ActUtil.SetupScene(camp.Root,
+                                        new TextAct("You wake up in the middle of a nicely set up campsite with a tent, fire, and backpack."),
+                                        new TextAct("As you scan your surroundings for who brought you here, a <color=magenta>moving figure</color> far away catches your eye."),
+                                        new TextAct("You stand up to get a better view of them, but they have already disappeared."),
+                                        new TextAct("Near where you initially spotted them, you see the ruins of some town.")
+                                        );
+                                }
                             };
                             camp.Root.Invoke();
                         })
