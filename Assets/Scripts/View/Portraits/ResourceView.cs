@@ -12,7 +12,6 @@ namespace Scripts.View.Portraits {
     /// on a CharacterView, representing their resources.
     /// </summary>
     public class ResourceView : PooledBehaviour, IComparable<ResourceView> {
-        public StatType Type;
 
         /// <summary>
         /// Bar that represents the absence of a resource
@@ -35,13 +34,9 @@ namespace Scripts.View.Portraits {
         [SerializeField]
         private Tip tip;
 
-        public Tip Tip {
-            get {
-                return tip;
-            }
-        }
+        private int order;
 
-        public float BarScale {
+        private float BarScale {
             set {
                 Vector3 v = fillBar.gameObject.GetComponent<RectTransform>().localScale;
                 v.x = Mathf.Clamp(value, 0, 1);
@@ -49,60 +44,44 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public Color EmptyColor {
-            get {
-                return emptyBar.color;
-            }
-            set {
-                emptyBar.color = value;
-            }
-        }
-
-        public Color FillColor {
-            get {
-                return fillBar.color;
-            }
-            set {
-                fillBar.color = value;
-            }
-        }
-
-        public Sprite Sprite {
-            set {
-                resourceIcon.sprite = value;
-            }
-        }
-
-        /// <summary>
-        /// Text on bar that describes the amount in some way
-        /// </summary>
-        public string Text {
-            get {
-                return text.text;
-            }
-            set {
-                text.text = value;
-            }
+        public void Setup(
+            Color negativeColor,
+            Color fillColor,
+            Sprite sprite,
+            string barText,
+            int numerator,
+            int denominator,
+            string typeDescription) {
+            emptyBar.color = negativeColor;
+            fillBar.color = fillColor;
+            resourceIcon.sprite = sprite;
+            text.text = barText;
+            SetBarScale(numerator, denominator);
+            tip.Body = string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, typeDescription);
         }
 
         public override void Reset() {
-            Sprite = null;
-            EmptyColor = Color.white;
-            FillColor = Color.white;
-            Text = "";
+            Setup(
+                Color.white,
+                Color.white,
+                null,
+                string.Empty,
+                0,
+                0,
+                string.Empty
+                );
         }
 
-        public void SetBarScale(float numerator, float denominator) {
+        private void SetBarScale(float numerator, float denominator) {
             if (denominator <= 0) {
                 BarScale = 0;
             } else {
                 BarScale = numerator / denominator;
             }
-            tip.Body = string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, Type.Description);
         }
 
         int IComparable<ResourceView>.CompareTo(ResourceView other) {
-            return this.Type.CompareTo(other.Type);
+            return this.order.CompareTo(other.order);
         }
     }
 }

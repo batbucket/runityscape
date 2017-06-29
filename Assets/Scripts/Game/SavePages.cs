@@ -69,7 +69,7 @@ namespace Scripts.Game.Pages {
                 GetSaveProcess(previous, "Overwrite", saveIndex, gs, string.Format("Save over file {0}.", saveIndex), string.Format("File {0} was overwritten.", saveIndex)),
                 saveName,
                 string.Format("Overwrite file {0}.", saveIndex),
-                string.Format("Are you sure you want to overwrite the contents of file {0}?", saveIndex)
+                string.Format("Are you sure you want to overwrite file {0}?", saveIndex)
                 );
             page.AddCharacters(Side.RIGHT, party.Collection);
             return page;

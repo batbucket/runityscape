@@ -39,9 +39,9 @@ namespace Scripts.Model.Characters {
             GetEquipmentBonus = (st) => 0;
         }
 
-        public StatType[] Resources {
+        public IEnumerable<Stat> Resources {
             get {
-                return dict.Keys.Where(k => StatType.RESOURCES.Contains(k)).ToArray();
+                return dict.Values.Where(v => StatType.RESOURCES.Contains(v.Type));
             }
         }
 

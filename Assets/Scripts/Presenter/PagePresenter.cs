@@ -90,6 +90,7 @@ namespace Scripts.Presenter {
         }
 
         public void Tick() {
+            page.Input = GetInputFunc.Invoke();
             Page.Tick();
             header.Location = Page.Location;
             if (overrideGrid == null) {
@@ -100,8 +101,6 @@ namespace Scripts.Presenter {
             }
             SetCharacterPresenters(Page.Left, left);
             SetCharacterPresenters(Page.Right, right);
-            TickCharacterPresenters(Page.Left);
-            TickCharacterPresenters(Page.Right);
         }
 
         private void SetPage(Page page) {
@@ -148,27 +147,52 @@ namespace Scripts.Presenter {
             return textBoxHolder.AddTextBox(t);
         }
 
-        private void SetCharacterPresenters(ICollection<Character> characters, PortraitHolderView portraitHolder) {
-            ICollection<Character> targetableCharacters = characters;
-            portraitHolder.AddPortraits(
-                characters
-                    .Select(c => new PortraitHolderView.PortraitContent() {
-                        id = c.Id,
-                        name = c.Look.DisplayName,
-                        sprite = c.Look.Sprite
-                    }
-                    )
-                ); //Pass in characters' Names as parameter
-            foreach (Character c in targetableCharacters) {
+        private void SetCharacterPresenters(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
+            AddCharactersToPortraitHolder(characters, portraitHolder);
+            foreach (Character c in characters) {
                 c.Presenter = new CharacterPresenter(c, portraitHolder.GetPortrait(c.Id));
+                c.Presenter.Tick();
             }
         }
 
-        private void TickCharacterPresenters(ICollection<Character> characters) {
-            page.Input = GetInputFunc.Invoke();
-            foreach (Character c in characters) {
-                c.Presenter.Tick();
-            }
+        private void AddCharactersToPortraitHolder(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
+            portraitHolder.AddContents(
+                characters
+                .Select(
+                    c => new PortraitHolderView.PortraitContent() {
+                        Id = c.Id,
+                        Name = c.Look.DisplayName,
+                        Sprite = c.Look.Sprite,
+                        Tip = string.Format("Level {0} {1}\n<color=grey>{2}</color>",
+                            c.Stats.Level,
+                            c.Look.Breed.GetDescription(),
+                            c.Look.Tooltip),
+                        Buffs = c.Buffs
+                            .Select(
+                            b => new BuffHolderView.BuffContent() {
+                                Id = b.Id,
+                                Color = Color.white,
+                                Description = b.Description,
+                                Duration = b.DurationText,
+                                Name = b.Name,
+                                Sprite = b.Sprite
+                            }),
+                        Resources = c
+                            .Stats
+                            .Resources
+                            .Select(
+                            r => new ResourceHolderView.ResourceContent() {
+                                Id = r.Type.GetHashCode(),
+                                BarText = r.Mod.ToString(),
+                                Numerator = r.Mod,
+                                Denominator = r.Max,
+                                FillColor = r.Type.Color,
+                                NegativeColor = r.Type.NegativeColor,
+                                Sprite = r.Type.Sprite,
+                                TypeDescription = r.Type.Description
+                            })
+                    }
+                ));
         }
     }
 }

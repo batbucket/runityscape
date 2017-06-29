@@ -16,13 +16,13 @@ namespace Scripts.View.Portraits {
         /// Text inside the buff's box
         /// </summary>
         [SerializeField]
-        private Text text;
+        private Text nameText;
 
         /// <summary>
         /// Duration of the buff, displayed under text
         /// </summary>
         [SerializeField]
-        private Text duration;
+        private Text durationText;
 
         /// <summary>
         /// Background of the buff
@@ -34,44 +34,38 @@ namespace Scripts.View.Portraits {
         /// Icon representing the buff
         /// </summary>
         [SerializeField]
-        private Image icon;
+        private Image image;
 
         [SerializeField]
         private Tip Tip;
 
-        public Tip Tooltip {
-            get {
-                return Tip;
-            }
-        }
+        public void Setup(
+            string name,
+            string duration,
+            Sprite icon,
+            Color color,
+            string body
+            ) {
+            nameText.text = name;
+            durationText.text = duration;
+            image.sprite = icon;
 
-        public string Text {
-            set {
-                text.text = value;
-            }
-        }
-        public string Duration {
-            set {
-                duration.text = value;
-            }
-        }
-        public Sprite Icon {
-            set {
-                icon.sprite = value;
-            }
-        }
-
-        public Color Color {
-            set {
-                text.color = value;
-            }
+            Tip.Setup(
+                icon,
+                name,
+                body
+                );
         }
 
         public override void Reset() {
-            Text = "";
-            Duration = "";
-            Color = Color.white;
-            background.color = Color.clear;
+            Setup(
+                string.Empty,
+                string.Empty,
+                null,
+                Color.white,
+                string.Empty
+                );
+            Tip.Reset();
         }
     }
 }

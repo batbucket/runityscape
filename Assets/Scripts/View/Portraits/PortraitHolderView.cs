@@ -10,11 +10,14 @@ namespace Scripts.View.Portraits {
     /// This class represents a "side" of the screen,
     /// where Character portraits may appear.
     /// </summary>
-    public class PortraitHolderView : PooledBehaviour {
+    public class PortraitHolderView : MonoBehaviour, IHolderView<PortraitHolderView.PortraitContent> {
         public struct PortraitContent {
-            public int id;
-            public string name;
-            public Sprite sprite;
+            public int Id;
+            public string Name;
+            public string Tip;
+            public Sprite Sprite;
+            public IEnumerable<ResourceHolderView.ResourceContent> Resources;
+            public IEnumerable<BuffHolderView.BuffContent> Buffs;
         }
 
         [SerializeField]
@@ -28,43 +31,27 @@ namespace Scripts.View.Portraits {
         /// This allows us to use the shake effect.
         /// </summary>
         /// <param name="characters"></param>
-        public void AddPortraits(IEnumerable<PortraitContent> contents) {
-            IDictionary<int, PortraitView> current = new Dictionary<int, PortraitView>();
-            foreach (PortraitContent pc in contents) {
-                PortraitView pv = null;
-
-                // New contents also has previous character -> pass on to this iteration of the dictionary
-                if (previous.ContainsKey(pc.id)) {
-                    pv = previous[pc.id];
-                    previous.Remove(pc.id); // Remove from previous dict
-
-                    // New contents has entirely new character -> make a new portraitview
-                } else {
-                    pv = ObjectPoolManager.Instance.Get(portraitPrefab);
-                    Util.Parent(pv.gameObject, gameObject);
-                }
-                SetupPortrait(pv, pc);
-                current.Add(new KeyValuePair<int, PortraitView>(pc.id, pv));
-            }
-
-            // Previous dict should only have unrefreshed characters, return these.
-            foreach (PortraitView pv in previous.Values) {
-                ObjectPoolManager.Instance.Return(pv);
-            }
-            previous = current;
+        public void AddContents(IEnumerable<PortraitContent> contents) {
+            PortraitUtil.GetDifferences(ref previous,
+                contents,
+                portraitPrefab,
+                this.gameObject,
+                c => c.Id,
+                (v, c) => SetupViewFromContent(v, c));
         }
 
         public PortraitView GetPortrait(int id) {
             return previous[id];
         }
 
-        public override void Reset() {
-
-        }
-
-        private void SetupPortrait(PortraitView view, PortraitContent content) {
-            view.PortraitName = content.name;
-            view.Sprite = content.sprite;
+        private void SetupViewFromContent(PortraitView view, PortraitContent content) {
+            view.Setup(
+                content.Sprite,
+                content.Name,
+                content.Tip,
+                content.Resources,
+                content.Buffs
+                );
         }
 
         private void Start() {

@@ -32,43 +32,6 @@ namespace Scripts.Presenter {
 
         public void Tick() {
             SetupFuncs();
-
-            // Setup Tooltip
-            PortraitView.SetTip(Character.Look.Sprite, Character.Look.Name,
-                string.Format("Level {0} {1}\n<color=grey>{2}</color>",
-                Character.Stats.Level,
-                Character.Look.Breed.GetDescription(),
-                Character.Look.Tooltip));
-
-            //Attempt to set ResourceViews
-            PortraitView.SetResources(Character.Stats.Resources);
-
-            //Update ResourceViews' values
-            foreach (KeyValuePair<StatType, Stat> pair in Character.Stats) {
-                if (PortraitView != null && PortraitView.ResourceViews.ContainsKey(pair.Key)) {
-                    ResourceView rv = PortraitView.ResourceViews[pair.Key].resourceView;
-                    StatType resType = pair.Key;
-                    Stat res = pair.Value;
-                    rv.SetBarScale(res.Mod, res.Max);
-                    rv.Text = "" + res.Mod;
-                }
-            }
-
-            //TODO Buff stuff
-            PortraitView.SetBuffs(Character.Buffs
-                .Select(b =>
-                new PortraitView.BuffParams {
-                    id = b.GetHashCode(),
-                    name = b.Name,
-                    color = Color.white,
-                    description = b.Description,
-                    sprite = b.Sprite,
-                    duration = b.DurationText
-                })
-                .ToArray()
-                );
-
-            this.PortraitView.Sprite = Character.Look.Sprite;
         }
 
         private void SetupFuncs() {

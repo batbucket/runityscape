@@ -143,7 +143,7 @@ namespace Scripts.Model.Stats {
         }
 
         public override int GetHashCode() {
-            return this.Name.GetHashCode() ^ Color.GetHashCode();
+            return order;
         }
 
         public Color DetermineColor(float value) {
