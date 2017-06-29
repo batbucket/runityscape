@@ -189,7 +189,8 @@ namespace Scripts.Presenter {
                                 FillColor = r.Type.Color,
                                 NegativeColor = r.Type.NegativeColor,
                                 Sprite = r.Type.Sprite,
-                                TypeDescription = r.Type.Description
+                                TypeDescription = r.Type.Description,
+                                Title = r.Type.Name
                             })
                     }
                 ));

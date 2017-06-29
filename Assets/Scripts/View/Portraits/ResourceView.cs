@@ -51,13 +51,14 @@ namespace Scripts.View.Portraits {
             string barText,
             int numerator,
             int denominator,
+            string title,
             string typeDescription) {
             emptyBar.color = negativeColor;
             fillBar.color = fillColor;
             resourceIcon.sprite = sprite;
             text.text = barText;
             SetBarScale(numerator, denominator);
-            tip.Body = string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, typeDescription);
+            tip.Setup(sprite, title, string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, typeDescription));
         }
 
         public override void Reset() {
@@ -68,6 +69,7 @@ namespace Scripts.View.Portraits {
                 string.Empty,
                 0,
                 0,
+                string.Empty,
                 string.Empty
                 );
         }

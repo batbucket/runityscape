@@ -14,6 +14,7 @@ namespace Scripts.View.Portraits {
             public string BarText;
             public int Numerator;
             public int Denominator;
+            public string Title;
             public string TypeDescription;
         }
 
@@ -46,6 +47,7 @@ namespace Scripts.View.Portraits {
                 content.BarText,
                 content.Numerator,
                 content.Denominator,
+                content.Title,
                 content.TypeDescription);
         }
     }
