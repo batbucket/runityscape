@@ -64,8 +64,6 @@ namespace Scripts.Model.Characters {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] += pair.Value;
             }
-
-            AddSplat(new SplatDetails(Color.green, "+", e.Icon));
         }
 
         public void RemoveEquip(Inventory inv, EquipType type) {
@@ -83,8 +81,6 @@ namespace Scripts.Model.Characters {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] -= pair.Value;
             }
-
-            AddSplat(new SplatDetails(Color.red, "-", itemToRemove.Icon));
         }
 
         public EquippableItem PeekItem(EquipType type) {
