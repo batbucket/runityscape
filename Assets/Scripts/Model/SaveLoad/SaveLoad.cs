@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
+using SimpleJSON;
 using System;
 using UnityEngine;
 
@@ -12,21 +13,25 @@ namespace Scripts.Game.Serialization {
     /// and store them in PlayerPrefs.
     /// </summary>
     public static class SaveLoad {
-#if UNITY_EDITOR
-        public const bool IS_ENCRYPT_VALUES = false;
-#else
         public const bool IS_ENCRYPT_VALUES = true;
-#endif
 
         public const int MAX_SAVE_FILES = 10;
         private const string SAVE_PREFIX = "save_";
 
-        private const string ENCRYPT_FOLDER_NAME = "Encrypt";
-        private const string ENCRYPT_FILE_NAME = "config";
+        private const string CONFIG_FOLDER_NAME = "Config";
+        private const string CONFIG_FILE_NAME = "config";
 
-        private static string EncryptKey {
+        private const string ENCRYPTION_KEY_KEY = "encryptionKey";
+        private static readonly string ENCRYPTION_KEY;
+
+        static SaveLoad() {
+            JSONNode node = JSON.Parse(ConfigJSON);
+            ENCRYPTION_KEY = node[ENCRYPTION_KEY_KEY];
+        }
+
+        public static string ConfigJSON {
             get {
-                TextAsset ta = Resources.Load<TextAsset>(string.Format("{0}/{1}", ENCRYPT_FOLDER_NAME, ENCRYPT_FILE_NAME));
+                TextAsset ta = Resources.Load<TextAsset>(string.Format("{0}/{1}", CONFIG_FOLDER_NAME, CONFIG_FILE_NAME));
                 return ta.text;
             }
         }
@@ -48,29 +53,33 @@ namespace Scripts.Game.Serialization {
             Util.Log("Saves deleted.");
         }
 
-        public static GameSave Load(int saveIndex, bool isEncrypted) {
+        public static GameSave Load(int saveIndex, string successNoun) {
+            return Load(GetSaveValue(saveIndex), successNoun);
+        }
+
+        public static GameSave Load(string save, string successNoun) {
             string json = null;
             try {
-                string saveValue = GetSaveValue(saveIndex);
-                if (isEncrypted) {
+                string saveValue = save;
+                if (IS_ENCRYPT_VALUES) {
                     json = DecryptString(saveValue);
                 } else {
                     json = saveValue;
                 }
             } catch (Exception e) {
-                Main.Instance.TextBoxes.AddTextBox(new TextBox(Util.ColorString(e.ToString(), Color.red)));
+                PostMessage(Util.ColorString(e.ToString(), Color.red));
                 return null;
             }
             GameSave load = JsonUtility.FromJson<GameSave>(json);
-            PostMessage("Load from {0} was successful.", saveIndex);
+            PostMessage("Load from {0} was successful.", successNoun);
             return load;
         }
 
-        public static void Save(GameSave saveObject, bool isEncrypted, int saveIndex) {
+        public static void Save(GameSave saveObject, int saveIndex) {
             string json = JsonUtility.ToJson(saveObject);
             try {
                 string modified = string.Empty;
-                if (isEncrypted) {
+                if (IS_ENCRYPT_VALUES) {
                     modified = EncryptString(json);
                 } else {
                     modified = json;
@@ -97,6 +106,10 @@ namespace Scripts.Game.Serialization {
             return string.Format("{0}\nLevel {1}", name, level);
         }
 
+        public static string GetSaveValue(int index) {
+            return PlayerPrefs.GetString(GetSaveKey(index));
+        }
+
         private static void SetSave(int index, string value) {
             PlayerPrefs.SetString(GetSaveKey(index), value);
         }
@@ -106,15 +119,11 @@ namespace Scripts.Game.Serialization {
         }
 
         private static string EncryptString(string jsonToEncrypt) {
-            return Encrypter.Encrypt(jsonToEncrypt, EncryptKey);
+            return Encrypter.Encrypt(jsonToEncrypt, ENCRYPTION_KEY);
         }
 
         private static string DecryptString(string encryptedJson) {
-            return Encrypter.Decrypt(encryptedJson, EncryptKey);
-        }
-
-        private static string GetSaveValue(int index) {
-            return PlayerPrefs.GetString(GetSaveKey(index));
+            return Encrypter.Decrypt(encryptedJson, ENCRYPTION_KEY);
         }
 
         private static void PostMessage(string message, params object[] args) {

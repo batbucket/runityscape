@@ -37,6 +37,17 @@ namespace Scripts.Model.Pages {
             return g;
         }
 
+        public static Page GetConfirmationPage(Page current, IButtonable previous, Process confirm, string name, string tooltip, string confirmationQuestion) {
+            Page p = new Page(name);
+            p.Body = confirmationQuestion;
+
+            p.Actions = new IButtonable[] {
+                GenerateBack(previous),
+                confirm
+            };
+            return p;
+        }
+
         /// <summary>
         /// Create a Back Process, which is used
         /// to leave a subgrid.

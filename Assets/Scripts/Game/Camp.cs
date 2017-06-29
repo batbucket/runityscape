@@ -30,20 +30,16 @@ namespace Scripts.Game.Pages {
         private void SetupCamp() {
             Page p = Get(ROOT_INDEX);
             p.OnEnter = () => {
+                p.Left.Clear();
+                p.Right.Clear();
+                p.AddCharacters(Side.LEFT, party.Collection);
                 p.Actions = new IButtonable[] {
                 new LevelUpPages(Root, party.Default),
                 new InventoryPages(p, party.Default, party.shared),
                 new EquipmentPages(p, new SpellParams(party.Default)),
                 new SavePages(p, party, flags)
             };
-                p.AddCharacters(Side.LEFT, party.Collection);
             };
-        }
-
-        private Page CampOption(int index, List<IButtonable> buttons) {
-            Page p = BasicPage(index, ROOT_INDEX, buttons.ToArray());
-            p.AddCharacters(Side.LEFT, party.Collection);
-            return p;
         }
     }
 

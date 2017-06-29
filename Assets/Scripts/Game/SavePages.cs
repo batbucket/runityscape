@@ -28,7 +28,7 @@ namespace Scripts.Game.Pages {
                 buttons.Add(PageUtil.GenerateBack(previous));
                 for (int i = 0; i < SaveLoad.MAX_SAVE_FILES; i++) {
                     if (SaveLoad.IsSaveUsed(i)) {
-                        buttons.Add(GetOverrideSaveGrid(p, i, gs)); // oink
+                        buttons.Add(GetOverrideSavePage(p, i, gs)); // oink
                     } else {
                         buttons.Add(
                             GetSaveProcess(
@@ -56,25 +56,23 @@ namespace Scripts.Game.Pages {
             };
         }
 
-        private Grid GetOverrideSaveGrid(Page previous, int saveIndex, GameSave save) {
-            GameSave gs = SaveLoad.Load(saveIndex, SaveLoad.IS_ENCRYPT_VALUES);
+        private Page GetOverrideSavePage(Page previous, int saveIndex, GameSave save) {
+            GameSave gs = SaveLoad.Load(saveIndex, saveIndex.ToString());
             Party party = new Party();
             party.InitFromSaveObject(gs.Party);
             Flags flags = gs.Flags;
             string saveName = SaveLoad.SaveFileDisplay(party.Default.Look.Name, party.Default.Stats.Level);
 
-            Grid grid = PageUtil.GetConfirmationGrid(
+            Page page = PageUtil.GetConfirmationPage(
                 previous,
                 previous,
-                GetSaveProcess(previous, "Yes", saveIndex, gs, string.Format("Save over file {0}.", saveIndex), string.Format("File {0} was overwritten.", saveIndex)),
+                GetSaveProcess(previous, "Overwrite", saveIndex, gs, string.Format("Save over file {0}.", saveIndex), string.Format("File {0} was overwritten.", saveIndex)),
                 saveName,
                 string.Format("Overwrite file {0}.", saveIndex),
                 string.Format("Are you sure you want to overwrite the contents of file {0}?", saveIndex)
                 );
-            grid.OnEnter += () => {
-                previous.AddCharacters(Side.RIGHT, party.Collection);
-            };
-            return grid;
+            page.AddCharacters(Side.RIGHT, party.Collection);
+            return page;
         }
 
         private Process GetSaveProcess(Page previous, string name, int saveIndex, GameSave save, string tooltip, string saveMessage) {
@@ -82,7 +80,7 @@ namespace Scripts.Game.Pages {
                 name,
                 tooltip,
                 () => {
-                    SaveLoad.Save(save, SaveLoad.IS_ENCRYPT_VALUES, saveIndex);
+                    SaveLoad.Save(save, saveIndex);
                     previous.Invoke();
                     previous.AddText(saveMessage);
                 }

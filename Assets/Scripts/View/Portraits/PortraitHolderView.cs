@@ -53,6 +53,7 @@ namespace Scripts.View.Portraits {
         }
 
         public override void Reset() {
+
         }
 
         private void Start() {

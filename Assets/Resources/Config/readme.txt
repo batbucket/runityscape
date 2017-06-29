@@ -1,0 +1,1 @@
+JSON file goes here, containing Pastebin details found in Pastebin.cs as well as SaveLoad's encryption key.

@@ -18,6 +18,7 @@ using Scripts.Model.Stats;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Serialized;
 using Scripts.Game.Serialization;
+using Scripts.Model.SaveLoad;
 
 namespace Scripts.Game.Pages {
 
@@ -120,6 +121,8 @@ namespace Scripts.Game.Pages {
                 }),
                 new Process("ALL saves", () => SaveLoad.PrintSaves()),
                 new Process("DELET all saves", () => SaveLoad.DeleteAllSaves()),
+                new Process("test pasty", () => Pastebin.PasteTest()),
+                new Process("move fox", () => { debug.Left.Clear(); debug.AddCharacters(Side.RIGHT, kitsune); }),
                 submenu
             };
 
