@@ -90,7 +90,7 @@ namespace Scripts.Model.Stats {
                                                                     Color.white);
 
         public static readonly HashSet<StatType> RESOURCES = new HashSet<StatType>() { HEALTH, SKILL, MANA, CHARGE, CORRUPTION, EXPERIENCE };
-        public static readonly HashSet<StatType> RESTORED = new HashSet<StatType>() { HEALTH, MANA };
+        public static readonly HashSet<StatType> RESTORED = new HashSet<StatType>() { HEALTH, MANA, STRENGTH, AGILITY, INTELLECT, VITALITY };
 
         public readonly Bounds Bounds;
         public readonly string Name;

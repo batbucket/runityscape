@@ -396,4 +396,8 @@ public static class Util {
     public static bool EqualsIgnoreCase(this char a, char b) {
         return char.ToLower(a) == char.ToLower(b);
     }
+
+    public static T[] EnumAsArray<T>() {
+        return Enum.GetValues(typeof(T)).Cast<T>().ToArray();
+    }
 }

@@ -17,7 +17,7 @@ namespace Scripts.Game.Defined.Characters {
     public class HeroLook : Look {
         public HeroLook(string name) : base() {
             this.Name = name;
-            this.Sprite = Util.GetSprite("health-normal");
+            this.Sprite = Util.GetSprite("person");
             this.tooltip = string.Empty;
             this.textColor = Color.white;
         }

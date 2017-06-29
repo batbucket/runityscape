@@ -54,8 +54,10 @@ namespace Scripts.Model.Characters {
                     Util.Assert(false, "Unknown removal type: " + type);
                     break;
             }
-            set.Remove(buff);
-            AddSplat(new SplatDetails(Color.red, string.Format("-"), buff.Sprite));
+            if (buff.IsDispellable) {
+                set.Remove(buff);
+                AddSplat(new SplatDetails(Color.red, string.Format("-"), buff.Sprite));
+            }
         }
 
         IEnumerator<Buff> IEnumerable<Buff>.GetEnumerator() {

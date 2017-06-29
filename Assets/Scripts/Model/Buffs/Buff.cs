@@ -19,6 +19,7 @@ namespace Scripts.Model.Buffs {
         public readonly Sprite Sprite;
         public readonly string Name;
         public readonly string Description;
+        public readonly bool IsDispellable;
 
         private Characters.Stats caster;
         private int turnsRemaining;
@@ -29,19 +30,16 @@ namespace Scripts.Model.Buffs {
 
         private bool isCasterSet;
 
-        public Buff(Sprite sprite, string name, string description) {
+        public Buff(Sprite sprite, string name, string description, bool isDispellable) {
             this.Sprite = sprite;
             this.Name = name;
             this.Description = description;
+            this.IsDispellable = isDispellable;
             this.buffId = idCount++;
         }
 
-        public Buff(int duration, Sprite sprite, string name, string description) {
+        public Buff(int duration, Sprite sprite, string name, string description, bool isDispellable) : this(sprite, name, description, isDispellable) {
             Util.Assert(duration > 0, "Duration must be positive.");
-            this.Sprite = sprite;
-            this.Name = name;
-            this.Description = description;
-            this.buffId = idCount++;
             this.turnsRemaining = duration;
             this.isDefinite = true;
         }
