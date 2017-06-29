@@ -150,10 +150,17 @@ namespace Scripts.Presenter {
 
         private void SetCharacterPresenters(ICollection<Character> characters, PortraitHolderView portraitHolder) {
             ICollection<Character> targetableCharacters = characters;
-            portraitHolder.AddPortraits(targetableCharacters); //Pass in characters' Names as parameter
+            portraitHolder.AddPortraits(
+                characters
+                    .Select(c => new PortraitHolderView.PortraitContent() {
+                        id = c.Id,
+                        name = c.Look.DisplayName,
+                        sprite = c.Look.Sprite
+                    }
+                    )
+                ); //Pass in characters' Names as parameter
             foreach (Character c in targetableCharacters) {
-                c.Presenter = new CharacterPresenter(c, portraitHolder.CharacterViews[c].portraitView);
-                c.Presenter.PortraitView.Presenter = c.Presenter;
+                c.Presenter = new CharacterPresenter(c, portraitHolder.GetPortrait(c.Id));
             }
         }
 

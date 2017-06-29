@@ -11,10 +11,16 @@ namespace Scripts.View.Portraits {
     /// where Character portraits may appear.
     /// </summary>
     public class PortraitHolderView : PooledBehaviour {
-        public IDictionary<Character, PortraitBundle> CharacterViews;
+        public struct PortraitContent {
+            public int id;
+            public string name;
+            public Sprite sprite;
+        }
 
         [SerializeField]
         private PortraitView portraitPrefab;
+
+        private IDictionary<int, PortraitView> previous;
 
         /// <summary>
         /// Selectively update Portraits by only
@@ -22,48 +28,48 @@ namespace Scripts.View.Portraits {
         /// This allows us to use the shake effect.
         /// </summary>
         /// <param name="characters"></param>
-        public void AddPortraits(ICollection<Character> characters) {
-            //Set all existing isSets to false.
-            List<Character> keys = new List<Character>(CharacterViews.Keys); //Can't modify Dictionary in foreach loop
-            foreach (Character key in keys) {
-                CharacterViews[key] = new PortraitBundle { portraitView = key.Presenter.PortraitView, isSet = false };
-            }
+        public void AddPortraits(IEnumerable<PortraitContent> contents) {
+            IDictionary<int, PortraitView> current = new Dictionary<int, PortraitView>();
+            foreach (PortraitContent pc in contents) {
+                PortraitView pv = null;
 
-            // Add or possibly replace new PortraitViews.
-            foreach (Character c in characters) {
-                PortraitView pv;
-                if (!CharacterViews.ContainsKey(c)) {
+                // New contents also has previous character -> pass on to this iteration of the dictionary
+                if (previous.ContainsKey(pc.id)) {
+                    pv = previous[pc.id];
+                    previous.Remove(pc.id); // Remove from previous dict
+
+                    // New contents has entirely new character -> make a new portraitview
+                } else {
                     pv = ObjectPoolManager.Instance.Get(portraitPrefab);
                     Util.Parent(pv.gameObject, gameObject);
-                } else {
-                    pv = CharacterViews[c].portraitView;
                 }
-                pv.PortraitName = c.Look.DisplayName;
-                CharacterViews[c] = new PortraitBundle { portraitView = pv, isSet = true };
+                SetupPortrait(pv, pc);
+                current.Add(new KeyValuePair<int, PortraitView>(pc.id, pv));
             }
 
-            // Check if any isSets are false, if so, remove them and Destroy their gameObjects.
-            // We can use same keys list as before since newly added keys cannot be false
-            foreach (Character key in keys) {
-                if (CharacterViews.ContainsKey(key) && !CharacterViews[key].isSet) {
-                    ObjectPoolManager.Instance.Return(CharacterViews[key].portraitView);
-                    CharacterViews.Remove(key);
-                }
+            // Previous dict should only have unrefreshed characters, return these.
+            foreach (PortraitView pv in previous.Values) {
+                ObjectPoolManager.Instance.Return(pv);
             }
+            previous = current;
+        }
+
+        public PortraitView GetPortrait(int id) {
+            return previous[id];
         }
 
         public override void Reset() {
 
         }
 
-        private void Start() {
-            this.CharacterViews = new Dictionary<Character, PortraitBundle>(new IdNumberEqualityComparer<Character>());
-            ObjectPoolManager.Instance.Register(portraitPrefab, 10);
+        private void SetupPortrait(PortraitView view, PortraitContent content) {
+            view.PortraitName = content.name;
+            view.Sprite = content.sprite;
         }
 
-        public struct PortraitBundle {
-            public bool isSet;
-            public PortraitView portraitView;
+        private void Start() {
+            previous = new Dictionary<int, PortraitView>();
+            ObjectPoolManager.Instance.Register(portraitPrefab, 10);
         }
     }
 }

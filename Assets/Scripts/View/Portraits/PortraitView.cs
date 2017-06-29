@@ -16,7 +16,6 @@ namespace Scripts.View.Portraits {
     /// on either the left or right side of the screen.
     /// </summary>
     public class PortraitView : PooledBehaviour, ITippable {
-        public CharacterPresenter Presenter;
 
         [SerializeField]
         private BuffView buffPrefab;
