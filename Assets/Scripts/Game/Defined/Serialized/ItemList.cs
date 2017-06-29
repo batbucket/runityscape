@@ -10,10 +10,10 @@ namespace Scripts.Game.Defined.Serialized.Items.Consumables {
     public class Apple : ConsumableItem {
         private const int HEALING_AMOUNT = 5;
 
-        public Apple() : base(5, TargetType.ALL, "Apple", string.Format("A juicy apple. Restores {0} {1}.", HEALING_AMOUNT, StatType.HEALTH.Name)) { }
+        public Apple() : base(5, TargetType.SINGLE_ALLY, "Apple", string.Format("A juicy apple. Restores {0} {1}.", HEALING_AMOUNT, StatType.HEALTH.Name)) { }
 
         public override IList<SpellEffect> GetEffects(SpellParams caster, SpellParams target) {
-            return new SpellEffect[] { new AddToModStat(caster.Stats, StatType.HEALTH, HEALING_AMOUNT) };
+            return new SpellEffect[] { new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT) };
         }
     }
 }
