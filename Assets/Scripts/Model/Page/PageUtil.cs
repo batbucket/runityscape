@@ -163,8 +163,8 @@ namespace Scripts.Model.Pages {
             grid.Icon = sb.Icon;
 
             foreach (Character myTarget in targets) {
-                SpellParams target = new SpellParams(myTarget);
-                grid.List.Add(GenerateTargetProcess(previous, owner, target, sb, handlePlayable));
+                Character target = myTarget;
+                grid.List.Add(GenerateTargetProcess(previous, owner, new SpellParams(target), sb, handlePlayable));
             }
             Item item = spellable as Item;
             if (item != null && item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {

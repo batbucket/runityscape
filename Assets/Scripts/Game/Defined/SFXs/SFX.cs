@@ -10,7 +10,6 @@ namespace Scripts.Game.Defined.SFXs {
 
     public static class SFX {
         public static IEnumerator HitSplat(GameObject parent, string s, Color c, Sprite sprite = null) {
-            Util.Log("Big Hitsplat called");
             HitsplatView hp = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
             Util.Parent(hp.gameObject, parent);
             return hp.Animation(s, c, sprite);

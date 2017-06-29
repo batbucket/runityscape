@@ -32,8 +32,6 @@ namespace Scripts.Game.Pages {
         private void SetupCamp() {
             Page p = Get(ROOT_INDEX);
             p.OnEnter = () => {
-                p.Left.Clear();
-                p.Right.Clear();
                 p.AddCharacters(Side.LEFT, party.Collection);
                 p.Actions = new IButtonable[] {
                 new LevelUpPages(Root, party.Default),
