@@ -15,7 +15,7 @@ namespace Scripts.View.Effects {
 
         private const float TIME_UPSIZED = 1.0f;
 
-        private static readonly Vector2 FINAL_SIZE = new Vector2(1, 1);
+        private static readonly Vector2 FINAL_SIZE = new Vector2(1f, 1f);
 
         private static readonly Vector2 INITIAL_SIZE = new Vector2(3f, 3f);
 
@@ -26,7 +26,6 @@ namespace Scripts.View.Effects {
         private Image image;
 
         public IEnumerator Animation(string s, Color c, Sprite sprite) {
-            Util.Log(string.Format("Hitsplat animation with string={0}, color={1}, sprite={2}", s, c, sprite));
             this.image.sprite = sprite;
             image.gameObject.SetActive(sprite != null);
             text.color = c;
