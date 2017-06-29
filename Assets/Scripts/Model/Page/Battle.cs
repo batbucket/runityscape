@@ -54,10 +54,10 @@ namespace Scripts.Model.Pages {
         private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
             ICollection<PooledBehaviour> declarations = new List<PooledBehaviour>();
             for (int i = 0; i < chars.Count; i++) {
-                yield return new WaitForSeconds(0.25f);
                 Character c = chars[i];
 
                 if (c.Stats.State == State.ALIVE) {
+                    yield return new WaitForSeconds(0.25f);
                     PooledBehaviour textbox = null;
 
                     // Only show when player controlled is asked to make a move
@@ -109,7 +109,8 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator GoThroughBuffs(IList<Character> chars) {
             //End of round buff interactions
-            foreach (Character c in chars) {
+            foreach (Character myC in chars) {
+                Character c = myC;
                 yield return new WaitForSeconds(0.25f);
                 Characters.Buffs buffs = c.Buffs;
                 IList<Buff> timedOut = new List<Buff>();
