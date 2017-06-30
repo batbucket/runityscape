@@ -57,7 +57,7 @@ namespace Scripts.Model.Pages {
 
         public string ButtonText {
             get {
-                return Location;
+                return Util.ColorString(Location, IsInvokable);
             }
         }
 

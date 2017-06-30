@@ -1,9 +1,14 @@
 ﻿using Scripts.Game.Defined.Serialized.Characters;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
+using Scripts.Model.Interfaces;
+using Scripts.Model.Items;
+using Scripts.Model.Processes;
 using Scripts.Model.Spells;
+using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,17 +23,39 @@ namespace Scripts.Model.Pages {
 
         private const string BUFF_FADE = "<color=yellow>{0}</color>'s {1} fades.";
 
+        private const int CAPACITY_FLAGGED_ITEM_LOOT_AMOUNT = 1;
+
         private const string CHARACTER_DEATH = "<color=yellow>{0}</color> has been <color=red>defeated</color>.";
+
+        private const string DEFEAT = "Defeat!";
+
+        private const string LOOT_MESSAGE = "{0}({1}) was added to the inventory.({2})";
 
         private const string PLAYER_QUESTION = "What will <color=yellow>{0}</color> do?";
 
-        private const string RESOLVED = "The <color=yellow>{1}</color> side is victorious after <color=yellow>{0}</color> turn(s).";
-
         private const string ROUND_START = "Turn {0}";
+
+        private const string VICTORY = "Victory!";
+
+        private Page defeat;
+
+        private HashSet<Character> leftGraveyard;
+
+        private HashSet<Character> rightGraveyard;
 
         private int turnCount;
 
-        public Battle(string location, IList<Character> left, IList<Character> right) : base(location) {
+        private Page victory;
+
+        private IDictionary<Item, int> loot;
+
+        public Battle(Page defeat, Page victory, Music music, string location, IList<Character> left, IList<Character> right) : base(location) {
+            this.loot = new Dictionary<Item, int>();
+            this.leftGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());
+            this.rightGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());
+            this.defeat = defeat;
+            this.victory = victory;
+            this.Music = music.GetDescription();
             turnCount = 0;
             foreach (Character c in left) {
                 Left.Add(c);
@@ -37,9 +64,18 @@ namespace Scripts.Model.Pages {
                 Right.Add(c);
             }
             OnEnter += () => {
-                Presenter.Main.Instance.StartCoroutine(startBattle());
-                OnEnter = () => { };
+                if (!IsResolved) {
+                    Presenter.Main.Instance.StartCoroutine(startBattle());
+                } else {
+                    PostBattle(PlayerStatus);
+                }
             };
+        }
+
+        private enum PlayerPartyStatus {
+            ALIVE,
+            DEAD,
+            NOT_FOUND
         }
         private bool IsResolved {
             get {
@@ -47,8 +83,151 @@ namespace Scripts.Model.Pages {
             }
         }
 
+        private PlayerPartyStatus PlayerStatus {
+            get {
+                // Left is player party
+                if (Left.Any(c => c.HasFlag(Characters.Flag.PLAYER))) {
+                    return Left.Any(c => c.Stats.State == State.ALIVE) ? PlayerPartyStatus.ALIVE : PlayerPartyStatus.DEAD;
+
+                    // right is player party
+                } else if (Right.Any(c => c.HasFlag(Characters.Flag.PLAYER))) {
+                    return Right.Any(c => c.Stats.State == State.ALIVE) ? PlayerPartyStatus.ALIVE : PlayerPartyStatus.DEAD;
+
+                    //Player party not found
+                } else {
+                    return PlayerPartyStatus.NOT_FOUND;
+                }
+            }
+        }
+
+        private ICollection<Character> VictoriousParty {
+            get {
+                if (VictoriousSide == Side.LEFT) {
+                    return Left;
+                } else {
+                    return Right;
+                }
+            }
+        }
+
+        private Side VictoriousSide {
+            get {
+                if (Left.Any(c => c.Stats.State == State.ALIVE)) {
+                    return Side.LEFT;
+                } else {
+                    return Side.RIGHT;
+                }
+            }
+        }
+        private static void AddEquipmentToLoot(IDictionary<Item, int> loot, Equipment equipment) {
+            List<EquippableItem> equipmentItems = ((IEnumerable<EquippableItem>)equipment).ToList();
+            foreach (EquippableItem item in equipmentItems) {
+                AddItemToDictionary(loot, item, 1);
+                equipment.RemoveEquip(new Inventory(), item.Type); // Dummy inventory to remove equipment
+            }
+        }
+
+        private static void AddInventoryToLoot(IDictionary<Item, int> loot, Inventory inventory) {
+            List<Item> inventoryItems = ((IEnumerable<Item>)inventory).ToList();
+            foreach (Item item in inventoryItems) {
+                AddItemToDictionary(loot, item, inventory.GetCount(item));
+                inventory.Remove(item, inventory.GetCount(item));
+            }
+        }
+
+        private static void AddItemsToLoot(IDictionary<Item, int> loot, IEnumerable<Character> defeatedSide) {
+            foreach (Character c in defeatedSide) {
+                if (c.HasFlag(Characters.Flag.DROPS_ITEMS)) {
+                    AddInventoryToLoot(loot, c.Inventory);
+                    AddEquipmentToLoot(loot, c.Equipment);
+                }
+            }
+        }
+
+        private static void AddItemToDictionary(IDictionary<Item, int> loot, Item item, int count) {
+            if (!loot.ContainsKey(item)) {
+                loot.Add(item, 0);
+            }
+            loot[item] += count;
+        }
+
+        private static Process GetItemStackProcess(Page current, Grid previousGrid, Grid lootGrid, IDictionary<Item, int> loot, Item item, Inventory victorInventory) {
+            Util.Log(string.Format("{0}({1})", item.Name, loot[item]));
+            return new Process(
+                    string.Format("{0}({1})", item.Name, loot[item]),
+                    item.Icon,
+                    string.Format("Loot this item.\n{0}\n{1}",
+                    Util.ColorString(string.Format("Stack of {0}", loot[item]), Color.grey),
+                    item.Description),
+                    () => {
+                        int lootAmount = GetOneClickLootAmount(loot, item);
+                        loot[item] -= lootAmount;
+                        if (loot[item] <= 0) {
+                            loot.Remove(item);
+                        }
+                        victorInventory.Add(item, lootAmount);
+                        current.AddText(string.Format(LOOT_MESSAGE, item.Name, lootAmount, victorInventory.Fraction));
+                        lootGrid.Invoke();
+                    },
+                    () => loot.ContainsKey(item) && loot[item] > 0 && victorInventory.IsAddable(item, GetOneClickLootAmount(loot, item)
+                ));
+        }
+
+        private static Grid GetLootGrid(Page current, Grid previous, IDictionary<Item, int> loot, ICollection<Character> victoriousSide) {
+            Grid lootGrid = new Grid("Loot");
+            lootGrid.Tooltip = "Pick up dropped items.";
+            Util.Log("loot number: " + loot.Count.ToString());
+            lootGrid.Icon = Util.GetSprite("swap-bag");
+            lootGrid.Condition = () => (loot.Count > 0);
+            lootGrid.OnEnter = () => {
+                lootGrid.List.Clear();
+                lootGrid.List.Add(PageUtil.GenerateBack(previous));
+                Util.Log("here come dat loop!");
+                foreach (Item item in loot.Keys) {
+                    if (loot[item] > 0) {
+                        lootGrid.List.Add(GetItemStackProcess(current, previous, lootGrid, loot, item, victoriousSide.FirstOrDefault().Inventory));
+                    }
+                }
+            };
+            Util.Log("how many butts: " + lootGrid.List.Count);
+            return lootGrid;
+        }
+
+        private static int GetOneClickLootAmount(IDictionary<Item, int> loot, Item item) {
+            int lootAmount = 0;
+            if (item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {
+                lootAmount = CAPACITY_FLAGGED_ITEM_LOOT_AMOUNT;
+            } else {
+                lootAmount = loot[item];
+            }
+            return lootAmount;
+        }
+
         private bool CharacterCanCast(SpellParams c) {
             return c.Stats.State == State.ALIVE;
+        }
+
+        private IEnumerator CheckForDeath() {
+            foreach (Character c in GetAll()) {
+                if (c.Stats.State == State.DEAD) {
+                    foreach (Buff removableBuff in c.Buffs.Where(b => b.IsDispellable)) {
+                        c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
+                    }
+                    yield return new WaitForSeconds(0.25f);
+                    AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
+                    HashSet<Character> graveyard = null;
+                    if (Left.Contains(c)) {
+                        graveyard = leftGraveyard;
+                    } else {
+                        graveyard = rightGraveyard;
+                    }
+                    if (!c.HasFlag(Characters.Flag.PERSISTS_AFTER_DEFEAT)) {
+                        graveyard.Add(c);
+                        Left.Remove(c);
+                        Right.Remove(c);
+                    }
+                }
+            }
         }
 
         private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
@@ -107,6 +286,21 @@ namespace Scripts.Model.Pages {
             turnCount++;
         }
 
+        private IButtonable GetLootButton(Grid previous) {
+            ICollection<Character> graveyardToLoot = null;
+            ICollection<Character> sideToLoot = null;
+            if (VictoriousSide == Side.RIGHT) {
+                graveyardToLoot = leftGraveyard;
+                sideToLoot = Left;
+            } else {
+                graveyardToLoot = rightGraveyard;
+                sideToLoot = Right;
+            }
+            AddItemsToLoot(loot, graveyardToLoot);
+            AddItemsToLoot(loot, sideToLoot);
+            return GetLootGrid(this, previous, loot, VictoriousParty);
+        }
+
         private IEnumerator GoThroughBuffs(IList<Character> chars) {
             //End of round buff interactions
             foreach (Character myC in chars) {
@@ -143,26 +337,28 @@ namespace Scripts.Model.Pages {
                     bool wasPlayable = play.IsPlayable;
                     yield return play.Play();
                     AddText(play.Text);
-
-                    // If play didn't occur (e.g the target became dead before its cast, don't announce death)
-                    if (wasPlayable) {
-                        SpellParams caster = play.MySpell.Caster;
-                        SpellParams target = play.MySpell.Target;
-
-                        // Caster somehow kills themself, don't say they died twice
-                        if (caster.Equals(target) && caster.Stats.State == State.DEAD) {
-                            AddText(string.Format(CHARACTER_DEATH, play.MySpell.Caster.Look.DisplayName));
-                        } else {
-                            if (caster.Stats.State == State.DEAD) {
-                                AddText(string.Format(CHARACTER_DEATH, play.MySpell.Caster.Look.DisplayName));
-                            }
-                            if (target.Stats.State == State.DEAD) {
-                                AddText(string.Format(CHARACTER_DEATH, play.MySpell.Target.Look.DisplayName));
-                            }
-                        }
-                    }
                 }
             }
+        }
+        private void PostBattle(PlayerPartyStatus status) {
+            Main.Instance.Sound.StopAllSounds();
+            Grid postBattle = new Grid("Main");
+            postBattle.OnEnter = () => {
+                postBattle.List.Clear();
+                if (status == PlayerPartyStatus.ALIVE || status == PlayerPartyStatus.NOT_FOUND) {
+                    if (status == PlayerPartyStatus.ALIVE) {
+                        postBattle.List.Add(GetLootButton(postBattle));
+                    }
+                    Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
+                    postBattle.List.Add(PageUtil.GenerateItems(this, postBattle, new SpellParams(anyoneFromVictorParty), PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(PageUtil.GenerateEquipmentGrid(postBattle, new SpellParams(anyoneFromVictorParty), PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(victory);
+                } else {
+                    postBattle.List.Add(defeat);
+                }
+                Actions = postBattle.List;
+            };
+            postBattle.Invoke();
         }
 
         private IEnumerator startBattle() {
@@ -171,9 +367,23 @@ namespace Scripts.Model.Pages {
                 yield return startRound();
                 yield return new WaitForSeconds(1);
             }
-            AddText(string.Format(RESOLVED, turnCount, Left.All(c => c.Stats.State == State.DEAD) ? "right" : "left"));
-        }
 
+            string message = string.Empty;
+            PlayerPartyStatus result = PlayerStatus;
+            if (result == PlayerPartyStatus.ALIVE) {
+                message = VICTORY;
+
+            } else if (result == PlayerPartyStatus.DEAD) {
+                message = DEFEAT;
+
+            } else { // Didn't find party
+                message = "...";
+
+            }
+
+            AddText(message);
+            PostBattle(result);
+        }
         private IEnumerator startRound() {
             AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();
@@ -183,6 +393,7 @@ namespace Scripts.Model.Pages {
             yield return DetermineCharacterActions(chars, plays, playerActionSet);
             yield return PerformActions(plays);
             yield return GoThroughBuffs(chars);
+            yield return CheckForDeath();
             EndRound();
         }
     }

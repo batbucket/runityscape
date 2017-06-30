@@ -15,14 +15,19 @@ namespace Scripts.Game.Defined.Characters {
             this.Inventory.Add(new Apple());
             this.Inventory.Add(new Apple());
             this.Inventory.Add(new Apple());
+            this.Inventory.Add(new Apple());
+            this.Inventory.Add(new Apple());
+            this.Inventory.Add(new Apple());
             this.Inventory.Add(new PoisonArmor());
             this.Inventory.Add(new Money(), 100);
+            this.flags.Add(Flag.DROPS_ITEMS);
         }
     }
 
     public class Hero : Character {
         public Hero(string name) : base(new HeroStats(), new HeroLook(name), new Player(), new HeroSpells()) {
-
+            flags.Add(Flag.PLAYER);
+            flags.Add(Flag.PERSISTS_AFTER_DEFEAT);
         }
     }
 }

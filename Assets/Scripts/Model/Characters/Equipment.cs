@@ -16,6 +16,7 @@ namespace Scripts.Model.Characters {
 
     public class Equipment
         :
+            IEnumerable<Item>,
             IEnumerable<EquippableItem>,
             IEnumerable<ISpellable>,
             IEnumerable<KeyValuePair<EquipType, EquippableItem>>,
@@ -66,14 +67,14 @@ namespace Scripts.Model.Characters {
             }
         }
 
-        public void RemoveEquip(Inventory inv, EquipType type) {
+        public void RemoveEquip(Inventory inventory, EquipType type) {
             Util.Assert(equipped.ContainsKey(type), "No equipment in slot.");
             EquippableItem itemToRemove = equipped[type];
 
             Buff buffToRemove = itemBuffs[itemToRemove.Type];
             itemBuffs.Remove(itemToRemove.Type);
 
-            inv.Add(itemToRemove);
+            inventory.Add(itemToRemove);
             equipped.Remove(itemToRemove.Type);
             RemoveBuff(buffToRemove);
 
@@ -188,6 +189,10 @@ namespace Scripts.Model.Characters {
 
         IEnumerator<KeyValuePair<StatType, int>> IEnumerable<KeyValuePair<StatType, int>>.GetEnumerator() {
             return statBonuses.GetEnumerator();
+        }
+
+        IEnumerator<Item> IEnumerable<Item>.GetEnumerator() {
+            return equipped.Cast<Item>().GetEnumerator();
         }
     }
 }

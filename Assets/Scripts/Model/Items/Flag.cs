@@ -3,6 +3,7 @@
 namespace Scripts.Model.Items {
 
     public enum Flag {
-        OCCUPIES_SPACE
+        OCCUPIES_SPACE,
+        ESSENTIAL
     }
 }

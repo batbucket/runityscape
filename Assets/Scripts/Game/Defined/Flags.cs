@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Scripts.Game.Serialized {
@@ -17,10 +18,15 @@ namespace Scripts.Game.Serialized {
         NIGHT,
     }
 
+    public enum Explore {
+        RUINS
+    }
+
     [Serializable]
     public class Flags {
         public TimeOfDay Time;
         public int DayCount;
+        public List<Explore> UnlockedExplores;
 
         public Flags() { }
     }

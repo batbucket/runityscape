@@ -23,6 +23,8 @@ namespace Scripts.Game.Pages {
         private Flags flags;
         private Party party;
 
+        private bool shouldAdvanceTime;
+
         public Camp(Party party, Flags flags) : base(new Page("Campsite")) {
             this.party = party;
             this.flags = flags;
@@ -34,12 +36,16 @@ namespace Scripts.Game.Pages {
             p.OnEnter = () => {
                 p.AddCharacters(Side.LEFT, party.Collection);
                 p.Actions = new IButtonable[] {
+                new ExplorePages(p, flags, ref shouldAdvanceTime),
                 new LevelUpPages(Root, party.Default),
                 new InventoryPages(p, party.Default, party.shared),
                 new EquipmentPages(p, new SpellParams(party.Default)),
                 RestProcess(p),
                 new SavePages(p, party, flags)
                 };
+                if (shouldAdvanceTime) {
+                    AdvanceTime(p);
+                }
                 PostTime(p);
             };
         }
@@ -81,7 +87,13 @@ namespace Scripts.Game.Pages {
                 );
         }
 
-
+        private void AdvanceTime(Page p) {
+            TimeOfDay[] times = Util.EnumAsArray<TimeOfDay>();
+            int currentIndex = (int)flags.Time;
+            int newIndex = (currentIndex + 1) % times.Length;
+            flags.Time = times[newIndex];
+            p.AddText("Some time has passed.");
+        }
     }
 
 }

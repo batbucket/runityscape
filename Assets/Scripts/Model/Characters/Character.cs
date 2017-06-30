@@ -6,6 +6,8 @@ using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Scripts.Model.Characters {
 
@@ -28,6 +30,7 @@ namespace Scripts.Model.Characters {
 
         public CharacterPresenter Presenter;
 
+        protected readonly HashSet<Flag> flags;
         private static int idCounter;
         private int id;
 
@@ -39,6 +42,7 @@ namespace Scripts.Model.Characters {
             this.Spells = spells;
             this.Inventory = inventory;
             this.Equipment = equipment;
+            this.flags = new HashSet<Flag>();
 
             Brain.Owner = this;
             Brain.Spells = this.Spells;
@@ -85,6 +89,10 @@ namespace Scripts.Model.Characters {
                 && this.Equipment.Equals(item.Equipment);
         }
 
+        public bool HasFlag(Flag f) {
+            return this.flags.Contains(f);
+        }
+
         public override int GetHashCode() {
             return 0;
         }
@@ -99,6 +107,7 @@ namespace Scripts.Model.Characters {
         public CharacterSave GetSaveObject() {
             return new CharacterSave(
                 this.id,
+                flags.ToList(),
                 Stats.GetSaveObject(),
                 Buffs.GetSaveObject(),
                 Look.GetSaveObject(),
@@ -110,6 +119,9 @@ namespace Scripts.Model.Characters {
 
         public void InitFromSaveObject(CharacterSave saveObject) {
             // No special classes - set fields
+            foreach (Flag flag in saveObject.Flags) {
+                flags.Add(flag);
+            }
             this.Stats.InitFromSaveObject(saveObject.Stats);
             this.Look.InitFromSaveObject(saveObject.Look);
             this.Spells.InitFromSaveObject(saveObject.Spells);

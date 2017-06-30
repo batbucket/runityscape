@@ -32,7 +32,7 @@ namespace Scripts.Model.Processes {
 
         public string ButtonText {
             get {
-                return Text;
+                return Util.ColorString(Text, IsInvokable);
             }
         }
 
@@ -55,8 +55,8 @@ namespace Scripts.Model.Processes {
         }
 
         public void Invoke() {
-            changeGridFunc.Invoke(List);
             this.OnEnter();
+            changeGridFunc.Invoke(List);
         }
     }
 }

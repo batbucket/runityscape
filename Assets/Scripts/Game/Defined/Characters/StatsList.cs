@@ -5,7 +5,7 @@ using Scripts.Model.Stats;
 namespace Scripts.Game.Defined.StartingStats {
     public class KitsuneStats : Stats {
         public KitsuneStats() : base() {
-            InitializeStats(5, 1, 5, 5, 1);
+            InitializeStats(5, 55, 1, 5, 1);
         }
     }
 

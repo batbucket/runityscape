@@ -114,7 +114,7 @@ namespace Scripts.Game.Pages {
                     Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
                     Presenter.Main.Instance.StartCoroutine(hpv.Animation("Test", Color.cyan, Util.GetSprite("fox-head")));
                 }),
-                new Battle("Battle Test", new Character[] { new Kitsune(), new Kitsune()  }, new Character[] { new Kitsune(), new Kitsune() }),
+                new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { new Hero("Debug"), new Kitsune(), new Kitsune()  }, new Character[] { new Kitsune(), new Kitsune() }),
                 new Process("LongTalk Test", () => {
                     ActUtil.SetupScene(Get(DEBUGGING), ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>the best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
                 }),

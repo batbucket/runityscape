@@ -25,6 +25,12 @@ namespace Scripts.Model.Characters {
             this.capacity = INITIAL_CAPACITY;
         }
 
+        public bool IsFull {
+            get {
+                return TotalOccupiedSpace >= Capacity;
+            }
+        }
+
         public int TotalOccupiedSpace {
             get {
                 int sum = 0;
@@ -50,6 +56,12 @@ namespace Scripts.Model.Characters {
             set {
                 Util.Assert(value >= 0, "Value must be nonnegative.");
                 capacity = value;
+            }
+        }
+
+        public string Fraction {
+            get {
+                return string.Format("{0}/{1}", TotalOccupiedSpace, Capacity);
             }
         }
 

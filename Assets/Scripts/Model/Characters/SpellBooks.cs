@@ -29,7 +29,7 @@ namespace Scripts.Model.Characters {
         }
 
         public void AddSpellBook(SpellBook s) {
-            Util.Assert(s.HasFlag(Flag.CASTER_REQUIRES_SPELL), "Uncastable spell.");
+            Util.Assert(s.HasFlag(Spells.Flag.CASTER_REQUIRES_SPELL), "Uncastable spell.");
             set.Add(s);
         }
 

@@ -308,9 +308,11 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public BrainSave Brain;
         // Party shares an inventory, so we associate it with the party
         public EquipmentSave Equipment;
+        public List<Characters.Flag> Flags;
 
         public CharacterSave(
             int id,
+            List<Characters.Flag> flags,
             CharacterStatsSave stats,
             CharacterBuffsSave buffs,
             LookSave look,
@@ -318,6 +320,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
             BrainSave brain,
             EquipmentSave equipment) {
             this.Id = id;
+            this.Flags = flags;
             this.Stats = stats;
             this.Buffs = buffs;
             this.Look = look;
