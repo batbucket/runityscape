@@ -55,6 +55,8 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
     }
 
     public class Experience : Stat {
+        private const int MAX_LEVEL_FOR_CALCULATION = 30; // Stop int overflow
+
         public Experience(int mod) : base(mod, 0, StatType.EXPERIENCE) { }
 
         public Experience() : base(0, 0, StatType.EXPERIENCE) { }
@@ -75,7 +77,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         }
 
         public static int GetExpForLevel(int level) {
-            return 1 + (int)Mathf.Pow(2, level);
+            return 1 + (int)Mathf.Pow(2, Mathf.Min(level, MAX_LEVEL_FOR_CALCULATION));
         }
 
         public static int GetExpDiffForLevel(int levelCurrent, int levelNext) {

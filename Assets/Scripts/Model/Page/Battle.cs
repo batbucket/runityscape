@@ -5,6 +5,7 @@ using Scripts.Model.Interfaces;
 using Scripts.Model.Items;
 using Scripts.Model.Processes;
 using Scripts.Model.Spells;
+using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
@@ -17,6 +18,8 @@ using UnityEngine;
 namespace Scripts.Model.Pages {
 
     public class Battle : Page {
+        private const string EXPERIENCE_GAIN = "{0} gains {1} {2}.";
+
         private const string BATTLE_START = "The battle begins.";
 
         private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=yellow>{1}</color>.";
@@ -49,7 +52,10 @@ namespace Scripts.Model.Pages {
 
         private IDictionary<Item, int> loot;
 
+        private bool wasExperienceGiven;
+
         public Battle(Page defeat, Page victory, Music music, string location, IList<Character> left, IList<Character> right) : base(location) {
+            this.wasExperienceGiven = false;
             this.loot = new Dictionary<Item, int>();
             this.leftGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());
             this.rightGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());
@@ -97,6 +103,20 @@ namespace Scripts.Model.Pages {
                 } else {
                     return PlayerPartyStatus.NOT_FOUND;
                 }
+            }
+        }
+
+        private ICollection<Character> AllDefeated {
+            get {
+                List<Character> defeated = new List<Character>();
+                if (VictoriousSide == Side.LEFT) {
+                    defeated.AddRange(Right);
+                    defeated.AddRange(rightGraveyard);
+                } else {
+                    defeated.AddRange(Left);
+                    defeated.AddRange(leftGraveyard);
+                }
+                return defeated;
             }
         }
 
@@ -152,7 +172,6 @@ namespace Scripts.Model.Pages {
         }
 
         private static Process GetItemStackProcess(Page current, Grid previousGrid, Grid lootGrid, IDictionary<Item, int> loot, Item item, Inventory victorInventory) {
-            Util.Log(string.Format("{0}({1})", item.Name, loot[item]));
             return new Process(
                     string.Format("{0}({1})", item.Name, loot[item]),
                     item.Icon,
@@ -176,20 +195,17 @@ namespace Scripts.Model.Pages {
         private static Grid GetLootGrid(Page current, Grid previous, IDictionary<Item, int> loot, ICollection<Character> victoriousSide) {
             Grid lootGrid = new Grid("Loot");
             lootGrid.Tooltip = "Pick up dropped items.";
-            Util.Log("loot number: " + loot.Count.ToString());
             lootGrid.Icon = Util.GetSprite("swap-bag");
             lootGrid.Condition = () => (loot.Count > 0);
             lootGrid.OnEnter = () => {
                 lootGrid.List.Clear();
                 lootGrid.List.Add(PageUtil.GenerateBack(previous));
-                Util.Log("here come dat loop!");
                 foreach (Item item in loot.Keys) {
                     if (loot[item] > 0) {
                         lootGrid.List.Add(GetItemStackProcess(current, previous, lootGrid, loot, item, victoriousSide.FirstOrDefault().Inventory));
                     }
                 }
             };
-            Util.Log("how many butts: " + lootGrid.List.Count);
             return lootGrid;
         }
 
@@ -348,6 +364,10 @@ namespace Scripts.Model.Pages {
                 if (status == PlayerPartyStatus.ALIVE || status == PlayerPartyStatus.NOT_FOUND) {
                     if (status == PlayerPartyStatus.ALIVE) {
                         postBattle.List.Add(GetLootButton(postBattle));
+                        if (!wasExperienceGiven) {
+                            wasExperienceGiven = true;
+                            GiveExperienceToVictors();
+                        }
                     }
                     Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
                     postBattle.List.Add(PageUtil.GenerateItems(this, postBattle, new SpellParams(anyoneFromVictorParty), PageUtil.GetOutOfBattlePlayableHandler(this)));
@@ -359,6 +379,27 @@ namespace Scripts.Model.Pages {
                 Actions = postBattle.List;
             };
             postBattle.Invoke();
+        }
+
+        private void GiveExperienceToVictors() {
+            foreach (Character victor in VictoriousParty) {
+                int totalExp = 0;
+                foreach (Character defeated in AllDefeated) {
+                    totalExp += CalculateExperience(victor.Stats, defeated.Stats);
+                }
+                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, totalExp);
+                this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(totalExp.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
+            }
+        }
+
+        /// <summary>
+        /// Exp earned = Defeated.Level - Earner.Level
+        /// </summary>
+        /// <param name="earner">Whoever is earning the experience</param>
+        /// <param name="defeated">Defeated character to do calculation for</param>
+        /// <returns>Calculated experience earner should recieve</returns>
+        private int CalculateExperience(Characters.Stats earner, Characters.Stats defeated) {
+            return Mathf.Max(1, defeated.Level - earner.Level);
         }
 
         private IEnumerator startBattle() {
