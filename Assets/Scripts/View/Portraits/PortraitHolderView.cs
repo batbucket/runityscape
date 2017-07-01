@@ -18,6 +18,7 @@ namespace Scripts.View.Portraits {
             public Sprite Sprite;
             public IEnumerable<ResourceHolderView.ResourceContent> Resources;
             public IEnumerable<BuffHolderView.BuffContent> Buffs;
+            public bool IsRevealed;
         }
 
         [SerializeField]
@@ -50,7 +51,8 @@ namespace Scripts.View.Portraits {
                 content.Name,
                 content.Tip,
                 content.Resources,
-                content.Buffs
+                content.Buffs,
+                content.IsRevealed
                 );
         }
 

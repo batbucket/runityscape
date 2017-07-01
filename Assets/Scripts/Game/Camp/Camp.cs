@@ -32,21 +32,21 @@ namespace Scripts.Game.Pages {
         }
 
         private void SetupCamp() {
-            Page p = Get(ROOT_INDEX);
-            p.OnEnter = () => {
-                p.AddCharacters(Side.LEFT, party.Collection);
-                p.Actions = new IButtonable[] {
-                new ExplorePages(p, flags, ref shouldAdvanceTime),
+            Page root = Get(ROOT_INDEX);
+            root.OnEnter = () => {
+                root.AddCharacters(Side.LEFT, party.Collection);
+                root.Actions = new IButtonable[] {
+                new ExplorePages(root, party, flags, ref shouldAdvanceTime),
                 new LevelUpPages(Root, party.Default),
-                new InventoryPages(p, party.Default, party.shared),
-                new EquipmentPages(p, new SpellParams(party.Default)),
-                RestProcess(p),
-                new SavePages(p, party, flags)
+                new InventoryPages(root, party.Default, party.shared),
+                new EquipmentPages(root, new SpellParams(party.Default)),
+                RestProcess(root),
+                new SavePages(root, party, flags)
                 };
                 if (shouldAdvanceTime) {
-                    AdvanceTime(p);
+                    AdvanceTime(root);
                 }
-                PostTime(p);
+                PostTime(root);
             };
         }
 

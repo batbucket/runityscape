@@ -56,12 +56,17 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public void Setup(Sprite sprite, string title, string body, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs) {
+        public void Setup(Sprite sprite, string title, string body, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs, bool isRevealed) {
             tip.Setup(sprite, title, body);
             PortraitName = title;
             Sprite = sprite;
-            resourcesHolder.AddContents(resources);
-            buffsHolder.AddContents(buffs);
+            if (isRevealed) {
+                resourcesHolder.AddContents(resources);
+                buffsHolder.AddContents(buffs);
+            } else {
+                resourcesHolder.AddContents(new ResourceHolderView.ResourceContent[0]);
+                buffsHolder.AddContents(new BuffHolderView.BuffContent[0]);
+            }
         }
 
         public override void Reset() {

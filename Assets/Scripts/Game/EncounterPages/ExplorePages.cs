@@ -1,4 +1,6 @@
-﻿using Scripts.Game.Serialized;
+﻿using Scripts.Game.Pages.Explorables;
+using Scripts.Game.Serialized;
+using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
@@ -9,23 +11,29 @@ using UnityEngine;
 
 namespace Scripts.Game.Pages {
     public class ExplorePages : PageGroup {
-        private readonly IDictionary<Explore, PageGenerator> explores = new Dictionary<Explore, PageGenerator>();
+        private readonly IDictionary<Explore, ExplorableArea> explores = new Dictionary<Explore, ExplorableArea>();
+        private readonly Party party;
+        private readonly Flags flags;
+        private readonly Page previous;
 
-        public ExplorePages(Page previous, Flags flags, ref bool shouldAdvanceTime) : base(new Page("Explore")) {
+        public ExplorePages(Page previous, Party party, Flags flags, ref bool shouldAdvanceTime) : base(new Page("Explore")) {
             var buttons = new List<IButtonable>();
+            this.party = party;
+            this.flags = flags;
+            this.previous = previous;
 
-            SetupGenerators(Root, flags);
+            SetupGenerators();
 
-            foreach (KeyValuePair<Explore, PageGenerator> pair in explores) {
+            foreach (KeyValuePair<Explore, ExplorableArea> pair in explores) {
                 if (flags.UnlockedExplores.Contains(pair.Key)) {
-                    buttons.Add(GetEncounterProcess(flags, pair.Value));
+                    buttons.Add(GetEncounterProcess(pair.Value.Generator));
                 }
             }
 
             Get(ROOT_INDEX).Actions = buttons;
         }
 
-        private Process GetEncounterProcess(Flags flags, PageGenerator gen) {
+        private Process GetEncounterProcess(PageGenerator gen) {
             return new Process(
                 gen.Name,
                 gen.Sprite,
@@ -34,14 +42,8 @@ namespace Scripts.Game.Pages {
                 );
         }
 
-        private void SetupGenerators(Page previous, Flags flags) {
-            explores.Add(Explore.RUINS, Ruins(previous, flags));
-        }
-
-        private PageGenerator Ruins(Page previous, Flags flags) {
-            PageGenerator pg = new PageGenerator("Ruins", Util.GetSprite("tentacle"), "A derelict town visible from the campsite.");
-            return pg;
-            //pg.AddEncounter(new Encounter(Rarity.COMMON);
+        private void SetupGenerators() {
+            //explores.Add(Explore.RUINS, Ruins());
         }
     }
 }

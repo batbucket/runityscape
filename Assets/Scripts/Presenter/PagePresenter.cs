@@ -1,4 +1,5 @@
 ﻿using Script.View.Tooltip;
+using Scripts.Game.Defined.Serialized.Characters;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
@@ -156,6 +157,7 @@ namespace Scripts.Presenter {
         }
 
         private void AddCharactersToPortraitHolder(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
+            bool isRevealed = characters.Any(c => c.Brain is Player); // Show resources if anyone is controlled by user
             portraitHolder.AddContents(
                 characters
                 .Select(
@@ -191,7 +193,8 @@ namespace Scripts.Presenter {
                                 Sprite = r.Type.Sprite,
                                 TypeDescription = r.Type.Description,
                                 Title = r.Type.Name
-                            })
+                            }),
+                        IsRevealed = isRevealed
                     }
                 ));
         }

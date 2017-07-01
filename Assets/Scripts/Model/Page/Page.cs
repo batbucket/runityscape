@@ -137,7 +137,12 @@ namespace Scripts.Model.Pages {
         public void Tick() {
             IList<Character> all = GetAll();
             RepeatedCharacterCheck(all);
-            foreach (Character c in all) {
+            UpdateCharacters(Left);
+            UpdateCharacters(Right);
+        }
+
+        private void UpdateCharacters(IEnumerable<Character> characters) {
+            foreach (Character c in characters) {
                 c.Update();
             }
         }

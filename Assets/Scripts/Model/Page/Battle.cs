@@ -54,7 +54,7 @@ namespace Scripts.Model.Pages {
 
         private bool wasExperienceGiven;
 
-        public Battle(Page defeat, Page victory, Music music, string location, IList<Character> left, IList<Character> right) : base(location) {
+        public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right) : base(location) {
             this.wasExperienceGiven = false;
             this.loot = new Dictionary<Item, int>();
             this.leftGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());

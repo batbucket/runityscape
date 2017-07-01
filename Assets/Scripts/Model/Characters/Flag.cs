@@ -2,6 +2,6 @@
     public enum Flag {
         PLAYER,
         PERSISTS_AFTER_DEFEAT,
-        DROPS_ITEMS
+        DROPS_ITEMS,
     }
 }
