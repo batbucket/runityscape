@@ -19,6 +19,8 @@ namespace Scripts.Model.Characters {
         private string suffix;
         private Sprite sprite;
 
+        private int revealCount;
+
         public Look() {
             this.Name = "Default";
             this.sprite = Util.GetSprite("fox-head");
@@ -26,6 +28,12 @@ namespace Scripts.Model.Characters {
             this.check = string.Empty;
             this.breed = Breed.UNKNOWN;
             this.textColor = Color.white;
+        }
+
+        public int RevealCount {
+            get {
+                return revealCount;
+            }
         }
 
         public Breed Breed {
@@ -66,6 +74,14 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public void AddRevealStack() {
+            revealCount++;
+        }
+
+        public void RemoveRevealStack() {
+            revealCount--;
+        }
+
         public override bool Equals(object obj) {
             var item = obj as Look;
 
@@ -79,6 +95,7 @@ namespace Scripts.Model.Characters {
                 && this.tooltip.Equals(item.tooltip)
                 && this.breed.Equals(item.breed)
                 && this.sprite.Equals(item.sprite)
+                && this.revealCount.Equals(item.revealCount)
                 && this.check.Equals(item.check);
         }
 
@@ -87,7 +104,7 @@ namespace Scripts.Model.Characters {
         }
 
         public LookSave GetSaveObject() {
-            return new LookSave(Name, sprite, textColor, check, tooltip, breed);
+            return new LookSave(Name, sprite, textColor, check, tooltip, breed, revealCount);
         }
 
         public void InitFromSaveObject(LookSave saveObject) {
@@ -97,6 +114,7 @@ namespace Scripts.Model.Characters {
             this.check = saveObject.Check;
             this.tooltip = saveObject.Tooltip;
             this.breed = saveObject.Breed;
+            this.revealCount = saveObject.RevealCount;
         }
     }
 }

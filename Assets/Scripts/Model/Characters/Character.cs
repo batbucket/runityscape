@@ -86,6 +86,7 @@ namespace Scripts.Model.Characters {
                 && this.Spells.Equals(item.Spells)
                 && this.Brain.Equals(item.Brain)
                 && this.Inventory.Equals(item.Inventory)
+                && this.flags.SetEquals(item.flags)
                 && this.Equipment.Equals(item.Equipment);
         }
 

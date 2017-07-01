@@ -157,7 +157,7 @@ namespace Scripts.Presenter {
         }
 
         private void AddCharactersToPortraitHolder(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
-            bool isRevealed = characters.Any(c => c.Brain is Player); // Show resources if anyone is controlled by user
+            int revealContributionFromFlags = Convert.ToInt32(characters.Any(c => c.Brain is Player)); // Being in same party as player gives +1 to revealing
             portraitHolder.AddContents(
                 characters
                 .Select(
@@ -194,9 +194,13 @@ namespace Scripts.Presenter {
                                 TypeDescription = r.Type.Description,
                                 Title = r.Type.Name
                             }),
-                        IsRevealed = isRevealed
+                        IsRevealed = IsRevealedCalculation(c.Look, revealContributionFromFlags)
                     }
                 ));
+        }
+
+        private bool IsRevealedCalculation(Look look, int contributionFromFlags) {
+            return look.RevealCount + contributionFromFlags > 0;
         }
     }
 }
