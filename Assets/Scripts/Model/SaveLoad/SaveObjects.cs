@@ -75,8 +75,10 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public List<StatSave> Stats;
         public int Level;
         public int StatBonusCount;
+        public int ResourceVisibility;
 
-        public CharacterStatsSave(int level, int statBonusCount, List<StatSave> stats) {
+        public CharacterStatsSave(int resourceVisibility, int level, int statBonusCount, List<StatSave> stats) {
+            this.ResourceVisibility = resourceVisibility;
             this.Stats = stats;
             this.Level = level;
             this.StatBonusCount = statBonusCount;
@@ -159,16 +161,14 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public string Check;
         public string Tooltip;
         public Breed Breed;
-        public int RevealCount;
 
-        public LookSave(string name, Sprite sprite, Color text, string check, string tooltip, Breed breed, int revealStack) {
+        public LookSave(string name, Sprite sprite, Color text, string check, string tooltip, Breed breed) {
             this.Name = name;
             this.Sprite = sprite;
             this.TextColor = text;
             this.Check = check;
             this.Tooltip = tooltip;
             this.Breed = breed;
-            this.RevealCount = revealStack;
         }
     }
 
@@ -285,7 +285,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
                     Util.Assert(false, "Unknown SaveType");
                     break;
             }
-            b.Caster = new BuffParams() { Caster = caster, CasterId = id };
+            b.Caster = new BuffParams(caster, id);
 
             return b;
         }
