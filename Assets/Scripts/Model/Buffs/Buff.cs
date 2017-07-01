@@ -11,8 +11,13 @@ using UnityEngine;
 
 namespace Scripts.Model.Buffs {
     public struct BuffParams {
-        public Characters.Stats Caster;
-        public int CasterId;
+        public readonly Characters.Stats Caster;
+        public readonly int CasterId;
+
+        public BuffParams(Characters.Stats caster, int casterId) {
+            this.Caster = caster;
+            this.CasterId = casterId;
+        }
     }
 
     public abstract class Buff : IComparable<Buff>, ISaveable<BuffSave>, IIdNumberable {
@@ -155,7 +160,7 @@ namespace Scripts.Model.Buffs {
         }
 
         protected virtual IList<SpellEffect> OnDispellHelper(Characters.Stats owner) {
-            return new SpellEffect[0];
+            return OnTimeOutHelper(owner);
         }
 
         private void PerformSpellEffects(IList<SpellEffect> list) {

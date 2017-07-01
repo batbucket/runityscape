@@ -25,7 +25,7 @@ namespace Scripts.Model.Items {
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip), new Buffs.BuffParams() { Caster = caster.Stats, CasterId = caster.CharacterId })
+                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip), new Buffs.BuffParams(caster.Stats, caster.CharacterId))
                 };
         }
     }

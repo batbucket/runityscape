@@ -15,4 +15,16 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             };
         }
     }
+
+    public class Checked : Buff {
+        public Checked() : base(Util.GetSprite("magnifying-glass"), "Checked", "Resource visibility increased.", true) { }
+
+        protected override IList<SpellEffect> OnApplyHelper(Stats owner) {
+            return new SpellEffect[] { new AddToResourceVisibility(owner, 1) };
+        }
+
+        protected override IList<SpellEffect> OnTimeOutHelper(Stats owner) {
+            return new SpellEffect[] { new AddToResourceVisibility(owner, -1) };
+        }
+    }
 }

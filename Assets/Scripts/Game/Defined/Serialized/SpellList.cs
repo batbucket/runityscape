@@ -15,6 +15,8 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class Attack : BasicSpellbook {
         public const float PERCENT = 0.01f;
         public const float CRITICAL_MULTIPLIER = 2f;
+        public const float BASE_ACCURACY = .8f;
+        public const float BASE_CRITICAL_RATE = .2f;
         public const int SKILL_ON_HIT = 1;
         public const int SKILL_ON_CRIT = 2;
 
@@ -29,13 +31,11 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override bool IsHit(SpellParams caster, SpellParams target) {
-            // 1 + (c.Agi - t.Agi)%
-            return Util.IsChance(1 + StatUtil.GetDifference(StatType.AGILITY, caster.Stats, target.Stats) * PERCENT);
+            return Util.IsChance(BASE_ACCURACY + StatUtil.GetDifference(StatType.AGILITY, caster.Stats, target.Stats) * PERCENT);
         }
 
         protected override bool IsCritical(SpellParams caster, SpellParams target) {
-            // (c.Int - t.Int)% chance to critical
-            return Util.IsChance(StatUtil.GetDifference(StatType.INTELLECT, caster.Stats, target.Stats) * PERCENT);
+            return Util.IsChance(BASE_CRITICAL_RATE + StatUtil.GetDifference(StatType.AGILITY, caster.Stats, target.Stats) * PERCENT);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
@@ -65,6 +65,19 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
+    public class Check : BasicSpellbook {
+        public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE) { }
+
+        public override string CreateDescriptionHelper(SpellParams caster) {
+            Checked dummy = new Checked();
+            return string.Format("Closely analyze an enemy, temporarily increasing their resource visibility.", dummy.Name, dummy.Description);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            return new SpellEffect[] { new AddBuff(new BuffParams(caster.Stats, caster.CharacterId), target.Buffs, new Checked()) };
+        }
+    }
+
     public class InflictPoison : BasicSpellbook {
         public InflictPoison() : base("Poison", Util.GetSprite("fox-head"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE) {
             Costs.Add(StatType.MANA, 1);
@@ -75,7 +88,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
-            return new SpellEffect[] { new AddBuff(new BuffParams() { Caster = caster.Stats, CasterId = caster.CharacterId }, target.Buffs, new Poison()) };
+            return new SpellEffect[] { new AddBuff(new BuffParams(caster.Stats, caster.CharacterId), target.Buffs, new Poison()) };
         }
     }
 }

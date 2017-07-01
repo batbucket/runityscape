@@ -13,7 +13,7 @@ namespace Scripts.Game.Defined.Spells {
         private readonly StatType affected;
         private readonly Stats target;
 
-        public AddToModStat(Stats target, StatType affected, int value) : base(SpellEffectType.ADD_TO_MOD_STAT, value) {
+        public AddToModStat(Stats target, StatType affected, int value) : base(value) {
             this.affected = affected;
             this.target = target;
         }
@@ -27,7 +27,7 @@ namespace Scripts.Game.Defined.Spells {
         private readonly Buff buff;
         private readonly Buffs target;
 
-        public AddBuff(BuffParams caster, Buffs target, Buff buff) : base(SpellEffectType.ADD_BUFF, 1) {
+        public AddBuff(BuffParams caster, Buffs target, Buff buff) : base(1) {
             this.target = target;
             this.buff = buff;
             this.buff.Caster = caster;
@@ -54,7 +54,7 @@ namespace Scripts.Game.Defined.Spells {
         private EquipParams ep;
         private BuffParams bp;
 
-        public EquipItemEffect(EquipParams ep, BuffParams bp) : base(SpellEffectType.EQUIP_ITEM, 1) {
+        public EquipItemEffect(EquipParams ep, BuffParams bp) : base(1) {
             this.ep = ep;
             this.bp = bp;
         }
@@ -67,7 +67,7 @@ namespace Scripts.Game.Defined.Spells {
     public class UnequipItemEffect : SpellEffect {
         private EquipParams ep;
 
-        public UnequipItemEffect(EquipParams ep) : base(SpellEffectType.EQUIP_ITEM, 1) {
+        public UnequipItemEffect(EquipParams ep) : base(1) {
             this.ep = ep;
         }
 
@@ -80,13 +80,29 @@ namespace Scripts.Game.Defined.Spells {
         private Inventory caster;
         private Item item;
 
-        public ConsumeItemEffect(Item item, Inventory caster) : base(SpellEffectType.CONSUME_ITEM, 1) {
+        public ConsumeItemEffect(Item item, Inventory caster) : base(1) {
             this.caster = caster;
             this.item = item;
         }
 
         public override void CauseEffect() {
-            caster.Remove(item, 1);
+            caster.Remove(item, Value);
+        }
+    }
+
+    public class AddToResourceVisibility : SpellEffect {
+        private Stats target;
+
+        public AddToResourceVisibility(Stats target, int value) : base(value) {
+            this.target = target;
+        }
+
+        public override void CauseEffect() {
+            if (Value > 0) {
+                target.IncreaseResourceVisibility();
+            } else if (Value < 0) {
+                target.DecreaseResourceVisibility();
+            }
         }
     }
 }

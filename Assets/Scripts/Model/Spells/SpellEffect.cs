@@ -4,11 +4,9 @@ using UnityEngine;
 namespace Scripts.Model.Spells {
 
     public abstract class SpellEffect {
-        public readonly SpellEffectType EffectType;
         public readonly int Value;
 
-        public SpellEffect(SpellEffectType effect, int value) {
-            this.EffectType = effect;
+        public SpellEffect(int value) {
             this.Value = value;
         }
 

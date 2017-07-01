@@ -77,6 +77,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Attack>("attack");
             Add<Wait>("wait");
             Add<InflictPoison>("inflictpoison");
+            Add<Check>("checkSpell");
         }
 
         private void Items() {
@@ -87,6 +88,7 @@ namespace Scripts.Model.SaveLoad {
 
         private void Buffs() {
             Add<Poison>("poison");
+            Add<Checked>("checkedDebuff");
         }
 
         private void Brains() {
