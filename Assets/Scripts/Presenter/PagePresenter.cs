@@ -161,46 +161,47 @@ namespace Scripts.Presenter {
             portraitHolder.AddContents(
                 characters
                 .Select(
-                    c => new PortraitHolderView.PortraitContent() {
-                        Id = c.Id,
-                        Name = c.Look.DisplayName,
-                        Sprite = c.Look.Sprite,
-                        Tip = string.Format("Level {0} {1}\n<color=grey>{2}</color>",
+                    c => new PortraitHolderView.PortraitContent(
+                        id: c.Id,
+                        name: c.Look.DisplayName,
+                        sprite: c.Look.Sprite,
+                        tip: string.Format("Level {0} {1}\n<color=grey>{2}</color>",
                             c.Stats.Level,
                             c.Look.Breed.GetDescription(),
                             c.Look.Tooltip),
-                        Buffs = c.Buffs
+                        buffs: c.Buffs
                             .Select(
-                            b => new BuffHolderView.BuffContent() {
-                                Id = b.Id,
-                                Color = Color.white,
-                                Description = b.Description,
-                                Duration = b.DurationText,
-                                Name = b.Name,
-                                Sprite = b.Sprite
-                            }),
-                        Resources = c
+                            b => new BuffHolderView.BuffContent(
+                                id: b.Id,
+                                color: Color.white,
+                                description: b.Description,
+                                duration: b.DurationText,
+                                name: b.Name,
+                                sprite: b.Sprite
+                            )),
+                        resources: c
                             .Stats
                             .Resources
                             .Select(
-                            r => new ResourceHolderView.ResourceContent() {
-                                Id = r.Type.GetHashCode(),
-                                BarText = r.Mod.ToString(),
-                                Numerator = r.Mod,
-                                Denominator = r.Max,
-                                FillColor = r.Type.Color,
-                                NegativeColor = r.Type.NegativeColor,
-                                Sprite = r.Type.Sprite,
-                                TypeDescription = r.Type.Description,
-                                Title = r.Type.Name
-                            }),
-                        IsRevealed = IsRevealedCalculation(c.Look, revealContributionFromFlags)
-                    }
-                ));
+                            r => new ResourceHolderView.ResourceContent(
+                                id: r.Type.GetHashCode(),
+                                barText: r.Mod.ToString(),
+                                numerator: r.Mod,
+                                denominator: r.Max,
+                                fillColor: r.Type.Color,
+                                negativeColor: r.Type.NegativeColor,
+                                sprite: r.Type.Sprite,
+                                typeDescription: r.Type.Description,
+                                title: r.Type.Name
+                            )),
+                        isRevealed: IsRevealedCalculation(c.Stats, revealContributionFromFlags)
+                    )
+                )
+            );
         }
 
-        private bool IsRevealedCalculation(Look look, int contributionFromFlags) {
-            return look.RevealCount + contributionFromFlags > 0;
+        private bool IsRevealedCalculation(Stats stats, int contributionFromFlags) {
+            return stats.ResourceVisibility + contributionFromFlags > 0;
         }
     }
 }

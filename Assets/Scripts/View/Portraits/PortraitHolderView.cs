@@ -12,13 +12,23 @@ namespace Scripts.View.Portraits {
     /// </summary>
     public class PortraitHolderView : MonoBehaviour, IHolderView<PortraitHolderView.PortraitContent> {
         public struct PortraitContent {
-            public int Id;
-            public string Name;
-            public string Tip;
-            public Sprite Sprite;
-            public IEnumerable<ResourceHolderView.ResourceContent> Resources;
-            public IEnumerable<BuffHolderView.BuffContent> Buffs;
-            public bool IsRevealed;
+            public readonly int Id;
+            public readonly string Name;
+            public readonly string Tip;
+            public readonly Sprite Sprite;
+            public readonly IEnumerable<ResourceHolderView.ResourceContent> Resources;
+            public readonly IEnumerable<BuffHolderView.BuffContent> Buffs;
+            public readonly bool IsRevealed;
+
+            public PortraitContent(int id, string name, string tip, Sprite sprite, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs, bool isRevealed) {
+                Id = id;
+                Name = name;
+                Tip = tip;
+                Sprite = sprite;
+                Resources = resources;
+                Buffs = buffs;
+                IsRevealed = isRevealed;
+            }
         }
 
         [SerializeField]

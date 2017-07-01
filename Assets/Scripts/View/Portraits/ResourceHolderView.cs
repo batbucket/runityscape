@@ -7,15 +7,27 @@ using UnityEngine;
 namespace Scripts.View.Portraits {
     public class ResourceHolderView : MonoBehaviour, IHolderView<ResourceHolderView.ResourceContent> {
         public struct ResourceContent {
-            public int Id;
-            public Color NegativeColor;
-            public Color FillColor;
-            public Sprite Sprite;
-            public string BarText;
-            public int Numerator;
-            public int Denominator;
-            public string Title;
-            public string TypeDescription;
+            public readonly int Id;
+            public readonly Color NegativeColor;
+            public readonly Color FillColor;
+            public readonly Sprite Sprite;
+            public readonly string BarText;
+            public readonly int Numerator;
+            public readonly int Denominator;
+            public readonly string Title;
+            public readonly string TypeDescription;
+
+            public ResourceContent(int id, Color negativeColor, Color fillColor, Sprite sprite, string barText, int numerator, int denominator, string title, string typeDescription) {
+                Id = id;
+                NegativeColor = negativeColor;
+                FillColor = fillColor;
+                Sprite = sprite;
+                BarText = barText;
+                Numerator = numerator;
+                Denominator = denominator;
+                Title = title;
+                TypeDescription = typeDescription;
+            }
         }
 
         [SerializeField]

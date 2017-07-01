@@ -7,12 +7,21 @@ using System;
 namespace Scripts.View.Portraits {
     public class BuffHolderView : MonoBehaviour, IHolderView<BuffHolderView.BuffContent> {
         public struct BuffContent {
-            public int Id;
-            public Color Color;
-            public Sprite Sprite;
-            public string Name;
-            public string Duration;
-            public string Description;
+            public readonly int Id;
+            public readonly Color Color;
+            public readonly Sprite Sprite;
+            public readonly string Name;
+            public readonly string Duration;
+            public readonly string Description;
+
+            public BuffContent(int id, Color color, Sprite sprite, string name, string duration, string description) {
+                Id = id;
+                Color = color;
+                Sprite = sprite;
+                Name = name;
+                Duration = duration;
+                Description = description;
+            }
         }
 
         [SerializeField]

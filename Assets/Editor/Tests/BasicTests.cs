@@ -267,7 +267,7 @@ public class BasicTests {
             Equipment equips = new Equipment();
             Inventory inv = new Inventory();
             inv.Add(new PoisonArmor());
-            equips.AddEquip(inv, new BuffParams() { Caster = new KitsuneStats(), CasterId = 2 }, new PoisonArmor());
+            equips.AddEquip(inv, new BuffParams(new KitsuneStats(), 2), new PoisonArmor());
 
             EquipmentSave initialSaveObject = equips.GetSaveObject();
             initialSaveObject.Buffs.ForEach(b => b.Buff.SetupAsCasterNotInParty());
@@ -326,7 +326,7 @@ public class BasicTests {
         public void SettingCasterForBuffSetsEverythingCorrectly() {
             Kitsune caster = new Kitsune();
             Buff poison = new Poison();
-            poison.Caster = new BuffParams() { Caster = caster.Stats, CasterId = caster.Id };
+            poison.Caster = new BuffParams(caster.Stats, caster.Id);
             Assert.AreEqual(caster.Id, poison.CasterId);
             Assert.AreSame(caster.Stats, poison.BuffCaster);
         }
@@ -340,7 +340,7 @@ public class BasicTests {
 
             Poison poison = new Poison();
             Util.Log("BuffcasterID: " + buffCaster.Id);
-            poison.Caster = new BuffParams() { Caster = buffCaster.Stats, CasterId = buffCaster.Id };
+            poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
 
             buffRecipient.Buffs.AddBuff(poison);
 
@@ -373,7 +373,7 @@ public class BasicTests {
 
             Poison poison = new Poison();
             Util.Log("BuffcasterID: " + buffCaster.Id);
-            poison.Caster = new BuffParams() { Caster = buffCaster.Stats, CasterId = buffCaster.Id };
+            poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
 
             buffRecipient.Buffs.AddBuff(poison);
 
