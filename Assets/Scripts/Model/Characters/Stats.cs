@@ -31,6 +31,8 @@ namespace Scripts.Model.Characters {
         public int Level;
         public int StatPoints;
 
+        private int resourceVisibility;
+
         public Stats() {
             this.dict = new Dictionary<StatType, Stat>();
             this.AddSplat = (a => { });
@@ -42,6 +44,12 @@ namespace Scripts.Model.Characters {
         public IEnumerable<Stat> Resources {
             get {
                 return dict.Values.Where(v => StatType.RESOURCES.Contains(v.Type));
+            }
+        }
+
+        public int ResourceVisibility {
+            get {
+                return resourceVisibility;
             }
         }
 
@@ -85,6 +93,14 @@ namespace Scripts.Model.Characters {
             get {
                 return GetStatCount(Get.MOD, StatType.EXPERIENCE) >= GetStatCount(Get.MAX, StatType.EXPERIENCE);
             }
+        }
+
+        public void IncreaseResourceVisibility() {
+            resourceVisibility++;
+        }
+
+        public void DecreaseResourceVisibility() {
+            resourceVisibility--;
         }
 
         public void AddStat(Stat stat) {
@@ -162,7 +178,11 @@ namespace Scripts.Model.Characters {
                 return false;
             }
 
-            return Util.IsDictionariesEqual<StatType, Stat>(this.dict, item.dict);
+            return
+                Util.IsDictionariesEqual<StatType, Stat>(this.dict, item.dict)
+                && this.resourceVisibility.Equals(item.resourceVisibility)
+                && this.Level.Equals(item.Level)
+                && this.StatPoints.Equals(item.StatPoints);
         }
 
         public override int GetHashCode() {
@@ -216,7 +236,7 @@ namespace Scripts.Model.Characters {
                 Stat stat = pair.Value;
                 list.Add(stat.GetSaveObject());
             }
-            return new CharacterStatsSave(this.Level, this.StatPoints, list);
+            return new CharacterStatsSave(this.resourceVisibility, this.Level, this.StatPoints, list);
         }
 
         public void InitFromSaveObject(CharacterStatsSave saveObject) {
