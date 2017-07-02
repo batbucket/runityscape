@@ -116,7 +116,7 @@ namespace Scripts.Game.Pages {
                 }),
                 new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { new Hero("Debug"), new Kitsune(), new Kitsune()  }, new Character[] { new Kitsune(), new Kitsune() }),
                 new Process("LongTalk Test", () => {
-                    ActUtil.SetupScene(Get(DEBUGGING), ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>the best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
+                    ActUtil.SetupScene(Get(DEBUGGING), ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>theaefaefef oieafoewjfoejfio oe foiawjefoawijef oj efjoiejfaoo oajeoaijfo wi best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
                 }),
                 new Process("Get level exp diff", () => {
                     Page.TypeText(new TextBox(string.Format("For level {0}-{1}: {2} exp", level, level + 1, Experience.GetExpDiffForLevel(level, level + 1))));
@@ -153,11 +153,11 @@ namespace Scripts.Game.Pages {
 
             page.OnEnter += () => {
                 page.AddText(
-                    "Tools: Made with Unity and the NUnit testing framework.",
-                    "Music: Sourced from OpenGameArt.",
-                    "Sound Effects: Sourced from Freesound, SoundBible, and OpenGameArt.",
-                    "Icons: Sourced from http://Game-icons.net.",
-                    "Fonts: Determination Mono (Main), Hachicro (Hitsplats), Mars Needs C. (Bar text)"
+                    "<Tools>\nMade with Unity and the NUnit testing framework.",
+                    "<Music>\nSourced from OpenGameArt.",
+                    "<Sound Effects>\nSourced from Freesound, SoundBible, and OpenGameArt.",
+                    "<Icons>\nSourced from http://Game-icons.net.",
+                    "<Fonts>\nMain: BPmono by George Triantafyllakos\nTextboxes: Anonymous Pro by Mark Simonson\nHitsplat: n04b by 04\nHotkey: PKMN-Mystery-Dungeon by David Fens"
                     );
             };
         }

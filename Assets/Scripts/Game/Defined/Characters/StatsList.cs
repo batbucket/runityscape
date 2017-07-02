@@ -11,26 +11,26 @@ namespace Scripts.Game.Defined.StartingStats {
 
     public class HeroStats : Stats {
         public HeroStats() : base() {
-            InitializeStats(0, 5, 5, 5, 5);
+            InitializeStats(0, 1, 1, 1, 5);
             AddStat(new Experience());
         }
     }
 
     public class VillagerStats : Stats {
         public VillagerStats() {
-            InitializeStats(1, 1, 1, 1, 1);
+            InitializeStats(2, 1, 1, 1, 2);
         }
     }
 
     public class KnightStats : Stats {
         public KnightStats() {
-            InitializeStats(2, 5, 5, 5, 2);
+            InitializeStats(3, 2, 2, 2, 4);
         }
     }
 
     public class HealerStats : Stats {
         public HealerStats() {
-            InitializeStats(4, 1, 10, 10, 3);
+            InitializeStats(3, 1, 5, 5, 1);
         }
     }
 }
