@@ -49,6 +49,7 @@ namespace Scripts.View.Portraits {
             nameText.text = name;
             durationText.text = duration;
             image.sprite = icon;
+            nameText.color = color;
 
             Tip.Setup(
                 icon,
