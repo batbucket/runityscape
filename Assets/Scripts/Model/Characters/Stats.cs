@@ -112,6 +112,10 @@ namespace Scripts.Model.Characters {
             this.dict.Remove(type);
         }
 
+        public int GetMissingStatCount(StatType type) {
+            return GetStatCount(Get.MAX) - GetStatCount(Get.MOD);
+        }
+
         public void SetToStat(StatType statType, Set type, int amount) {
             if (HasStat(statType) && amount != 0) {
                 Stat stat = dict[statType];
