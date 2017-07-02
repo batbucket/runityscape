@@ -22,7 +22,7 @@ namespace Scripts.Model.Pages {
 
         private const string BATTLE_START = "The battle begins.";
 
-        private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=yellow>{1}</color>.";
+        private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=cyan>{1}</color>.";
 
         private const string BUFF_FADE = "<color=yellow>{0}</color>'s {1} fades.";
 
@@ -226,10 +226,11 @@ namespace Scripts.Model.Pages {
         private IEnumerator CheckForDeath() {
             foreach (Character c in GetAll()) {
                 if (c.Stats.State == State.DEAD) {
-                    foreach (Buff removableBuff in c.Buffs.Where(b => b.IsDispellable)) {
+                    IList<Buff> dispellableOnDeath = c.Buffs.Where(b => b.IsDispellable).ToList();
+                    foreach (Buff removableBuff in dispellableOnDeath) {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
                     }
-                    yield return new WaitForSeconds(0.25f);
+                    yield return new WaitForSeconds(0.50f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
                     HashSet<Character> graveyard = null;
                     if (Left.Contains(c)) {
