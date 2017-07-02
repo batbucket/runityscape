@@ -111,8 +111,12 @@ namespace Scripts.Model.Buffs {
             }
         }
 
+        public virtual bool IsReact(Spell s) {
+            return false;
+        }
+
         public void React(Spell s, Characters.Stats owner) {
-            PerformSpellEffects(ReactHelper(s, owner));
+            ReactHelper(s, owner);
         }
 
         public void OnTimeOut(Characters.Stats owner) {
@@ -151,8 +155,8 @@ namespace Scripts.Model.Buffs {
             return new SpellEffect[0];
         }
 
-        protected virtual IList<SpellEffect> ReactHelper(Spell s, Characters.Stats owner) {
-            return new SpellEffect[0];
+        protected virtual void ReactHelper(Spell s, Characters.Stats owner) {
+
         }
 
         protected virtual IList<SpellEffect> OnTimeOutHelper(Characters.Stats owner) {

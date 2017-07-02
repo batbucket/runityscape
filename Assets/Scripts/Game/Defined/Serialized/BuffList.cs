@@ -17,14 +17,30 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class Checked : Buff {
-        public Checked() : base(Util.GetSprite("magnifying-glass"), "Checked", "Resource visibility increased.", true) { }
+        public Checked() : base(5, Util.GetSprite("magnifying-glass"), "Checked", "Resource visibility increased.", true) { }
 
-        protected override IList<SpellEffect> OnApplyHelper(Stats owner) {
+        protected override IList<SpellEffect> OnApplyHelper(Stats owner) { // TODO UNSTACKABLE
             return new SpellEffect[] { new AddToResourceVisibility(owner, 1) };
         }
 
         protected override IList<SpellEffect> OnTimeOutHelper(Stats owner) {
             return new SpellEffect[] { new AddToResourceVisibility(owner, -1) };
+        }
+    }
+
+    public class Counter : Buff {
+        public Counter() : base(Util.GetSprite("round-shield"), "Counter", "Next <color=yellow>Attack</color> on this unit is reflected.", false) { }
+
+        public override bool IsReact(Spell s) {
+            return s.Book is Attack;
+        }
+
+        protected override void ReactHelper(Spell s, Stats owner) {
+            s.Result.Effects.Clear();
+            s.Result.AddEffect(
+                new AddToModStat(
+                    s.Caster.Stats, StatType.HEALTH, -s.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH))
+                );
         }
     }
 }
