@@ -21,11 +21,15 @@ namespace Scripts.Model.Spells {
         }
 
         public sealed override string CreateDescriptionHelper(SpellParams caster) {
+            return CreateBuffDescription(dummy);
+        }
+
+        public static string CreateBuffDescription(Buff buff) {
             return string.Format(
-                "Target is affected by\n{0}\n{1}\nDuration: {2} turns.",
-                dummy.Name,
-                dummy.Description,
-                dummy.DurationText
+                "Target is affected by\n\n<color=cyan>{0}</color>\n{1}\nDuration: {2} turns.",
+                buff.Name,
+                buff.Description,
+                buff.DurationText
                 );
         }
 
