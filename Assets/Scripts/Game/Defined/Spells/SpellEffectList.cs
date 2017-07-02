@@ -11,7 +11,7 @@ using Scripts.Model.Spells;
 namespace Scripts.Game.Defined.Spells {
     public class AddToModStat : SpellEffect {
         private readonly StatType affected;
-        private Stats target;
+        private readonly Stats target;
 
         public AddToModStat(Stats target, StatType affected, int value) : base(value) {
             this.affected = affected;
