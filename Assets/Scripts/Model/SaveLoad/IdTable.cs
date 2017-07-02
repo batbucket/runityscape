@@ -86,6 +86,8 @@ namespace Scripts.Model.SaveLoad {
             Add<Apple>("apple");
             Add<PoisonArmor>("poisonarmor");
             Add<Money>("money");
+            Add<GhostArmor>("ghostArmor");
+            Add<BrokenSword>("ghostSword");
         }
 
         private void Buffs() {
@@ -97,9 +99,9 @@ namespace Scripts.Model.SaveLoad {
         private void Brains() {
             Add<Player>("player");
             Add<DebugAI>("debugai");
-            Add<VillagerBrain>("villager");
-            Add<KnightBrain>("knight");
-            Add<HealerBrain>("healer");
+            Add<RuinsBrains.Villager>("villager");
+            Add<RuinsBrains.Knight>("knight");
+            Add<RuinsBrains.Healer>("healer");
         }
 
         private void Add<Type>(string id) {
@@ -117,7 +119,7 @@ namespace Scripts.Model.SaveLoad {
             Type[] types = GetTypesInNamespace(Assembly.GetExecutingAssembly(), "Scripts.Game.Defined.Serialized");
             bool isEverythingIncludedInMap = true;
             foreach (Type t in types) {
-                if (!map.Contains(t)) {
+                if (!map.Contains(t) && !t.IsAbstract) {
                     Util.Log(string.Format("Unable to locate {0} in Map.", t.ToString()));
                     isEverythingIncludedInMap = false;
                 }
