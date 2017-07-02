@@ -23,6 +23,7 @@ namespace Scripts.Game.Pages {
             this.previous = previous;
 
             SetupGenerators();
+            buttons.Add(PageUtil.GenerateBack(previous));
 
             foreach (KeyValuePair<Explore, ExplorableArea> pair in explores) {
                 if (flags.UnlockedExplores.Contains(pair.Key)) {
