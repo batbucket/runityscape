@@ -57,6 +57,8 @@ namespace Scripts.Model.Characters {
 
         public Character(Stats stats, Look look, Brain brain, SpellBooks spells) : this(stats, look, brain, spells, new Inventory(), new Equipment()) { }
 
+        public Character(Stats stats, Look look, Brain brain) : this(stats, look, brain, new SpellBooks(), new Inventory(), new Equipment()) { }
+
         /// <summary>
         /// Used in serialization for parties
         /// </summary>
@@ -88,6 +90,10 @@ namespace Scripts.Model.Characters {
                 && this.Inventory.Equals(item.Inventory)
                 && this.flags.SetEquals(item.flags)
                 && this.Equipment.Equals(item.Equipment);
+        }
+
+        public void AddFlag(Flag f) {
+            flags.Add(f);
         }
 
         public bool HasFlag(Flag f) {
