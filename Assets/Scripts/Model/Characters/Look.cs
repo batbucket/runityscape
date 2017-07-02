@@ -54,6 +54,12 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public string Check {
+            get {
+                return check;
+            }
+        }
+
         public string DisplayName {
             get {
                 return string.Format("{0}{1}", Name, string.IsNullOrEmpty(suffix) ? "" : string.Format(" {0}", suffix));
