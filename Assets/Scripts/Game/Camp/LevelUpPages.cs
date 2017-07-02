@@ -90,7 +90,8 @@ namespace Scripts.Game.Pages {
             return new Process(
                 st.Name,
                 st.Sprite,
-                string.Format("Add a point in\n{0}\n{1}",
+                string.Format("Add {0} point(s) in\n{1}\n{2}",
+                    st.StatPointIncreaseAmount,
                     st.Name,
                     st.Description),
                 () => {
