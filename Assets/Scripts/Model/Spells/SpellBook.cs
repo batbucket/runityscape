@@ -27,7 +27,7 @@ namespace Scripts.Model.Spells {
             }
         }
 
-        public SpellParams(Character c) {
+        public SpellParams(Characters.Character c) {
             this.CharacterId = c.Id;
             this.Character = c;
             this.Look = c.Look;
@@ -89,7 +89,7 @@ namespace Scripts.Model.Spells {
             return flags.Contains(f);
         }
 
-        public virtual string CreateDescription(SpellParams caster) {
+        public string CreateDescription(SpellParams caster) {
             return string.Format("{0}{3}\n\nTarget: {1}\nCost: {2}",
                 CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n", Color.red),
                 TargetType.Name,
