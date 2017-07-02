@@ -19,11 +19,11 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public string ClassId;
 
         public IdSaveObject(Type type) {
-            this.ClassId = IDs.Types.Get(type);
+            this.ClassId = IdTable.Types.Get(type);
         }
 
         public T CreateObjectFromID() {
-            Type type = IDs.Types.Get(ClassId);
+            Type type = IdTable.Types.Get(ClassId);
             return Util.TypeToObject<T>(type);
         }
     }
@@ -41,19 +41,19 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
 
     [Serializable]
     public class StatTypeSave : TypeSafeEnumSave<StatType> {
-        public StatTypeSave(StatType st) : base(IDs.Stats.Get(st)) { }
+        public StatTypeSave(StatType st) : base(IdTable.Stats.Get(st)) { }
 
         public override StatType Restore() {
-            return IDs.Stats.Get(Id);
+            return IdTable.Stats.Get(Id);
         }
     }
 
     [Serializable]
     public class EquipTypeSave : TypeSafeEnumSave<EquipType> {
-        public EquipTypeSave(EquipType type) : base(IDs.Equips.Get(type)) { }
+        public EquipTypeSave(EquipType type) : base(IdTable.Equips.Get(type)) { }
 
         public override EquipType Restore() {
-            return IDs.Equips.Get(Id);
+            return IdTable.Equips.Get(Id);
         }
     }
 
