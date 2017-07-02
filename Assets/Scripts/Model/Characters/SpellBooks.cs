@@ -7,13 +7,19 @@ using System.Linq;
 using Scripts.Model.Stats;
 using Scripts.Model.SaveLoad;
 using System;
+using Scripts.Game.Defined.Serialized.Spells;
 
 namespace Scripts.Model.Characters {
     public class SpellBooks : IEnumerable<ISpellable>, IEnumerable<SpellBook>, ISaveable<CharacterSpellBooksSave> {
+        private static readonly SpellBook[] DEFAULT_SPELLS = new SpellBook[] { new Attack(), new Wait() };
+
         private readonly HashSet<SpellBook> set;
 
         public SpellBooks() {
             set = new HashSet<SpellBook>();
+            foreach (SpellBook sb in DEFAULT_SPELLS) {
+                set.Add(sb);
+            }
         }
 
         public int HighestSkillCost {
