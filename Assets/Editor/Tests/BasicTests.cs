@@ -28,22 +28,22 @@ public class BasicTests {
     public class IDTableTests {
         [OneTimeSetUp]
         public void Setup() {
-            IDs.Init();
+            IdTable.Init();
         }
 
         [Test]
         public void TypeIDTableContainsAllSerializableMaterial() {
-            IDTableIncludesEverythingHelper(IDs.Types);
+            IDTableIncludesEverythingHelper(IdTable.Types);
         }
 
         [Test]
         public void StatTypeIDTableContainsAllStatTypes() {
-            IDTableIncludesEverythingHelper(IDs.Stats);
+            IDTableIncludesEverythingHelper(IdTable.Stats);
         }
 
         [Test]
         public void EquipTypeIDTableContainsAllStatTypes() {
-            IDTableIncludesEverythingHelper(IDs.Equips);
+            IDTableIncludesEverythingHelper(IdTable.Equips);
         }
 
         private void IDTableIncludesEverythingHelper<T>(IdMap<T> idMap) {
@@ -55,7 +55,7 @@ public class BasicTests {
     public class SerializationTests {
         [OneTimeSetUp]
         public void Setup() {
-            IDs.Init();
+            IdTable.Init();
         }
 
         public string ToJson(object o) {
@@ -164,17 +164,17 @@ public class BasicTests {
 
         [Test]
         public void IDsInputMatchesOutput() {
-            foreach (KeyValuePair<Type, string> pair in IDs.Types) {
-                Assert.AreEqual(IDs.Types.Get(pair.Key), pair.Value);
-                Assert.AreEqual(IDs.Types.Get(pair.Value), pair.Key);
+            foreach (KeyValuePair<Type, string> pair in IdTable.Types) {
+                Assert.AreEqual(IdTable.Types.Get(pair.Key), pair.Value);
+                Assert.AreEqual(IdTable.Types.Get(pair.Value), pair.Key);
             }
-            foreach (KeyValuePair<StatType, string> pair in IDs.Stats) {
-                Assert.AreEqual(IDs.Stats.Get(pair.Key), pair.Value);
-                Assert.AreEqual(IDs.Stats.Get(pair.Value), pair.Key);
+            foreach (KeyValuePair<StatType, string> pair in IdTable.Stats) {
+                Assert.AreEqual(IdTable.Stats.Get(pair.Key), pair.Value);
+                Assert.AreEqual(IdTable.Stats.Get(pair.Value), pair.Key);
             }
-            foreach (KeyValuePair<EquipType, string> pair in IDs.Equips) {
-                Assert.AreEqual(IDs.Equips.Get(pair.Key), pair.Value);
-                Assert.AreEqual(IDs.Equips.Get(pair.Value), pair.Key);
+            foreach (KeyValuePair<EquipType, string> pair in IdTable.Equips) {
+                Assert.AreEqual(IdTable.Equips.Get(pair.Key), pair.Value);
+                Assert.AreEqual(IdTable.Equips.Get(pair.Value), pair.Key);
             }
         }
 
@@ -353,7 +353,6 @@ public class BasicTests {
             Party party2 = new Party();
             party2.InitFromSaveObject(retrieved);
 
-            List<Character> a = party.ToList();
             List<Character> b = party.ToList();
 
             Character caster = b[1];
