@@ -8,6 +8,8 @@ namespace Scripts.Game.Defined.Characters {
         MONSTER,
         [Description("Human")]
         HUMAN,
+        [Description("Ghost")]
+        GHOST,
 
         // These are here for the credits
         [Description("Tester")]

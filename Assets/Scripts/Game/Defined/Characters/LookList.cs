@@ -22,6 +22,16 @@ namespace Scripts.Game.Defined.Characters {
             this.textColor = Color.white;
         }
     }
+
+    public static class Ruins {
+        class Villager : Look {
+            public Villager() : base() {
+                this.Name = "Fallen Villager";
+                this.Sprite = Util.GetSprite("");
+                this.tooltip = "The spirit of some passed villager. It still defends the ruin.";
+            }
+        }
+    }
 }
 
 namespace Scripts.Game.Undefined.Characters {
