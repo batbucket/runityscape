@@ -209,7 +209,7 @@ public class BasicTests {
 
         [Test]
         public void CharacterStatsAreSerializable() {
-            Stats stats = new KitsuneStats();
+            Stats stats = new Stats(1, 2, 3, 4, 5);
             ContainerSerializationHelper<Stats, CharacterStatsSave, KeyValuePair<StatType, Stat>>(stats);
         }
 
@@ -254,7 +254,7 @@ public class BasicTests {
 
         [Test]
         public void LookIsSerializable() {
-            BasicSerializableHelper<Look, LookSave>(new KitsuneLook());
+            BasicSerializableHelper<Look, LookSave>(Scripts.Game.Defined.Characters.Debug.NotKitsune());
         }
 
         [Test]
@@ -267,7 +267,7 @@ public class BasicTests {
             Equipment equips = new Equipment();
             Inventory inv = new Inventory();
             inv.Add(new PoisonArmor());
-            equips.AddEquip(inv, new BuffParams(new KitsuneStats(), 2), new PoisonArmor());
+            equips.AddEquip(inv, new BuffParams(new Stats(1, 2, 3, 4, 5), 2), new PoisonArmor());
 
             EquipmentSave initialSaveObject = equips.GetSaveObject();
             initialSaveObject.Buffs.ForEach(b => b.Buff.SetupAsCasterNotInParty());
@@ -294,7 +294,7 @@ public class BasicTests {
         private void SavingCharactersInPartyThrowsNoErrors(int characterCount) {
             Party party = new Party();
             for (int i = 0; i < characterCount; i++) {
-                party.AddMember(new Kitsune());
+                party.AddMember(CharacterList.NotKitsune());
             }
             ToJson(party.GetSaveObject());
         }
@@ -314,7 +314,7 @@ public class BasicTests {
         private void LoadingCharactersInPartyThrowsNoErrors(int characterCount) {
             Party party = new Party();
             for (int i = 0; i < characterCount; i++) {
-                party.AddMember(new Kitsune());
+                party.AddMember(CharacterList.NotKitsune());
             }
             string json = ToJson(party.GetSaveObject());
             PartySave partySave = JsonUtility.FromJson<PartySave>(json);
@@ -324,7 +324,7 @@ public class BasicTests {
 
         [Test]
         public void SettingCasterForBuffSetsEverythingCorrectly() {
-            Kitsune caster = new Kitsune();
+            Character caster = CharacterList.NotKitsune();
             Buff poison = new Poison();
             poison.Caster = new BuffParams(caster.Stats, caster.Id);
             Assert.AreEqual(caster.Id, poison.CasterId);
@@ -334,9 +334,9 @@ public class BasicTests {
         [Test, Timeout(2000)]
         public void SaveLoadMaintainsReferencesForPartyMemberCastedBuffs() {
             Party party = new Party();
-            Kitsune dummy = new Kitsune();
-            Kitsune buffCaster = new Kitsune();
-            Kitsune buffRecipient = new Kitsune();
+            Character dummy = CharacterList.NotKitsune();
+            Character buffCaster = CharacterList.NotKitsune();
+            Character buffRecipient = CharacterList.NotKitsune();
 
             Poison poison = new Poison();
             Util.Log("BuffcasterID: " + buffCaster.Id);
@@ -366,9 +366,9 @@ public class BasicTests {
         [Test, Timeout(2000)]
         public void SaveLoadDoesNotMaintainsReferencesForNonPartyMemberCastedBuffs() {
             Party party = new Party();
-            Kitsune dummy = new Kitsune();
-            Kitsune buffCaster = new Kitsune();
-            Kitsune buffRecipient = new Kitsune();
+            Character dummy = CharacterList.NotKitsune();
+            Character buffCaster = CharacterList.NotKitsune();
+            Character buffRecipient = CharacterList.NotKitsune();
 
             Poison poison = new Poison();
             Util.Log("BuffcasterID: " + buffCaster.Id);
@@ -377,7 +377,7 @@ public class BasicTests {
             buffRecipient.Buffs.AddBuff(poison);
 
             party.AddMember(dummy);
-            party.AddMember(new Kitsune());
+            party.AddMember(CharacterList.NotKitsune());
             party.AddMember(buffRecipient);
 
             PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
