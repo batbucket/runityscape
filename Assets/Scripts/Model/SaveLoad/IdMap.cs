@@ -15,7 +15,7 @@ namespace Scripts.Model.SaveLoad {
 
         public IdMap() {
             this.map = new Map<T, string>();
-            IDs.AddInit(this);
+            IdTable.AddInit(this);
         }
 
         public string Get(T t) {
