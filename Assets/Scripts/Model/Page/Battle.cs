@@ -265,18 +265,21 @@ namespace Scripts.Model.Pages {
 
                     // Wait until this is true until we ask the next character what action they want to perform
                     bool isActionTaken = false;
-                    c.Brain.PageSetup(this);
 
                     // Pass to the Brain a func that lets that lets them pass us what action they want to take
-                    c.Brain.DetermineAction((p) => {
-                        if (!playerActionSet.Contains(c)) {
-                            plays.Add(p);
-                            playerActionSet.Add(c);
-                            isActionTaken = true;
-                        } else {
-                            Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
-                        }
-                    });
+                    c.Brain.PageSetup(this,
+                        (p) => {
+                            if (!playerActionSet.Contains(c)) {
+                                plays.Add(p);
+                                playerActionSet.Add(c);
+                                isActionTaken = true;
+                            } else {
+                                Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
+                            }
+                        });
+
+                    // Let brain decide now
+                    c.Brain.DetermineAction();
 
                     // Wait until they choose a move. (This so the player can wait as long as they want)
                     yield return new WaitWhile(() => !isActionTaken);
@@ -342,6 +345,20 @@ namespace Scripts.Model.Pages {
             }
         }
 
+        private void MakeTargetBuffsReactToSpell(Spell spell) {
+            foreach (Buff b in spell.Target.Buffs) {
+                if (b.IsReact(spell)) {
+                    AddText(string.Format("{0}'s {1} activates {2}'s {3}!",
+                        spell.Caster.Look.DisplayName,
+                        spell.Book.Name,
+                        spell.Target.Look.DisplayName,
+                        b.Name
+                        ));
+                    b.React(spell, spell.Target.Stats);
+                }
+            }
+        }
+
         private IEnumerator PerformActions(List<IPlayable> plays) {
             plays.Sort();
             for (int i = 0; i < plays.Count; i++) {
@@ -351,6 +368,7 @@ namespace Scripts.Model.Pages {
                 // Dead characters cannot unleash spells
                 if (CharacterCanCast(play.MySpell.Caster)) { // Death check
                     bool wasPlayable = play.IsPlayable;
+                    MakeTargetBuffsReactToSpell(play.MySpell);
                     yield return play.Play();
                     AddText(play.Text);
                 }
