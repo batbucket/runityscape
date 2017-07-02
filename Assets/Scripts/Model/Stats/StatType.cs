@@ -136,7 +136,7 @@ namespace Scripts.Model.Stats {
             string spriteLoc,
             string description,
             Color color,
-            Color negativeColor) : this(0, boundType, name, spriteLoc, description, color) { }
+            Color negativeColor) : this(0, boundType, name, spriteLoc, description, color, negativeColor) { }
 
         private StatType(
             BoundType boundType,
