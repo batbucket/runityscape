@@ -76,7 +76,9 @@ namespace Scripts.Game.Pages {
 
         private Page SetupImport(Page previous, int index) {
             Page p = new Page(Util.ColorString("Import from Pastebin", Color.grey));
-            p.Body = "Type the key associated with a Pastebin Paste containing a save string for this game.\nExample: If URL = pastebin.com/abcDEF, then type abcDEF";
+            p.Body = "Type the key associated with a Pastebin Paste containing a save string for this game."
+                + "\nExample: If URL = pastebin.com/abcDEF, then type abcDEF"
+                + "\nImporting from save strings created in a different version of the game may cause issues.";
             p.HasInputField = true;
             p.OnEnter = () => {
                 p.Actions = new IButtonable[] {
