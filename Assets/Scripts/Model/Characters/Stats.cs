@@ -53,6 +53,23 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public string ShortAttributeDistribution {
+            get {
+                List<string> assignables = new List<string>();
+                foreach (KeyValuePair<StatType, Stat> pair in dict) {
+                    if (StatType.ASSIGNABLES.Contains(pair.Key)) {
+                        assignables.Add(string.Format("{0} {1}",
+                            GetStatCount(Get.MOD_AND_EQUIP, pair.Key),
+                            Util.ColorString(pair.Key.Name.Substring(0, 3), pair.Key.Color)));
+                    }
+                }
+                return string.Format(
+                    "{0}",
+                    string.Join("  ", assignables.ToArray())
+                    );
+            }
+        }
+
         public string LongAttributeDistribution {
             get {
                 List<string> assignables = new List<string>();
