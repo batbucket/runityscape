@@ -8,7 +8,7 @@ using Scripts.Game.Defined.Serialized.Spells;
 
 namespace Scripts.Game.Defined.Serialized.Items.Consumables {
     public class Apple : ConsumableItem {
-        private const int HEALING_AMOUNT = 5;
+        private const int HEALING_AMOUNT = 3;
 
         public Apple() : base(5, TargetType.SINGLE_ALLY, "Apple", string.Format("A juicy apple. Restores {0} {1}.", HEALING_AMOUNT, StatType.HEALTH.Name)) { }
 
@@ -29,6 +29,20 @@ namespace Scripts.Game.Defined.Serialized.Items.Equipment {
             return new Poison();
         }
 
+    }
+
+    public class BrokenSword : EquippableItem {
+        public BrokenSword() : base(EquipType.WEAPON, 5, "Broken Sword", "A broken sword dropped by a spirit. You feel closer to death just by holding it.") {
+            Stats.Add(StatType.STRENGTH, 1);
+            Stats.Add(StatType.VITALITY, -1);
+        }
+    }
+
+    public class GhostArmor : EquippableItem {
+        public GhostArmor() : base(EquipType.ARMOR, 10, "Ghostly Mail", "A transparent, weightless chainmail. You feel closer to death just by holding it.") {
+            Stats.Add(StatType.AGILITY, 1);
+            Stats.Add(StatType.VITALITY, -1);
+        }
     }
 }
 

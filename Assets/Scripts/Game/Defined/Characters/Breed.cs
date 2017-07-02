@@ -9,7 +9,7 @@ namespace Scripts.Game.Defined.Characters {
         [Description("Human")]
         HUMAN,
         [Description("Ghost")]
-        GHOST,
+        SPIRIT,
 
         // These are here for the credits
         [Description("Tester")]
