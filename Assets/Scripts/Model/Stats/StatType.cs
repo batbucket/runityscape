@@ -20,25 +20,30 @@ namespace Scripts.Model.Stats {
             { BoundType.ASSIGNABLE, new Bounds(0, 100) },
         };
 
-        public static readonly StatType STRENGTH = new StatType(BoundType.ASSIGNABLE,
+        public static readonly StatType STRENGTH = new StatType(
+                                                                STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT,
+                                                                BoundType.ASSIGNABLE,
                                                                           "Strength",
                                                                           "fist",
                                                                           "Increases basic attack damage.",
                                                                           Color.red);
 
-        public static readonly StatType INTELLECT = new StatType(BoundType.ASSIGNABLE,
+        public static readonly StatType INTELLECT = new StatType(STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT,
+                                                                BoundType.ASSIGNABLE,
                                                                            "Intellect",
                                                                            "light-bulb",
                                                                            "Increases spell effects.",
                                                                            Color.blue);
 
-        public static readonly StatType AGILITY = new StatType(BoundType.ASSIGNABLE,
+        public static readonly StatType AGILITY = new StatType(STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT,
+                                                                BoundType.ASSIGNABLE,
                                                                          "Agility",
                                                                          "power-lightning",
                                                                          "Increases critical hit rate and accuracy.",
                                                                          Color.green);
 
-        public static readonly StatType VITALITY = new StatType(BoundType.ASSIGNABLE,
+        public static readonly StatType VITALITY = new StatType(VITALITY_INCREASE_FROM_STAT_POINT_AMOUNT,
+                                                                BoundType.ASSIGNABLE,
                                                                           "Vitality",
                                                                           "health-normal",
                                                                           "Increases Health.",
@@ -96,13 +101,18 @@ namespace Scripts.Model.Stats {
         public readonly string Name;
         public readonly Sprite Sprite;
         public readonly string Description;
+        public readonly int StatPointIncreaseAmount;
         public readonly Color Color;
         public readonly Color NegativeColor;
 
         private readonly int order;
+
+        private const int STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT = 1;
+        private const int VITALITY_INCREASE_FROM_STAT_POINT_AMOUNT = 2;
         private static int orderCounter;
 
         private StatType(
+            int statPointIncreaseAmount,
             BoundType boundType,
             string name,
             string spriteLoc,
@@ -110,6 +120,7 @@ namespace Scripts.Model.Stats {
             Color color,
             Color negativeColor) {
             attributeBounds.TryGetValue(boundType, out Bounds);
+            this.StatPointIncreaseAmount = statPointIncreaseAmount;
             this.Name = Util.ColorString(name, color);
             this.Sprite = Util.LoadIcon(spriteLoc);
             this.Description = description;
@@ -124,7 +135,23 @@ namespace Scripts.Model.Stats {
             string name,
             string spriteLoc,
             string description,
-            Color color) : this(boundType, name, spriteLoc, description, color, Color.grey) { }
+            Color color,
+            Color negativeColor) : this(0, boundType, name, spriteLoc, description, color) { }
+
+        private StatType(
+            BoundType boundType,
+            string name,
+            string spriteLoc,
+            string description,
+            Color color) : this(0, boundType, name, spriteLoc, description, color, Color.grey) { }
+
+        private StatType(
+            int statPointIncreaseAmount,
+            BoundType boundType,
+            string name,
+            string spriteLoc,
+            string description,
+            Color color) : this(statPointIncreaseAmount, boundType, name, spriteLoc, description, color, Color.grey) { }
 
         public static ICollection<StatType> AllTypes {
             get {

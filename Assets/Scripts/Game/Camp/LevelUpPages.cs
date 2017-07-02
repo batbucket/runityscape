@@ -95,7 +95,7 @@ namespace Scripts.Game.Pages {
                     st.Description),
                 () => {
                     stats.StatPoints--;
-                    stats.AddToStat(st, Stats.Set.MAX, 1);
+                    stats.AddToStat(st, Stats.Set.MAX, st.StatPointIncreaseAmount);
                     p.AddText(string.Format("Maximum {0} was increased to {1}.\nPoints remaining: {2}.", st.Name, stats.GetStatCount(Stats.Get.MAX, st), stats.StatPoints));
                 },
                 () => stats.StatPoints > 0

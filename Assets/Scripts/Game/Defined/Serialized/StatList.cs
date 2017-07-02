@@ -33,7 +33,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
     }
 
     public class Health : Stat {
-        private const int VIT_TO_HEALTH = 10;
+        private const int VIT_TO_HEALTH = 1;
 
         public Health(int mod, int max) : base(mod, max, StatType.HEALTH) { }
 
@@ -74,7 +74,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
                 Page.TypeText(
                     new TextBox(
                         string.Format(
-                            "<color=yellow>{0}</color> is now level <color=yellow>{1}</color>.\nThey now have <color=cyan>{2}</color> point(s) for stat allocation.",
+                            "<color=yellow>{0}</color> is now level <color=yellow>{1}</color>.\n<color=cyan>{2}</color> point(s) have been gained for stat allocation.",
                             c.Look.DisplayName,
                             c.Stats.Level,
                             timesLeveledUp)));
@@ -97,9 +97,9 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
             Max = GetExpForLevel(stats.Level);
         }
 
-        private static void DoLevelUpStatBoost(Stats stats, int amount) {
+        private static void DoLevelUpStatBoost(Stats stats, int numberOfTimesLeveledUp) {
             foreach (StatType assignable in StatType.ASSIGNABLES) {
-                stats.AddToStat(assignable, Stats.Set.MAX, amount);
+                stats.AddToStat(assignable, Stats.Set.MAX, numberOfTimesLeveledUp * assignable.StatPointIncreaseAmount);
             }
         }
     }

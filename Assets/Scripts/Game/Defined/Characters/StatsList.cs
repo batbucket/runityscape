@@ -15,6 +15,24 @@ namespace Scripts.Game.Defined.StartingStats {
             AddStat(new Experience());
         }
     }
+
+    public class VillagerStats : Stats {
+        public VillagerStats() {
+            InitializeStats(1, 1, 1, 1, 1);
+        }
+    }
+
+    public class KnightStats : Stats {
+        public KnightStats() {
+            InitializeStats(2, 5, 5, 5, 2);
+        }
+    }
+
+    public class HealerStats : Stats {
+        public HealerStats() {
+            InitializeStats(4, 1, 10, 10, 3);
+        }
+    }
 }
 
 namespace Scripts.Game.Undefined.StartingStats {
