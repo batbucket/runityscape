@@ -121,7 +121,7 @@ namespace Scripts.Model.Stats {
             Color negativeColor) {
             attributeBounds.TryGetValue(boundType, out Bounds);
             this.StatPointIncreaseAmount = statPointIncreaseAmount;
-            this.Name = Util.ColorString(name, color);
+            this.Name = name;
             this.Sprite = Util.LoadIcon(spriteLoc);
             this.Description = description;
             this.Color = color;
@@ -156,6 +156,12 @@ namespace Scripts.Model.Stats {
         public static ICollection<StatType> AllTypes {
             get {
                 return new ReadOnlyCollection<StatType>(allTypes.ToArray());
+            }
+        }
+
+        public string ColoredName {
+            get {
+                return Util.ColorString(Name, Color);
             }
         }
 
