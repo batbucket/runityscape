@@ -14,6 +14,7 @@ using UnityEngine;
 namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class Attack : BasicSpellbook {
+        public const float DAMAGE_VARIABILITY = 0.25f;
         public const float PERCENT = 0.01f;
         public const float CRITICAL_MULTIPLIER = 2f;
         public const float BASE_ACCURACY = .8f;
@@ -42,14 +43,14 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH), .25f)),
+                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH), DAMAGE_VARIABILITY)),
                     new AddToModStat(caster.Stats, StatType.SKILL, 1)
                 };
         }
 
         protected override IList<SpellEffect> GetCriticalEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * CRITICAL_MULTIPLIER, .25f)),
+                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * CRITICAL_MULTIPLIER, DAMAGE_VARIABILITY)),
                     new AddToModStat(caster.Stats, StatType.SKILL, 2)
                 };
         }
@@ -104,7 +105,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class SetupCounter : BuffAdder {
         public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, new Counter(), "Counter") {
-            Costs.Add(StatType.SKILL, 1);
+            Costs.Add(StatType.SKILL, 2);
         }
     }
 
@@ -117,7 +118,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, 5)
+                new AddToModStat(target.Stats, StatType.HEALTH, 2)
             };
         }
     }

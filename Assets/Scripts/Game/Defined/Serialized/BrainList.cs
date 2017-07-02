@@ -36,37 +36,38 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         }
     }
 
-    public class VillagerBrain : PriorityBrain {
-        public static readonly Attack Attack = new Attack();
+    public static class RuinsBrains {
+        public class Villager : PriorityBrain {
+            public static readonly Attack Attack = new Attack();
 
-        protected override IList<Func<bool>> SetupPriorityActions() {
-            return new Func<bool>[] {
+            protected override IList<Func<bool>> SetupPriorityActions() {
+                return new Func<bool>[] {
                 CastOnRandom(Attack)
             };
+            }
         }
-    }
 
-    public class KnightBrain : PriorityBrain {
-        public static readonly Attack Attack = new Attack();
-        public static readonly SetupCounter Counter = new SetupCounter();
+        public class Knight : PriorityBrain {
+            public static readonly Attack Attack = new Attack();
+            public static readonly SetupCounter Counter = new SetupCounter();
 
-        protected override IList<Func<bool>> SetupPriorityActions() {
-            return new Func<bool>[] {
+            protected override IList<Func<bool>> SetupPriorityActions() {
+                return new Func<bool>[] {
                 CastOnRandom(Counter),
                 CastOnRandom(Attack)
             };
+            }
         }
-    }
+        public class Healer : PriorityBrain {
+            public static readonly Attack Attack = new Attack();
+            public static readonly Heal Heal = new Heal();
 
-    public class HealerBrain : PriorityBrain {
-        public static readonly Attack Attack = new Attack();
-        public static readonly Heal Heal = new Heal();
-
-        protected override IList<Func<bool>> SetupPriorityActions() {
-            return new Func<bool>[] {
+            protected override IList<Func<bool>> SetupPriorityActions() {
+                return new Func<bool>[] {
                 CastOnTargetMeetingCondition(Heal, c => c.Stats.GetMissingStatCount(StatType.HEALTH) > 0),
                 CastOnRandom(Attack)
             };
+            }
         }
     }
 }
