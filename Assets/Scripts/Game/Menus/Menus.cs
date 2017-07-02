@@ -50,6 +50,7 @@ namespace Scripts.Game.Pages {
 
         private void StartPage() {
             Page start = Get(ROOT_INDEX);
+            start.Body = string.Format("Welcome to MonsterScape v{0}.", Main.VERSION);
             start.OnEnter = () => {
                 start.Actions = new IButtonable[] {
                 Get(NEW_GAME),
@@ -72,7 +73,7 @@ namespace Scripts.Game.Pages {
                         new ActionAct(() => {
                             Party party = new Party();
                             Flags flags = new Flags();
-                            party.AddMember(new Hero(name));
+                            party.AddMember(CharacterList.Hero(name));
                             Camp camp = new Camp(party, flags);
                             bool wasCalled = false;
                             camp.Root.OnEnter += () => {
@@ -101,7 +102,7 @@ namespace Scripts.Game.Pages {
             Grid submenu = new Grid("Go to submenu");
             Grid mainDebug = new Grid("Return to main menu");
 
-            Character kitsune = new Kitsune();
+            Character kitsune = CharacterList.NotKitsune();
             debug.AddCharacters(Side.LEFT, kitsune);
             int level = 0;
 
@@ -114,7 +115,7 @@ namespace Scripts.Game.Pages {
                     Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
                     Presenter.Main.Instance.StartCoroutine(hpv.Animation("Test", Color.cyan, Util.GetSprite("fox-head")));
                 }),
-                new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { new Hero("Debug"), new Kitsune(), new Kitsune()  }, new Character[] { new Kitsune(), new Kitsune() }),
+                new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { CharacterList.Hero("Debug"), CharacterList.NotKitsune(), CharacterList.NotKitsune()  }, new Character[] { CharacterList.NotKitsune(), CharacterList.NotKitsune() }),
                 new Process("LongTalk Test", () => {
                     ActUtil.SetupScene(Get(DEBUGGING), ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>theaefaefef oieafoewjfoejfio oe foiawjefoawijef oj efjoiejfaoo oajeoaijfo wi best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
                 }),
@@ -148,7 +149,7 @@ namespace Scripts.Game.Pages {
             page.AddCharacters(Side.LEFT, new CreditsDummy(Breed.TESTER, 99, "Rohan", "swap-bag", "Best hunter in the critically acclaimed game\n\'Ace Prunes 3\'"));
             page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "Vishal", "round-shield", "Hacked the save file to give himself 2,147,483,647 gold in an attempt to buy the tome."));
             page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "One of Vishal's friends", "hourglass", "Name forgotten, but not gone."));
-            page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "cjdudeman14", "tentacles-skull", "Open beta tester. Bug slayer. Attempted to kill that which is unkillable."));
+            page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "cjdudeman14", "round-shield", "Open beta tester. Bug slayer. Attempted to kill that which is unkillable."));
             page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.COMMENTER, 5, "UnserZeitMrGlinko", "gladius", "\"more talking!﻿\" ~UZMG"));
 
             page.OnEnter += () => {
