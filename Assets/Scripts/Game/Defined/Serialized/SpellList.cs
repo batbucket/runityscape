@@ -9,6 +9,7 @@ using Scripts.Game.Defined.SFXs;
 using Scripts.Model.Characters;
 using Scripts.Game.Defined.Spells;
 using Scripts.Model.Buffs;
+using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -68,8 +69,31 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
-    public class Check : BuffAdder {
-        public Check() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, new Checked(), "Check") { }
+    public class Check : BasicSpellbook {
+        private static readonly Checked dummy = new Checked();
+
+        public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) { }
+
+        public override string CreateDescriptionHelper(SpellParams caster) {
+            return BuffAdder.CreateBuffDescription(dummy);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            return new SpellEffect[] {
+                new PostText(CheckText(target)),
+                new AddBuff(new BuffParams(caster.Stats, caster.CharacterId), target.Buffs, new Checked())
+            };
+        }
+
+        private static string CheckText(SpellParams target) {
+            string targetCheck = target.Look.Check;
+            return string.Format(
+                "{0}\n{1}{2}",
+                target.Look.DisplayName,
+                target.Stats.ShortAttributeDistribution,
+                string.IsNullOrEmpty(targetCheck) ? string.Empty : string.Format("\n{0}", targetCheck)
+                );
+        }
     }
 
     public class InflictPoison : BuffAdder {

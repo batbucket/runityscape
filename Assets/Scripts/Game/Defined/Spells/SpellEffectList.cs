@@ -7,6 +7,7 @@ using System.Text;
 using Scripts.Model.Buffs;
 using Scripts.Model.Items;
 using Scripts.Model.Spells;
+using Scripts.Model.Pages;
 
 namespace Scripts.Game.Defined.Spells {
     public class AddToModStat : SpellEffect {
@@ -103,6 +104,18 @@ namespace Scripts.Game.Defined.Spells {
             } else if (Value < 0) {
                 target.DecreaseResourceVisibility();
             }
+        }
+    }
+
+    public class PostText : SpellEffect {
+        private string message;
+
+        public PostText(string message) : base(1) {
+            this.message = message;
+        }
+
+        public override void CauseEffect() {
+            Page.TypeText(new Model.TextBoxes.TextBox(message));
         }
     }
 }
