@@ -41,6 +41,10 @@ namespace Scripts.Model.Characters {
             GetEquipmentBonus = (st) => 0;
         }
 
+        public Stats(int level, int str, int agi, int intel, int vit) : this() {
+            InitializeStats(level, str, agi, intel, vit);
+        }
+
         public IEnumerable<Stat> Resources {
             get {
                 return dict.Values.Where(v => StatType.RESOURCES.Contains(v.Type));

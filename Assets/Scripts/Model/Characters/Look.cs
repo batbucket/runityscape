@@ -19,14 +19,18 @@ namespace Scripts.Model.Characters {
         private string suffix;
         private Sprite sprite;
 
-        public Look() {
-            this.Name = "Default";
-            this.sprite = Util.GetSprite("fox-head");
-            this.tooltip = string.Empty;
-            this.check = string.Empty;
-            this.breed = Breed.UNKNOWN;
-            this.textColor = Color.white;
+        public Look() : this("Default", "fox-head", string.Empty, string.Empty, Breed.UNKNOWN, Color.white) { }
+
+        public Look(string name, string spriteLoc, string tooltip, string check, Breed breed, Color textColor) {
+            this.Name = name;
+            this.sprite = Util.GetSprite(spriteLoc);
+            this.tooltip = tooltip;
+            this.check = check;
+            this.breed = breed;
+            this.textColor = textColor;
         }
+
+        public Look(string name, string spriteLoc, string tooltip, string check, Breed breed) : this(name, spriteLoc, tooltip, check, breed, Color.white) { }
 
         public Breed Breed {
             get {

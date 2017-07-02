@@ -22,6 +22,12 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public SpellBooks(params SpellBook[] initialSpells) : this() {
+            foreach (SpellBook sb in initialSpells) {
+                set.Add(sb);
+            }
+        }
+
         public int HighestSkillCost {
             get {
                 return set.Select(s => s.Costs[StatType.SKILL]).Max();

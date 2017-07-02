@@ -10,6 +10,19 @@ using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
+    public struct ItemPair {
+        public readonly int Count;
+        public readonly Item Item;
+        public ItemPair(int count, Item item) {
+            this.Count = count;
+            this.Item = item;
+        }
+
+        public ItemPair(Item item) {
+            this.Count = 1;
+            this.Item = item;
+        }
+    }
 
     public class Inventory : IEnumerable<Item>, IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
         private const int INITIAL_CAPACITY = 10;
@@ -23,6 +36,18 @@ namespace Scripts.Model.Characters {
             this.dict = new Dictionary<Item, int>();
             this.AddSplat = ((p) => { });
             this.capacity = INITIAL_CAPACITY;
+        }
+
+        /// <summary>
+        /// Initialize inventory with items.
+        /// These starting items do not have to obey the capacity limit,
+        /// but if the inventory is full/overfilled, new items cannot be added.
+        /// </summary>
+        /// <param name="initialItems">Initial items to add</param>
+        public Inventory(params ItemPair[] initialItems) : this() {
+            foreach (ItemPair item in initialItems) {
+                dict.Add(item.Item, item.Count);
+            }
         }
 
         public bool IsFull {
@@ -65,13 +90,22 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        /// <summary>
+        /// No capacity check
+        /// </summary>
+        public void ForceAdd(Item itemToAdd, int count = 1) {
+            if (count > 0) {
+                if (!dict.ContainsKey(itemToAdd)) {
+                    dict.Add(itemToAdd, 0);
+                }
+                dict[itemToAdd] += count;
+            }
+        }
+
         public void Add(Item itemToAdd, int count = 1) {
             Util.Assert(IsAddable(itemToAdd, count), "No more room!");
             Util.Assert(count >= 0, string.Format("Invalid count: {0}", count));
-            if (!dict.ContainsKey(itemToAdd)) {
-                dict.Add(itemToAdd, 0);
-            }
-            dict[itemToAdd] += count;
+            ForceAdd(itemToAdd, count);
             AddSplat(new SplatDetails(Color.green, string.Format("+{0}", count), itemToAdd.Icon));
         }
 
