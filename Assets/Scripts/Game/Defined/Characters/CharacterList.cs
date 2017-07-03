@@ -77,14 +77,18 @@ namespace Scripts.Game.Defined.Characters {
 
         private static Character AddEquips(this Character c, params EquippableItem[] equips) {
             foreach (EquippableItem equip in equips) {
-                c.Equipment.AddEquip(new Inventory(), new Model.Buffs.BuffParams(c.Stats, c.Id), equip);
+                Inventory dummy = new Inventory();
+                dummy.ForceAdd(equip);
+                c.Equipment.AddEquip(dummy, new Model.Buffs.BuffParams(c.Stats, c.Id), equip);
             }
             return c;
         }
 
         private static Character AddEquip(this Character c, EquippableItem equip, bool isAdded = true) {
             if (isAdded) {
-                c.Equipment.AddEquip(new Inventory(), new Model.Buffs.BuffParams(c.Stats, c.Id), equip);
+                Inventory dummy = new Inventory();
+                dummy.ForceAdd(equip);
+                c.Equipment.AddEquip(dummy, new Model.Buffs.BuffParams(c.Stats, c.Id), equip);
             }
             return c;
         }
