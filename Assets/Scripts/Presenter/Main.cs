@@ -23,6 +23,8 @@ using Scripts.Model.SaveLoad;
 namespace Scripts.Presenter {
 
     public class Main : MonoBehaviour {
+        public static int VERSION = 2;
+
         private static Main instance;
 
         [SerializeField]

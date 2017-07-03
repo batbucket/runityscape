@@ -286,7 +286,9 @@ namespace Scripts.Model.Pages {
                     yield return new WaitWhile(() => !isActionTaken);
                     ClearActionGrid();
 
-                    ObjectPoolManager.Instance.Return(textbox); // Remove "What will X do?" textbox, reduce clutter
+                    if (textbox != null) {
+                        ObjectPoolManager.Instance.Return(textbox); // Remove "What will X do?" textbox, reduce clutter
+                    }
 
                     if (brainIsPlayer) {
                         Spell spell = plays.Last().MySpell;

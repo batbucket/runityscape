@@ -54,8 +54,8 @@ namespace Scripts.Model.Characters {
             }
 
             Buff buff = e.CreateBuff();
-            buff.Caster = caster;
             if (buff != null) {
+                buff.Caster = caster;
                 itemBuffs.Add(e.Type, buff);
                 AddBuff(buff);
             }

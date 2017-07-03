@@ -23,8 +23,6 @@ namespace Scripts.Game.Pages {
         private Flags flags;
         private Party party;
 
-        private bool shouldAdvanceTime;
-
         public Camp(Party party, Flags flags) : base(new Page("Campsite")) {
             this.party = party;
             this.flags = flags;
@@ -36,15 +34,16 @@ namespace Scripts.Game.Pages {
             root.OnEnter = () => {
                 root.AddCharacters(Side.LEFT, party.Collection);
                 root.Actions = new IButtonable[] {
-                new ExplorePages(root, party, flags, ref shouldAdvanceTime),
+                new ExplorePages(root, party, flags),
                 new LevelUpPages(Root, party.Default),
                 new InventoryPages(root, party.Default, party.shared),
                 new EquipmentPages(root, new SpellParams(party.Default)),
                 RestProcess(root),
                 new SavePages(root, party, flags)
                 };
-                if (shouldAdvanceTime) {
+                if (flags.ShouldAdvanceTimeInCamp) {
                     AdvanceTime(root);
+                    flags.ShouldAdvanceTimeInCamp = false;
                 }
                 PostTime(root);
             };

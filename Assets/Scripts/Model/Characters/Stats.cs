@@ -81,7 +81,7 @@ namespace Scripts.Model.Characters {
                 List<string> other = new List<string>();
                 foreach (KeyValuePair<StatType, Stat> pair in dict) {
                     string s = string.Format("{0} {1}/{2} {3}",
-                        pair.Key.Name,
+                        pair.Key.ColoredName,
                         pair.Value.Mod,
                         pair.Value.Max,
                         StatType.ASSIGNABLES.Contains(pair.Key) ? string.Format("({0})", Util.Sign(GetEquipmentBonus(pair.Key))) : string.Empty
@@ -125,8 +125,10 @@ namespace Scripts.Model.Characters {
         }
 
         public void AddStat(Stat stat) {
+            if (!dict.ContainsKey(stat.Type)) {
+                AddSplat(new SplatDetails(stat.Type.Color, "+", stat.Type.Sprite));
+            }
             this.dict.Add(stat.Type, stat);
-            AddSplat(new SplatDetails(stat.Type.Color, "+", stat.Type.Sprite));
         }
 
         protected void RemoveStat(StatType type) {
@@ -138,31 +140,35 @@ namespace Scripts.Model.Characters {
         }
 
         public void SetToStat(StatType statType, Set type, int amount) {
-            if (HasStat(statType) && amount != 0) {
-                Stat stat = dict[statType];
-                if (type == Set.MOD) {
-                    stat.Mod = amount;
-                } else if (type == Set.MAX) {
-                    stat.Max = amount;
-                } else if (type == Set.MOD_UNBOUND) {
-                    stat.SetMod(amount, false);
+            if (HasStat(statType)) {
+                if (amount != 0) {
+                    Stat stat = dict[statType];
+                    if (type == Set.MOD) {
+                        stat.Mod = amount;
+                    } else if (type == Set.MAX) {
+                        stat.Max = amount;
+                    } else if (type == Set.MOD_UNBOUND) {
+                        stat.SetMod(amount, false);
+                    }
                 }
+                AddSplat(new SplatDetails(statType.DetermineColor(amount), string.Format("={0}", amount), statType.Sprite));
             }
-            AddSplat(new SplatDetails(statType.DetermineColor(amount), string.Format("={0}", amount), statType.Sprite));
         }
 
         public void AddToStat(StatType statType, Set type, int amount) {
-            if (HasStat(statType) && amount != 0) {
-                Stat stat = dict[statType];
-                if (type == Set.MOD) {
-                    stat.Mod += amount;
-                } else if (type == Set.MAX) {
-                    stat.Max += amount;
-                } else if (type == Set.MOD_UNBOUND) {
-                    stat.SetMod(stat.Mod + amount, false);
+            if (HasStat(statType)) {
+                if (amount != 0) {
+                    Stat stat = dict[statType];
+                    if (type == Set.MOD) {
+                        stat.Mod += amount;
+                    } else if (type == Set.MAX) {
+                        stat.Max += amount;
+                    } else if (type == Set.MOD_UNBOUND) {
+                        stat.SetMod(stat.Mod + amount, false);
+                    }
                 }
+                AddSplat(new SplatDetails(statType.DetermineColor(amount), StatUtil.ShowSigns(amount), statType.Sprite));
             }
-            AddSplat(new SplatDetails(statType.DetermineColor(amount), StatUtil.ShowSigns(amount), statType.Sprite));
         }
 
         public bool HasStat(StatType statType) {

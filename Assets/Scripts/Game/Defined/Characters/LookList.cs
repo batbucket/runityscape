@@ -32,7 +32,7 @@ namespace Scripts.Game.Defined.Characters {
         public static Look Villager() {
             return new Look(
                 "F. Villager",
-                "spectre",
+                "haunting",
                 "The spirit of some fallen villager.",
                 "The easiest enemy. Can only do 0-1 damage.",
                 Breed.SPIRIT
@@ -52,7 +52,7 @@ namespace Scripts.Game.Defined.Characters {
         public static Look Healer() {
             return new Look(
                 "F. Healer",
-                "health-normal",
+                "spectre",
                 "The spirit of some fallen healer.",
                 "Will heal injured targets. Should be attacked first in most cases.",
                 Breed.SPIRIT

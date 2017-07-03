@@ -23,8 +23,10 @@ namespace Scripts.Model.Characters {
                 Func<bool> possibleAction = priorityActionList[i];
                 hasChosenAction = possibleAction();
             }
-            // Unable to find anything, if we don't do anything here Battle will get stuck on computer thinking
-            handlePlay(Owner.Character.Spells.CreateSpell(DEFAULT_ACTION, Owner, Owner));
+            // Unable to find anything, perform a wait so the battle doesn't get stuck
+            if (!hasChosenAction) {
+                handlePlay(Owner.Character.Spells.CreateSpell(DEFAULT_ACTION, Owner, Owner));
+            }
         }
 
         protected abstract IList<Func<bool>> SetupPriorityActions();

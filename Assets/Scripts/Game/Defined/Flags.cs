@@ -27,7 +27,11 @@ namespace Scripts.Game.Serialized {
         public TimeOfDay Time;
         public int DayCount;
         public List<Explore> UnlockedExplores;
+        public int TotalExploreCount;
+        public bool ShouldAdvanceTimeInCamp;
 
-        public Flags() { }
+        public Flags() {
+            this.UnlockedExplores = new List<Explore>();
+        }
     }
 }

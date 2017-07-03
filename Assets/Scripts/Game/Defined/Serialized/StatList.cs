@@ -73,11 +73,8 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
                 DoLevelUpStatBoost(stats, timesLeveledUp);
                 Page.TypeText(
                     new TextBox(
-                        string.Format(
-                            "<color=yellow>{0}</color> is now level <color=yellow>{1}</color>.\n<color=cyan>{2}</color> point(s) have been gained for stat allocation.",
-                            c.Look.DisplayName,
-                            c.Stats.Level,
-                            timesLeveledUp)));
+                        GetLevelUpText(c, timesLeveledUp)
+                        ));
                 Main.Instance.Sound.PlaySound("orchestra");
             }
         }
@@ -95,6 +92,26 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
             stats.Level++;
             stats.StatPoints++;
             Max = GetExpForLevel(stats.Level);
+        }
+
+        private static string GetLevelUpText(Character character, int timesLeveledUp) {
+            string[] assignablesIncrease = new string[StatType.ASSIGNABLES.Count];
+
+            int index = 0;
+            foreach (StatType st in StatType.ASSIGNABLES) {
+                assignablesIncrease[index++] =
+                    string.Format("{0} increases to {1}. ({2})",
+                    st.ColoredName,
+                    character.Stats.GetStatCount(Stats.Get.MAX, st),
+                    Util.Sign(timesLeveledUp * st.StatPointIncreaseAmount));
+            }
+
+            return string.Format(
+                            "<color=yellow>{0}</color> is now level <color=yellow>{1}</color>.\n{2}\n<color=cyan>{3}</color> point(s) have been gained for stat allocation.",
+                            character.Look.DisplayName,
+                            character.Stats.Level,
+                            string.Join("\n", assignablesIncrease),
+                            timesLeveledUp);
         }
 
         private static void DoLevelUpStatBoost(Stats stats, int numberOfTimesLeveledUp) {
