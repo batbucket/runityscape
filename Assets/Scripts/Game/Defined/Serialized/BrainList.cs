@@ -19,10 +19,10 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         public override void DetermineAction() {
             Grid main = new Grid("Main");
             main.List = new IButtonable[] {
-                PageUtil.GenerateTargets(battle, main, Owner, Attack, handlePlay),
-                PageUtil.GenerateSpellBooks(battle, main, Owner, Attack, handlePlay),
-                PageUtil.GenerateItems(battle, main, Owner, handlePlay),
-                PageUtil.GenerateEquipmentGrid(main, Owner, handlePlay)
+                PageUtil.GenerateTargets(battle, main, owner, Attack, handlePlay),
+                PageUtil.GenerateSpellBooks(battle, main, owner, Attack, handlePlay),
+                PageUtil.GenerateItems(battle, main, owner, handlePlay),
+                PageUtil.GenerateEquipmentGrid(main, owner, handlePlay)
             };
             battle.Actions = main.List;
         }

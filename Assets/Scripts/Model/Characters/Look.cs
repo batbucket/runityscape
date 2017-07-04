@@ -107,6 +107,7 @@ namespace Scripts.Model.Characters {
             this.check = saveObject.Check;
             this.tooltip = saveObject.Tooltip;
             this.breed = saveObject.Breed;
+            this.suffix = string.Empty;
         }
     }
 }
