@@ -8,22 +8,23 @@ using System.Linq;
 
 namespace Scripts.Model.Characters {
     public abstract class Brain : ISaveable<BrainSave> {
-        public SpellParams Owner;
         public SpellBooks Spells;
 
         // Refreshed every turn
         protected ICollection<SpellParams> allies;
         protected ICollection<SpellParams> foes;
 
+        protected SpellParams owner;
         protected Battle battle;
         protected Action<IPlayable> handlePlay;
 
         public Brain() { }
 
-        public void PageSetup(Battle b, Action<IPlayable> playHandler) {
-            allies = b.GetAllies(Owner.Character).Select(c => new SpellParams(c)).ToArray();
-            foes = b.GetFoes(Owner.Character).Select(c => new SpellParams(c)).ToArray();
+        public void PageSetup(Battle b, Action<IPlayable> playHandler, SpellParams owner) {
+            allies = b.GetAllies(owner.Character).Select(c => new SpellParams(c)).ToArray();
+            foes = b.GetFoes(owner.Character).Select(c => new SpellParams(c)).ToArray();
             this.battle = b;
+            this.owner = owner;
             this.handlePlay = playHandler;
         }
 

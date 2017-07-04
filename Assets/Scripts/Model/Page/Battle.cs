@@ -269,15 +269,8 @@ namespace Scripts.Model.Pages {
 
                     // Pass to the Brain a func that lets that lets them pass us what action they want to take
                     c.Brain.PageSetup(this,
-                        (p) => {
-                            if (!playerActionSet.Contains(c)) {
-                                plays.Add(p);
-                                playerActionSet.Add(c);
-                                isActionTaken = true;
-                            } else {
-                                Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
-                            }
-                        });
+                        (p) => InBattlePlayHandler(playerActionSet, plays, c, ref isActionTaken, p),
+                        new SpellParams(c));
 
                     // Let brain decide now
                     c.Brain.DetermineAction();
@@ -301,6 +294,16 @@ namespace Scripts.Model.Pages {
             // Remove all "X will do Y" texts
             foreach (PooledBehaviour pb in declarations) {
                 ObjectPoolManager.Instance.Return(pb);
+            }
+        }
+
+        private void InBattlePlayHandler(HashSet<Character> playerActionSet, IList<IPlayable> plays, Character c, ref bool isActionTaken, IPlayable playToAdd) {
+            if (!playerActionSet.Contains(c)) {
+                plays.Add(playToAdd);
+                playerActionSet.Add(c);
+                isActionTaken = true;
+            } else {
+                Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
             }
         }
 

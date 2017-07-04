@@ -44,7 +44,6 @@ namespace Scripts.Model.Characters {
             this.Equipment = equipment;
             this.flags = new HashSet<Flag>();
 
-            Brain.Owner = new SpellParams(this);
             Brain.Spells = this.Spells;
             Stats.Update(this);
             Equipment.AddBuff = b => Buffs.AddBuff(b);

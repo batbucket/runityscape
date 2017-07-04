@@ -25,7 +25,7 @@ namespace Scripts.Model.Characters {
             }
             // Unable to find anything, perform a wait so the battle doesn't get stuck
             if (!hasChosenAction) {
-                handlePlay(Owner.Character.Spells.CreateSpell(DEFAULT_ACTION, Owner, Owner));
+                handlePlay(owner.Character.Spells.CreateSpell(DEFAULT_ACTION, owner, owner));
             }
         }
 
@@ -40,13 +40,13 @@ namespace Scripts.Model.Characters {
                 Character specificTarget =
                     sb
                     .TargetType
-                    .GetTargets(Owner.Character, battle)
+                    .GetTargets(owner.Character, battle)
                     .Where(
-                        c => sb.IsCastable(Owner, new SpellParams(c)) && requirement(c))
+                        c => sb.IsCastable(owner, new SpellParams(c)) && requirement(c))
                     .PickRandom();
 
                 if (specificTarget != null) {
-                    handlePlay(Owner.Spells.CreateSpell(sb, Owner, new SpellParams(specificTarget)));
+                    handlePlay(owner.Spells.CreateSpell(sb, owner, new SpellParams(specificTarget)));
                     return true;
                 }
                 return false;
