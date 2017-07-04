@@ -105,7 +105,7 @@ namespace Scripts.Model.Spells {
         }
 
         public string CreateTargetDescription(SpellParams caster, SpellParams target) {
-            return string.Format("{0} {1} on {2}.\n\n{3}", this.Verb, this.Name, target.Look.DisplayName, CreateDescription(caster));
+            return string.Format("{0} {1} on {2}.", this.Verb, this.Name, target.Look.DisplayName);
         }
 
         public abstract string CreateDescriptionHelper(SpellParams caster);
