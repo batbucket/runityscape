@@ -48,7 +48,7 @@ namespace Scripts.Game.Pages {
             string saveName;
             RestoreCamp(SaveLoad.Load(index, index.ToString()), out camp, out party, out saveName);
             Page page = new Page(saveName);
-            page.Body = string.Format("Are you sure you want to load file {0}?", index);
+            page.Body = string.Format("What would you like to do with file {0}?", index);
             page.Actions = new IButtonable[] {
                 PageUtil.GenerateBack(previous),
                 GetLoadProcess(camp, index),

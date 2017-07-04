@@ -39,7 +39,7 @@ namespace Scripts.Game.Pages {
             int statPoints = c.Stats.StatPoints;
             p.AddText(c.Stats.LongAttributeDistribution);
             p.AddText(string.Format("{0} Experience until level up.", diffToLevelUp));
-            p.AddText(string.Format("{0} stat points to allocate.", statPoints));
+            p.AddText(string.Format("{0} Stat Point(s) to allocate.", statPoints));
         }
 
         private Process ExpHack(Character c) {
