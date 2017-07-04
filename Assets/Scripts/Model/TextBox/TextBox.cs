@@ -18,9 +18,12 @@ namespace Scripts.Model.TextBoxes {
         private string[] textArray;
         private float timePerLetter;
 
-        public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) { }
+        public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) {
+        }
 
-        public TextBox(Color c, string text) : this(text, c, TextEffect.FADE_IN, "Blip_0", 0) { }
+        public TextBox(Color c, string text) : this(text, c, TextEffect.FADE_IN, "Blip_0", 0) {
+        }
+
         protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
             this.textArray = Regex.Matches(text, "(<.*?>)|\\.|.").Cast<Match>().Select(m => m.Value).ToArray(); //Splits by rich text, then letters
             this.rawText = text;

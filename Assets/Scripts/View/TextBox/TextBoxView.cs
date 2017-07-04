@@ -57,6 +57,7 @@ namespace Scripts.View.TextBoxes {
             text.color = Color.white;
             background.color = Color.black;
             outline.effectColor = Color.white;
+            isSkip = false;
         }
 
         /// <summary>
