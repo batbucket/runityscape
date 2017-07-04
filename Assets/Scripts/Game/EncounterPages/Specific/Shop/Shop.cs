@@ -91,7 +91,9 @@ namespace Scripts.Game.Pages {
                 main.List.Add(null);
                 main.List.Add(previous);
             };
-            main.Invoke();
+            p.OnEnter = () => {
+                main.Invoke();
+            };
         }
 
         private void PostMoneyAmount() {
