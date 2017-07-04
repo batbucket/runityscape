@@ -321,7 +321,8 @@ namespace Scripts.Model.Pages {
                         () => {
                             handlePlayable(owner.Spells.CreateSpell(unequipSpell, owner, owner));
                             previous.Invoke();
-                        }
+                        },
+                        () => unequipSpell.IsCastable(owner, owner)
                         );
         }
 
