@@ -1,4 +1,6 @@
-﻿using Scripts.Model.Pages;
+﻿using Scripts.Game.Defined.Unserialized.Spells;
+using Scripts.Model.Interfaces;
+using Scripts.Model.Pages;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
@@ -16,13 +18,15 @@ namespace Scripts.Model.Characters {
 
         protected SpellParams owner;
         protected Battle battle;
+        protected IEnumerable<ISpellable> temporarySpells;
         protected Action<IPlayable> handlePlay;
 
         public Brain() { }
 
-        public void PageSetup(Battle b, Action<IPlayable> playHandler, SpellParams owner) {
+        public void PageSetup(Battle b, IEnumerable<ISpellable> temporarySpells, Action<IPlayable> playHandler, SpellParams owner) {
             allies = b.GetAllies(owner.Character).Select(c => new SpellParams(c)).ToArray();
             foes = b.GetFoes(owner.Character).Select(c => new SpellParams(c)).ToArray();
+            this.temporarySpells = temporarySpells;
             this.battle = b;
             this.owner = owner;
             this.handlePlay = playHandler;

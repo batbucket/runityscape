@@ -7,6 +7,7 @@ using Scripts.Presenter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Model.Pages {
@@ -15,6 +16,7 @@ namespace Scripts.Model.Pages {
         public static readonly Sprite EQUIPMENT = Util.GetSprite("battle-gear");
         public static readonly Sprite INVENTORY = Util.GetSprite("knapsack");
         public static readonly Sprite SPELLBOOK = Util.GetSprite("spell-book");
+        public static readonly Sprite ACTION = Util.GetSprite("talk");
 
         /// <summary>
         /// Creates a Grid asking if the user wants to perform a task.
@@ -133,16 +135,43 @@ namespace Scripts.Model.Pages {
             SpellBook excluded,
             Action<IPlayable> addPlay
             ) {
+            List<SpellBook> spellsThatHaveACost = new List<SpellBook>();
+
             return GenerateSpellableGrid(
                 p,
                 previous,
                 owner,
                 excluded,
-                owner.Spells,
+                ((IEnumerable<ISpellable>)owner.Spells).Where(s => s.GetSpellBook().Costs.Count > 0),
                 addPlay,
                 SPELLBOOK,
                 "Spells",
                 "Cast a spell.");
+        }
+
+        /// <summary>
+        /// Actions are spells without a cost.
+        /// </summary>
+        public static Grid GenerateActions(
+            Page p,
+            IButtonable previous,
+            SpellParams owner,
+            SpellBook excluded,
+            IEnumerable<ISpellable> concat,
+            Action<IPlayable> addPlay
+            ) {
+            List<SpellBook> spellsThatHaveACost = new List<SpellBook>();
+
+            return GenerateSpellableGrid(
+                p,
+                previous,
+                owner,
+                excluded,
+                ((IEnumerable<ISpellable>)owner.Spells).Where(s => s.GetSpellBook().Costs.Count <= 0).ToList().Concat(concat),
+                addPlay,
+                ACTION,
+                "Action",
+                "Perform an action.");
         }
 
         /// <summary>
@@ -156,11 +185,25 @@ namespace Scripts.Model.Pages {
         /// <param name="handlePlayable">Playable handler</param>
         /// <returns></returns>
         public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
+            return GenerateTargets(p, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable);
+        }
+
+        /// <summary>
+        /// Creates a subGrid containing all possible targets
+        /// of spellable
+        /// </summary>
+        /// <param name="p">Page that owner is on</param>
+        /// <param name="previous">supergrid containing a list of possible ISpellables to use</param>
+        /// <param name="owner">User of the Spellable</param>
+        /// <param name="spellable">Spellable to use on target</param>
+        /// <param name="handlePlayable">Playable handler</param>
+        /// <returns></returns>
+        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable) {
             SpellBook sb = spellable.GetSpellBook();
             ICollection<Character> targets = sb.TargetType.GetTargets(owner.Character, p);
             Grid grid = GenerateBackableGrid(previous, sb.Icon, sb.Name, sb.CreateDescription(owner));
 
-            grid.Icon = sb.Icon;
+            grid.Icon = sprite;
 
             foreach (Character myTarget in targets) {
                 Character target = myTarget;

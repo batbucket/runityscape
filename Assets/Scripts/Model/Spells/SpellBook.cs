@@ -45,7 +45,6 @@ namespace Scripts.Model.Spells {
         public readonly Sprite Icon;
         public readonly TargetType TargetType;
         public readonly SpellType SpellType;
-        public readonly IDictionary<StatType, int> Costs;
         public readonly int Priority;
 
         public readonly int CastTime;
@@ -54,11 +53,12 @@ namespace Scripts.Model.Spells {
         public readonly string Verb;
 
         protected readonly HashSet<Flag> flags;
+        private readonly IDictionary<StatType, int> costs;
 
         public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, string verb) {
             this.Name = spellName;
             this.Icon = sprite;
-            this.Costs = new Dictionary<StatType, int>();
+            this.costs = new Dictionary<StatType, int>();
             this.TargetType = target;
             this.SpellType = spell;
             this.CastTime = castTime;
@@ -79,6 +79,12 @@ namespace Scripts.Model.Spells {
 
             return this.GetType().Equals(item.GetType())
                 && this.IsSilenced.Equals(item.IsSilenced);
+        }
+
+        public IDictionary<StatType, int> Costs {
+            get {
+                return new ReadOnlyDictionary<StatType, int>(costs);
+            }
         }
 
         public override int GetHashCode() {
@@ -194,6 +200,11 @@ namespace Scripts.Model.Spells {
 
         protected virtual IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
             return new IEnumerator[0];
+        }
+
+        protected void AddCost(StatType type, int cost) {
+            Util.Assert(cost > 0, "Cost must be positive.");
+            costs.Add(type, cost);
         }
 
         protected virtual IList<IEnumerator> GetMissSFX(PortraitView caster, PortraitView target) {

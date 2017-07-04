@@ -118,4 +118,19 @@ namespace Scripts.Game.Defined.Spells {
             Page.TypeText(new Model.TextBoxes.TextBox(message));
         }
     }
+
+    public class GoToPage : SpellEffect {
+        private Page destination;
+        private Action stopBattle;
+
+        public GoToPage(Page destination, Action stopBattle) : base(1) {
+            this.destination = destination;
+            this.stopBattle = stopBattle;
+        }
+
+        public override void CauseEffect() {
+            Page.ChangePageFunc(destination);
+            stopBattle.Invoke();
+        }
+    }
 }

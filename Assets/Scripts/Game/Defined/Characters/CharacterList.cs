@@ -123,7 +123,7 @@ namespace Scripts.Game.Defined.Characters {
 
             public static Character Knight() {
                 return StandardEnemy(
-                    new Stats(3, 2, 2, 2, 5),
+                    new Stats(3, 1, 2, 2, 5),
                     RuinsLooks.Knight(),
                     new RuinsBrains.Knight())
                     .AddEquip(new GhostArmor(), Util.IsChance(.50f))

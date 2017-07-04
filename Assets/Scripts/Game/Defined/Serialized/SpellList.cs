@@ -10,6 +10,7 @@ using Scripts.Model.Characters;
 using Scripts.Game.Defined.Spells;
 using Scripts.Model.Buffs;
 using UnityEngine;
+using Scripts.Model.Pages;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -22,7 +23,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public const int SKILL_ON_HIT = 1;
         public const int SKILL_ON_CRIT = 2;
 
-        public Attack() : base("Attack", Util.GetSprite("gladius"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE) {
+        public Attack() : base("Attack", Util.GetSprite("fist"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE) {
         }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
@@ -99,13 +100,13 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class InflictPoison : BuffAdder {
         public InflictPoison() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, new Poison(), "Infect") {
-            Costs.Add(StatType.MANA, 1);
+            AddCost(StatType.MANA, 1);
         }
     }
 
     public class SetupCounter : BuffAdder {
         public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, new Counter(), "Counter") {
-            Costs.Add(StatType.SKILL, 2);
+            AddCost(StatType.SKILL, 2);
         }
     }
 
@@ -120,6 +121,27 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             return new SpellEffect[] {
                 new AddToModStat(target.Stats, StatType.HEALTH, 2)
             };
+        }
+    }
+}
+
+namespace Scripts.Game.Defined.Unserialized.Spells {
+    public class Flee : BasicSpellbook {
+        private Page destination;
+        private Action stopBattle;
+
+        public Flee(Page destination, Action stopBattle) : base("Flee", Util.GetSprite("walking-boot"), TargetType.SELF, SpellType.DEFENSE) {
+            this.destination = destination;
+            this.stopBattle = stopBattle;
+            this.flags.Remove(Model.Spells.Flag.CASTER_REQUIRES_SPELL);
+        }
+
+        public override string CreateDescriptionHelper(SpellParams caster) {
+            return string.Format("Escape back to {0}.", destination.Location);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            return new SpellEffect[] { new GoToPage(destination, stopBattle) };
         }
     }
 }

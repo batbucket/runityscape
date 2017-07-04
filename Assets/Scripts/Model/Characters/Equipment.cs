@@ -108,6 +108,10 @@ namespace Scripts.Model.Characters {
                 && Util.IsDictionariesEqual(this.statBonuses, item.statBonuses);
         }
 
+        public bool HasEquip(EquipType type) {
+            return equipped.ContainsKey(type);
+        }
+
         public override int GetHashCode() {
             return 0;
         }

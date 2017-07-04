@@ -19,12 +19,24 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         public override void DetermineAction() {
             Grid main = new Grid("Main");
             main.List = new IButtonable[] {
-                PageUtil.GenerateTargets(battle, main, owner, Attack, handlePlay),
+                PageUtil.GenerateTargets(battle, main, owner, Attack, GetAttackSprite(owner.Equipment), handlePlay),
+                null,
+                null,
+                null,
+                PageUtil.GenerateActions(battle, main, owner, Attack, temporarySpells, handlePlay),
                 PageUtil.GenerateSpellBooks(battle, main, owner, Attack, handlePlay),
                 PageUtil.GenerateItems(battle, main, owner, handlePlay),
-                PageUtil.GenerateEquipmentGrid(main, owner, handlePlay)
+                PageUtil.GenerateEquipmentGrid(main, owner, handlePlay),
             };
             battle.Actions = main.List;
+        }
+
+        private Sprite GetAttackSprite(Equipment equipment) {
+            if (equipment.HasEquip(EquipType.WEAPON)) {
+                return equipment.PeekItem(EquipType.WEAPON).Icon;
+            } else {
+                return Util.GetSprite("fist");
+            }
         }
     }
 

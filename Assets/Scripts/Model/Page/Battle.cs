@@ -1,4 +1,5 @@
 ﻿using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
@@ -54,6 +55,8 @@ namespace Scripts.Model.Pages {
 
         private bool wasExperienceGiven;
 
+        private IList<ISpellable> temporarySpells;
+
         public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right) : base(location) {
             this.wasExperienceGiven = false;
             this.loot = new Dictionary<Item, int>();
@@ -63,12 +66,14 @@ namespace Scripts.Model.Pages {
             this.victory = victory;
             this.Music = music.GetDescription();
             turnCount = 0;
+            temporarySpells = new List<ISpellable>();
             foreach (Character c in left) {
                 Left.Add(c);
             }
             foreach (Character c in right) {
                 Right.Add(c);
             }
+            SetupTempSpells();
             OnEnter += () => {
                 if (!IsResolved) {
                     Presenter.Main.Instance.StartCoroutine(startBattle());
@@ -76,6 +81,19 @@ namespace Scripts.Model.Pages {
                     PostBattle(PlayerStatus);
                 }
             };
+        }
+
+        private void SetupTempSpells() {
+            AddTempSpell(new Flee(defeat, () => {
+                Main.Instance.StopAllCoroutines();
+                AddText("Fled from battle.");
+            }
+            ));
+        }
+
+        private void AddTempSpell(SpellBook temporary) {
+            Util.Assert(!temporary.HasFlag(Spells.Flag.CASTER_REQUIRES_SPELL), "Has flag: Caster req spell.");
+            temporarySpells.Add(temporary);
         }
 
         private enum PlayerPartyStatus {
@@ -268,7 +286,9 @@ namespace Scripts.Model.Pages {
                     bool isActionTaken = false;
 
                     // Pass to the Brain a func that lets that lets them pass us what action they want to take
-                    c.Brain.PageSetup(this,
+                    c.Brain.PageSetup(
+                        this,
+                        temporarySpells,
                         (p) => InBattlePlayHandler(playerActionSet, plays, c, ref isActionTaken, p),
                         new SpellParams(c));
 
