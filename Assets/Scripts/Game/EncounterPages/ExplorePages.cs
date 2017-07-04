@@ -44,6 +44,12 @@ namespace Scripts.Game.Pages {
             }
 
             Get(ROOT_INDEX).Actions = buttons;
+            Get(ROOT_INDEX).OnEnter = () => {
+                Get(ROOT_INDEX)
+                .AddText(
+                    "Where would you like to explore?"
+                    );
+            };
         }
 
         private Process GetEncounterProcess(PageGenerator gen) {

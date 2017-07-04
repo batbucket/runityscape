@@ -12,6 +12,7 @@ using Scripts.Model.Characters;
 using Scripts.Model.Items;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
+using UnityEngine;
 
 namespace Scripts.Game.Defined.Characters {
     public static class CharacterList {
@@ -98,25 +99,59 @@ namespace Scripts.Game.Defined.Characters {
         public static Character Hero(string name) {
             return new Character(
                 new Stats(0, 1, 1, 1, 5),
-                RuinsLooks.Hero(name),
+                new Look(
+                    name,
+                    "person",
+                    "It's you!",
+                    "Did you really just check yourself?",
+                    Breed.HUMAN
+                    ),
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
                 .AddStats(new Experience());
         }
 
         public static Character NotKitsune() {
-            Character c = new Character(new Stats(5, 55, 1, 5, 1), Debug.NotKitsune(), new Player())
+            Character c = new Character(
+                new Stats(5, 55, 1, 5, 1),
+                    new Look(
+                    "Kitsune",
+                    "fox-head",
+                    "Humanoid fox creature. Those tails don't look very friendly...",
+                    "undfeined lol",
+                    Breed.MONSTER,
+                    Color.magenta
+                    ),
+                new Player())
                 .AddItems(new ItemCount(new Apple(), 7), new ItemCount(new PoisonArmor()), new ItemCount(new Money(), 100))
                 .AddFlags(Model.Characters.Flag.DROPS_ITEMS);
             return c;
         }
 
         public static class Ruins {
+            public static Character Maple() {
+                return new Character(
+                        new Stats(5, 6, 6, 6, 12),
+                        new Look(
+                            "Maple",
+                            "maple-leaf",
+                            "A very strange shopkeeper in the ruins. Named after a tree.",
+                            string.Empty,
+                            Breed.UNKNOWN
+                            ),
+                        new DebugAI());
+            }
 
             public static Character Villager() {
                 return StandardEnemy(
                     new Stats(2, 1, 1, 1, 2),
-                    RuinsLooks.Villager(),
+                    new Look(
+                        "F. Villager",
+                        "haunting",
+                        "The spirit of some fallen villager.",
+                        "The easiest enemy. Can only do 0-1 damage.",
+                        Breed.SPIRIT
+                        ),
                     new RuinsBrains.Villager())
                     .AddItem(new Money(), Util.Range(0, 3));
             }
@@ -124,7 +159,13 @@ namespace Scripts.Game.Defined.Characters {
             public static Character Knight() {
                 return StandardEnemy(
                     new Stats(3, 1, 2, 2, 5),
-                    RuinsLooks.Knight(),
+                    new Look(
+                        "F. Knight",
+                        "spectre",
+                        "The spirit of some fallen knight.",
+                        "During its counter, avoid using Attack.",
+                        Breed.SPIRIT
+                        ),
                     new RuinsBrains.Knight())
                     .AddEquip(new GhostArmor(), Util.IsChance(.50f))
                     .AddEquip(new BrokenSword(), Util.IsChance(.50f))
@@ -132,7 +173,16 @@ namespace Scripts.Game.Defined.Characters {
             }
 
             public static Character Healer() {
-                return StandardEnemy(new Stats(3, 1, 5, 5, 1), RuinsLooks.Healer(), new RuinsBrains.Healer())
+                return StandardEnemy(
+                    new Stats(3, 1, 5, 5, 1),
+                    new Look(
+                        "F. Healer",
+                        "spectre",
+                        "The spirit of some fallen healer.",
+                        "Will heal injured targets. Should be attacked first in most cases.",
+                        Breed.SPIRIT
+                        ),
+                    new RuinsBrains.Healer())
                     .AddItem(new Apple(), Util.IsChance(.50f))
                     .AddSpells(new Heal());
             }
@@ -150,7 +200,7 @@ namespace Scripts.Game.Undefined.Characters {
             string spriteLoc,
             string tip)
             : base(new DummyStats(level),
-                  new DummyLook(breed, name, Util.GetSprite(spriteLoc), tip),
+                  new Look(name, spriteLoc, tip, string.Empty, breed),
                   new DebugAI()) {
 
         }

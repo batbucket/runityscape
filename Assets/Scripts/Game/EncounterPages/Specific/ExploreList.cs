@@ -25,13 +25,15 @@ namespace Scripts.Game.Pages.Explorables {
 
         protected override IEnumerable<Encounter> GetEncounters() {
             return new Encounter[] {
-                RandomBattle(Rarity.COMMON, CharacterList.Ruins.Villager())
+                GetPage(Rarity.COMMON, ShopList.Ruins(camp, flags, party).Root)
+                    .AddOverride(f => true),
+                GetBattle(Rarity.COMMON, CharacterList.Ruins.Villager())
                     .AddOverride(flags => flags.TotalExploreCount < 2),
-                RandomBattle(Rarity.UNCOMMON, CharacterList.Ruins.Knight()),
-                RandomBattle(Rarity.UNCOMMON, CharacterList.Ruins.Healer()),
-                RandomBattle(Rarity.RARE, CharacterList.Ruins.Knight(), CharacterList.Ruins.Healer()),
-                RandomBattle(Rarity.VERY_RARE, CharacterList.Ruins.Knight(), CharacterList.Ruins.Knight(), CharacterList.Ruins.Healer()),
-                RandomBattle(Rarity.VERY_RARE, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
+                GetBattle(Rarity.UNCOMMON, CharacterList.Ruins.Knight()),
+                GetBattle(Rarity.UNCOMMON, CharacterList.Ruins.Healer()),
+                GetBattle(Rarity.RARE, CharacterList.Ruins.Knight(), CharacterList.Ruins.Healer()),
+                GetBattle(Rarity.VERY_RARE, CharacterList.Ruins.Knight(), CharacterList.Ruins.Knight(), CharacterList.Ruins.Healer()),
+                GetBattle(Rarity.VERY_RARE, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
             };
         }
     }

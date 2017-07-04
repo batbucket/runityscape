@@ -109,11 +109,20 @@ namespace Scripts.Model.Characters {
             AddSplat(new SplatDetails(Color.green, string.Format("+{0}", count), itemToAdd.Icon));
         }
 
-        public bool HasItem(Item item) {
-            return dict.ContainsKey(item) && dict[item] > 0;
+        public bool HasItem(Item item, int count = 1) {
+            Util.Assert(count > 0, "Must use a positive count.");
+            return dict.ContainsKey(item) && dict[item] >= count;
+        }
+
+        public string CountedItemName(Item item) {
+            return string.Format("{0}{1}",
+                item.Name,
+                GetCount(item) > 1 ? string.Format("({0})", GetCount(item)) : string.Empty
+                );
         }
 
         public void Remove(Item itemToRemove, int count = 1) {
+            Util.Assert(count >= 0, string.Format("Invalid count: {0}", count));
             if (dict.ContainsKey(itemToRemove)) {
                 Util.Assert(IsRemovable(itemToRemove, count), string.Format("{0} only has quantity: {1}. Unable to remove {2} from it.", itemToRemove.Name, dict[itemToRemove], count));
                 dict[itemToRemove] -= count;
@@ -138,7 +147,7 @@ namespace Scripts.Model.Characters {
         }
 
         public int GetCount(Item item) {
-            return dict[item];
+            return dict.ContainsKey(item) ? dict[item] : 0;
         }
 
         public override bool Equals(object obj) {

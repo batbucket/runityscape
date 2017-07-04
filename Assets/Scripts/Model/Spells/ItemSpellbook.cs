@@ -23,10 +23,7 @@ namespace Scripts.Model.Spells {
                 color = Color.grey;
             }
 
-            return string.Format("{0}{1}",
-                Util.ColorString(Name, color),
-                count > 1 ? string.Format("({0})", count) : string.Empty
-                );
+            return caster.Inventory.CountedItemName(item);
         }
 
         protected override bool IsMeetOtherCastRequirements(SpellParams caster, SpellParams target) {

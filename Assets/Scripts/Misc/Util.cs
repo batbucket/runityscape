@@ -400,4 +400,8 @@ public static class Util {
     public static T[] EnumAsArray<T>() {
         return Enum.GetValues(typeof(T)).Cast<T>().ToArray();
     }
+
+    public static string Color(this int num, Color color) {
+        return Util.ColorString(num.ToString(), color);
+    }
 }

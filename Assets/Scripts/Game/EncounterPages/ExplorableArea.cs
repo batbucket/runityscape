@@ -10,8 +10,8 @@ namespace Scripts.Game.Pages {
         public readonly Explore Type;
 
         protected Flags flags;
-        private Page camp;
-        private Party party;
+        protected Page camp;
+        protected Party party;
         private string location;
         private PageGenerator generator;
 
@@ -57,8 +57,26 @@ namespace Scripts.Game.Pages {
 
         protected abstract IEnumerable<Encounter> GetEncounters();
 
-        protected Encounter RandomBattle(Rarity rarity, params Character[] enemies) {
+        protected Encounter GetBattle(Rarity rarity, params Character[] enemies) {
             return new Encounter(rarity, GetPageFunc(enemies));
+        }
+
+        protected Encounter GetPage(Rarity rarity, Page destination, Action onEnter) {
+            Func<Page> func = () => {
+                bool isTriggered = false;
+                destination.OnEnter += () => {
+                    if (!isTriggered) {
+                        isTriggered = false;
+                        onEnter.Invoke();
+                    }
+                };
+                return destination;
+            };
+            return new Encounter(rarity, func);
+        }
+
+        protected Encounter GetPage(Rarity rarity, Page destination) {
+            return GetPage(rarity, destination, () => { });
         }
 
         private void SetupGeneratorWithEncounters() {

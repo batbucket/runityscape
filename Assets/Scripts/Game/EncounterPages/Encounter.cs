@@ -8,6 +8,7 @@ namespace Scripts.Game.Pages {
         public Func<Page> GeneratePage;
         public Func<Flags, bool> IsOverride; // True = always will occur
         public Func<Flags, bool> CanOccur; // False = will never occur
+        public Func<Flags, bool> IsSpecialEncounter;
 
         /// <summary>
         /// Blueprint for an encounter
@@ -16,15 +17,22 @@ namespace Scripts.Game.Pages {
         /// <param name="generatePage">Creates the encounter page</param>
         /// <param name="isOverride">If true, will always pick this encounter</param>
         /// <param name="canOccur">If false, will never pick this encounter</param>
-        public Encounter(Rarity rarity, Func<Page> generatePage, Func<Flags, bool> isOverride, Func<Flags, bool> canOccur) {
+        public Encounter(Rarity rarity, Func<Page> generatePage) {
             this.Weight = rarity.Weight;
             this.GeneratePage = generatePage;
-            this.IsOverride = isOverride;
-            this.CanOccur = canOccur;
+            this.IsOverride = f => false;
+            this.CanOccur = f => true;
+            IsSpecialEncounter = f => false;
         }
 
-        public Encounter(Rarity rarity, Func<Page> generatePage, Func<Flags, bool> canOccur) : this(rarity, generatePage, (f) => false, canOccur) { }
+        public Encounter AddOverride(Func<Flags, bool> isOverride) {
+            IsOverride = isOverride;
+            return this;
+        }
 
-        public Encounter(Rarity rarity, Func<Page> generatePage) : this(rarity, generatePage, (f) => false, (f) => true) { }
+        public Encounter AddEnable(Func<Flags, bool> isEnabled) {
+            this.CanOccur = isEnabled;
+            return this;
+        }
     }
 }

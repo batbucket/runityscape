@@ -254,7 +254,7 @@ public class BasicTests {
 
         [Test]
         public void LookIsSerializable() {
-            BasicSerializableHelper<Look, LookSave>(Scripts.Game.Defined.Characters.Debug.NotKitsune());
+            BasicSerializableHelper<Look, LookSave>(new Look("test", "fox-head", "test5", "testcheck", Breed.UNKNOWN));
         }
 
         [Test]

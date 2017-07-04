@@ -19,6 +19,11 @@ namespace Scripts.Model.Processes {
                Action action,
                Func<bool> condition = null) : this(name, null, null, action, condition) { }
 
+        public Process(string name,
+                Sprite sprite,
+                Action action,
+                Func<bool> condition = null) : this(name, sprite, null, action, condition) { }
+
 
         /// <summary>
         /// Dummy Process for indicating something
