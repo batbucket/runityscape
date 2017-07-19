@@ -45,12 +45,12 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class SpiritLink : Buff {
-        public SpiritLink() : base(Util.GetSprite("knot"), "Spirit Link", "Attacks on the buff's caster will cause this unit to also take damage.", false) {
+        public SpiritLink() : base(Util.GetSprite("knot"), "Spirit Link", "Attacks on the non-clone unit will also cause this unit to take damage.", false) {
 
         }
 
         public override bool IsReact(Spell s, Stats buffHolder) {
-            return s.Book.SpellType == SpellType.OFFENSE && s.Target.Stats == this.BuffCaster;
+            return s.Book.SpellType == SpellType.OFFENSE && s.Target.Stats == this.BuffCaster && s.Result.Type.IsSuccessfulType;
         }
 
         protected override void ReactHelper(Spell s, Stats buffHolder) {
@@ -62,7 +62,9 @@ namespace Scripts.Game.Defined.Serialized.Spells {
                     healthDamage = addToModStat;
                 }
             }
-            buffHolder.AddToStat(StatType.HEALTH, Stats.Set.MOD, healthDamage.Value);
+            if (healthDamage != null) {
+                buffHolder.AddToStat(StatType.HEALTH, Stats.Set.MOD, healthDamage.Value);
+            }
         }
     }
 
@@ -70,13 +72,20 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public ReflectAttack() : base(Util.GetSprite("round-shield"), "Reflect Attack", "Next <color=yellow>Attack</color> on this unit is reflected.", false) { }
 
         public override bool IsReact(Spell s, Stats owner) {
-            return s.Book is Attack && s.Target.Stats == owner;
+            return s.Book is Attack && s.Target.Stats == owner && s.Result.Type.IsSuccessfulType;
         }
 
         protected override void ReactHelper(Spell s, Stats owner) {
+            int damageToReflect = 0;
+            foreach (SpellEffect se in s.Result.Effects) {
+                AddToModStat damageHealth = se as AddToModStat;
+                if (damageHealth != null && damageHealth.AffectedStat == StatType.HEALTH) {
+                    damageToReflect = damageHealth.Value;
+                }
+            }
             s.Result.AddEffect(
                 new AddToModStat(
-                    s.Caster.Stats, StatType.HEALTH, -s.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * 2)
+                    s.Caster.Stats, StatType.HEALTH, damageToReflect)
                 );
         }
     }
