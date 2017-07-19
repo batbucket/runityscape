@@ -53,6 +53,7 @@ namespace Scripts.Presenter {
 
         public Grid Override {
             set {
+                actionGrid.ClearAll();
                 this.overrideGrid = value;
             }
             get {
@@ -94,10 +95,8 @@ namespace Scripts.Presenter {
             Page.Tick();
             header.Location = Page.Location;
             if (overrideGrid == null) {
-                actionGrid.ClearAll();
                 actionGrid.SetButtonAttributes(page.Actions);
             } else {
-                actionGrid.ClearAll();
                 actionGrid.SetButtonAttributes(overrideGrid.List);
             }
             SetCharacterPresenters(Page.Left, left);

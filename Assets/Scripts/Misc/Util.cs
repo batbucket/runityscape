@@ -22,7 +22,7 @@ public static class Util {
 
     public static string PickRandom(string big) {
         string[] split = big.Split(RANDOM_STRING_DELIMITER);
-        return split.PickRandom();
+        return split.ChooseRandom();
     }
 
     public static bool IsDictionariesEqual<A, B>(IDictionary<A, B> dic1, IDictionary<A, B> dic2) {
@@ -357,23 +357,15 @@ public static class Util {
             ((int)(alpha <= 1 ? alpha * 255 : alpha)).ToString("X2")));
     }
 
-    public static T PickRandom<T>(this IEnumerable<T> source) {
+    public static T ChooseRandom<T>(this IEnumerable<T> source) {
         if (source.Count() > 0) {
-            return source.PickRandom(1).Single();
+            return source.ElementAt(rng.Next(0, source.Count()));
         } else {
             return default(T);
         }
     }
 
-    public static IEnumerable<T> PickRandom<T>(this IEnumerable<T> source, int count) {
-        return source.Shuffle().Take(count);
-    }
-
     private static readonly System.Random rng = new System.Random();
-
-    public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) {
-        return source.OrderBy(x => rng.Next());
-    }
 
     public static Sprite GetSprite(string name) {
         Sprite sprite = Resources.Load<Sprite>(string.Format("Images/Icons/{0}", name)); ;
@@ -435,5 +427,20 @@ public static class Util {
 
     public static Color SetAlpha(this Color color, float alpha) {
         return new UnityEngine.Color(color.r, color.g, color.b, alpha);
+    }
+}
+public static class IListExtensions {
+    /// <summary>
+    /// Shuffles the element order of the specified list.
+    /// </summary>
+    public static void Shuffle<T>(this IList<T> ts) {
+        var count = ts.Count;
+        var last = count - 1;
+        for (var i = 0; i < last; ++i) {
+            var r = UnityEngine.Random.Range(i, count);
+            var tmp = ts[i];
+            ts[i] = ts[r];
+            ts[r] = tmp;
+        }
     }
 }

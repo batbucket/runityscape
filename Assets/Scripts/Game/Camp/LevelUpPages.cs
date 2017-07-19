@@ -22,11 +22,14 @@ namespace Scripts.Game.Pages {
 
         private void SetupRoot(Page previous, Character c) {
             Page p = Get(ROOT_INDEX);
+            p.Icon = c.Look.Sprite;
             p.OnEnter = () => {
                 List<IButtonable> actions = new List<IButtonable>();
                 actions.Add(PageUtil.GenerateBack(previous));
                 actions.Add(GetSendPlayerToPointAllocationPageProcess(c));
-                actions.Add(ExpHack(c));
+                if (Util.IS_DEBUG) {
+                    actions.Add(ExpHack(c));
+                }
                 DisplayStats(p, c);
                 LevelUpPage(c);
                 p.Actions = actions.ToArray();

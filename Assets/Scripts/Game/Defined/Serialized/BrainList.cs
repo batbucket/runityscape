@@ -115,7 +115,6 @@ namespace Scripts.Game.Defined.Serialized.Characters {
                 if (IsAnyHealersAlive) {
                     return CastOnRandom(ATTACK);
                 } else { // Phase 2: Start using clone
-                    Util.Log("Should I cast clone? " + ShouldCastClone);
                     if (ShouldCastClone) {
                         lastTurnCloned = currentBattle.TurnCount;
                         return CastOnRandom(CLONE);
@@ -127,16 +126,8 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
             public override string ReactToSpell(Spell spell) {
                 int cloneCount = CloneCount;
-                if (CloneCount > 0 && spell.Book.SpellType == SpellType.OFFENSE && spell.Result.Type.IsSuccessfulType && owner.Stats.State == State.ALIVE) {
-                    if (cloneCount == 4) {
-                        return Util.PickRandom("A little observant, huh?/You will not land another./Nothing but luck./How did you...?/A one in five chance.");
-                    } else if (cloneCount == 3) {
-                        return Util.PickRandom("Learning from your mistakes, huh?/So you've learned from the first clone?/A one in four chance.");
-                    } else if (cloneCount == 2) {
-                        return Util.PickRandom("A one in three chance./Slow learner, huh?/Took you long enough.");
-                    } else { // 1 clone
-                        return Util.PickRandom("A one in two chance./A coin flip./Took you long enough./I'm surprised it took you this long to figure out the real one.");
-                    }
+                if (cloneCount > 0 && spell.Book.SpellType == SpellType.OFFENSE && spell.Result.Type.IsSuccessfulType && owner.Stats.State == State.ALIVE) {
+                    return Util.PickRandom("A little observant, huh?/You will not land another./Nothing but luck./How did you...?/");
                 }
                 return string.Empty;
             }

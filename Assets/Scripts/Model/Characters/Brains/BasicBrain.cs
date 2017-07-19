@@ -25,7 +25,7 @@ namespace Scripts.Model.Characters {
                 .GetTargets(owner.Character, currentBattle)
                 .Where(
                     c => sb.IsCastable(owner, new SpellParams(c, currentBattle)) && requirement(c))
-                .PickRandom();
+                .ChooseRandom();
 
             if (specificTarget != null) {
                 SpellBook castableSpell = null;

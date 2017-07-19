@@ -209,6 +209,7 @@ namespace Scripts.Game.Defined.Characters {
                     KitsuneLook(),
                     new RuinsBrains.Kitsune()
                     )
+                .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
                 .AddSpells(new ReflectiveClone(), new SetupCounter());
             }
 

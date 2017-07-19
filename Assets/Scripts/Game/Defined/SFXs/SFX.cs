@@ -54,7 +54,8 @@ namespace Scripts.Game.Defined.SFXs {
         }
 
         public static IEnumerator PageTransition(Sprite sprite, string text) {
-            return Main.Instance.Title.TitleTransition(sprite, text, 3);
+            Main.Instance.Title.Play(sprite, text);
+            yield return new WaitUntil(() => Main.Instance.Title.IsDone);
         }
 
         private static IEnumerator MoveTowards(GameObject mover, GameObject destination, float duration) {

@@ -21,6 +21,7 @@ public abstract class Dungeon : PageGroup {
     private Process GetDungeonEnterProcess(Party party, Page defeat, Page destination, Music music) {
         Character[][] enemyEncounters = GetEnemyEncounters();
         Battle[] battles = new Battle[enemyEncounters.Length];
+        enemyEncounters[enemyEncounters.Length - 1].Shuffle();
         battles[battles.Length - 1] = new Battle(
             defeat,
             destination,
@@ -29,7 +30,8 @@ public abstract class Dungeon : PageGroup {
             party,
             enemyEncounters[enemyEncounters.Length - 1]);
         for (int i = battles.Length - 2; i >= 0; i--) {
-            battles[i] = new Battle(defeat, battles[i + 1], music, string.Format("{0} - {1}", Root.Location, i), party, enemyEncounters[i].Shuffle());
+            enemyEncounters[i].Shuffle();
+            battles[i] = new Battle(defeat, battles[i + 1], music, string.Format("{0} - {1}", Root.Location, i), party, enemyEncounters[i]);
         }
         return new Process(
                 "Enter",

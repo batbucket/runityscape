@@ -68,7 +68,7 @@ namespace Scripts.Game.Pages {
                 destination.OnEnter += () => {
                     if (!isTriggered && !string.IsNullOrEmpty(big)) {
                         isTriggered = false;
-                        ActUtil.SetupScene(destination, ActUtil.LongTalk(destination, destination.Right.PickRandom(), big));
+                        ActUtil.SetupScene(destination, ActUtil.LongTalk(destination, destination.Right.ChooseRandom(), big));
                     }
                 };
                 return destination;

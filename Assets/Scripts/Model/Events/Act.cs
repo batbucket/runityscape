@@ -209,8 +209,8 @@ namespace Scripts.Model.Acts {
         }
 
         protected override IEnumerator PlayHelper() {
-            destination.Invoke();
             yield return SFX.PageTransition(sprite, text);
+            destination.Invoke();
         }
 
         protected override void Skip() {

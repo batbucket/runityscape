@@ -21,6 +21,7 @@ namespace Scripts.Game.Pages {
             this.flags = flags;
             this.previous = previous;
 
+            Root.Icon = Util.GetSprite("walking-boot");
             Root.AddCharacters(Side.LEFT, party);
             Root.Condition = () => flags.Time != TimeOfDay.NIGHT && party.Any(c => c.Stats.State == State.ALIVE);
 

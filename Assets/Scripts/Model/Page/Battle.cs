@@ -387,7 +387,7 @@ namespace Scripts.Model.Pages {
                         AddText(string.Format("<color=yellow>{0}</color>'s <color=cyan>{1}</color> activates <color=yellow>{2}</color>'s <color=cyan>{3}</color>!",
                             spell.Caster.Look.DisplayName,
                             spell.Book.Name,
-                            spell.Target.Look.DisplayName,
+                            combatant.Look.DisplayName,
                             b.Name
                             ));
                         b.React(spell, combatant.Stats);

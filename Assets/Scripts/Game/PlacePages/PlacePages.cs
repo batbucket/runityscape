@@ -23,6 +23,7 @@ namespace Scripts.Game.Pages {
 
         private void SetupRoot() {
             Page p = Root;
+            p.Icon = Util.GetSprite("walking-boot");
             p.Body = "Where would you like to go?";
             p.AddCharacters(Side.LEFT, party);
             var buttons = new List<IButtonable>();

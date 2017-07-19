@@ -44,7 +44,7 @@ namespace Scripts.View.Title {
             routine = StartCoroutine(TitleTransition(sprite, text, DURATION));
         }
 
-        public IEnumerator TitleTransition(Sprite sprite, string text, float duration) {
+        private IEnumerator TitleTransition(Sprite sprite, string text, float duration) {
             this.IsDone = false;
             image.sprite = sprite;
             this.text.text = text;

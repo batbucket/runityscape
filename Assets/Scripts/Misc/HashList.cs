@@ -41,7 +41,7 @@ public class HashList<T> : IList<T> {
     }
 
     public void Shuffle() {
-        this.list = list.Shuffle().ToList();
+        this.list.Shuffle();
     }
 
     public void Add(T item) {
