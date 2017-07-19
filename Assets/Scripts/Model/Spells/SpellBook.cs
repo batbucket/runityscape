@@ -60,7 +60,9 @@ namespace Scripts.Model.Spells {
         protected readonly HashSet<Flag> flags;
         private readonly IDictionary<StatType, int> costs;
 
-        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, string verb) {
+        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, string verb) : this(spellName, sprite, target, spell, castTime, cooldown, 0, verb) { }
+
+        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, int priority, string verb) {
             this.Name = spellName;
             this.Icon = sprite;
             this.costs = new Dictionary<StatType, int>();
@@ -70,6 +72,7 @@ namespace Scripts.Model.Spells {
             this.Cooldown = cooldown;
             this.flags = new HashSet<Flag>() { Flag.CASTER_REQUIRES_SPELL };
             this.Verb = verb;
+            this.Priority = priority;
         }
 
         public SpellBook(string spellName, string spriteLoc, TargetType target, SpellType spell, int castTime, int cooldown)
