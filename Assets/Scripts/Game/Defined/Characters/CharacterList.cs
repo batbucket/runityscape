@@ -199,27 +199,19 @@ namespace Scripts.Game.Defined.Characters {
                         "fox-head",
                         "A fox-type, humanoid monster known for using illusions.",
                         "Its clones do no damage.",
-                        Breed.KITSUNE
+                        Breed.KITSUNE,
+                        Color.magenta
                         );
             }
 
             public static Character Kitsune() {
                 return StandardEnemy(
-                    new Stats(10, 2, 5, 10, 15),
+                    new Stats(10, 2, 5, 10, 30),
                     KitsuneLook(),
                     new RuinsBrains.Kitsune()
                     )
                 .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
                 .AddSpells(new ReflectiveClone(), new SetupCounter());
-            }
-
-            public static Character KitsuneClone() {
-                return StandardEnemy(
-                    new Stats(9, 0, 100, 0, 1),
-                    KitsuneLook(),
-                    new RuinsBrains.KitsuneClone()
-                    )
-                    .RemoveFlag(Model.Characters.Flag.GIVES_EXPERIENCE);
             }
         }
     }
