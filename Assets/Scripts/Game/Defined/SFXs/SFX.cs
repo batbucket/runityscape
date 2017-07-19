@@ -5,14 +5,14 @@ using Scripts.View.ObjectPool;
 using Scripts.View.Sounds;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Scripts.Game.Defined.SFXs {
 
     public static class SFX {
         public static IEnumerator HitSplat(GameObject parent, string s, Color c, Sprite sprite = null) {
             HitsplatView hp = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
-            Util.Parent(hp.gameObject, parent);
-            return hp.Animation(s, c, sprite);
+            return hp.Animation(parent, s, c, sprite);
         }
 
         public static IEnumerator PlaySound(string soundLoc) {
@@ -40,8 +40,21 @@ namespace Scripts.Game.Defined.SFXs {
             mover.transform.SetSiblingIndex(index);
         }
 
-        public static IEnumerator Death(GameObject parent) {
-            return null;
+        public static IEnumerator Death(GameObject portrait, GameObject effectHolder, float fadeDuration) {
+            Rect rect = effectHolder.GetComponent<RectTransform>().rect;
+            Vector2 dimensions = new Vector2(rect.width, rect.height);
+
+            ExplosionView ev = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Explosion);
+            ev.Dimensions = dimensions;
+            Util.Parent(ev.gameObject, effectHolder);
+            ev.Play();
+            yield return HitSplat(effectHolder, "DEFEAT", Color.red, Util.GetSprite("skull-crossed-bones")); // this one is causing issues
+            yield return new WaitUntil(() => ev.IsDone);
+            ObjectPoolManager.Instance.Return(ev);
+        }
+
+        public static IEnumerator PageTransition(Sprite sprite, string text) {
+            return Main.Instance.Title.TitleTransition(sprite, text, 3);
         }
 
         private static IEnumerator MoveTowards(GameObject mover, GameObject destination, float duration) {

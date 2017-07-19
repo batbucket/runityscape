@@ -72,6 +72,7 @@ namespace Scripts.View.Portraits {
                 string.Empty,
                 string.Empty
                 );
+            text.color = Color.white;
         }
 
         private void SetBarScale(float numerator, float denominator) {

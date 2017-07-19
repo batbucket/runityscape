@@ -35,6 +35,11 @@ namespace Scripts.Model.Characters {
             this.AddSplat = (a => { });
         }
 
+        public void AddBuff(Buff buff, Character caster) {
+            buff.Caster = new BuffParams(caster.Stats, caster.Id);
+            AddBuff(buff);
+        }
+
         public void AddBuff(Buff buff) {
             Util.Assert(buff.BuffCaster != null, "Buff's caster is null.");
             buff.OnApply(Stats);
@@ -58,6 +63,10 @@ namespace Scripts.Model.Characters {
                 set.Remove(buff);
                 AddSplat(new SplatDetails(Color.red, string.Format("-"), buff.Sprite));
             }
+        }
+
+        public bool HasBuff<T>() where T : Buff {
+            return set.Any(b => b is T);
         }
 
         IEnumerator<Buff> IEnumerable<Buff>.GetEnumerator() {

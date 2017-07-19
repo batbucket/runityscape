@@ -80,6 +80,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Check>("checkSpell");
             Add<SetupCounter>("setupCounter");
             Add<Heal>("heal");
+            Add<ReflectiveClone>("reflectiveClone");
         }
 
         private void Items() {
@@ -94,6 +95,8 @@ namespace Scripts.Model.SaveLoad {
             Add<Poison>("poison");
             Add<Checked>("checkedDebuff");
             Add<Counter>("counterBuff");
+            Add<ReflectAttack>("reflectAttack");
+            Add<SpiritLink>("spiritLink");
         }
 
         private void Brains() {
@@ -102,6 +105,7 @@ namespace Scripts.Model.SaveLoad {
             Add<RuinsBrains.Villager>("villager");
             Add<RuinsBrains.Knight>("knight");
             Add<RuinsBrains.Healer>("healer");
+            Add<RuinsBrains.Kitsune>("kitsuneRuins");
         }
 
         private void Add<Type>(string id) {

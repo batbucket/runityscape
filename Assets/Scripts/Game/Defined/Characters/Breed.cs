@@ -10,6 +10,8 @@ namespace Scripts.Game.Defined.Characters {
         HUMAN,
         [Description("Ghost")]
         SPIRIT,
+        [Description("Kitsune")]
+        KITSUNE,
 
         // These are here for the credits
         [Description("Tester")]

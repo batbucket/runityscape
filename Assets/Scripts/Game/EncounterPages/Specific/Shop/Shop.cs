@@ -39,13 +39,22 @@ namespace Scripts.Game.Pages {
             SetupMenus();
         }
 
-        public Shop AddBuy(Buy b) {
-            buys.Add(b);
+        public Shop AddOnEnter(Action action) {
+            Root.OnEnter += action;
             return this;
         }
 
-        public Shop AddTalk(Talk t) {
-            talks.Add(t);
+        public Shop AddBuys(params Buy[] buys) {
+            foreach (Buy buy in buys) {
+                this.buys.Add(buy);
+            }
+            return this;
+        }
+
+        public Shop AddTalks(params Talk[] talks) {
+            foreach (Talk talk in talks) {
+                this.talks.Add(talk);
+            }
             return this;
         }
 
@@ -86,12 +95,12 @@ namespace Scripts.Game.Pages {
                 main.List.Add(SetupSellMenu(main));
                 main.List.Add(SetupBuyMenu(main));
                 main.List.Add(null);
-                main.List.Add(PageUtil.GenerateItems(p, main, new SpellParams(party.Default), PageUtil.GetOutOfBattlePlayableHandler(p)));
-                main.List.Add(PageUtil.GenerateEquipmentGrid(main, new SpellParams(party.Default), PageUtil.GetOutOfBattlePlayableHandler(p)));
+                main.List.Add(PageUtil.GenerateItemsGrid(p, main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p)));
+                main.List.Add(PageUtil.GenerateEquipmentGrid(main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p)));
                 main.List.Add(null);
-                main.List.Add(previous);
+                main.List.Add(PageUtil.GenerateBack(previous));
             };
-            p.OnEnter = () => {
+            p.OnEnter += () => {
                 main.Invoke();
             };
         }
@@ -177,12 +186,13 @@ namespace Scripts.Game.Pages {
             return new Process(
                 talk.Name,
                 Util.GetSprite("talk"),
+                string.Format("Talk about this topic.", talk.Name),
                 () => {
                     ActUtil.SetupScene(Get(ROOT_INDEX), ActUtil.LongTalk(Get(ROOT_INDEX), shopkeeper, talk.Big));
                     talk.SetFlags(flags);
                 },
                 () => talk.Condition(flags)
-                );
+                ).SetVisibleOnDisable(false);
         }
 
     }

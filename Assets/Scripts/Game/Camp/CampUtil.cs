@@ -12,7 +12,7 @@ namespace Scripts.Game.Pages {
         public static void RestoreStats(StatType type, Stats stats, bool isLastTime) {
             int missing = stats.GetStatCount(Stats.Get.MAX, type) - stats.GetStatCount(Stats.Get.MOD, type);
             int restoreAmount = 0;
-            if (isLastTime) {
+            if (!isLastTime) {
                 restoreAmount = Mathf.Max((int)(missing * MISSING_RESTORE_PERCENTAGE), MINIMUM_RESTORE_AMOUNT);
             } else {
                 restoreAmount = missing;

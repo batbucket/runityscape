@@ -31,8 +31,8 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class Counter : Buff {
         public Counter() : base(Util.GetSprite("round-shield"), "Counter", "Next <color=yellow>Attack</color> on this unit is reflected.", false) { }
 
-        public override bool IsReact(Spell s) {
-            return s.Book is Attack;
+        public override bool IsReact(Spell s, Stats owner) {
+            return s.Book is Attack && s.Target.Stats == owner;
         }
 
         protected override void ReactHelper(Spell s, Stats owner) {
@@ -40,6 +40,43 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             s.Result.AddEffect(
                 new AddToModStat(
                     s.Caster.Stats, StatType.HEALTH, -s.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH))
+                );
+        }
+    }
+
+    public class SpiritLink : Buff {
+        public SpiritLink() : base(Util.GetSprite("knot"), "Spirit Link", "Attacks on the buff's caster will cause this unit to also take damage.", false) {
+
+        }
+
+        public override bool IsReact(Spell s, Stats buffHolder) {
+            return s.Book.SpellType == SpellType.OFFENSE && s.Target.Stats == this.BuffCaster;
+        }
+
+        protected override void ReactHelper(Spell s, Stats buffHolder) {
+            SpellEffect healthDamage = null;
+            for (int i = 0; (i < s.Result.Effects.Count) && (healthDamage == null); i++) {
+                SpellEffect se = s.Result.Effects[i];
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
+                    healthDamage = addToModStat;
+                }
+            }
+            buffHolder.AddToStat(StatType.HEALTH, Stats.Set.MOD, healthDamage.Value);
+        }
+    }
+
+    public class ReflectAttack : Buff {
+        public ReflectAttack() : base(Util.GetSprite("round-shield"), "Reflect Attack", "Next <color=yellow>Attack</color> on this unit is reflected.", false) { }
+
+        public override bool IsReact(Spell s, Stats owner) {
+            return s.Book is Attack && s.Target.Stats == owner;
+        }
+
+        protected override void ReactHelper(Spell s, Stats owner) {
+            s.Result.AddEffect(
+                new AddToModStat(
+                    s.Caster.Stats, StatType.HEALTH, -s.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * 2)
                 );
         }
     }

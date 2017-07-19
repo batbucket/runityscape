@@ -57,7 +57,6 @@ namespace Scripts.View.ObjectPool {
                 pb = pools[script.gameObject.name].Pop();
                 ids.Remove(pb.gameObject.GetInstanceID());
             }
-
             pb.gameObject.SetActive(true);
             //Util.Log("Retrieved " + pb.GetInstanceID());
             return pb.GetComponent<T>();

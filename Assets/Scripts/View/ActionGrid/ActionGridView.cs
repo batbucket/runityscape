@@ -65,8 +65,8 @@ namespace Scripts.View.ActionGrid {
                 }
 
                 if (buttonables[i] != null) {
-                    hb.IsVisible = true;
                     hb.Buttonable = buttonables[i];
+                    hb.IsVisible = buttonables[i].IsInvokable || buttonables[i].IsVisibleOnDisable;
                 } else {
                     hb.IsVisible = false;
                 }

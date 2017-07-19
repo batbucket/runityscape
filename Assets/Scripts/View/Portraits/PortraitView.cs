@@ -76,6 +76,8 @@ namespace Scripts.View.Portraits {
             Image.enabled = true;
             tip.Reset();
 
+            this.StopAllCoroutines();
+
             // Not a class because its just a gameobject things get parented to
             PooledBehaviour[] ces = effectsHolder.GetComponentsInChildren<PooledBehaviour>();
             for (int i = 0; i < ces.Length; i++) {

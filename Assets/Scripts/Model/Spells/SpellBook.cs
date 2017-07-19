@@ -9,6 +9,9 @@ using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.SaveLoad;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Scripts.Model.Pages;
+using Scripts.Game.Defined.SFXs;
+using Scripts.Presenter;
 
 namespace Scripts.Model.Spells {
 
@@ -21,13 +24,14 @@ namespace Scripts.Model.Spells {
         public readonly Characters.Buffs Buffs;
         public readonly Characters.Inventory Inventory;
         public readonly Characters.Equipment Equipment;
+        public readonly Page Page;
         public PortraitView Portrait {
             get {
                 return Character.Presenter.PortraitView;
             }
         }
 
-        public SpellParams(Characters.Character c) {
+        public SpellParams(Characters.Character c, Page currentPage) {
             this.CharacterId = c.Id;
             this.Character = c;
             this.Look = c.Look;
@@ -36,6 +40,7 @@ namespace Scripts.Model.Spells {
             this.Buffs = c.Buffs;
             this.Inventory = c.Inventory;
             this.Equipment = c.Equipment;
+            this.Page = currentPage;
         }
     }
 
@@ -158,15 +163,16 @@ namespace Scripts.Model.Spells {
                 res.AddSFX(GetHitSFX(caster.Portrait, target.Portrait));
                 if (IsCritical(caster, target)) {
                     res.Type = ResultType.CRITICAL;
-                    res.Effects = GetCriticalEffects(caster, target);
+                    res.AddEffects(GetCriticalEffects(caster, target));
                 } else {
                     res.Type = ResultType.HIT;
-                    res.Effects = GetHitEffects(caster, target);
+                    res.AddEffects(GetHitEffects(caster, target));
                 }
             } else {
                 res.AddSFX(GetMissSFX(caster.Portrait, target.Portrait));
+                res.AddSFX(SFX.HitSplat(target.Portrait.EffectsHolder, new SplatDetails(Color.grey, "MISS!")));
                 res.Type = ResultType.MISS;
-                res.Effects = GetMissEffects(caster, target);
+                res.AddEffects(GetMissEffects(caster, target));
             }
 
             return new Spell(this, res, caster, target);

@@ -1,5 +1,6 @@
 ﻿using Scripts.View.ObjectPool;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Scripts.View.Effects {
 
@@ -28,6 +29,9 @@ namespace Scripts.View.Effects {
         [SerializeField]
         private HitsplatView minisplatPrefab;
 
+        [SerializeField]
+        private ShroudView shroudPrefab;
+
         public static EffectsManager Instance {
             get {
                 if (instance == null) {
@@ -43,6 +47,7 @@ namespace Scripts.View.Effects {
         public FadeAnimation Lightning { get { return lightningPrefab; } }
         public HitsplatView Minisplat { get { return minisplatPrefab; } }
         public GameObject Foreground { get { return foreground; } }
+        public ShroudView Shroud { get { return shroudPrefab; } }
 
         private void Start() {
             ObjectPoolManager.Instance.Register(hitsplatPrefab, 10);
@@ -50,6 +55,7 @@ namespace Scripts.View.Effects {
             ObjectPoolManager.Instance.Register(lightningPrefab, 10);
             ObjectPoolManager.Instance.Register(bloodsplatPrefab, 10);
             ObjectPoolManager.Instance.Register(explosionPrefab, 10);
+            ObjectPoolManager.Instance.Register(shroudPrefab, 10);
         }
     }
 }

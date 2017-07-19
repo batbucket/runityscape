@@ -1,4 +1,5 @@
-﻿using Scripts.Model.Characters;
+﻿using Scripts.Game.Serialized;
+using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Items;
 using Scripts.Model.Processes;
@@ -17,6 +18,10 @@ namespace Scripts.Model.Pages {
         public static readonly Sprite INVENTORY = Util.GetSprite("knapsack");
         public static readonly Sprite SPELLBOOK = Util.GetSprite("spell-book");
         public static readonly Sprite ACTION = Util.GetSprite("talk");
+
+        public static void GetFirstPlaceVisitMessage(PageGroup place) {
+            place.Root.AddText(string.Format("{0} was discovered.\nThis place can be visited again in the <color=yellow>Places</color> menu back at camp.", place.Root.Location));
+        }
 
         /// <summary>
         /// Creates a Grid asking if the user wants to perform a task.
@@ -98,7 +103,7 @@ namespace Scripts.Model.Pages {
         /// <param name="owner">Owner of the inventory</param>
         /// <param name="addPlay">IPlayable handler</param>
         /// <returns></returns>
-        public static Grid GenerateItems(
+        public static Grid GenerateItemsGrid(
                     Page p,
                     IButtonable previous,
                     SpellParams owner,
@@ -207,7 +212,7 @@ namespace Scripts.Model.Pages {
 
             foreach (Character myTarget in targets) {
                 Character target = myTarget;
-                grid.List.Add(GenerateTargetProcess(previous, owner, new SpellParams(target), sb, handlePlayable));
+                grid.List.Add(GenerateTargetProcess(previous, owner, new SpellParams(target, p), sb, handlePlayable));
             }
             Item item = spellable as Item;
             if (item != null && item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {

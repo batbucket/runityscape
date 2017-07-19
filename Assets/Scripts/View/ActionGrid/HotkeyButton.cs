@@ -114,7 +114,7 @@ namespace Scripts.View.ActionGrid {
         }
 
         private void DisabledAppearance() {
-            text.text = "";
+            text.text = string.Empty;
             tip.enabled = false;
             icon.color = Color.clear;
             button.image.color = Color.clear;

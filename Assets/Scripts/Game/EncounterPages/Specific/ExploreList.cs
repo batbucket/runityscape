@@ -1,5 +1,6 @@
 ﻿using Scripts.Game.Defined.Characters;
 using Scripts.Game.Serialized;
+using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Pages;
 using System;
@@ -25,8 +26,8 @@ namespace Scripts.Game.Pages.Explorables {
 
         protected override IEnumerable<Encounter> GetEncounters() {
             return new Encounter[] {
-                GetPage(Rarity.COMMON, ShopList.Ruins(camp, flags, party).Root)
-                    .AddOverride(f => true),
+                GetPage(Rarity.COMMON, new Cathedral(camp, party, flags).Root)
+                    .AddEnable(f => !f.UnlockedPlaces.Contains(Place.CATHEDRAL)),
                 GetBattle(Rarity.COMMON, CharacterList.Ruins.Villager())
                     .AddOverride(flags => flags.TotalExploreCount < 2),
                 GetBattle(Rarity.UNCOMMON, CharacterList.Ruins.Knight()),

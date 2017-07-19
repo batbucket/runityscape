@@ -32,19 +32,24 @@ namespace Scripts.Game.Pages {
         private void SetupCamp() {
             Page root = Get(ROOT_INDEX);
             root.OnEnter = () => {
-                root.AddCharacters(Side.LEFT, party.Collection);
-                root.Actions = new IButtonable[] {
-                new ExplorePages(root, party, flags),
-                new LevelUpPages(Root, party.Default),
-                new InventoryPages(root, party.Default, party.shared),
-                new EquipmentPages(root, new SpellParams(party.Default)),
-                RestProcess(root),
-                new SavePages(root, party, flags)
-                };
+
+                // If this isn't first Resting will advance to wrong time
                 if (flags.ShouldAdvanceTimeInCamp) {
                     AdvanceTime(root);
                     flags.ShouldAdvanceTimeInCamp = false;
                 }
+
+                root.AddCharacters(Side.LEFT, party.Collection);
+                root.Actions = new IButtonable[] {
+                new ExplorePages(root, party, flags),
+                new PlacePages(root, flags, party),
+                new LevelUpPages(Root, party.Default),
+                new InventoryPages(root, party.Default, party.shared),
+                new EquipmentPages(root, party.Default),
+                RestProcess(root),
+                new SavePages(root, party, flags)
+                };
+
                 PostTime(root);
             };
         }
@@ -80,7 +85,7 @@ namespace Scripts.Game.Pages {
                         flags.DayCount++;
                     }
                     flags.Time = times[newIndex];
-                    current.AddText(string.Format("The party {0}s.", isLastTime ? "rest" : "sleep"));
+                    current.AddText(string.Format("The party {0}s.", isLastTime ? "sleep" : "rest"));
                     current.OnEnter();
                 }
                 );

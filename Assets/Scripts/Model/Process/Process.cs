@@ -11,6 +11,7 @@ namespace Scripts.Model.Processes {
         private string description;
         private string name;
         private Func<bool> condition;
+        private bool isVisibleOnDisable;
 
         /// <summary>
         /// Descriptionless constructor
@@ -57,6 +58,7 @@ namespace Scripts.Model.Processes {
             this.description = description;
             this.action = action;
             this.condition = condition ?? (() => true);
+            this.isVisibleOnDisable = true;
         }
 
         public Process(string name, Sprite sprite, string description, Action action) : this(name, sprite, description, action, null) { }
@@ -66,6 +68,7 @@ namespace Scripts.Model.Processes {
             this.description = "";
             this.action = (() => { });
             this.condition = (() => { return false; });
+            this.isVisibleOnDisable = true;
         }
 
         public string ButtonText {
@@ -93,10 +96,21 @@ namespace Scripts.Model.Processes {
             }
         }
 
+        public bool IsVisibleOnDisable {
+            get {
+                return isVisibleOnDisable;
+            }
+        }
+
         public virtual void Invoke() {
             if (IsInvokable) {
                 action.Invoke();
             }
+        }
+
+        public Process SetVisibleOnDisable(bool isVisibleOnDisable) {
+            this.isVisibleOnDisable = isVisibleOnDisable;
+            return this;
         }
 
         public static Process GetBackProcess(Page previous) {

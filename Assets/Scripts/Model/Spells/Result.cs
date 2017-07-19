@@ -5,16 +5,32 @@ using System.Linq;
 namespace Scripts.Model.Spells {
     public class Result {
         public ResultType Type;
-        public IList<IEnumerator> SFX;
-        public IList<SpellEffect> Effects;
+
+        private readonly List<IEnumerator> sfx;
+        private readonly List<SpellEffect> effects;
 
         public Result() {
-            this.Effects = new List<SpellEffect>();
-            this.SFX = new List<IEnumerator>();
+            this.effects = new List<SpellEffect>();
+            this.sfx = new List<IEnumerator>();
+        }
+
+        public IList<IEnumerator> SFX {
+            get {
+                return sfx;
+            }
+        }
+        public IList<SpellEffect> Effects {
+            get {
+                return effects;
+            }
         }
 
         public void AddEffect(SpellEffect se) {
             Effects.Add(se);
+        }
+
+        public void AddEffects(IEnumerable<SpellEffect> effects) {
+            this.effects.AddRange(effects);
         }
 
         public void AddSFX(IEnumerator sfx) {
@@ -22,9 +38,7 @@ namespace Scripts.Model.Spells {
         }
 
         public void AddSFX(ICollection<IEnumerator> sfx) {
-            foreach (IEnumerator item in sfx) {
-                SFX.Add(item);
-            }
+            this.sfx.AddRange(sfx);
         }
     }
 }

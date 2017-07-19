@@ -8,7 +8,6 @@ namespace Scripts.Game.Pages {
         public Func<Page> GeneratePage;
         public Func<Flags, bool> IsOverride; // True = always will occur
         public Func<Flags, bool> CanOccur; // False = will never occur
-        public Func<Flags, bool> IsSpecialEncounter;
 
         /// <summary>
         /// Blueprint for an encounter
@@ -22,7 +21,6 @@ namespace Scripts.Game.Pages {
             this.GeneratePage = generatePage;
             this.IsOverride = f => false;
             this.CanOccur = f => true;
-            IsSpecialEncounter = f => false;
         }
 
         public Encounter AddOverride(Func<Flags, bool> isOverride) {

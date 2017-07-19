@@ -20,7 +20,7 @@ namespace Scripts.Game.Pages {
             Page p = Get(ROOT_INDEX);
             p.Icon = Util.GetSprite("save");
             p.OnEnter = () => {
-                GameSave gs = new GameSave(party.GetSaveObject(), flags);
+                WorldSave currentGame = new WorldSave(party.GetSaveObject(), flags.GetSaveObject());
                 p.Right.Clear();
                 p.AddCharacters(Side.LEFT, party.Collection);
                 p.HasInputField = false;
@@ -28,14 +28,14 @@ namespace Scripts.Game.Pages {
                 buttons.Add(PageUtil.GenerateBack(previous));
                 for (int i = 0; i < SaveLoad.MAX_SAVE_FILES; i++) {
                     if (SaveLoad.IsSaveUsed(i)) {
-                        buttons.Add(GetOverrideSavePage(p, i, gs)); // oink
+                        buttons.Add(GetOverrideSavePage(p, i, currentGame)); // oink
                     } else {
                         buttons.Add(
                             GetSaveProcess(
                                 p,
                                 string.Format("<color=grey>FILE {0}</color>", i),
                                 i,
-                                gs,
+                                currentGame,
                                 string.Format("Save to file {0}.", i),
                                 string.Format("Saved to file {0}.", i)
                             )
@@ -56,17 +56,18 @@ namespace Scripts.Game.Pages {
             };
         }
 
-        private Page GetOverrideSavePage(Page previous, int saveIndex, GameSave save) {
-            GameSave gs = SaveLoad.Load(saveIndex, saveIndex.ToString());
-            Party party = new Party();
-            party.InitFromSaveObject(gs.Party);
-            Flags flags = gs.Flags;
+        private Page GetOverrideSavePage(Page previous, int saveIndex, WorldSave currentGame) {
+            WorldSave currentSaveInTheSlot = SaveLoad.Load(saveIndex, saveIndex.ToString());
+            World world = new World();
+            world.InitFromSaveObject(currentSaveInTheSlot);
+            Party party = world.Party;
+            Flags flags = world.Flags;
             string saveName = SaveLoad.SaveFileDisplay(party.Default.Look.Name, party.Default.Stats.Level);
 
             Page page = PageUtil.GetConfirmationPage(
                 previous,
                 previous,
-                GetSaveProcess(previous, "Overwrite", saveIndex, gs, string.Format("Save over file {0}.", saveIndex), string.Format("File {0} was overwritten.", saveIndex)),
+                GetSaveProcess(previous, "Overwrite", saveIndex, currentGame, string.Format("Save over file {0}.", saveIndex), string.Format("File {0} was overwritten.", saveIndex)),
                 saveName,
                 string.Format("Overwrite file {0}.", saveIndex),
                 string.Format("Are you sure you want to overwrite file {0}?", saveIndex)
@@ -75,7 +76,7 @@ namespace Scripts.Game.Pages {
             return page;
         }
 
-        private Process GetSaveProcess(Page previous, string name, int saveIndex, GameSave save, string tooltip, string saveMessage) {
+        private Process GetSaveProcess(Page previous, string name, int saveIndex, WorldSave save, string tooltip, string saveMessage) {
             return new Process(
                 name,
                 tooltip,

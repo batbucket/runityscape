@@ -18,6 +18,12 @@ using WindowsInput;
  */
 
 public static class Util {
+    private static char RANDOM_STRING_DELIMITER = '/';
+
+    public static string PickRandom(string big) {
+        string[] split = big.Split(RANDOM_STRING_DELIMITER);
+        return split.PickRandom();
+    }
 
     public static bool IsDictionariesEqual<A, B>(IDictionary<A, B> dic1, IDictionary<A, B> dic2) {
         return (dic1 == dic2) ||
@@ -120,7 +126,7 @@ public static class Util {
         b.transform.SetSiblingIndex(ai);
     }
 
-    private const bool IS_DEBUG = true;
+    public const bool IS_DEBUG = true;
 
     public static void Log(string message) {
         if (IS_DEBUG) {
@@ -140,7 +146,23 @@ public static class Util {
         }
     }
 
-    public static int Random(float mean, float variance) {
+    public static void SetAllAlphaOfChildren(GameObject parent, float alpha) {
+        Image[] images = parent.GetComponentsInChildren<Image>();
+        Text[] texts = parent.GetComponentsInChildren<Text>();
+
+        foreach (Image i in images) {
+            Util.SetImageAlpha(i, alpha);
+        }
+        foreach (Text t in texts) {
+            Util.SetTextAlpha(t, alpha);
+        }
+    }
+
+    public static int RandomRange(int min, int max) {
+        return UnityEngine.Random.Range(min, max + 1);
+    }
+
+    public static int Random(int mean, float variance) {
         return (int)UnityEngine.Random.Range(mean * (1 - variance), mean * (1 + variance));
     }
 
@@ -200,6 +222,10 @@ public static class Util {
     public static void Parent(GameObject child, GameObject parent) {
         child.transform.SetParent(parent.transform);
         //child.transform.localPosition = new Vector3(0, 0, 0);
+    }
+
+    public static void Unparent(GameObject child) {
+        child.transform.SetParent(null);
     }
 
     public static void Parent(IList<GameObject> child, GameObject parent) {
@@ -343,8 +369,10 @@ public static class Util {
         return source.Shuffle().Take(count);
     }
 
+    private static readonly System.Random rng = new System.Random();
+
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) {
-        return source.OrderBy(x => Guid.NewGuid());
+        return source.OrderBy(x => rng.Next());
     }
 
     public static Sprite GetSprite(string name) {
@@ -403,5 +431,9 @@ public static class Util {
 
     public static string Color(this int num, Color color) {
         return Util.ColorString(num.ToString(), color);
+    }
+
+    public static Color SetAlpha(this Color color, float alpha) {
+        return new UnityEngine.Color(color.r, color.g, color.b, alpha);
     }
 }

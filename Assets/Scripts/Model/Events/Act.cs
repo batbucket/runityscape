@@ -9,6 +9,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using Scripts.Model.Spells;
+using Scripts.Game.Defined.SFXs;
 
 namespace Scripts.Model.Acts {
     public static class ActUtil {
@@ -22,17 +24,19 @@ namespace Scripts.Model.Acts {
             Main.Instance.StartCoroutine(SetupSceneRoutine(page, acts));
         }
 
-        public static Act[] LongTalk(Page p, Character c, string big) {
+        public static Act[] LongTalk(Page p, Character c, string big, params Act[] postAction) {
             List<Act> events = new List<Act>();
             IList<TextBox> boxes = SplitBigDialogue(p, c, big);
 
             for (int i = 0; i < boxes.Count; i++) {
                 events.Add(new TextAct(boxes[i]));
             }
+
+            events.AddRange(postAction);
             return events.ToArray();
         }
 
-        private static IEnumerator SetupSceneRoutine(Page page, Act[] acts) {
+        public static IEnumerator SetupSceneRoutine(Page page, Act[] acts) {
             Grid grid = new Grid(string.Empty);
             Main.Instance.PagePresenter.Override = grid;
 
@@ -43,9 +47,11 @@ namespace Scripts.Model.Acts {
                 lastIndex = i;
                 bool isStepped = false;
                 Act act = acts[i];
-                grid.List = new IButtonable[] {
+                if (act.IsSkippable) {
+                    grid.List = new IButtonable[] {
                     new Process("Skip", "Skip the current event.", () => act.SkipAct())
                 };
+                }
                 yield return act.Play();
                 if (i < acts.Length - 1) {
                     grid.List = new IButtonable[] {
@@ -82,11 +88,11 @@ namespace Scripts.Model.Acts {
 
             foreach (string match in matches) {
                 char identifier = match[IDENTIFIER_POSITION];
-                string text = match.Substring(TAG_LENGTH);
+                string text = string.Format(match.Substring(TAG_LENGTH), c.Look.DisplayName);
 
                 TextBox box = null;
                 if (identifier.Equals(TEXTBOX_SYMBOL)) {
-                    box = new TextBox(c.Look.TextColor, text);
+                    box = new TextBox(text);
                 } else if (identifier.Equals(AVATARBOX_SYMBOL)) {
                     box = new AvatarBox(p.GetSide(c), c.Look.Sprite, c.Look.TextColor, text);
                 } else {
@@ -99,10 +105,13 @@ namespace Scripts.Model.Acts {
     }
 
     public abstract class Act {
+        public readonly bool IsSkippable;
         private bool hasEnded;
         private bool isSkip;
 
-        public Act() { }
+        public Act(bool isSkippable = true) {
+            this.IsSkippable = isSkippable;
+        }
 
         public IEnumerator Play() {
             Coroutine co = Main.Instance.StartCoroutine(PlayTemplate());
@@ -128,6 +137,7 @@ namespace Scripts.Model.Acts {
             yield return PlayHelper();
             hasEnded = true;
         }
+
     }
 
     public class TextAct : Act {
@@ -153,6 +163,23 @@ namespace Scripts.Model.Acts {
         }
     }
 
+    public class PageChangeAct : Act {
+        private Page destination;
+
+        public PageChangeAct(Page destination) {
+            this.destination = destination;
+        }
+
+        protected override IEnumerator PlayHelper() {
+            destination.Invoke();
+            yield break;
+        }
+
+        protected override void Skip() {
+
+        }
+    }
+
     public class ActionAct : Act {
         private Action action;
 
@@ -167,6 +194,27 @@ namespace Scripts.Model.Acts {
 
         protected override void Skip() {
 
+        }
+    }
+
+    public class BossTransitionAct : Act {
+        private Page destination;
+        private Sprite sprite;
+        private string text;
+
+        public BossTransitionAct(Page destination, Characters.Look boss) : base(false) {
+            this.destination = destination;
+            this.sprite = boss.Sprite;
+            this.text = boss.Name;
+        }
+
+        protected override IEnumerator PlayHelper() {
+            destination.Invoke();
+            yield return SFX.PageTransition(sprite, text);
+        }
+
+        protected override void Skip() {
+            Main.Instance.Title.Cancel();
         }
     }
 }

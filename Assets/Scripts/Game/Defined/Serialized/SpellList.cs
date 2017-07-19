@@ -11,15 +11,16 @@ using Scripts.Game.Defined.Spells;
 using Scripts.Model.Buffs;
 using UnityEngine;
 using Scripts.Model.Pages;
+using Scripts.Game.Defined.Serialized.Characters;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class Attack : BasicSpellbook {
-        public const float DAMAGE_VARIABILITY = 0.25f;
         public const float PERCENT = 0.01f;
         public const float CRITICAL_MULTIPLIER = 2f;
-        public const float BASE_ACCURACY = .8f;
-        public const float BASE_CRITICAL_RATE = .2f;
+        public const float CRITICAL_VARIABILITY = 0.25f;
+        public const float BASE_ACCURACY = .90f;
+        public const float BASE_CRITICAL_RATE = .10f;
         public const int SKILL_ON_HIT = 1;
         public const int SKILL_ON_CRIT = 2;
 
@@ -43,15 +44,17 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            int lowerBound = (caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) > 0) ? 1 : 0;
+
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH), DAMAGE_VARIABILITY)),
+                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.RandomRange(lowerBound, caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH))), // Range(0, CurrentStrength)
                     new AddToModStat(caster.Stats, StatType.SKILL, 1)
                 };
         }
 
         protected override IList<SpellEffect> GetCriticalEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * CRITICAL_MULTIPLIER, DAMAGE_VARIABILITY)),
+                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random((int)(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * CRITICAL_MULTIPLIER), CRITICAL_VARIABILITY)),
                     new AddToModStat(caster.Stats, StatType.SKILL, 2)
                 };
         }
@@ -120,6 +123,35 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
                 new AddToModStat(target.Stats, StatType.HEALTH, 2)
+            };
+        }
+    }
+
+    public class ReflectiveClone : BasicSpellbook {
+        private const int NUMBER_OF_CLONES = 2;
+
+        public ReflectiveClone() : base("Trickster Art: Reflective Clones", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST) { }
+
+        public override string CreateDescriptionHelper(SpellParams caster) {
+            return "Creates clones of the caster that vanish when the caster is attacked. Clones reflect attacks. Shuffles the caster's side.";
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            Func<Character> cloneFunc =
+                () => {
+                    Character c = new Character(
+                        new Stats(caster.Stats.Level, 0, 1, 1, 1),
+                        new Look(caster.Look.Name, caster.Look.Sprite, caster.Look.Tooltip, caster.Look.Check, caster.Look.Breed, caster.Look.TextColor),
+                        new RuinsBrains.KitsuneClone());
+                    c.AddFlag(Model.Characters.Flag.IS_CLONE);
+                    c.Buffs.AddBuff(new ReflectAttack(), c);
+                    c.Buffs.AddBuff(new SpiritLink(), caster.Character);
+                    return c;
+                };
+
+            return new SpellEffect[] {
+                new CloneEffect(NUMBER_OF_CLONES, caster.Page.GetSide(caster.Character), cloneFunc, caster.Page),
+                new ShuffleEffect(caster.Page, caster.Page.GetSide(caster.Character))
             };
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Scripts.Model.Characters;
 using Scripts.Model.Stats;
 using UnityEngine;
@@ -17,6 +18,12 @@ namespace Scripts.Game.Defined.Spells {
         public AddToModStat(Stats target, StatType affected, int value) : base(value) {
             this.affected = affected;
             this.target = target;
+        }
+
+        public StatType AffectedStat {
+            get {
+                return affected;
+            }
         }
 
         public override void CauseEffect() {
@@ -131,6 +138,49 @@ namespace Scripts.Game.Defined.Spells {
         public override void CauseEffect() {
             Page.ChangePageFunc(destination);
             stopBattle.Invoke();
+        }
+    }
+
+    public class CloneEffect : SpellEffect {
+        private Func<Character> toBeCloned;
+        private Side side;
+        private Page currentPage;
+
+        public CloneEffect(int numberOfClones, Side side, Func<Character> toBeCloned, Page page) : base(numberOfClones) {
+            this.toBeCloned = toBeCloned;
+            this.side = side;
+            this.currentPage = page;
+        }
+
+        public override void CauseEffect() {
+            List<Character> clonesToBeKilled = new List<Character>();
+            foreach (Character possibleClone in currentPage.GetCharacters(side)) {
+                if (possibleClone.HasFlag(Model.Characters.Flag.IS_CLONE)) {
+                    clonesToBeKilled.Add(possibleClone);
+                }
+            }
+            foreach (Character cloneToBeRemoved in clonesToBeKilled) {
+                cloneToBeRemoved.Stats.SetToStat(StatType.HEALTH, Stats.Set.MOD, 0);
+            }
+            for (int i = 0; i < Value; i++) {
+                Character clone = toBeCloned();
+                clone.AddFlag(Model.Characters.Flag.IS_CLONE);
+                currentPage.AddCharacters(side, toBeCloned());
+            }
+        }
+    }
+
+    public class ShuffleEffect : SpellEffect {
+        private Page page;
+        private Side side;
+
+        public ShuffleEffect(Page page, Side side) : base(1) {
+            this.page = page;
+            this.side = side;
+        }
+
+        public override void CauseEffect() {
+            page.Shuffle(side);
         }
     }
 }

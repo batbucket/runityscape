@@ -68,7 +68,7 @@ namespace Scripts.Game.Pages {
 
         private void LetUserSelectAStatToIncrease(Page p, Character c) {
             List<IButtonable> actions = new List<IButtonable>();
-            actions.Add(Process.GetBackProcess(Get(ROOT_INDEX)));
+            actions.Add(PageUtil.GenerateBack(Get(ROOT_INDEX)));
 
             foreach (StatType st in StatType.ASSIGNABLES) {
                 if (c.Stats.HasStat(st)) {
@@ -88,11 +88,11 @@ namespace Scripts.Game.Pages {
 
         private Process AddStatProcess(Page p, Stats stats, StatType st) {
             return new Process(
-                st.Name,
+                st.ColoredName,
                 st.Sprite,
                 string.Format("Add {0} point(s) in\n{1}\n{2}",
                     st.StatPointIncreaseAmount,
-                    st.Name,
+                    st.ColoredName,
                     st.Description),
                 () => {
                     stats.StatPoints--;

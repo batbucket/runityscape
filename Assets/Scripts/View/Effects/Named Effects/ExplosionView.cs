@@ -8,6 +8,13 @@ namespace Scripts.View.Effects {
         [SerializeField]
         private ParticleSystem ps;
 
+        public Vector2 Dimensions {
+            set {
+                var x = ps.shape;
+                x.box = value;
+            }
+        }
+
         public bool IsDone {
             get {
                 return !ps.IsAlive();

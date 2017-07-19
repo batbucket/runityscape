@@ -16,13 +16,14 @@ namespace Scripts.Model.Pages {
         public static Action<Page> UpdateGridUI;
         public static Func<TextBox, PooledBehaviour> TypeText;
 
-        public ICollection<Character> Left;
+        public HashList<Character> left;
         public readonly string Location;
         public string Music;
-        public ICollection<Character> Right;
+        public HashList<Character> right;
         public string Body;
         public Sprite Icon;
         public Action OnEnter;
+        public Func<bool> Condition;
         public bool HasInputField;
         public string Input;
 
@@ -31,10 +32,11 @@ namespace Scripts.Model.Pages {
         public Page(string location) {
             this.Location = location;
             this.grid = new IButtonable[Grid.DEFAULT_BUTTON_COUNT];
-            this.Left = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
-            this.Right = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
+            this.left = new HashList<Character>(new IdNumberEqualityComparer<Character>());
+            this.right = new HashList<Character>(new IdNumberEqualityComparer<Character>());
             this.OnEnter = () => { };
             this.Input = string.Empty;
+            this.Condition = () => true;
         }
 
         public IList<IButtonable> Actions {
@@ -55,6 +57,18 @@ namespace Scripts.Model.Pages {
             }
         }
 
+        public ICollection<Character> Left {
+            get {
+                return left;
+            }
+        }
+
+        public ICollection<Character> Right {
+            get {
+                return right;
+            }
+        }
+
         public string ButtonText {
             get {
                 return Util.ColorString(Location, IsInvokable);
@@ -63,7 +77,7 @@ namespace Scripts.Model.Pages {
 
         public bool IsInvokable {
             get {
-                return true;
+                return Condition();
             }
         }
 
@@ -92,7 +106,7 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        public void AddCharacters(Side side, ICollection<Character> chars) {
+        public void AddCharacters(Side side, IEnumerable<Character> chars) {
             ICollection<Character> mySet = (side == Side.LEFT) ? Left : Right;
             foreach (Character c in chars) {
                 mySet.Add(c);
@@ -114,6 +128,14 @@ namespace Scripts.Model.Pages {
             allChars.AddRange(GetCharacters(Side.LEFT));
             allChars.AddRange(GetCharacters(Side.RIGHT));
             return c == null ? allChars : allChars.Where(chara => chara != c).ToList();
+        }
+
+        public void Shuffle(Side side) {
+            if (side == Side.LEFT) {
+                left.Shuffle();
+            } else {
+                right.Shuffle();
+            }
         }
 
         public ICollection<Character> GetAllies(Character c) {

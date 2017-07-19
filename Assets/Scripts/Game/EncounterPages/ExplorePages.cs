@@ -5,23 +5,10 @@ using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 
 namespace Scripts.Game.Pages {
-    public static class ExploreUtil {
-        public static Encounter AddCondition(this Encounter e, Func<Flags, bool> condition) {
-            e.CanOccur = condition;
-            return e;
-        }
-
-        public static Encounter AddOverride(this Encounter e, Func<Flags, bool> condition) {
-            e.IsOverride = condition;
-            return e;
-        }
-    }
-
     public class ExplorePages : PageGroup {
         private readonly IDictionary<Explore, ExplorableArea> explores = new Dictionary<Explore, ExplorableArea>();
         private readonly Party party;
@@ -33,6 +20,9 @@ namespace Scripts.Game.Pages {
             this.party = party;
             this.flags = flags;
             this.previous = previous;
+
+            Root.AddCharacters(Side.LEFT, party);
+            Root.Condition = () => flags.Time != TimeOfDay.NIGHT && party.Any(c => c.Stats.State == State.ALIVE);
 
             SetupGenerators();
             buttons.Add(PageUtil.GenerateBack(previous));

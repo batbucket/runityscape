@@ -11,6 +11,7 @@ namespace Scripts.Model.Interfaces {
         bool IsInvokable { get; }
         string TooltipText { get; }
         Sprite Sprite { get; }
+        bool IsVisibleOnDisable { get; }
 
         void Invoke();
     }

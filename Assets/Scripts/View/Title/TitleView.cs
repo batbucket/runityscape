@@ -24,6 +24,8 @@ namespace Scripts.View.Title {
 
         public bool IsDone;
 
+        private Coroutine routine;
+
         private float alpha {
             set {
                 Util.SetImageAlpha(background, value);
@@ -38,13 +40,13 @@ namespace Scripts.View.Title {
             alpha = 0;
         }
 
-        public void Play(string imageLoc, string text) {
-            StartCoroutine(TitleTransition(imageLoc, text, DURATION));
+        public void Play(Sprite sprite, string text) {
+            routine = StartCoroutine(TitleTransition(sprite, text, DURATION));
         }
 
-        private IEnumerator TitleTransition(string imageLoc, string text, float duration) {
+        public IEnumerator TitleTransition(Sprite sprite, string text, float duration) {
             this.IsDone = false;
-            image.sprite = Util.LoadIcon(imageLoc);
+            image.sprite = sprite;
             this.text.text = text;
             float timer = 0;
 

@@ -1,21 +1,37 @@
 ﻿using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Spells;
 using Scripts.Model.Characters;
+using Scripts.Model.Pages;
 using Scripts.Model.Spells;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scripts.Model.Acts {
     public class PlayGroup : IPlayable {
         public static Wait Wait = new Wait();
 
-        private IList<IPlayable> plays;
+        private Page page;
+        private Act[] preActs;
+        private Act[] postActs;
         private Spell spell;
 
-        public PlayGroup(SpellParams caster) {
-            plays = new List<IPlayable>();
-            spell = Wait.ForceSpell(caster, caster);
+        public PlayGroup(Page page, Spell spell) {
+            this.page = page;
+            this.spell = spell;
+            this.preActs = new Act[0];
+            this.postActs = new Act[0];
+        }
+
+        public PlayGroup AddPreActs(params Act[] preActs) {
+            this.preActs = preActs;
+            return this;
+        }
+
+        public PlayGroup AddPostActs(params Act[] postActs) {
+            this.postActs = postActs;
+            return this;
         }
 
         public bool IsPlayable {
@@ -41,10 +57,9 @@ namespace Scripts.Model.Acts {
         }
 
         public IEnumerator Play() {
-            for (int i = 0; i < plays.Count; i++) {
-                yield return plays[i].Play();
-                // TODO between each one allow a step button to proceed???
-            }
+            yield return ActUtil.SetupSceneRoutine(page, preActs);
+            yield return spell.Play();
+            yield return ActUtil.SetupSceneRoutine(page, postActs);
         }
 
         public IEnumerator Skip() {

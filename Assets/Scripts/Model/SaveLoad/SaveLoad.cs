@@ -53,11 +53,11 @@ namespace Scripts.Game.Serialization {
             Util.Log("Saves deleted.");
         }
 
-        public static GameSave Load(int saveIndex, string successNoun) {
+        public static WorldSave Load(int saveIndex, string successNoun) {
             return Load(GetSaveValue(saveIndex), successNoun);
         }
 
-        public static GameSave Load(string save, string successNoun) {
+        public static WorldSave Load(string save, string successNoun) {
             string json = null;
             try {
                 string saveValue = save;
@@ -70,12 +70,12 @@ namespace Scripts.Game.Serialization {
                 PostMessage(Util.ColorString(e.ToString(), Color.red));
                 return null;
             }
-            GameSave load = JsonUtility.FromJson<GameSave>(json);
+            WorldSave load = JsonUtility.FromJson<WorldSave>(json);
             PostMessage("Load from {0} was successful.", successNoun);
             return load;
         }
 
-        public static void Save(GameSave saveObject, int saveIndex) {
+        public static void Save(WorldSave saveObject, int saveIndex) {
             string json = JsonUtility.ToJson(saveObject);
             try {
                 string modified = string.Empty;

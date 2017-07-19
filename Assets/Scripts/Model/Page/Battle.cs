@@ -1,5 +1,7 @@
 ﻿using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Game.Defined.SFXs;
 using Scripts.Game.Defined.Unserialized.Spells;
+using Scripts.Model.Acts;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
@@ -81,6 +83,12 @@ namespace Scripts.Model.Pages {
                     PostBattle(PlayerStatus);
                 }
             };
+        }
+
+        public int TurnCount {
+            get {
+                return turnCount;
+            }
         }
 
         private void SetupTempSpells() {
@@ -248,7 +256,8 @@ namespace Scripts.Model.Pages {
                     foreach (Buff removableBuff in dispellableOnDeath) {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
                     }
-                    yield return new WaitForSeconds(0.50f);
+                    Main.Instance.Sound.PlaySound("Boom_6");
+                    yield return SFX.Death(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
                     HashSet<Character> graveyard = null;
                     if (Left.Contains(c)) {
@@ -271,7 +280,7 @@ namespace Scripts.Model.Pages {
                 Character c = chars[i];
 
                 if (c.Stats.State == State.ALIVE) {
-                    yield return new WaitForSeconds(0.25f);
+                    yield return new WaitForSeconds(0.10f);
                     PooledBehaviour textbox = null;
 
                     // Only show when player controlled is asked to make a move
@@ -286,11 +295,9 @@ namespace Scripts.Model.Pages {
                     bool isActionTaken = false;
 
                     // Pass to the Brain a func that lets that lets them pass us what action they want to take
-                    c.Brain.PageSetup(
-                        this,
+                    c.Brain.PreActionSetup(
                         temporarySpells,
-                        (p) => InBattlePlayHandler(playerActionSet, plays, c, ref isActionTaken, p),
-                        new SpellParams(c));
+                        (p) => InBattlePlayHandler(playerActionSet, plays, c, ref isActionTaken, p));
 
                     // Let brain decide now
                     c.Brain.DetermineAction();
@@ -350,20 +357,22 @@ namespace Scripts.Model.Pages {
             //End of round buff interactions
             foreach (Character myC in chars) {
                 Character c = myC;
-                yield return new WaitForSeconds(0.25f);
+                yield return new WaitForSeconds(0.10f);
                 Characters.Buffs buffs = c.Buffs;
                 IList<Buff> timedOut = new List<Buff>();
                 foreach (Buff myB in buffs) {
-                    yield return new WaitForSeconds(0.1f);
                     Buff b = myB;
-                    AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
-                    b.OnEndOfTurn(c.Stats);
+                    if (myB.HasEndOfTurn) {
+                        yield return new WaitForSeconds(0.02f);
+                        AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
+                        b.OnEndOfTurn(c.Stats);
+                    }
                     if (b.IsTimedOut) {
                         timedOut.Add(b);
                     }
                 }
                 foreach (Buff myB in timedOut) {
-                    yield return new WaitForSeconds(0.1f);
+                    yield return new WaitForSeconds(0.02f);
                     Buff b = myB;
                     AddText(string.Format(BUFF_FADE, c.Look.DisplayName, b.Name));
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
@@ -371,16 +380,18 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private void MakeTargetBuffsReactToSpell(Spell spell) {
-            foreach (Buff b in spell.Target.Buffs) {
-                if (b.IsReact(spell)) {
-                    AddText(string.Format("{0}'s {1} activates {2}'s {3}!",
-                        spell.Caster.Look.DisplayName,
-                        spell.Book.Name,
-                        spell.Target.Look.DisplayName,
-                        b.Name
-                        ));
-                    b.React(spell, spell.Target.Stats);
+        private void MakeEveryonesBuffsReactToSpell(Spell spell) {
+            foreach (Character combatant in GetAll()) {
+                foreach (Buff b in combatant.Buffs) {
+                    if (b.IsReact(spell, combatant.Stats)) {
+                        AddText(string.Format("<color=yellow>{0}</color>'s <color=cyan>{1}</color> activates <color=yellow>{2}</color>'s <color=cyan>{3}</color>!",
+                            spell.Caster.Look.DisplayName,
+                            spell.Book.Name,
+                            spell.Target.Look.DisplayName,
+                            b.Name
+                            ));
+                        b.React(spell, combatant.Stats);
+                    }
                 }
             }
         }
@@ -388,20 +399,20 @@ namespace Scripts.Model.Pages {
         private IEnumerator PerformActions(List<IPlayable> plays) {
             plays.Sort();
             for (int i = 0; i < plays.Count; i++) {
-                yield return new WaitForSeconds(0.25f);
+                yield return new WaitForSeconds(0.10f);
                 IPlayable play = plays[i];
 
                 // Dead characters cannot unleash spells
                 if (CharacterCanCast(play.MySpell.Caster)) { // Death check
                     bool wasPlayable = play.IsPlayable;
-                    MakeTargetBuffsReactToSpell(play.MySpell);
+                    MakeEveryonesBuffsReactToSpell(play.MySpell);
                     yield return play.Play();
+                    play.MySpell.Target.Character.Brain.ReactToSpell(play.MySpell);
                     AddText(play.Text);
                 }
             }
         }
         private void PostBattle(PlayerPartyStatus status) {
-            Main.Instance.Sound.StopAllSounds();
             Grid postBattle = new Grid("Main");
             postBattle.OnEnter = () => {
                 postBattle.List.Clear();
@@ -414,8 +425,8 @@ namespace Scripts.Model.Pages {
                         }
                     }
                     Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
-                    postBattle.List.Add(PageUtil.GenerateItems(this, postBattle, new SpellParams(anyoneFromVictorParty), PageUtil.GetOutOfBattlePlayableHandler(this)));
-                    postBattle.List.Add(PageUtil.GenerateEquipmentGrid(postBattle, new SpellParams(anyoneFromVictorParty), PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(PageUtil.GenerateItemsGrid(this, postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(PageUtil.GenerateEquipmentGrid(postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(victory);
                 } else {
                     postBattle.List.Add(defeat);
@@ -429,7 +440,9 @@ namespace Scripts.Model.Pages {
             foreach (Character victor in VictoriousParty) {
                 int totalExp = 0;
                 foreach (Character defeated in AllDefeated) {
-                    totalExp += CalculateExperience(victor.Stats, defeated.Stats);
+                    if (defeated.HasFlag(Characters.Flag.GIVES_EXPERIENCE)) {
+                        totalExp += CalculateExperience(victor.Stats, defeated.Stats);
+                    }
                 }
                 victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, totalExp);
                 this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(totalExp.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
@@ -450,7 +463,7 @@ namespace Scripts.Model.Pages {
             AddText(BATTLE_START);
             while (!IsResolved) {
                 yield return startRound();
-                yield return new WaitForSeconds(1);
+                yield return new WaitForSeconds(0.10f);
             }
 
             string message = string.Empty;
@@ -472,14 +485,29 @@ namespace Scripts.Model.Pages {
         private IEnumerator startRound() {
             AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();
-            List<Character> chars = GetAll();
+            List<Character> allBattlers = GetAll();
             HashSet<Character> playerActionSet = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
 
-            yield return DetermineCharacterActions(chars, plays, playerActionSet);
+            yield return StartOfRound(allBattlers);
+            yield return DetermineCharacterActions(allBattlers, plays, playerActionSet);
             yield return PerformActions(plays);
-            yield return GoThroughBuffs(chars);
+            yield return GoThroughBuffs(allBattlers);
             yield return CheckForDeath();
             EndRound();
+        }
+
+        private IEnumerator StartOfRound(IEnumerable<Character> battlers) {
+            foreach (Character c in battlers) {
+                c.Brain.StartOfRoundSetup(this, new SpellParams(c, this));
+                yield return CharacterDialogue(c, c.Brain.StartOfRoundDialogue());
+            }
+        }
+
+        private IEnumerator CharacterDialogue(Character speaker, string content) {
+            if (!string.IsNullOrEmpty(content)) {
+                yield return ActUtil.SetupSceneRoutine(this, new Act[] { new TextAct(new AvatarBox(GetSide(speaker), speaker.Look.Sprite, speaker.Look.TextColor, content)) });
+            }
+            yield break;
         }
     }
 }

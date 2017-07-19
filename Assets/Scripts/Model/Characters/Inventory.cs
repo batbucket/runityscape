@@ -25,7 +25,7 @@ namespace Scripts.Model.Characters {
     }
 
     public class Inventory : IEnumerable<Item>, IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
-        private const int INITIAL_CAPACITY = 10;
+        private const int INITIAL_CAPACITY = 4;
 
         public Action<SplatDetails> AddSplat;
 

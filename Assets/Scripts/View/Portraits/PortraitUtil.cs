@@ -39,14 +39,15 @@ namespace Scripts.View.Portraits {
                 if (previous.ContainsKey(idSelector(content))) {
                     view = previous[id];
                     previous.Remove(id); // Remove from previous dict
+                    Util.Unparent(view.gameObject); // Remove association so we can update order
 
                     // New contents has entirely new character -> make a new portraitview
                 } else {
                     view = ObjectPoolManager.Instance.Get(prefab);
-                    Util.Parent(view.gameObject, thisGameObject);
                 }
                 setupView(view, content);
                 current.Add(new KeyValuePair<int, V>(id, view));
+                Util.Parent(view.gameObject, thisGameObject); // Parent outside so order is maintained (in case if character -> new char / character occurs between ticks)
             }
 
             // Previous dict should only have unrefreshed characters, return these.

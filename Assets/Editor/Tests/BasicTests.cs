@@ -10,6 +10,7 @@ using Scripts.Model.Acts;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
+using Scripts.Model.Pages;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
@@ -241,8 +242,8 @@ public class BasicTests {
         [Test]
         public void InventoryIsSerializable() {
             Inventory inv = new Inventory();
-            inv.Add(new Apple(), 5);
-            inv.Add(new PoisonArmor(), 2);
+            inv.ForceAdd(new Apple(), 5);
+            inv.ForceAdd(new PoisonArmor(), 2);
             ContainerSerializationHelper<Inventory, InventorySave, Item>(inv);
         }
 
@@ -394,6 +395,16 @@ public class BasicTests {
             Assert.IsTrue(party.Equals(party2));
             Assert.AreEqual(party, party2);
             Assert.AreNotSame(party.Collection.ToList()[1].Stats, party.Collection.ToList()[2].Buffs.ToList()[0].BuffCaster);
+        }
+
+        [Test]
+        public void CharacterWithHigherAgilityIsLessThanSlowerCharacter() {
+            Character fast = CharacterList.NotKitsune();
+            fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
+            Character slow = CharacterList.NotKitsune();
+            int difference = fast.Stats.CompareTo(slow.Stats);
+            Util.Log("Difference is: " + difference);
+            Assert.IsTrue(difference < 0);
         }
     }
 }

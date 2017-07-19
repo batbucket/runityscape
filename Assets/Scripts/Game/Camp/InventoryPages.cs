@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace Scripts.Game.Pages {
     public class InventoryPages : PageGroup {
 
-        public InventoryPages(Page previous, Character c, Inventory inventory) : base(new Page("Inventory")) {
+        public InventoryPages(Page previous, Character c, Inventory inventory) : base(new Page(string.Format("Inventory ({0})", inventory.Fraction))) {
             Inventory(previous, c, inventory);
         }
 
@@ -23,10 +23,10 @@ namespace Scripts.Game.Pages {
             p.Icon = PageUtil.INVENTORY;
             p.OnEnter = () => {
                 p.AddText(string.Format("{0}/{1} spaces used.", inventory.TotalOccupiedSpace, inventory.Capacity));
-                p.Actions = PageUtil.GenerateItems(
+                p.Actions = PageUtil.GenerateItemsGrid(
                         p,
                         previous,
-                        new SpellParams(c),
+                        new SpellParams(c, p),
                         PageUtil.GetOutOfBattlePlayableHandler(p))
                         .List;
             };

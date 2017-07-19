@@ -1,4 +1,5 @@
 ﻿using Scripts.Game.Serialized;
+using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Pages;
 using System;
@@ -61,13 +62,13 @@ namespace Scripts.Game.Pages {
             return new Encounter(rarity, GetPageFunc(enemies));
         }
 
-        protected Encounter GetPage(Rarity rarity, Page destination, Action onEnter) {
+        protected Encounter GetPage(Rarity rarity, Page destination, string big) {
             Func<Page> func = () => {
                 bool isTriggered = false;
                 destination.OnEnter += () => {
-                    if (!isTriggered) {
+                    if (!isTriggered && !string.IsNullOrEmpty(big)) {
                         isTriggered = false;
-                        onEnter.Invoke();
+                        ActUtil.SetupScene(destination, ActUtil.LongTalk(destination, destination.Right.PickRandom(), big));
                     }
                 };
                 return destination;
@@ -76,7 +77,10 @@ namespace Scripts.Game.Pages {
         }
 
         protected Encounter GetPage(Rarity rarity, Page destination) {
-            return GetPage(rarity, destination, () => { });
+            return new Encounter(
+                rarity,
+                () => destination
+                );
         }
 
         private void SetupGeneratorWithEncounters() {

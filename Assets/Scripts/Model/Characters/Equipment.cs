@@ -71,12 +71,14 @@ namespace Scripts.Model.Characters {
             Util.Assert(equipped.ContainsKey(type), "No equipment in slot.");
             EquippableItem itemToRemove = equipped[type];
 
-            Buff buffToRemove = itemBuffs[itemToRemove.Type];
-            itemBuffs.Remove(itemToRemove.Type);
+            if (itemBuffs.ContainsKey(itemToRemove.Type)) {
+                Buff buffToRemove = itemBuffs[itemToRemove.Type];
+                itemBuffs.Remove(itemToRemove.Type);
+                RemoveBuff(buffToRemove);
+            }
 
             inventory.Add(itemToRemove);
             equipped.Remove(itemToRemove.Type);
-            RemoveBuff(buffToRemove);
 
             foreach (KeyValuePair<StatType, int> pair in itemToRemove.Stats) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");

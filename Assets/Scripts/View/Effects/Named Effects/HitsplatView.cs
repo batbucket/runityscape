@@ -25,7 +25,8 @@ namespace Scripts.View.Effects {
         [SerializeField]
         private Image image;
 
-        public IEnumerator Animation(string s, Color c, Sprite sprite) {
+        public IEnumerator Animation(GameObject parent, string s, Color c, Sprite sprite) {
+            Util.Parent(this.gameObject, parent);
             this.image.sprite = sprite;
             image.gameObject.SetActive(sprite != null);
             text.color = c;
@@ -34,6 +35,7 @@ namespace Scripts.View.Effects {
 
             float timer = 0;
             float accel = 0;
+
             while ((timer += Time.deltaTime * accel) < TIME_UPSIZED) {
                 Vector2 scale = Vector2.Lerp(INITIAL_SIZE, FINAL_SIZE, timer / TIME_UPSIZED);
                 text.transform.localScale = scale;
@@ -51,10 +53,9 @@ namespace Scripts.View.Effects {
 
             float timer3 = 0;
             while ((timer3 += Time.deltaTime) < FADE_OUT_TIME) {
-                c.a -= Time.deltaTime * 3;
-                float t = 1 - timer3 / FADE_OUT_TIME;
-                Util.SetTextAlpha(text, t);
-                Util.SetImageAlpha(image, t);
+                float alpha = Mathf.Lerp(1, 0, timer3 / FADE_OUT_TIME);
+                Util.SetTextAlpha(text, alpha);
+                Util.SetImageAlpha(image, alpha);
                 yield return null;
             }
             ObjectPoolManager.Instance.Return(this);
@@ -67,6 +68,7 @@ namespace Scripts.View.Effects {
             image.transform.localScale = INITIAL_SIZE;
             text.color = Color.white;
             image.color = Color.white;
+            image.sprite = null;
         }
     }
 }

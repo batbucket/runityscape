@@ -7,6 +7,12 @@ namespace Scripts.View.Sound {
         [SerializeField]
         private AudioSource source;
 
+        public float Volume {
+            set {
+                source.volume = value;
+            }
+        }
+
         public AudioClip Clip {
             set {
                 source.clip = value;

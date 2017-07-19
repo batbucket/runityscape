@@ -62,7 +62,6 @@ namespace Scripts.Presenter {
 
         public Page Page {
             set {
-                Debug.Log(value.Location);
                 SetPage(value);
             }
 
@@ -95,6 +94,7 @@ namespace Scripts.Presenter {
             Page.Tick();
             header.Location = Page.Location;
             if (overrideGrid == null) {
+                actionGrid.ClearAll();
                 actionGrid.SetButtonAttributes(page.Actions);
             } else {
                 actionGrid.ClearAll();
@@ -201,7 +201,7 @@ namespace Scripts.Presenter {
         }
 
         private bool IsRevealedCalculation(Stats stats, int contributionFromFlags) {
-            return stats.ResourceVisibility + contributionFromFlags > 0;
+            return Util.IS_DEBUG || ((stats.ResourceVisibility + contributionFromFlags) > 0);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Collections.ObjectModel;
+using System;
 
 namespace Scripts.Model.Pages {
     public abstract class PageGroup : IButtonable {
@@ -27,13 +28,13 @@ namespace Scripts.Model.Pages {
 
         public string ButtonText {
             get {
-                return root.Location;
+                return root.ButtonText;
             }
         }
 
         public bool IsInvokable {
             get {
-                return true;
+                return Root.IsInvokable;
             }
         }
 
@@ -55,6 +56,12 @@ namespace Scripts.Model.Pages {
             }
         }
 
+        public bool IsVisibleOnDisable {
+            get {
+                return root.IsVisibleOnDisable;
+            }
+        }
+
         protected void Register(int id, Page page) {
             Util.Assert(!dict.ContainsKey(id), "ID already registered.");
             dict.Add(id, page);
@@ -68,7 +75,7 @@ namespace Scripts.Model.Pages {
         protected Page BasicPage(int index, int previousIndex, params IButtonable[] buttons) {
             Page page = Get(index);
             IButtonable[] list = new IButtonable[buttons.Length + 1];
-            list[0] = Get(previousIndex);
+            list[0] = PageUtil.GenerateBack(Get(previousIndex));
             for (int i = 1; i < list.Length; i++) {
                 list[i] = buttons[i - 1];
             }

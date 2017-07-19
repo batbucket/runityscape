@@ -54,6 +54,12 @@ namespace Scripts.Model.Processes {
             }
         }
 
+        public bool IsVisibleOnDisable {
+            get {
+                return true;
+            }
+        }
+
         public void Invoke() {
             this.OnEnter();
             changeGridFunc.Invoke(List);

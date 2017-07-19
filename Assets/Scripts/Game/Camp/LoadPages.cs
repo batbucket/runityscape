@@ -66,11 +66,11 @@ namespace Scripts.Game.Pages {
             return page;
         }
 
-        private void RestoreCamp(GameSave save, out Camp camp, out Party party, out string saveName) {
-            party = new Party();
-            party.InitFromSaveObject(save.Party);
-            Flags flags = save.Flags;
-            camp = new Camp(party, flags);
+        private void RestoreCamp(WorldSave save, out Camp camp, out Party party, out string saveName) {
+            World world = new World();
+            world.InitFromSaveObject(save);
+            party = world.Party;
+            camp = new Camp(party, world.Flags);
             saveName = SaveLoad.SaveFileDisplay(party.Default.Look.Name, party.Default.Stats.Level);
         }
 
@@ -103,7 +103,7 @@ namespace Scripts.Game.Pages {
             current.AddText("Attempting to import from Pastebin...");
             string possibleSave = string.Empty;
             yield return Pastebin.GetFromKey(current.Input, s => { possibleSave = s; });
-            GameSave gameSave = null;
+            WorldSave gameSave = null;
             try {
                 gameSave = SaveLoad.Load(possibleSave, possibleSave);
             } catch (Exception e) {

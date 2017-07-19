@@ -136,7 +136,7 @@ namespace Scripts.Model.Characters {
         }
 
         public int GetMissingStatCount(StatType type) {
-            return GetStatCount(Get.MAX) - GetStatCount(Get.MOD);
+            return GetStatCount(Get.MAX, type) - GetStatCount(Get.MOD, type);
         }
 
         public void SetToStat(StatType statType, Set type, int amount) {
@@ -177,7 +177,16 @@ namespace Scripts.Model.Characters {
             return stat != null;
         }
 
+        public float GetStatPercentage(StatType type) {
+            if (HasStat(type) && GetStatCount(Get.MAX, type) > 0) {
+                return ((float)GetStatCount(Get.MOD, type)) / GetStatCount(Get.MAX, type);
+            } else {
+                return 0;
+            }
+        }
+
         public int GetStatCount(Get type, params StatType[] statTypes) {
+            Util.Assert(statTypes.Length > 0, "No stat types specified.");
             int sum = 0;
             foreach (StatType st in statTypes) {
                 if (HasStat(st)) {
@@ -286,7 +295,7 @@ namespace Scripts.Model.Characters {
             if (diff == 0) {
                 return (Util.IsChance(.5) ? -1 : 1);
             } else {
-                return diff;
+                return -diff;
             }
         }
     }

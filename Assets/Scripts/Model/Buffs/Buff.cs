@@ -100,6 +100,12 @@ namespace Scripts.Model.Buffs {
             }
         }
 
+        public bool HasEndOfTurn {
+            get {
+                return OnEndOfTurnHelper(new Characters.Stats()).Count > 0;
+            }
+        }
+
         public void OnApply(Characters.Stats owner) {
             PerformSpellEffects(OnApplyHelper(owner));
         }
@@ -111,7 +117,7 @@ namespace Scripts.Model.Buffs {
             }
         }
 
-        public virtual bool IsReact(Spell s) {
+        public virtual bool IsReact(Spell s, Characters.Stats owner) {
             return false;
         }
 

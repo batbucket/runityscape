@@ -17,6 +17,11 @@ using UnityEngine;
 namespace Scripts.Game.Defined.Characters {
     public static class CharacterList {
         #region Character Builder stuff
+        private static Character RemoveFlag(this Character c, Model.Characters.Flag flag) {
+            c.RemoveFlag(flag);
+            return c;
+        }
+
         private struct ItemCount {
             public readonly Item Item;
             public readonly int Count;
@@ -34,6 +39,7 @@ namespace Scripts.Game.Defined.Characters {
         private static Character StandardEnemy(Stats stats, Look look, Brain brain) {
             Character enemy = new Character(stats, look, brain);
             enemy.AddFlag(Model.Characters.Flag.DROPS_ITEMS);
+            enemy.AddFlag(Model.Characters.Flag.GIVES_EXPERIENCE);
             return enemy;
         }
 
@@ -183,8 +189,36 @@ namespace Scripts.Game.Defined.Characters {
                         Breed.SPIRIT
                         ),
                     new RuinsBrains.Healer())
-                    .AddItem(new Apple(), Util.IsChance(.50f))
+                    .AddItem(new Apple())
                     .AddSpells(new Heal());
+            }
+
+            private static Look KitsuneLook() {
+                return new Look(
+                        "Vitra",
+                        "fox-head",
+                        "A fox-type, humanoid monster known for using illusions.",
+                        "Its clones do no damage.",
+                        Breed.KITSUNE
+                        );
+            }
+
+            public static Character Kitsune() {
+                return StandardEnemy(
+                    new Stats(10, 2, 5, 10, 15),
+                    KitsuneLook(),
+                    new RuinsBrains.Kitsune()
+                    )
+                .AddSpells(new ReflectiveClone(), new SetupCounter());
+            }
+
+            public static Character KitsuneClone() {
+                return StandardEnemy(
+                    new Stats(9, 0, 100, 0, 1),
+                    KitsuneLook(),
+                    new RuinsBrains.KitsuneClone()
+                    )
+                    .RemoveFlag(Model.Characters.Flag.GIVES_EXPERIENCE);
             }
         }
     }

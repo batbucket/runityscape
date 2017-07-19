@@ -1,13 +1,10 @@
-﻿using Scripts.View;
+﻿using Scripts.Model.Pages;
+using Scripts.View;
 using Scripts.View.TextBoxes;
 using System;
 using UnityEngine;
 
 namespace Scripts.Model.TextBoxes {
-    public enum Side {
-        LEFT,
-        RIGHT
-    }
 
     /// <summary>
     /// Represents a textbox with a character portrait window to one of the sides.

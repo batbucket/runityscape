@@ -7,12 +7,19 @@ namespace Scripts.Game.Pages {
         public readonly string Big;
         public Func<Flags, bool> Condition;
         public Action<Flags> SetFlags;
+        public Action EndAction;
 
         public Talk(string name, string big) {
             this.Name = name;
             this.Big = big;
             this.Condition = f => true;
             this.SetFlags = f => { };
+            this.EndAction = () => { };
+        }
+
+        public Talk AddEndAction(Action endAction) {
+            this.EndAction = endAction;
+            return this;
         }
 
         public Talk AddCondition(Func<Flags, bool> condition) {

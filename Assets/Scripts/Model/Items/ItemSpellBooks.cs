@@ -101,12 +101,12 @@ namespace Scripts.Model.Items {
     public class TossItem : ItemSpellBook {
         private Inventory inventory;
 
-        public TossItem(Item item, Inventory inventory) : base(item, "Drop") {
+        public TossItem(Item item, Inventory inventory) : base(item, "Dispose") {
             this.inventory = inventory;
         }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
-            return string.Format("{0}\n\nDrops one of this item from the inventory.", item.Description);
+            return string.Format("{0}\nThrow away one of this item from the inventory.", item.Description);
         }
 
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {

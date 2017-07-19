@@ -113,7 +113,7 @@ namespace Scripts.Game.Pages {
                 new Process("hitsplat test", () => {
                     HitsplatView hpv = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
                     Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
-                    Presenter.Main.Instance.StartCoroutine(hpv.Animation("Test", Color.cyan, Util.GetSprite("fox-head")));
+                    Presenter.Main.Instance.StartCoroutine(hpv.Animation(kitsune.Presenter.PortraitView.EffectsHolder, "Test", Color.cyan, Util.GetSprite("fox-head")));
                 }),
                 new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { CharacterList.Hero("Debug"), CharacterList.NotKitsune(), CharacterList.NotKitsune()  }, new Character[] { CharacterList.NotKitsune(), CharacterList.NotKitsune() }),
                 new Process("LongTalk Test", () => {
@@ -127,6 +127,7 @@ namespace Scripts.Game.Pages {
                 new Process("DELET all saves", () => SaveLoad.DeleteAllSaves()),
                 new Process("test pasty", () => Pastebin.PasteTest()),
                 new Process("move fox", () => { debug.Left.Clear(); debug.AddCharacters(Side.RIGHT, kitsune); }),
+                new Process("test boss logo", () => ActUtil.SetupScene(debug, new BossTransitionAct(Get(CREDITS), kitsune.Look))),
                 submenu
             };
 
@@ -148,14 +149,14 @@ namespace Scripts.Game.Pages {
             page.AddCharacters(Side.LEFT, new CreditsDummy(Breed.TESTER, 5, "Duperman", "shiny-apple", "Once explored the Amazon."));
             page.AddCharacters(Side.LEFT, new CreditsDummy(Breed.TESTER, 99, "Rohan", "swap-bag", "Best hunter in the critically acclaimed game\n\'Ace Prunes 3\'"));
             page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "Vishal", "round-shield", "Hacked the save file to give himself 2,147,483,647 gold in an attempt to buy the tome."));
-            page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "One of Vishal's friends", "hourglass", "Name forgotten, but not gone."));
+            page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "One of Vishal's friends", "hourglass", "Got Vitality nerfed to give 2 health, from 10."));
             page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.TESTER, 5, "cjdudeman14", "round-shield", "Open beta tester. Bug slayer. Attempted to kill that which is unkillable."));
             page.AddCharacters(Side.RIGHT, new CreditsDummy(Breed.COMMENTER, 5, "UnserZeitMrGlinko", "gladius", "\"more talking!﻿\" ~UZMG"));
 
             page.OnEnter += () => {
                 page.AddText(
                     "<Tools>\nMade with Unity and the NUnit testing framework.",
-                    "<Music>\nSourced from OpenGameArt.",
+                    "<Music>\nFrom OpenGameArt, Trevor Lentz, cynicmusic.com",
                     "<Sound Effects>\nSourced from Freesound, SoundBible, and OpenGameArt.",
                     "<Icons>\nSourced from http://Game-icons.net.",
                     "<Fonts>\nMain: BPmono by George Triantafyllakos\nTextboxes: Anonymous Pro by Mark Simonson\nHitsplat: n04b by 04\nHotkey: PKMN-Mystery-Dungeon by David Fens"

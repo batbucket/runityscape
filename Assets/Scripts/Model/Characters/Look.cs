@@ -21,9 +21,11 @@ namespace Scripts.Model.Characters {
 
         public Look() : this("Default", "fox-head", string.Empty, string.Empty, Breed.UNKNOWN, Color.white) { }
 
-        public Look(string name, string spriteLoc, string tooltip, string check, Breed breed, Color textColor) {
+        public Look(string name, string spriteLoc, string tooltip, string check, Breed breed, Color textColor) : this(name, Util.GetSprite(spriteLoc), tooltip, check, breed, textColor) { }
+
+        public Look(string name, Sprite sprite, string tooltip, string check, Breed breed, Color textColor) {
             this.Name = name;
-            this.sprite = Util.GetSprite(spriteLoc);
+            this.sprite = sprite;
             this.tooltip = tooltip;
             this.check = check;
             this.breed = breed;
