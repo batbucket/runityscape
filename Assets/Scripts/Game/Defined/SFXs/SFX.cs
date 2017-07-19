@@ -24,6 +24,10 @@ namespace Scripts.Game.Defined.SFXs {
             return HitSplat(parent, splat.Text, splat.Color, splat.Sprite);
         }
 
+        public static IEnumerator Wait(float duration) {
+            yield return new WaitForSeconds(duration);
+        }
+
         public static IEnumerator Melee(GameObject mover, GameObject destination, float duration, string soundLoc) {
             // Move mover to upper layer so it is on top of all elements
             int index = mover.transform.GetSiblingIndex();

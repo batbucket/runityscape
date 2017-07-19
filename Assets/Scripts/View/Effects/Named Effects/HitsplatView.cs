@@ -62,6 +62,12 @@ namespace Scripts.View.Effects {
             yield break;
         }
 
+        public static float TOTAL_DURATION {
+            get {
+                return TIME_UPSIZED + TIME_BEFORE_DECAY + FADE_OUT_TIME;
+            }
+        }
+
         public override void Reset() {
             text.text = string.Empty;
             text.transform.localScale = INITIAL_SIZE;
