@@ -406,9 +406,9 @@ namespace Scripts.Model.Pages {
                 if (CharacterCanCast(play.MySpell.Caster)) { // Death check
                     bool wasPlayable = play.IsPlayable;
                     MakeEveryonesBuffsReactToSpell(play.MySpell);
-                    yield return play.Play();
-                    play.MySpell.Target.Character.Brain.ReactToSpell(play.MySpell);
                     AddText(play.Text);
+                    yield return play.Play();
+                    yield return CharacterDialogue(play.MySpell.Target.Character, play.MySpell.Target.Character.Brain.ReactToSpell(play.MySpell));
                 }
             }
         }
