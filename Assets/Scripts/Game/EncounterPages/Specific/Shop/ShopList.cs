@@ -27,7 +27,7 @@ namespace Scripts.Game.Pages {
                                 ActUtil.SetupScene(
                                     shop.Root,
                                     ActUtil.LongTalk(shop.Root, maple,
-                                    "<t>You come across a woman covered in white desert robes and a hood lying on her back. Tiny cuts cover the front of the robes, making it slightly bloody.<t>From the opening in her hood, as well as her exposed hands, you see that her skin is a dark brown.<t>A massive backpack is right next to her, with a sign hooked onto it.<a>Money is in the top pouch...<t>She taps on the sign which reads:\n\"Maple's McIntosh Market.\"\n(Her prices are listed below it.)<a>Take one more or put in one less and I'll put you on the list...")
+                                    "<t>You come across a woman covered in white desert robes and a hood lying on her back. Tiny cuts cover the front of the robes, making it slightly bloody.<t>From the opening in her hood, as well as her exposed hands, you see that her skin is a dark brown.<t>A massive backpack is right next to her, with a sign hooked onto it.<a>Money is in the top pouch...<t>She taps on the sign which reads:<t>Maple's McIntosh Market<t>(Her prices are listed below it.)<a>Take one more or put in one less and I'll put you on the list...")
                                     );
                             }
                         })
