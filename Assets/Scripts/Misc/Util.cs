@@ -18,6 +18,7 @@ using WindowsInput;
  */
 
 public static class Util {
+    public const bool IS_DEBUG = false;
     private static char RANDOM_STRING_DELIMITER = '/';
 
     public static string PickRandom(string big) {
@@ -125,8 +126,6 @@ public static class Util {
         a.transform.SetSiblingIndex(b.transform.GetSiblingIndex());
         b.transform.SetSiblingIndex(ai);
     }
-
-    public const bool IS_DEBUG = true;
 
     public static void Log(string message) {
         if (IS_DEBUG) {
