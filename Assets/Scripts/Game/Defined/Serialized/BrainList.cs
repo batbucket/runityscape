@@ -86,10 +86,12 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         }
 
         public class Kitsune : BasicBrain {
-            private const int TURNS_BETWEEN_CLONES = 4;
+            private const int TURNS_BETWEEN_CLONES = 5;
+            private const int LOW_HEALTH = 5;
             public static readonly SpellBook ATTACK = new Attack();
             public static readonly SpellBook CLONE = new ReflectiveClone();
             private bool commentedOnDeadHealers;
+            private bool commentedOnLowHealth;
             private int lastTurnCloned;
 
             private bool IsAnyHealersAlive {
@@ -137,6 +139,10 @@ namespace Scripts.Game.Defined.Serialized.Characters {
                     commentedOnDeadHealers = true;
                     return Util.PickRandom("Know that I will not fall as easily as these spirits, mayfly./Killing those who are already dead... How unimpressive./They would have only gotten in the way.");
                 }
+                if (!commentedOnLowHealth && owner.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH) <= LOW_HEALTH) {
+                    commentedOnLowHealth = true;
+                    return Util.PickRandom("How.../Am I holding back...?/...");
+                }
                 return string.Empty;
             }
         }
@@ -156,11 +162,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
             public override string ReactToSpell(Spell spell) {
                 if (spell.Book.SpellType == SpellType.OFFENSE && spell.Result.Type.IsSuccessfulType) {
-                    if (CloneCount == 1) {
-                        return Util.PickRandom("Not very lucky, are you?/How mindless.../Took you long enough./As they say: fifth time is the charm./Now that's just sad./Unfortunate. For you.");
-                    } else {
-                        return Util.PickRandom("You destroy but a phantom./Merely a simulacrum of myself./I am but a clone./A replication of my true self./A powerless repetition./Just kidding.");
-                    }
+                    return Util.PickRandom("You destroy but a phantom./Merely a simulacrum of myself./I am but a clone./A replication of my true self./Just a repetition.");
                 }
                 return string.Empty;
             }
