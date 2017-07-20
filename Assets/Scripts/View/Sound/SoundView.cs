@@ -13,7 +13,8 @@ namespace Scripts.View.Sounds {
 
         private const string MUSIC_PREFIX = "Music/";
         private const string SOUND_PREFIX = "Sounds/";
-        private const float MUSIC_VOLUME = 0.5f;
+        private const float SOUND_VOLUME = 0.50f;
+        private const float MUSIC_VOLUME = 0.30f;
 
         public IDictionary<string, AudioClip> Sound { get; private set; }
 
@@ -68,6 +69,7 @@ namespace Scripts.View.Sounds {
         private IEnumerator PlayThenDestroy(string resourceLocation) {
             ClipView clip = ObjectPoolManager.Instance.Get<ClipView>(clipPrefab);
             clip.Clip = Sound[resourceLocation];
+            clip.Volume = SOUND_VOLUME;
             oneShotHolder.Add(clip);
             while (clip.IsPlaying) {
                 yield return null;
