@@ -65,6 +65,7 @@ namespace Scripts.Game.Pages {
         private void SetupEnd() {
             Page p = Get(DUNGEON_END);
             p.AddCharacters(Side.LEFT, party);
+            p.Music = "Wind";
             p.Body = "One final archway separates the halls from the cathedral center. The light fails to reach past it, leaving you clueless as to what lies further.";
             Grid grid = new Grid("Dungeon End");
             grid.List.Add(PageUtil.GetConfirmationGrid(p, grid,
@@ -77,6 +78,7 @@ namespace Scripts.Game.Pages {
         private void SetupBossRoom(Character fox) {
             Page p = Get(BOSS_ROOM);
             p.AddCharacters(Side.LEFT, party);
+            p.Music = "Wind";
             p.Body = "A dimly lit room with a staircase at the end of it. The staircase leads to a gateway at the very top, devoid of any portal. A black liquid is splattered all over the room and its walls, filling the room with a vile scent.";
             p.Actions = new IButtonable[] { PageUtil.GenerateBack(Get(DUNGEON_END)) };
             p.OnEnter = () => {
