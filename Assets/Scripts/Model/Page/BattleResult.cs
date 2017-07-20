@@ -8,8 +8,10 @@ namespace Scripts.Model.Pages {
         public readonly Action Action;
 
         public BattleResult(Page page, Action action = null) {
-            this.Page = page;
-            this.Action = action ?? (() => { });
-        }
+            if (page != null) {
+				this.Page = page;
+            	this.Action = action ?? (() => { });
+        	}
+		}
     }
 }
