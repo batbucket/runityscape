@@ -52,12 +52,15 @@ namespace Scripts.Game.Pages {
             Page start = Get(ROOT_INDEX);
             start.Body = string.Format("Welcome to MonsterScape v{0}.", Main.VERSION);
             start.OnEnter = () => {
-                start.Actions = new IButtonable[] {
-                Get(NEW_GAME),
-                Get(CREDITS),
-                new LoadPages(start),
-                Get(DEBUGGING)
+                List<IButtonable> buttons = new List<IButtonable>() {
+                    Get(NEW_GAME),
+                    Get(CREDITS),
+                    new LoadPages(start)
                 };
+                if (Util.IS_DEBUG) {
+                    buttons.Add(Get(DEBUGGING));
+                }
+                start.Actions = buttons;
             };
         }
 
