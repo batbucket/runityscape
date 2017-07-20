@@ -123,8 +123,8 @@ namespace Scripts.Game.Pages {
                 "Export to Pastebin",
                 string.Format("Exports this save file to Pastebin."),
                 () => {
+                    p.AddText("Attempting to export...");
                     try {
-                        p.AddText("Attempting to export...");
                         PastebinUpload(p, save);
                     } catch (Exception e) {
                         p.AddText(e.Message);
