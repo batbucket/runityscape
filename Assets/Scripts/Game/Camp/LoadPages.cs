@@ -47,7 +47,13 @@ namespace Scripts.Game.Pages {
             Party party;
             Camp camp;
             string saveName;
-            RestoreCamp(SaveLoad.Load(index, index.ToString()), out camp, out party, out saveName);
+            try {
+                RestoreCamp(SaveLoad.Load(index, index.ToString()), out camp, out party, out saveName);
+            } catch (Exception e) {
+                previous.AddText(string.Format("Save {0} is corrupted, deleting...\n{1}", index, e.Message));
+                SaveLoad.DeleteSave(index);
+                return SetupImport(previous, index);
+            }
             Page page = new Page(saveName);
             page.Body = string.Format("What would you like to do with file {0}?", index);
             page.Actions = new IButtonable[] {
