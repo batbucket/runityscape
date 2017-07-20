@@ -12,6 +12,7 @@ namespace Scripts.View.Effects {
             set {
                 var x = ps.shape;
                 x.box = value;
+                x.radius = value.x / 2;
             }
         }
 

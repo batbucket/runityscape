@@ -256,7 +256,7 @@ namespace Scripts.Model.Pages {
                     foreach (Buff removableBuff in dispellableOnDeath) {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
                     }
-                    Main.Instance.Sound.PlaySound("Boom_6");
+                    Main.Instance.Sound.PlaySound("synthetic_explosion_1");
                     yield return SFX.Death(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
                     HashSet<Character> graveyard = null;
