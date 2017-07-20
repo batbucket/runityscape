@@ -131,7 +131,7 @@ namespace Scripts.Model.Characters {
             this.Stats.InitFromSaveObject(saveObject.Stats);
             this.Look.InitFromSaveObject(saveObject.Look);
             this.Spells.InitFromSaveObject(saveObject.Spells);
-            this.Equipment.InitFromSaveObject(saveObject.Equipment);
+            // No equipment setup here!
 
             // Must replace class
             Brain brain = saveObject.Brain.CreateObjectFromID();

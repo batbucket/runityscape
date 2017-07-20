@@ -332,6 +332,20 @@ public class BasicTests {
             Assert.AreSame(caster.Stats, poison.BuffCaster);
         }
 
+        [Test]
+        public void EquippedItemsAreSaved() {
+            Character dummy = CharacterList.NotKitsune();
+            dummy.Inventory.ForceAdd(new BrokenSword());
+            dummy.Equipment.AddEquip(dummy.Inventory, new BuffParams(dummy.Stats, dummy.Id), new BrokenSword());
+            Party party = new Party();
+            party.AddMember(dummy);
+            PartySave ps = party.GetSaveObject();
+            PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
+            Party party2 = new Party();
+            party2.InitFromSaveObject(retrieved);
+            Assert.AreEqual(party, party2);
+        }
+
         [Test, Timeout(2000)]
         public void SaveLoadMaintainsReferencesForPartyMemberCastedBuffs() {
             Party party = new Party();
