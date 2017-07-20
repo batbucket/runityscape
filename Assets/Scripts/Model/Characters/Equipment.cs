@@ -155,7 +155,6 @@ namespace Scripts.Model.Characters {
         }
 
         public void InitFromSaveObject(EquipmentSave saveObject) {
-            Util.Log(equipped.Count.ToString());
             foreach (EquipItemSave save in saveObject.Equipped) {
                 EquippableItem eq = save.CreateObjectFromID();
                 eq.InitFromSaveObject(save);
