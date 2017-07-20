@@ -60,6 +60,11 @@ namespace Scripts.Model.Processes {
             }
         }
 
+        public Grid SetCondition(Func<bool> condition) {
+            this.Condition = condition;
+            return this;
+        }
+
         public void Invoke() {
             this.OnEnter();
             changeGridFunc.Invoke(List);

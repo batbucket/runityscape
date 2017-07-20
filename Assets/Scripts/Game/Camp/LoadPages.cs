@@ -17,6 +17,7 @@ namespace Scripts.Game.Pages {
         private const int PASTEBIN_USAGE_COOLDOWN = 60;
         private const int IMPORT = 1;
         private static float nextTimePastebinAvailable;
+        private bool isUploadingToPastebin;
 
         public LoadPages(Page previous) : base(new Page("Load Game")) {
             SetupRoot(previous);
@@ -50,8 +51,8 @@ namespace Scripts.Game.Pages {
             Page page = new Page(saveName);
             page.Body = string.Format("What would you like to do with file {0}?", index);
             page.Actions = new IButtonable[] {
-                PageUtil.GenerateBack(previous),
-                GetLoadProcess(camp, index),
+                PageUtil.GenerateBack(previous).SetCondition(() => !isUploadingToPastebin),
+                GetLoadProcess(camp, index).SetCondition(() => !isUploadingToPastebin),
                 PageUtil.GetConfirmationGrid(
                     previous,
                     previous,
@@ -59,7 +60,7 @@ namespace Scripts.Game.Pages {
                     "Delete",
                     string.Format("Delete file {0}.", index),
                     string.Format("Are you sure you want to delete file {0}?\n{1}", index, saveName)
-                    ),
+                    ).SetCondition(() => !isUploadingToPastebin),
                 GetExportProcess(previous, SaveLoad.GetSaveValue(index)),
             };
             page.AddCharacters(Side.RIGHT, party.Collection);
@@ -82,8 +83,8 @@ namespace Scripts.Game.Pages {
             p.HasInputField = true;
             p.OnEnter = () => {
                 p.Actions = new IButtonable[] {
-                PageUtil.GenerateBack(previous),
-                GetImportProcess(previous, p, index)
+                    PageUtil.GenerateBack(previous),
+                    GetImportProcess(previous, p, index)
                 };
             };
             return p;
@@ -125,21 +126,23 @@ namespace Scripts.Game.Pages {
                 () => {
                     p.AddText("Attempting to export...");
                     try {
-                        PastebinUpload(p, save);
+                        Main.Instance.StartCoroutine(PastebinUpload(p, save));
                     } catch (Exception e) {
                         p.AddText(e.Message);
                     }
                     nextTimePastebinAvailable = Time.time + PASTEBIN_USAGE_COOLDOWN;
                 },
-                () => Time.time > nextTimePastebinAvailable
+                () => Time.time > nextTimePastebinAvailable && !isUploadingToPastebin
                 );
         }
 
-        private void PastebinUpload(Page p, string save) {
-            Pastebin.Paste(
+        private IEnumerator PastebinUpload(Page p, string save) {
+            isUploadingToPastebin = true;
+            yield return Pastebin.Paste(
                 save,
-                s => p.AddText(string.Format("Posted save to {0}.\n<color=red>The Paste will expire in 10 minutes.</color>", s))
+                s => p.AddText(string.Format("Posted save to {0}.\n<color=red>It will expire in 10 minutes.</color>", s))
             );
+            isUploadingToPastebin = false;
         }
 
         private Process GetLoadProcess(Camp camp, int index) {

@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
-using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
+using UnityEngine;
+using UnityEngine.Networking;
 
 namespace PasteBin {
 
@@ -29,24 +29,26 @@ namespace PasteBin {
             get { return _userName; }
         }
 
-        public void Login(string userName, string password) {
+        public IEnumerator Login(string userName, string password) {
             if (string.IsNullOrEmpty(userName))
                 throw new ArgumentNullException("userName");
             if (string.IsNullOrEmpty(password))
                 throw new ArgumentNullException("password");
 
-            var parameters = GetBaseParameters();
-            parameters[ApiParameters.UserName] = userName;
-            parameters[ApiParameters.UserPassword] = password;
+            WWWForm form = GetBaseParameters();
+            form.AddField(ApiParameters.UserName, userName);
+            form.AddField(ApiParameters.UserPassword, password);
 
-            WebClient client = new WebClient();
-            byte[] bytes = client.UploadValues(_apiLoginUrl, parameters);
-            string resp = GetResponseText(bytes);
-            if (resp.StartsWith("Bad API request"))
-                throw new PasteBinApiException(resp);
-
-            _userName = userName;
-            _apiUserKey = resp;
+            using (UnityWebRequest www = UnityWebRequest.Post(_apiLoginUrl, form)) {
+                yield return www.Send();
+                string response = www.downloadHandler.text;
+                if (response.StartsWith("Bad API request")) {
+                    throw new PasteBinApiException(response);
+                } else {
+                    _userName = userName;
+                    _apiUserKey = response;
+                }
+            }
         }
 
         public void Logout() {
@@ -54,30 +56,30 @@ namespace PasteBin {
             _apiUserKey = null;
         }
 
-        public string Paste(PasteBinEntry entry) {
+        public IEnumerator Paste(PasteBinEntry entry, Action<string> responseHandler) {
             if (entry == null)
                 throw new ArgumentNullException("entry");
             if (string.IsNullOrEmpty(entry.Text))
                 throw new ArgumentException("The paste text must be set", "entry");
 
-            var parameters = GetBaseParameters();
-            parameters[ApiParameters.Option] = "paste";
-            parameters[ApiParameters.PasteCode] = entry.Text;
-            SetIfNotEmpty(parameters, ApiParameters.PasteName, entry.Title);
-            SetIfNotEmpty(parameters, ApiParameters.PasteFormat, entry.Format);
-            SetIfNotEmpty(parameters, ApiParameters.PastePrivate, entry.Private ? "1" : "0");
-            SetIfNotEmpty(parameters, ApiParameters.PasteExpireDate, FormatExpireDate(entry.Expiration));
-            SetIfNotEmpty(parameters, ApiParameters.UserKey, _apiUserKey);
+            WWWForm form = GetBaseParameters();
+            form.AddField(ApiParameters.Option, "paste");
+            form.AddField(ApiParameters.PasteCode, entry.Text);
+            SetIfNotEmpty(form, ApiParameters.PasteName, entry.Title);
+            SetIfNotEmpty(form, ApiParameters.PasteFormat, entry.Format);
+            SetIfNotEmpty(form, ApiParameters.PastePrivate, entry.Private ? "1" : "0");
+            SetIfNotEmpty(form, ApiParameters.PasteExpireDate, FormatExpireDate(entry.Expiration));
+            SetIfNotEmpty(form, ApiParameters.UserKey, _apiUserKey);
 
             string resp = string.Empty;
-            using (WebClient client = new WebClient()) {
-                byte[] bytes = client.UploadValues(_apiPostUrl, parameters);
-                resp = GetResponseText(bytes);
-                if (resp.StartsWith("Bad API request"))
+            using (UnityWebRequest www = UnityWebRequest.Post(_apiPostUrl, form)) {
+                yield return www.Send();
+                string response = www.downloadHandler.text;
+                if (response.StartsWith("Bad API request")) {
                     throw new PasteBinApiException(resp);
+                }
+                responseHandler(response);
             }
-            return resp;
-
         }
 
         private static string FormatExpireDate(PasteBinExpiration expiration) {
@@ -97,14 +99,14 @@ namespace PasteBin {
             }
         }
 
-        private static void SetIfNotEmpty(NameValueCollection parameters, string name, string value) {
+        private static void SetIfNotEmpty(WWWForm parameters, string name, string value) {
             if (!string.IsNullOrEmpty(value))
-                parameters[name] = value;
+                parameters.AddField(name, value);
         }
 
-        private NameValueCollection GetBaseParameters() {
-            var parameters = new NameValueCollection();
-            parameters[ApiParameters.DevKey] = _apiDevKey;
+        private WWWForm GetBaseParameters() {
+            var parameters = new WWWForm();
+            parameters.AddField(ApiParameters.DevKey, _apiDevKey);
 
             return parameters;
         }

@@ -30,12 +30,12 @@ namespace Scripts.Game.Serialization {
             handleOutput(www.text);
         }
 
-        public static void Paste(string message, Action<string> resultHandler) {
+        public static IEnumerator Paste(string message, Action<string> pasteResultHandler) {
             string apiKey = API_KEY;
             var client = new PasteBinClient(apiKey);
 
             // Optional; will publish as a guest if not logged in
-            client.Login(USERNAME, PASSWORD);
+            yield return client.Login(USERNAME, PASSWORD);
 
             var entry = new PasteBinEntry {
                 Title = "Untitled",
@@ -45,17 +45,15 @@ namespace Scripts.Game.Serialization {
                 Format = "text"
             };
 
-            string pasteUrl = client.Paste(entry);
-            resultHandler(pasteUrl);
-            Util.Log("Your paste is published at this URL: " + pasteUrl);
+            yield return client.Paste(entry, pasteResultHandler);
         }
 
-        public static void PasteTest() {
+        public static IEnumerator PasteTest() {
             string apiKey = API_KEY;
             var client = new PasteBinClient(apiKey);
 
             // Optional; will publish as a guest if not logged in
-            client.Login(USERNAME, PASSWORD);
+            yield return client.Login(USERNAME, PASSWORD);
 
             var entry = new PasteBinEntry {
                 Title = "PasteBin client test",
@@ -65,8 +63,7 @@ namespace Scripts.Game.Serialization {
                 Format = "csharp"
             };
 
-            string pasteUrl = client.Paste(entry);
-            Console.WriteLine("Your paste is published at this URL: " + pasteUrl);
+            yield return client.Paste(entry, s => Util.Log("Paste response:\n" + s));
         }
     }
 }

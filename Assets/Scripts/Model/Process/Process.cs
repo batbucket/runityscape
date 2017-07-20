@@ -113,6 +113,12 @@ namespace Scripts.Model.Processes {
             return this;
         }
 
+        public Process SetCondition(Func<bool> condition) {
+            Util.Assert(condition != null, "Condition cannot be null");
+            this.condition = condition;
+            return this;
+        }
+
         public static Process GetBackProcess(Page previous) {
             return new Process(
                 "Back",
