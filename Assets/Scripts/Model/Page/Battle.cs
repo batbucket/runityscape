@@ -280,7 +280,6 @@ namespace Scripts.Model.Pages {
                 Character c = chars[i];
 
                 if (c.Stats.State == State.ALIVE) {
-                    yield return new WaitForSeconds(0.10f);
                     PooledBehaviour textbox = null;
 
                     // Only show when player controlled is asked to make a move
@@ -357,7 +356,6 @@ namespace Scripts.Model.Pages {
             //End of round buff interactions
             foreach (Character myC in chars) {
                 Character c = myC;
-                yield return new WaitForSeconds(0.10f);
                 Characters.Buffs buffs = c.Buffs;
                 IList<Buff> timedOut = new List<Buff>();
                 foreach (Buff myB in buffs) {
