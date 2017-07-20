@@ -101,6 +101,7 @@ namespace Scripts.Game.Defined.SFXs {
                 mover.transform.position = Vector2.Lerp(mover.transform.position, destination, Mathf.SmoothStep(0, 1, timer / duration));
                 yield return null;
             }
+            mover.transform.position = destination;
         }
     }
 }

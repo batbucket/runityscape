@@ -18,7 +18,7 @@ using WindowsInput;
  */
 
 public static class Util {
-    public const bool IS_DEBUG = false;
+    public static readonly bool IS_DEBUG = true && Application.isEditor;
     private static char RANDOM_STRING_DELIMITER = '/';
 
     public static string PickRandom(string big) {
