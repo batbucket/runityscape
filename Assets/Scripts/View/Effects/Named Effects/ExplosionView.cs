@@ -10,9 +10,9 @@ namespace Scripts.View.Effects {
 
         public Vector2 Dimensions {
             set {
-                var x = ps.shape;
-                x.box = value;
-                x.radius = value.x / 2;
+                //var x = ps.shape;
+                //x.box = value;
+                //x.radius = value.x / 2;
             }
         }
 
