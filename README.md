@@ -34,8 +34,8 @@
         * Each object that needs to be serialized implements ISaveable<T> where T is an equivalent class that holds serializable data
             * Examples: Character : ISaveable<CharacterSave>, Buff : ISaveable<BuffSave>
     * Is also efficient in that it does not serialize content that is constant
-    * This is achieved through an ID Table, which associates each Type with a unique string
-        * The table automatically checks that each string is unique
+    * This is achieved through an ID Table, which associates each unique type with a unique string
+        * The table automatically checks that each type and string is unique
         * The table has an associated unit test segment that ensures that all serializable content is included in itself
         * This table also allows class names to be changed without impacting any saves
 * Dynamic [object pooling] system(https://unity3d.com/learn/tutorials/topics/scripting/object-pooling) for performance
