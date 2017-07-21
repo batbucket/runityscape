@@ -12,12 +12,12 @@
 * [Unity API](http://gamejolt.com/games/unity-api/15887) for GameJolt, modified slightly
 
 # Demo #
-* [Here](https://gamejolt.com/games/monsterscape/270136) on GameJolt.
+* [Here](https://gamejolt.com/games/monsterscape/270136) on GameJolt
 
 # Old Version (deprecated) #
-* [Here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc) as a download.
+* [Here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc) as a download
 * [Here](https://mothgarden.itch.io/monsterscape) as a WebGL build.
-* The downloadable version only works on devices with a screen ratio of 16:9. Other dimensions may cause cutoffs.
+* The downloadable version only works on devices with a screen ratio of 16:9. Other dimensions may cause cutoffs
 
 # Game Features #
 * Turn-based combat
