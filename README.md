@@ -2,6 +2,11 @@
 * An in-development text-based role-playing game project for browser play
 * Written in the Unity engine using C#
 
+# TODOs after Downloading #
+* Fulfill the requirements specified in the readmes in:
+    * Assets\Resources\Config (Encryption key)
+    * Assets\Plugins\GameJolt\Resources (API key for GameJolt services)
+
 # Other Plugins #
 * NUnit for unit testing
 * [Unity API](http://gamejolt.com/games/unity-api/15887) for GameJolt, modified slightly
