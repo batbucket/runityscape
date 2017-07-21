@@ -1,1 +1,5 @@
-JSON file goes here, containing Pastebin details found in Pastebin.cs as well as SaveLoad's encryption key.
+JSON file goes here, named config.txt
+It should look something like this:
+{
+  "encryptionKey" : <Your 8 character key here>
+}
