@@ -55,13 +55,30 @@ namespace Scripts.Game.Pages {
                 List<IButtonable> buttons = new List<IButtonable>() {
                     Get(NEW_GAME),
                     Get(CREDITS),
-                    new LoadPages(start)
+                    new LoadPages(start),
+                    null,
+                    GetHighScores(),
+                    GetTrophies()
                 };
                 if (Util.IS_DEBUG) {
                     buttons.Add(Get(DEBUGGING));
                 }
                 start.Actions = buttons;
             };
+        }
+
+        private Process GetHighScores() {
+            return new Process(
+                "Leaderboards",
+                () => GameJolt.UI.Manager.Instance.ShowLeaderboards()
+                );
+        }
+
+        private Process GetTrophies() {
+            return new Process(
+                "Trophies",
+                () => GameJolt.UI.Manager.Instance.ShowTrophies()
+                );
         }
 
         private void SetupIntro() {
@@ -128,9 +145,9 @@ namespace Scripts.Game.Pages {
                 }),
                 new Process("ALL saves", () => SaveLoad.PrintSaves()),
                 new Process("DELET all saves", () => SaveLoad.DeleteAllSaves()),
-                new Process("test pasty", () => Pastebin.PasteTest()),
                 new Process("move fox", () => { debug.Left.Clear(); debug.AddCharacters(Side.RIGHT, kitsune); }),
                 new Process("test boss logo", () => ActUtil.SetupScene(debug, new BossTransitionAct(Get(CREDITS), kitsune.Look))),
+                new Process("test trophy", () => GameJolt.API.Trophies.Unlock(80273)),
                 submenu
             };
 

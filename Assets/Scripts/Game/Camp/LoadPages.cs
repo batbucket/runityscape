@@ -14,10 +14,7 @@ using UnityEngine;
 
 namespace Scripts.Game.Pages {
     public class LoadPages : PageGroup {
-        private const int PASTEBIN_USAGE_COOLDOWN = 60;
-        private const int IMPORT = 1;
-        private static float nextTimePastebinAvailable;
-        private bool isUploadingToPastebin;
+        private bool isUploadingToGameJolt;
 
         public LoadPages(Page previous) : base(new Page("Load Game")) {
             SetupRoot(previous);
@@ -35,7 +32,7 @@ namespace Scripts.Game.Pages {
                     if (SaveLoad.IsSaveUsed(i)) {
                         buttons.Add(GetSpecificLoadPage(p, i));
                     } else {
-                        buttons.Add(SetupImport(p, i));
+                        buttons.Add(GetImportPage(p, i));
                     }
                 }
 
@@ -52,13 +49,13 @@ namespace Scripts.Game.Pages {
             } catch (Exception e) {
                 previous.AddText(string.Format("Save {0} is corrupted, deleting...\n{1}", index, e.Message));
                 SaveLoad.DeleteSave(index);
-                return SetupImport(previous, index);
+                return GetImportPage(previous, index);
             }
             Page page = new Page(saveName);
             page.Body = string.Format("What would you like to do with file {0}?", index);
             page.Actions = new IButtonable[] {
-                PageUtil.GenerateBack(previous).SetCondition(() => !isUploadingToPastebin),
-                GetLoadProcess(camp, index).SetCondition(() => !isUploadingToPastebin),
+                PageUtil.GenerateBack(previous).SetCondition(() => !isUploadingToGameJolt),
+                GetLoadProcess(camp, index).SetCondition(() => !isUploadingToGameJolt),
                 PageUtil.GetConfirmationGrid(
                     previous,
                     previous,
@@ -66,8 +63,8 @@ namespace Scripts.Game.Pages {
                     "Delete",
                     string.Format("Delete file {0}.", index),
                     string.Format("Are you sure you want to delete file {0}?\n{1}", index, saveName)
-                    ).SetCondition(() => !isUploadingToPastebin),
-                GetExportProcess(previous, SaveLoad.GetSaveValue(index)),
+                    ).SetCondition(() => !isUploadingToGameJolt),
+                GetExportPage(previous, index),
             };
             page.AddCharacters(Side.RIGHT, party.Collection);
             return page;
@@ -81,11 +78,10 @@ namespace Scripts.Game.Pages {
             saveName = SaveLoad.SaveFileDisplay(party.Default.Look.Name, party.Default.Stats.Level);
         }
 
-        private Page SetupImport(Page previous, int index) {
-            Page p = new Page(Util.ColorString("Import from Pastebin", Color.grey));
-            p.Body = "Type the key associated with a Pastebin Paste containing a save string for this game."
-                + "\nExample: If URL = pastebin.com/abcDEF, then type abcDEF"
-                + "\nImporting from save strings created in a different version of the game may cause issues.";
+        private Page GetImportPage(Page previous, int index) {
+            Page p = new Page(Util.ColorString("Import", Color.grey));
+            p.Body = "Type a key associated with a save for this game."
+                + "\nImporting from saves created in a different version of the game may cause issues.";
             p.HasInputField = true;
             p.OnEnter = () => {
                 p.Actions = new IButtonable[] {
@@ -99,56 +95,84 @@ namespace Scripts.Game.Pages {
         private Process GetImportProcess(Page previous, Page current, int index) {
             return new Process(
                 "Import",
-                "Import a save from the inputted Paste key.",
+                "Import a save from the inputted key.",
                 () => {
-                    Main.Instance.StartCoroutine(LoadFromURL(previous, current, index));
+                    LoadFromKey(previous, current, index, current.Input);
                 }
                 );
         }
 
-        private IEnumerator LoadFromURL(Page previous, Page current, int index) {
-            current.AddText("Attempting to import from Pastebin...");
-            string possibleSave = string.Empty;
-            yield return Pastebin.GetFromKey(current.Input, s => { possibleSave = s; });
-            WorldSave gameSave = null;
-            try {
-                gameSave = SaveLoad.Load(possibleSave, possibleSave);
-            } catch (Exception e) {
-                current.AddText(e.Message);
-                yield break;
-            }
-            if (gameSave == null) {
-                current.AddText("<color=red>Unable to import from the given Paste key.</color>");
-            } else {
-                SaveLoad.Save(gameSave, index);
-                previous.Invoke();
-            }
+        private void LoadFromKey(Page previous, Page current, int index, string key) {
+            current.AddText("Attempting to import from GameJolt...");
+            GameJolt.API.DataStore.Get(key, true, possibleSave => {
+                if (string.IsNullOrEmpty(possibleSave)) {
+                    current.AddText("Key's associated value was null.");
+                } else {
+                    WorldSave gameSave = null;
+                    try {
+                        gameSave = SaveLoad.Load(possibleSave, possibleSave);
+                    } catch (Exception e) {
+                        current.AddText(e.Message);
+                        return;
+                    }
+                    SaveLoad.Save(gameSave, index);
+                    previous.Invoke();
+                }
+            });
+        }
+
+        private Page GetExportPage(Page previous, int index) {
+            Page p = new Page("Export");
+            p.HasInputField = true;
+            p.Body = "Type a key to associate with this save.";
+            p.Actions = new IButtonable[] {
+                PageUtil.GenerateBack(previous).SetCondition(() => !isUploadingToGameJolt),
+                GetExportProcess(p, SaveLoad.GetSaveValue(index))
+            };
+            return p;
         }
 
         private Process GetExportProcess(Page p, string save) {
             return new Process(
-                "Export to Pastebin",
-                string.Format("Exports this save file to Pastebin."),
+                "Export",
+                string.Format("Associates this save file with the provided key. The key can then be used to retrieve the save."),
                 () => {
                     p.AddText("Attempting to export...");
                     try {
-                        Main.Instance.StartCoroutine(PastebinUpload(p, save));
+                        AttemptToUploadSave(p, save, p.Input);
                     } catch (Exception e) {
                         p.AddText(e.Message);
                     }
-                    nextTimePastebinAvailable = Time.time + PASTEBIN_USAGE_COOLDOWN;
                 },
-                () => Time.time > nextTimePastebinAvailable && !isUploadingToPastebin
+                () => !isUploadingToGameJolt
                 );
         }
 
-        private IEnumerator PastebinUpload(Page p, string save) {
-            isUploadingToPastebin = true;
-            yield return Pastebin.Paste(
-                save,
-                s => p.AddText(string.Format("Posted save to {0}.\n<color=red>It will expire in 10 minutes.</color>", s))
-            );
-            isUploadingToPastebin = false;
+        private void AttemptToUploadSave(Page p, string save, string key) {
+            isUploadingToGameJolt = true;
+            GameJolt.API.DataStore.Contains(
+                key,
+                true,
+                isExists => {
+                    if (isExists) {
+                        p.AddText("The specified key already exists.");
+                    } else {
+                        GameJolt.API.DataStore.Set(
+                            key,
+                            save,
+                            true,
+                            isSuccessful => {
+                                if (isSuccessful) {
+                                    p.AddText(string.Format("Save was successfully uploaded with key: {0}", key));
+                                } else {
+                                    p.AddText("Unable to upload key.");
+                                }
+                            }
+                            );
+                    }
+                    isUploadingToGameJolt = false;
+                }
+                );
         }
 
         private Process GetLoadProcess(Camp camp, int index) {
