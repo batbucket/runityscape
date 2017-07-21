@@ -45,4 +45,4 @@ Web Build/index.html
 Assets/Resources/Encrypt/config.txt
 WebBuild/
 Assets/Resources/Config/config.txt
-Assets/Plugins/
+Assets/Plugins/GameJolt/Resources/GJAPISettings.asset
