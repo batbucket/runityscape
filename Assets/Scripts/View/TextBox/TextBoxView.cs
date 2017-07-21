@@ -116,7 +116,7 @@ namespace Scripts.View.TextBoxes {
             int index = 0;
             int charsPassedWithoutSound = 0;
             text.text = string.Join("", currentTextArray);
-            string wrapper = "\u2007"; // Wordwrapped space
+            string wrapper = "_";//"\u2007"; // Wordwrapped space
 
             bool hasSkipOccurred = false;
             while (index < textBox.TextArray.Length && !hasSkipOccurred) {
