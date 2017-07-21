@@ -2,7 +2,7 @@
 * An in-development text-based role-playing game project for browser play
 * Written in the Unity engine using C#
 
-# Other plugins #
+# Other Plugins #
 * NUnit for unit testing
 * [Unity API](http://gamejolt.com/games/unity-api/15887) for GameJolt, modified slightly
 
