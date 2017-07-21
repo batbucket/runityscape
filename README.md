@@ -4,7 +4,7 @@
 
 # TODOs after Downloading #
 * Fulfill the requirements specified in the readmes in:
-    * Assets\Resources\Config (Encryption key)
+    * Assets\Resources\Config (Encryption key for saves)
     * Assets\Plugins\GameJolt\Resources (API key for GameJolt services)
 
 # Other Plugins #
@@ -38,7 +38,7 @@
         * The table automatically checks that each type and string is unique
         * The table has an associated unit test segment that ensures that all serializable content is included in itself
         * This table also allows class names to be changed without impacting any saves
-* Dynamic [object pooling] system(https://unity3d.com/learn/tutorials/topics/scripting/object-pooling) for performance
+* Dynamic [object pooling](https://unity3d.com/learn/tutorials/topics/scripting/object-pooling) system for performance
     * Requires inheritance from the abstract PooledBehaviour, which handles the resetting of fields
     * Object pooler will call Instantiate on GameObjects if it runs out of pooled objects of a specific type, dynamically increasing the size of the object pool as neccessary
     * Object pooler will reject already-returned objects, performing a contains check on a HashSet using the object's InstanceID as its hash
