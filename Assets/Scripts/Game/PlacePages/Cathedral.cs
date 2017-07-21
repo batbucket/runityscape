@@ -15,6 +15,7 @@ namespace Scripts.Game.Pages {
         private const int BOSS_ROOM = 2;
         private const int BOSS_BATTLE = 3;
         private const int BOSS_VICTORY = 4;
+        private const int BOSS_DEFEAT_TROPHY_ID = 80273;
 
         private Page camp;
         private Party party;
@@ -110,6 +111,7 @@ namespace Scripts.Game.Pages {
             p.AddCharacters(Side.RIGHT, fox);
             p.OnEnter = () => {
                 flags.Ruins = RuinsProgression.BOSS_VICTORY;
+                PostSuccess();
                 ActUtil.SetupScene(
                     p,
                     ActUtil.LongTalk(p, fox,
@@ -122,6 +124,11 @@ namespace Scripts.Game.Pages {
                     )
                     );
             };
+        }
+
+        private void PostSuccess() {
+            GameJolt.API.Trophies.Unlock(BOSS_DEFEAT_TROPHY_ID);
+            GameJolt.API.Scores.Add(flags.DayCount, string.Format("Completed in {0} days.", flags.DayCount), party.Default.Look.Name);
         }
     }
 }
