@@ -27,7 +27,7 @@
 * [Object pooling](https://unity3d.com/learn/tutorials/topics/scripting/object-pooling) for performance
 * Uses GameJolt's API for scoreboards and achievements
 * Saves can be exported and imported using into GameJolt's data storage by associating it with a unique key
-    * This reduces the ~1770 character save string to a more manageable 1-8 character string. 
+    * This reduces the ~1770 character save string to a more manageable 1-8 character string
     * This is needed because WebGL prevents the use of the clipboard
 * Programmed a solution for maintaining references between party members when serializing
     * For instance, if A casts a buff on B that redirects damage taken by B to A, the game will maintain that reference between loads
