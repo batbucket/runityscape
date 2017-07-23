@@ -115,7 +115,9 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class Heal : BasicSpellbook {
-        public Heal() : base("Heal", Util.GetSprite("health-normal"), TargetType.SINGLE_ALLY, SpellType.BOOST) { }
+        private const int HEALING_AMOUNT = 10;
+
+        public Heal() : base("Heal", Util.GetSprite("health-normal"), TargetType.SINGLE_ALLY, SpellType.BOOST, 1) { }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
             return "Restore a little health.";
@@ -123,15 +125,15 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, 2)
+                new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT)
             };
         }
     }
 
     public class ReflectiveClone : BasicSpellbook {
-        private const int NUMBER_OF_CLONES = 2;
+        private const int NUMBER_OF_CLONES = 4;
 
-        public ReflectiveClone() : base("Trickster Art: Reflective Clones", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, -1) {
+        public ReflectiveClone() : base("Reflective Replications", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, -1) {
 
         }
 
