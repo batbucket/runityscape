@@ -128,7 +128,7 @@ namespace Scripts.Game.Pages {
 
         private void PostSuccess() {
             GameJolt.API.Trophies.Unlock(BOSS_DEFEAT_TROPHY_ID);
-            GameJolt.API.Scores.Add(flags.DayCount, string.Format("Completed in {0} days at {1} with a level {2} character.", flags.DayCount, flags.Time.ToString(), party.Default.Stats.Level), party.Default.Look.Name);
+            GameJolt.API.Scores.Add(flags.DayCount, string.Format("Completed in {0} days at {1} with a level {2} character.", flags.DayCount, flags.Time.ToString(), party.Default.Stats.Level), "Unknown hero");
         }
     }
 }
