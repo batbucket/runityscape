@@ -45,17 +45,24 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
-            int lowerBound = (caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) > 0) ? 1 : 0;
-
+            int damage = 0;
+            if (caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) > 0) {
+                int lowerBound = (caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) > 0) ? 1 : 0;
+                damage = -Util.RandomRange(lowerBound, caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH));
+            }
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.RandomRange(lowerBound, caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH))), // Range(0, CurrentStrength)
+                    new AddToModStat(target.Stats, StatType.HEALTH, damage), // Range(0, CurrentStrength)
                     new AddToModStat(caster.Stats, StatType.SKILL, 1)
                 };
         }
 
         protected override IList<SpellEffect> GetCriticalEffects(SpellParams caster, SpellParams target) {
+            int damage = 0;
+            if (caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) > 0) {
+                damage = -Util.Random(((int)(caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) * CRITICAL_MULTIPLIER)), CRITICAL_VARIABILITY);
+            }
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, -Util.Random((int)(caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * CRITICAL_MULTIPLIER), CRITICAL_VARIABILITY)),
+                    new AddToModStat(target.Stats, StatType.HEALTH, damage),
                     new AddToModStat(caster.Stats, StatType.SKILL, 2)
                 };
         }
@@ -128,6 +135,11 @@ namespace Scripts.Game.Defined.Serialized.Spells {
                 new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT)
             };
         }
+
+        protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
+            return new IEnumerator[] { SFX.PlaySound("healspell1")
+                };
+        }
     }
 
     public class ReflectiveClone : BasicSpellbook {
@@ -142,14 +154,17 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
-            return new IEnumerator[] { SFX.Wait(HitsplatView.TOTAL_DURATION) };
+            return new IEnumerator[] {
+                SFX.Wait(HitsplatView.TOTAL_DURATION),
+                SFX.PlaySound("synthetic_explosion_1")
+            };
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             Func<Character> cloneFunc =
                 () => {
                     Character c = new Character(
-                        new Stats(caster.Stats.Level, 0, caster.Stats.GetStatCount(Stats.Get.MOD, StatType.AGILITY), 1, 1),
+                        new Stats(caster.Stats.Level, 0, caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY), 1, 1),
                         new Look(caster.Look.Name, caster.Look.Sprite, caster.Look.Tooltip, caster.Look.Check, caster.Look.Breed, caster.Look.TextColor),
                         new RuinsBrains.KitsuneClone());
                     c.AddFlag(Model.Characters.Flag.IS_CLONE);
