@@ -410,7 +410,10 @@ public class BasicTests {
             Assert.AreEqual(party, party2);
             Assert.AreNotSame(party.Collection.ToList()[1].Stats, party.Collection.ToList()[2].Buffs.ToList()[0].BuffCaster);
         }
+    }
 
+    [TestFixture]
+    public class BattleLogicTests {
         [Test]
         public void CharacterWithHigherAgilityIsLessThanSlowerCharacter() {
             Character fast = CharacterList.NotKitsune();
@@ -419,6 +422,88 @@ public class BasicTests {
             int difference = fast.Stats.CompareTo(slow.Stats);
             Util.Log("Difference is: " + difference);
             Assert.IsTrue(difference < 0);
+        }
+
+        [Test]
+        public void HigherPrioritySpellIsLessThanNormalSpell() {
+            Character fast = CharacterList.NotKitsune();
+            fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
+            Character slow = CharacterList.NotKitsune();
+            Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
+
+            Spell lowerPriority = new Spell(new Attack(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
+            Spell higherPriority = new Spell(new Heal(), new Result(), new SpellParams(slow, dummy), new SpellParams(slow, dummy));
+            Util.Log("Low priority: " + lowerPriority.Book.Priority);
+            Util.Log("high priority: " + higherPriority.Book.Priority);
+            int difference = lowerPriority.CompareTo(higherPriority);
+            Util.Log("Difference is: " + difference);
+            Assert.IsTrue(difference < 0);
+        }
+
+        [Test]
+        public void LowerPrioritySpellIsGreaterThanNormalSpell() {
+            Character fast = CharacterList.NotKitsune();
+            fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
+            Character slow = CharacterList.NotKitsune();
+            Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
+
+            Spell lowerPriority = new Spell(new ReflectiveClone(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
+            Spell higherPriority = new Spell(new Attack(), new Result(), new SpellParams(slow, dummy), new SpellParams(slow, dummy));
+            Util.Log("Low priority: " + lowerPriority.Book.Priority);
+            Util.Log("high priority: " + higherPriority.Book.Priority);
+            int difference = lowerPriority.CompareTo(higherPriority);
+            Util.Log("Difference is: " + difference);
+            Assert.IsTrue(difference < 0);
+        }
+
+        [Test]
+        public void SpellsAreSortedCorrectly() {
+            Character fast = CharacterList.NotKitsune();
+            fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
+            Character slow = CharacterList.NotKitsune();
+            Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
+
+            IPlayable lowPriorityWithSlowCaster = new Spell(new ReflectiveClone(), new Result(), new SpellParams(slow, dummy), new SpellParams(fast, dummy));
+            IPlayable lowPriorityWithFastCaster = new Spell(new ReflectiveClone(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
+            IPlayable normalPriorityWithSlowCaster = new Spell(new Attack(), new Result(), new SpellParams(slow, dummy), new SpellParams(fast, dummy));
+            IPlayable normalPriorityWithFastCaster = new Spell(new Attack(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
+            IPlayable highPriorityWithSlowCaster = new Spell(new Heal(), new Result(), new SpellParams(slow, dummy), new SpellParams(slow, dummy));
+            IPlayable highPriorityWithFastCaster = new Spell(new Heal(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
+
+
+            IPlayable[] expectedOrder = new IPlayable[] {
+                highPriorityWithFastCaster,
+                highPriorityWithSlowCaster,
+                normalPriorityWithFastCaster,
+                normalPriorityWithSlowCaster,
+                lowPriorityWithFastCaster,
+                lowPriorityWithSlowCaster
+            };
+
+            List<IPlayable> actualOrder = new List<IPlayable>();
+            actualOrder.Add(normalPriorityWithSlowCaster);
+            actualOrder.Add(normalPriorityWithFastCaster);
+            actualOrder.Add(highPriorityWithSlowCaster);
+            actualOrder.Add(highPriorityWithFastCaster);
+            actualOrder.Add(lowPriorityWithSlowCaster);
+            actualOrder.Add(lowPriorityWithFastCaster);
+            actualOrder.Sort();
+
+            for (int i = 0; i < expectedOrder.Length; i++) {
+                Util.Log(string.Format("Index {0}\nExpected: {1}\nActual: {2}\n",
+                    i,
+                    GetSpellDetails(expectedOrder[i].MySpell),
+                    GetSpellDetails(actualOrder[i].MySpell)));
+                Assert.AreSame(expectedOrder[i], actualOrder[i]);
+            }
+        }
+
+        private string GetSpellDetails(Spell spell) {
+            return string.Format(
+                "Caster agility: {0}/Spell priority: {1}",
+                spell.MySpell.Caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY),
+                spell.MySpell.Book.Priority
+                );
         }
     }
 }

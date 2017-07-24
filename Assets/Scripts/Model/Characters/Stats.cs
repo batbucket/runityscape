@@ -291,12 +291,7 @@ namespace Scripts.Model.Characters {
         }
 
         public int CompareTo(Stats other) {
-            int diff = StatUtil.GetDifference(StatType.AGILITY, this, other);
-            if (diff == 0) {
-                return (Util.IsChance(.5) ? -1 : 1);
-            } else {
-                return -diff;
-            }
+            return StatUtil.GetDifference(StatType.AGILITY, other, this);
         }
     }
 }

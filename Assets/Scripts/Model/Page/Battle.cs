@@ -395,18 +395,28 @@ namespace Scripts.Model.Pages {
         }
 
         private IEnumerator PerformActions(List<IPlayable> plays) {
-            plays.Sort();
+            // Shuffle first, then do a stable sort to make speed ties random
+            plays.Shuffle();
+            plays = plays.OrderBy(p => p).ToList();
             for (int i = 0; i < plays.Count; i++) {
                 yield return new WaitForSeconds(0.10f);
                 IPlayable play = plays[i];
+                Spell spell = play.MySpell;
 
                 // Dead characters cannot unleash spells
                 if (CharacterCanCast(play.MySpell.Caster)) { // Death check
-                    bool wasPlayable = play.IsPlayable;
-                    MakeEveryonesBuffsReactToSpell(play.MySpell);
+                    string spellMessage = string.Empty;
+
+                    // Do a different message if the spell cannot be cast on the target
+                    if (play.IsPlayable) {
+                        spellMessage = play.Text;
+                        MakeEveryonesBuffsReactToSpell(spell);
+                    } else {
+                        spellMessage = Spell.GetCastMessage(spell.Caster, spell.Target, spell.Book, ResultType.FAILED);
+                    }
                     AddText(play.Text);
                     yield return play.Play();
-                    yield return CharacterDialogue(play.MySpell.Target.Character, play.MySpell.Target.Character.Brain.ReactToSpell(play.MySpell));
+                    yield return CharacterDialogue(spell.Target.Character, spell.Target.Character.Brain.ReactToSpell(spell));
                 }
             }
         }
