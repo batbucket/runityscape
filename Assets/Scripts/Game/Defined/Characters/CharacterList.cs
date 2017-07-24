@@ -173,8 +173,7 @@ namespace Scripts.Game.Defined.Characters {
                         Breed.SPIRIT
                         ),
                     new RuinsBrains.Knight())
-                    .AddEquip(new GhostArmor(), Util.IsChance(.50f))
-                    .AddEquip(new BrokenSword(), Util.IsChance(.50f))
+                    .AddItem(new Item[] { new BrokenSword(), new GhostArmor() }.ChooseRandom(), Util.IsChance(.50f))
                     .AddSpells(new SetupCounter());
             }
 
