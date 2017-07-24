@@ -94,7 +94,7 @@ namespace Scripts.Model.Items {
         }
 
         protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
-            return new IEnumerator[] { SFX.PlaySound("Zip_0") };
+            return new IEnumerator[] { SFX.PlaySound("healspell1") };
         }
     }
 
