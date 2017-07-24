@@ -32,16 +32,16 @@ namespace Scripts.Game.Defined.Serialized.Items.Equipment {
     }
 
     public class BrokenSword : EquippableItem {
-        public BrokenSword() : base(EquipType.WEAPON, 5, "Broken Sword", "A broken sword dropped by a spirit. You feel closer to death just by holding it.") {
+        public BrokenSword() : base(EquipType.WEAPON, 5, "Broken Sword", "A broken sword dropped by a spirit.") {
             Stats.Add(StatType.STRENGTH, 1);
             Stats.Add(StatType.VITALITY, -1);
         }
     }
 
     public class GhostArmor : EquippableItem {
-        public GhostArmor() : base(EquipType.ARMOR, 10, "Ghostly Mail", "A transparent, weightless chainmail. You feel closer to death just by holding it.") {
-            Stats.Add(StatType.AGILITY, 1);
-            Stats.Add(StatType.VITALITY, -1);
+        public GhostArmor() : base(EquipType.ARMOR, 10, "Cursed Mail", "A cursed chainmail dropped by a spirit.") {
+            Stats.Add(StatType.STRENGTH, -10);
+            Stats.Add(StatType.AGILITY, -10);
         }
     }
 }
