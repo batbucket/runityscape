@@ -34,7 +34,7 @@ namespace Scripts.Game.Defined.Serialized.Items.Equipment {
     public class BrokenSword : EquippableItem {
         public BrokenSword() : base(EquipType.WEAPON, 5, "Broken Sword", "A broken sword dropped by a spirit.") {
             Stats.Add(StatType.STRENGTH, 1);
-            Stats.Add(StatType.VITALITY, -1);
+            Stats.Add(StatType.VITALITY, -4);
         }
     }
 
@@ -53,7 +53,7 @@ namespace Scripts.Game.Defined.Serialized.Items.Misc {
             Util.GetSprite("water-drop"),
             0,
             "Drop",
-            "A drop of pure water."
+            "A drop of pure water. Typically used as currency."
             ) { }
     }
 }
