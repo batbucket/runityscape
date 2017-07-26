@@ -23,7 +23,7 @@ namespace Scripts.Game.Pages {
 
         private void SetupRoot() {
             Page p = Root;
-            p.Condition = () => flags.Time < TimeOfDay.NIGHT;
+            p.Condition = PageUtil.GetVisitProcessCondition(flags, party);
             p.Icon = Util.GetSprite("walking-boot");
             p.Body = "Where would you like to go?";
             p.AddCharacters(Side.LEFT, party);
