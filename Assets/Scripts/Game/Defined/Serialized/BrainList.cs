@@ -87,7 +87,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
         public class Kitsune : BasicBrain {
             private const int TURNS_BETWEEN_CLONES = 5;
-            private const int LOW_HEALTH = 5;
+            private const int LOW_HEALTH = 10;
             public static readonly SpellBook ATTACK = new Attack();
             public static readonly SpellBook CLONE = new ReflectiveClone();
             private bool commentedOnDeadHealers;
@@ -102,7 +102,13 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
             private bool ShouldCastClone {
                 get {
-                    return CloneCount == 0 && ((currentBattle.TurnCount - lastTurnCloned) >= TURNS_BETWEEN_CLONES) && !IsAnyHealersAlive;
+                    return CloneCount == 0 && (((currentBattle.TurnCount - lastTurnCloned) >= TURNS_BETWEEN_CLONES) || IsLowHealth) && !IsAnyHealersAlive;
+                }
+            }
+
+            private bool IsLowHealth {
+                get {
+                    return owner.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH) <= LOW_HEALTH;
                 }
             }
 
@@ -139,7 +145,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
                     commentedOnDeadHealers = true;
                     return Util.PickRandom("Know that I will not fall as easily as these spirits, mayfly./Killing those who are already dead... How unimpressive./They would have only gotten in the way.");
                 }
-                if (!commentedOnLowHealth && owner.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH) <= LOW_HEALTH) {
+                if (!commentedOnLowHealth && IsLowHealth) {
                     commentedOnLowHealth = true;
                     return Util.PickRandom("How.../Am I holding back...?/...");
                 }
