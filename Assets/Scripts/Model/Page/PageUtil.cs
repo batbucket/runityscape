@@ -19,6 +19,10 @@ namespace Scripts.Model.Pages {
         public static readonly Sprite SPELLBOOK = Util.GetSprite("spell-book");
         public static readonly Sprite ACTION = Util.GetSprite("talk");
 
+        public static Func<bool> GetVisitProcessCondition(Flags flags, Party party) {
+            return () => flags.Time != TimeOfDay.NIGHT && party.Any(c => c.Stats.State == State.ALIVE);
+        }
+
         public static void GetFirstPlaceVisitMessage(PageGroup place) {
             place.Root.AddText(string.Format("{0} was discovered.\nThis place can be visited again in the <color=yellow>Places</color> menu back at camp.", place.Root.Location));
         }
