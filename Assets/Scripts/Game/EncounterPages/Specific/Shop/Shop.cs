@@ -188,8 +188,16 @@ namespace Scripts.Game.Pages {
                 Util.GetSprite("talk"),
                 string.Format("Talk about this topic.", talk.Name),
                 () => {
-                    ActUtil.SetupScene(Get(ROOT_INDEX), ActUtil.LongTalk(Get(ROOT_INDEX), shopkeeper, talk.Big));
-                    talk.SetFlags(flags);
+                    ActUtil.SetupScene(
+                        Get(ROOT_INDEX),
+                        ActUtil.LongTalk(
+                            Get(ROOT_INDEX),
+                            shopkeeper,
+                            talk.Big
+                        ),
+                            () => talk.SetFlags(flags),
+                            () => postTalk()
+                        );
                 },
                 () => talk.Condition(flags)
                 ).SetVisibleOnDisable(false);

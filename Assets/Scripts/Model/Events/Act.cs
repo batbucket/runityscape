@@ -21,10 +21,14 @@ namespace Scripts.Model.Acts {
         private const int TAG_LENGTH = 3;
 
         public static void SetupScene(Page page, params Act[] acts) {
-            Main.Instance.StartCoroutine(SetupSceneRoutine(page, acts));
+            SetupScene(page, acts, new Action[0]);
         }
 
-        public static Act[] LongTalk(Page p, Character c, string big, params Act[] postAction) {
+        public static void SetupScene(Page page, Act[] acts, params Action[] postActions) {
+            Main.Instance.StartCoroutine(SetupSceneRoutine(page, acts, postActions));
+        }
+
+        public static Act[] LongTalk(Page p, Character c, string big, params Act[] postActions) {
             List<Act> events = new List<Act>();
             IList<TextBox> boxes = SplitBigDialogue(p, c, big);
 
@@ -32,11 +36,16 @@ namespace Scripts.Model.Acts {
                 events.Add(new TextAct(boxes[i]));
             }
 
-            events.AddRange(postAction);
+            events.AddRange(postActions);
+
             return events.ToArray();
         }
 
         public static IEnumerator SetupSceneRoutine(Page page, Act[] acts) {
+            yield return SetupSceneRoutine(page, acts, new Action[0]);
+        }
+
+        public static IEnumerator SetupSceneRoutine(Page page, Act[] acts, Action[] postActions) {
             Grid grid = new Grid(string.Empty);
             Main.Instance.PagePresenter.Override = grid;
 
@@ -67,6 +76,10 @@ namespace Scripts.Model.Acts {
                     act.SkipAct();
                     yield return act.Play();
                 }
+            }
+
+            foreach (Action action in postActions) {
+                action();
             }
 
             // If grid we're using is still in use, wipe it
