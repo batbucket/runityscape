@@ -145,9 +145,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class ReflectiveClone : BasicSpellbook {
         private const int NUMBER_OF_CLONES = 4;
 
-        public ReflectiveClone() : base("Reflective Replications", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, -1) {
-
-        }
+        public ReflectiveClone() : base("Harmless Illusions", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, -1) { }
 
         public override string CreateDescriptionHelper(SpellParams caster) {
             return "Creates clones of the caster that vanish when the caster is attacked. Clones reflect attacks. Shuffles the caster's side.";
