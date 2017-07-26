@@ -23,7 +23,7 @@ namespace Scripts.Game.Pages {
 
             Root.Icon = Util.GetSprite("walking-boot");
             Root.AddCharacters(Side.LEFT, party);
-            Root.Condition = () => flags.Time != TimeOfDay.NIGHT && party.Any(c => c.Stats.State == State.ALIVE);
+            Root.Condition = PageUtil.GetVisitProcessCondition(flags, party);
 
             SetupGenerators();
             buttons.Add(PageUtil.GenerateBack(previous));
