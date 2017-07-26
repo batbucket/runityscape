@@ -425,38 +425,6 @@ public class BasicTests {
         }
 
         [Test]
-        public void HigherPrioritySpellIsLessThanNormalSpell() {
-            Character fast = CharacterList.NotKitsune();
-            fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
-            Character slow = CharacterList.NotKitsune();
-            Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
-
-            Spell lowerPriority = new Spell(new Attack(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
-            Spell higherPriority = new Spell(new Heal(), new Result(), new SpellParams(slow, dummy), new SpellParams(slow, dummy));
-            Util.Log("Low priority: " + lowerPriority.Book.Priority);
-            Util.Log("high priority: " + higherPriority.Book.Priority);
-            int difference = lowerPriority.CompareTo(higherPriority);
-            Util.Log("Difference is: " + difference);
-            Assert.IsTrue(difference < 0);
-        }
-
-        [Test]
-        public void LowerPrioritySpellIsGreaterThanNormalSpell() {
-            Character fast = CharacterList.NotKitsune();
-            fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
-            Character slow = CharacterList.NotKitsune();
-            Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
-
-            Spell lowerPriority = new Spell(new ReflectiveClone(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
-            Spell higherPriority = new Spell(new Attack(), new Result(), new SpellParams(slow, dummy), new SpellParams(slow, dummy));
-            Util.Log("Low priority: " + lowerPriority.Book.Priority);
-            Util.Log("high priority: " + higherPriority.Book.Priority);
-            int difference = lowerPriority.CompareTo(higherPriority);
-            Util.Log("Difference is: " + difference);
-            Assert.IsTrue(difference < 0);
-        }
-
-        [Test]
         public void SpellsAreSortedCorrectly() {
             Character fast = CharacterList.NotKitsune();
             fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
