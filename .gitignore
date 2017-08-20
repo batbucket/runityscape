@@ -35,7 +35,6 @@ Game_Data/
 Library/
 obj/
 *.zip
-*.meta
 Encrypt/config.txt
 Web Build/Release/UnityLoader.js
 Web Build/Release/Web Build.datagz

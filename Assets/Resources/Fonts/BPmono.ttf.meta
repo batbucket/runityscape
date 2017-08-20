@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: e2fc1a50e57e4e5469d04bfca5af1e0c
+timeCreated: 1498990329
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: BPmono
+  fontNames:
+  - BPmono
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

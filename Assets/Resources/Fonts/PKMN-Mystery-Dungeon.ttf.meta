@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 484cbbd7a2b3f5045b4f88a795b1a8d8
+timeCreated: 1498749536
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: PKMN Mystery Dungeon
+  fontNames:
+  - PKMN Mystery Dungeon
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

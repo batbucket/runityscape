@@ -1,0 +1,331 @@
+fileFormatVersion: 2
+guid: fcfed2764a7a4d84fb0cecab1953e1e0
+timeCreated: 1455762115
+licenseType: Free
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: splat_drop_0
+    21300002: splat_drop_1
+    21300004: splat_drop_2
+    21300006: splat_drop_3
+    21300008: splat_drop_4
+    21300010: splat_drop_5
+    21300012: splat_drop_6
+    21300014: splat_drop_7
+    21300016: splat_drop_8
+    21300018: splat_drop_9
+    21300020: splat_drop_10
+    21300022: splat_drop_11
+    21300024: splat_drop_12
+    21300026: splat_drop_13
+    21300028: splat_drop_14
+    21300030: splat_drop_15
+    21300032: splat_drop_16
+    21300034: splat_drop_17
+    21300036: splat_drop_18
+    21300038: splat_drop_19
+    21300040: splat_drop_20
+    21300042: splat_drop_21
+    21300044: splat_drop_22
+    21300046: splat_drop_23
+    21300048: splat_drop_24
+    21300050: splat_drop_25
+    21300052: splat_drop_26
+    21300054: splat_drop_27
+    21300056: splat_drop_28
+    21300058: splat_drop_29
+    21300060: splat_drop_30
+    21300062: splat_drop_31
+    21300064: splat_drop_32
+    21300066: splat_drop_33
+    21300068: splat_drop_34
+    21300070: splat_drop_35
+    21300072: splat_drop_36
+    21300074: splat_drop_37
+    21300076: splat_drop_38
+    21300078: splat_drop_39
+    21300080: splat_drop_40
+    21300082: splat_drop_41
+    21300084: splat_drop_42
+    21300086: splat_drop_43
+    21300088: splat_drop_44
+    21300090: splat_drop_45
+    21300092: splat_drop_46
+    21300094: splat_drop_47
+    21300096: splat_drop_48
+    21300098: splat_drop_49
+    21300100: splat_drop_50
+    21300102: splat_drop_51
+    21300104: splat_drop_52
+    21300106: splat_drop_53
+    21300108: splat_drop_54
+    21300110: splat_drop_55
+    21300112: splat_drop_56
+    21300114: splat_drop_57
+    21300116: splat_drop_58
+    21300118: splat_drop_59
+    21300120: splat_drop_60
+    21300122: splat_drop_61
+    21300124: splat_drop_62
+    21300126: splat_drop_63
+    21300128: splat_drop_64
+    21300130: splat_drop_65
+    21300132: splat_drop_66
+    21300134: splat_drop_67
+    21300136: splat_drop_68
+    21300138: splat_drop_69
+    21300140: splat_drop_70
+    21300142: splat_drop_71
+    21300144: splat_drop_72
+    21300146: splat_drop_73
+    21300148: splat_drop_74
+    21300150: splat_drop_75
+    21300152: splat_drop_76
+    21300154: splat_drop_77
+    21300156: splat_drop_78
+    21300158: splat_drop_79
+    21300160: splat_drop_80
+    21300162: splat_drop_81
+    21300164: splat_drop_82
+    21300166: splat_drop_83
+    21300168: splat_drop_84
+    21300170: splat_drop_85
+    21300172: splat_drop_86
+    21300174: splat_drop_87
+    21300176: splat_drop_88
+    21300178: splat_drop_89
+    21300180: splat_drop_90
+    21300182: splat_drop_91
+    21300184: splat_drop_92
+    21300186: splat_drop_93
+  serializedVersion: 4
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 1
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: -1
+  maxTextureSize: 2048
+  textureSettings:
+    filterMode: -1
+    aniso: 16
+    mipBias: -1
+    wrapMode: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spritePixelsToUnits: 100
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: splat_drop_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_1
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_2
+      rect:
+        serializedVersion: 2
+        x: 960
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_3
+      rect:
+        serializedVersion: 2
+        x: 1440
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_4
+      rect:
+        serializedVersion: 2
+        x: 1920
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_5
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_6
+      rect:
+        serializedVersion: 2
+        x: 2880
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_7
+      rect:
+        serializedVersion: 2
+        x: 3360
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_8
+      rect:
+        serializedVersion: 2
+        x: 3840
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_9
+      rect:
+        serializedVersion: 2
+        x: 4320
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_10
+      rect:
+        serializedVersion: 2
+        x: 4800
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_11
+      rect:
+        serializedVersion: 2
+        x: 5280
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    - serializedVersion: 2
+      name: splat_drop_12
+      rect:
+        serializedVersion: 2
+        x: 5760
+        y: 0
+        width: 480
+        height: 480
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: -1
+    outline: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
