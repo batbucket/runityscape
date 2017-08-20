@@ -11,12 +11,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
-using WindowsInput;
 
 /**
  * This class holds various helper methods that don't fit anywhere else
  */
-
 public static class Util {
     public static readonly bool IS_DEBUG = true && Application.isEditor;
     private static char RANDOM_STRING_DELIMITER = '/';
@@ -235,7 +233,7 @@ public static class Util {
     }
 
     public static GameObject FindChild(GameObject parent, string childName) {
-        return parent.transform.FindChild(childName).gameObject;
+        return parent.transform.Find(childName).gameObject;
     }
 
     /**
@@ -252,19 +250,6 @@ public static class Util {
         if (!statement) {
             throw new UnityException(message);
         }
-    }
-
-    /**
-     * Horrible horrible hack for converting KeyCode (unity) to VirtualKeyCode (windows)
-     *
-     * Parse searches for an enum with a certain string.
-     * KeyCode's toString (For the keys we deem important has [KEY] uppercase
-     * VirtualKeyCode's toString (For the keys we deem important has VK_[KEY]
-     * So we search for VK_ + [KEYCODE]
-     */
-
-    public static VirtualKeyCode KeyCodeToVirtualKeyCode(KeyCode keyToConvert) {
-        return keyToConvert == KeyCode.None ? VirtualKeyCode.NONAME : (VirtualKeyCode)System.Enum.Parse(typeof(VirtualKeyCode), "VK_" + keyToConvert.ToString());
     }
 
     public static Color InvertColor(Color color) {
