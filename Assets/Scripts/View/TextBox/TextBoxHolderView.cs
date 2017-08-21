@@ -8,6 +8,7 @@ using UnityEngine;
 namespace Scripts.View.TextBoxes {
 
     public class TextBoxHolderView : MonoBehaviour {
+        private const int MAX_NUMBER_OF_TEXTBOXES = 100;
 
         [SerializeField]
         private InputBoxView inputBoxPrefab;
@@ -27,11 +28,11 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private TextBoxView textBoxPrefab;
 
-        private IList<PooledBehaviour> children;
+        private Queue<PooledBehaviour> children;
 
         public InputBoxView AddInputBox() {
             InputBoxView ibv = ObjectPoolManager.Instance.Get(inputBoxPrefab);
-            children.Add(ibv);
+            children.Enqueue(ibv);
             Util.Parent(ibv.gameObject, gameObject);
 
             return ibv;
@@ -45,11 +46,14 @@ namespace Scripts.View.TextBoxes {
         }
 
         public PooledBehaviour AddTextBox(TextBox textBox) {
+            while (children.Count > MAX_NUMBER_OF_TEXTBOXES) {
+                ObjectPoolManager.Instance.Return(children.Dequeue());
+            }
             if (string.IsNullOrEmpty(textBox.RawText)) {
                 return null;
             }
             PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
-            children.Add(pb);
+            children.Enqueue(pb);
             Util.Parent(pb.gameObject, gameObject);
             pb.transform.SetAsLastSibling();
             textBox.SetupPrefab(pb.gameObject);
@@ -77,7 +81,7 @@ namespace Scripts.View.TextBoxes {
         }
 
         private void Start() {
-            children = new List<PooledBehaviour>();
+            children = new Queue<PooledBehaviour>();
             textBoxes = new Dictionary<TextBoxType, PooledBehaviour>() {
             { TextBoxType.TEXT, textBoxPrefab },
             { TextBoxType.LEFT, leftBoxPrefab },
