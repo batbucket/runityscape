@@ -58,14 +58,14 @@ namespace Scripts.Model.Acts {
                 Act act = acts[i];
                 if (act.IsSkippable) {
                     grid.List = new IButtonable[] {
-                    new Process("Skip", "Skip the current event.", () => act.SkipAct())
+                    new Process("Skip", string.Empty, () => act.SkipAct())
                 };
                 }
                 yield return act.Play();
                 if (i < acts.Length - 1) {
                     grid.List = new IButtonable[] {
-                    new Process("Step", "Advance to the next event.", () => isStepped = true),
-                    new Process("Skip All", "Skip the current scene.", () => isSkipAll = true)
+                    new Process("Step", string.Empty, () => isStepped = true),
+                    new Process("Skip All", string.Empty, () => isSkipAll = true)
                 };
                 }
                 yield return new WaitUntil(() => isStepped || i == (acts.Length - 1) || isSkipAll);
