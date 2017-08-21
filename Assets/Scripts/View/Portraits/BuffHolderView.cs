@@ -30,7 +30,7 @@ namespace Scripts.View.Portraits {
         private IDictionary<int, BuffView> previous;
 
         public void Awake() {
-            ObjectPoolManager.Instance.Register(buffPrefab, 10);
+            ObjectPoolManager.Instance.Register(buffPrefab);
             this.previous = new Dictionary<int, BuffView>();
         }
 

@@ -36,7 +36,7 @@ namespace Scripts.View.Portraits {
         private IDictionary<int, ResourceView> previous;
 
         public void Awake() {
-            ObjectPoolManager.Instance.Register(resourcePrefab, 4);
+            ObjectPoolManager.Instance.Register(resourcePrefab);
             this.previous = new Dictionary<int, ResourceView>();
         }
 

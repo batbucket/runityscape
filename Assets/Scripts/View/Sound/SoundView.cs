@@ -26,7 +26,7 @@ namespace Scripts.View.Sounds {
         private ClipView clipPrefab;
 
         private void Start() {
-            ObjectPoolManager.Instance.Register(clipPrefab, 20);
+            ObjectPoolManager.Instance.Register(clipPrefab);
         }
 
         public void LoopMusic(string resourceLocation) {

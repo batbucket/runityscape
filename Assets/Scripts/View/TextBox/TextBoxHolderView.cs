@@ -85,7 +85,7 @@ namespace Scripts.View.TextBoxes {
         };
 
             foreach (PooledBehaviour pb in textBoxes.Values) {
-                ObjectPoolManager.Instance.Register(pb, 100);
+                ObjectPoolManager.Instance.Register(pb);
             }
             ObjectPoolManager.Instance.Register(inputBoxPrefab, 1);
         }

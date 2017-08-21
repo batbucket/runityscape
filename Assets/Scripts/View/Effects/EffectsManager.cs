@@ -50,12 +50,12 @@ namespace Scripts.View.Effects {
         public ShroudView Shroud { get { return shroudPrefab; } }
 
         private void Start() {
-            ObjectPoolManager.Instance.Register(hitsplatPrefab, 10);
-            ObjectPoolManager.Instance.Register(minisplatPrefab, 10);
-            ObjectPoolManager.Instance.Register(lightningPrefab, 10);
-            ObjectPoolManager.Instance.Register(bloodsplatPrefab, 10);
-            ObjectPoolManager.Instance.Register(explosionPrefab, 10);
-            ObjectPoolManager.Instance.Register(shroudPrefab, 10);
+            ObjectPoolManager.Instance.Register(hitsplatPrefab);
+            ObjectPoolManager.Instance.Register(minisplatPrefab);
+            ObjectPoolManager.Instance.Register(lightningPrefab);
+            ObjectPoolManager.Instance.Register(bloodsplatPrefab);
+            ObjectPoolManager.Instance.Register(explosionPrefab);
+            ObjectPoolManager.Instance.Register(shroudPrefab);
         }
     }
 }

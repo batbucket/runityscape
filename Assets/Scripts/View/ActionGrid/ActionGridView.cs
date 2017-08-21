@@ -81,7 +81,7 @@ namespace Scripts.View.ActionGrid {
 
         // Use this for initialization
         private void Start() {
-            ObjectPoolManager.Instance.Register(actionButtonPrefab, 20);
+            ObjectPoolManager.Instance.Register(actionButtonPrefab);
             buttons = new List<HotkeyButton>();
         }
     }

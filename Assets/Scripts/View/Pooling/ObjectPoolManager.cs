@@ -67,7 +67,7 @@ namespace Scripts.View.ObjectPool {
         /// </summary>
         /// <param name="prefab">Prefab we want to register.</param>
         /// <param name="count">Number of prefab we want to register into the pool.</param>
-        public void Register(PooledBehaviour prefab, int count) {
+        public void Register(PooledBehaviour prefab, int count = 0) {
             //Util.Log(string.Format("Registering {0} of {1}.", count, prefab.gameObject.name));
             if (!pools.ContainsKey(prefab.gameObject.name)) {
                 pools.Add(prefab.name, new Stack<PooledBehaviour>());

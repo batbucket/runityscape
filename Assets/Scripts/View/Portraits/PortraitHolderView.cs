@@ -68,7 +68,7 @@ namespace Scripts.View.Portraits {
 
         private void Start() {
             previous = new Dictionary<int, PortraitView>();
-            ObjectPoolManager.Instance.Register(portraitPrefab, 10);
+            ObjectPoolManager.Instance.Register(portraitPrefab);
         }
     }
 }
