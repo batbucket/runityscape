@@ -106,7 +106,8 @@ namespace Scripts.Game.Pages {
             current.AddText("Attempting to import from GameJolt...");
             GameJolt.API.DataStore.Get(key, true, possibleSave => {
                 if (string.IsNullOrEmpty(possibleSave)) {
-                    current.AddText("Key's associated value was null.");
+                    current.Invoke();
+                    current.AddText(string.Format("No save associated with key {0}.", key));
                 } else {
                     WorldSave gameSave = null;
                     try {
