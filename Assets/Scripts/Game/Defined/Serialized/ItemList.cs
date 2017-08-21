@@ -52,8 +52,8 @@ namespace Scripts.Game.Defined.Serialized.Items.Misc {
             : base(
             Util.GetSprite("water-drop"),
             0,
-            "Drop",
-            "A drop of pure water. Typically used as currency."
+            "Droplet",
+            "A droplet of pure water. Used as currency."
             ) { }
     }
 }
