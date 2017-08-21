@@ -21,6 +21,8 @@ using UnityEngine;
 namespace Scripts.Model.Pages {
 
     public class Battle : Page {
+        private const int MINIMUM_EXP_PER_BATTLE = 1;
+
         private const string EXPERIENCE_GAIN = "{0} gains {1} {2}.";
 
         private const string BATTLE_START = "The battle begins.";
@@ -452,7 +454,7 @@ namespace Scripts.Model.Pages {
                         totalExp += CalculateExperience(victor.Stats, defeated.Stats);
                     }
                 }
-                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, totalExp);
+                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(1, totalExp));
                 this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(totalExp.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
             }
         }
@@ -464,7 +466,7 @@ namespace Scripts.Model.Pages {
         /// <param name="defeated">Defeated character to do calculation for</param>
         /// <returns>Calculated experience earner should recieve</returns>
         private int CalculateExperience(Characters.Stats earner, Characters.Stats defeated) {
-            return Mathf.Max(1, defeated.Level - earner.Level);
+            return Mathf.Max(0, defeated.Level - earner.Level);
         }
 
         private IEnumerator startBattle() {
