@@ -3,9 +3,7 @@
 * Written in the Unity engine using C#
 
 # TODOs after Downloading #
-* Fulfill the requirements specified in the readmes in:
-    * Assets\Resources\Config (Encryption key for saves)
-    * Assets\Plugins\GameJolt\Resources (API key for GameJolt services)
+* Fill in the fields in the Editor. Edit>Project Settings>Game Jolt API
 
 # Other Plugins #
 * NUnit for unit testing
@@ -16,7 +14,6 @@
 
 # Old Version (deprecated) #
 * [Here](https://drive.google.com/open?id=0B5E_IBqde8fLdGpmdUYyYmNzNHc) as a download
-* [Here](https://mothgarden.itch.io/monsterscape) as a WebGL build
 * The downloadable version only works on devices with a screen ratio of 16:9. Other dimensions may cause cutoffs
 
 # Game Features #
@@ -31,8 +28,8 @@
 # Technical Features #
 * [JSON serialization](https://docs.unity3d.com/Manual/JSONSerialization.html) for saving and loading data
     * Object-oriented serialization system that allows for extensions
-        * Each object that needs to be serialized implements ISaveable<T> where T is an equivalent class that holds serializable data
-            * Examples: Character : ISaveable<CharacterSave>, Buff : ISaveable<BuffSave>
+        * Each object that needs to be serialized implements ISaveable'<T>' where T is an equivalent class that holds serializable data
+            * Examples: Character : ISaveable'<CharacterSave>', Buff : ISaveable'<BuffSave>'
     * This is achieved through an ID Table, which associates each unique type with a unique string
         * The table automatically checks that each type and string is unique
         * The table has an associated unit test segment that ensures that all serializable content is included in itself
