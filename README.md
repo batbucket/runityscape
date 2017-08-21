@@ -3,7 +3,7 @@
 * Written in the Unity engine using C#
 
 # TODOs after Downloading #
-* Fill in the fields in the Editor. Edit>Project Settings>Game Jolt API
+* Setup the fields needed for the GameJolt API to work. From the editor, Edit → Project Settings → Game Jolt API
 
 # Other Plugins #
 * NUnit for unit testing
@@ -28,8 +28,8 @@
 # Technical Features #
 * [JSON serialization](https://docs.unity3d.com/Manual/JSONSerialization.html) for saving and loading data
     * Object-oriented serialization system that allows for extensions
-        * Each object that needs to be serialized implements ISaveable'<T>' where T is an equivalent class that holds serializable data
-            * Examples: Character : ISaveable'<CharacterSave>', Buff : ISaveable'<BuffSave>'
+        * Each object that needs to be serialized implements ISaveable`<T>` where T is an equivalent class that holds serializable data
+            * Examples: Character : ISaveable`<CharacterSave>`, Buff : ISaveable`<BuffSave>`
     * This is achieved through an ID Table, which associates each unique type with a unique string
         * The table automatically checks that each type and string is unique
         * The table has an associated unit test segment that ensures that all serializable content is included in itself
