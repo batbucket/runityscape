@@ -1,5 +1,4 @@
-﻿using Scripts.Game.Pages.Explorables;
-using Scripts.Game.Serialized;
+﻿using Scripts.Game.Serialized;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
@@ -10,7 +9,6 @@ using System.Linq;
 
 namespace Scripts.Game.Pages {
     public class ExplorePages : PageGroup {
-        private readonly IDictionary<Explore, ExplorableArea> explores = new Dictionary<Explore, ExplorableArea>();
         private readonly Party party;
         private readonly Flags flags;
         private readonly Page previous;
@@ -25,14 +23,7 @@ namespace Scripts.Game.Pages {
             Root.AddCharacters(Side.LEFT, party);
             Root.Condition = PageUtil.GetVisitProcessCondition(flags, party);
 
-            SetupGenerators();
             buttons.Add(PageUtil.GenerateBack(previous));
-
-            foreach (KeyValuePair<Explore, ExplorableArea> pair in explores) {
-                if (flags.UnlockedExplores.Contains(pair.Key)) {
-                    buttons.Add(GetEncounterProcess(pair.Value.Generator));
-                }
-            }
 
             Get(ROOT_INDEX).Actions = buttons;
             Get(ROOT_INDEX).OnEnter = () => {
@@ -54,15 +45,6 @@ namespace Scripts.Game.Pages {
                     flags.ShouldAdvanceTimeInCamp = true;
                 }
                 );
-        }
-
-        private void AddArea(ExplorableArea area) {
-            explores.Add(area.Type, area);
-        }
-
-        private void SetupGenerators() {
-            flags.UnlockedExplores.Add(Explore.RUINS);
-            AddArea(new Ruins(previous, flags, party));
         }
     }
 }

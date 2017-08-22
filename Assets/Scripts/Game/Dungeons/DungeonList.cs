@@ -16,7 +16,6 @@ namespace Scripts.Game.Pages {
                   "As you stand under the archway leading into the cathedral, you hear countless ghostly screams coming from the depths of the place."
                   ) {
             Root.AddCharacters(Side.LEFT, party);
-            Root.Condition = () => (flags.Ruins >= RuinsProgression.ASK_ABOUT_FOX);
         }
 
         protected override Character[][] GetEnemyEncounters() {

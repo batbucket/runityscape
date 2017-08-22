@@ -20,52 +20,15 @@ namespace Scripts.Game.Serialized {
         NIGHT,
     }
 
-    public enum Explore {
-        RUINS
-    }
-
-    public enum Place {
-        CATHEDRAL
-    }
-
-    public enum RuinsProgression {
-        UNEXPLORED,
-        FIRST_VISIT,
-        ENCOUNTER_MAPLE,
-        ASK_ABOUT_INJURIES,
-        ASK_ABOUT_FOX,
-        BOSS_CONFRONTED,
-        BOSS_VICTORY
-    }
-
     [Serializable]
     public class Flags : ISaveable<FlagsSave> {
         public TimeOfDay Time;
         public int DayCount;
         public int TotalExploreCount;
         public bool ShouldAdvanceTimeInCamp;
-        public RuinsProgression Ruins;
-
-        [NonSerialized]
-        private HashSet<Explore> unlockedExplores;
-        [NonSerialized]
-        private HashSet<Place> unlockedPlaces;
 
         public Flags() {
-            this.unlockedExplores = new HashSet<Explore>();
-            this.unlockedPlaces = new HashSet<Place>();
-        }
 
-        public ICollection<Explore> UnlockedExplores {
-            get {
-                return unlockedExplores;
-            }
-        }
-
-        public ICollection<Place> UnlockedPlaces {
-            get {
-                return unlockedPlaces;
-            }
         }
 
         public FlagsSave GetSaveObject() {
@@ -73,8 +36,7 @@ namespace Scripts.Game.Serialized {
         }
 
         public void InitFromSaveObject(FlagsSave saveObject) {
-            this.unlockedExplores = new HashSet<Explore>(saveObject.Explores);
-            this.unlockedPlaces = new HashSet<Place>(saveObject.Places);
+
         }
     }
 }

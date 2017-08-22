@@ -345,14 +345,10 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
 
     [Serializable]
     public sealed class FlagsSave {
-        public Explore[] Explores;
-        public Place[] Places;
         public Flags Flags;
 
         public FlagsSave(Flags flags) {
             this.Flags = flags;
-            this.Explores = flags.UnlockedExplores.ToArray();
-            this.Places = flags.UnlockedPlaces.ToArray();
         }
     }
 
