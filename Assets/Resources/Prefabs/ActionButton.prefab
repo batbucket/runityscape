@@ -180,7 +180,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 484cbbd7a2b3f5045b4f88a795b1a8d8, type: 3}
+    m_Font: {fileID: 12800000, guid: e2fc1a50e57e4e5469d04bfca5af1e0c, type: 3}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 1
@@ -192,7 +192,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Q
+  m_Text: 1
 --- !u!114 &11487998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -285,8 +285,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -0.10784578, y: -1.6951561}
-  m_SizeDelta: {x: 11.810045, y: 23.097755}
+  m_AnchoredPosition: {x: 14.5, y: -11.16}
+  m_SizeDelta: {x: 12, y: 22}
   m_Pivot: {x: 1, y: 0}
 --- !u!224 &22466768
 RectTransform:
