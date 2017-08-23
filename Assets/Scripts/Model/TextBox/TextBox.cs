@@ -17,11 +17,22 @@ namespace Scripts.Model.TextBoxes {
         private string soundLoc;
         private string[] textArray;
         private float timePerLetter;
+        private TooltipBundle tooltip;
+
+        public TextBox(string text, TooltipBundle tooltip) : this(text) {
+            this.tooltip = tooltip;
+        }
 
         public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) {
         }
 
         public TextBox(Color c, string text) : this(text, c, TextEffect.FADE_IN, "Blip_0", 0) {
+        }
+
+        public TooltipBundle Tooltip {
+            get {
+                return tooltip;
+            }
         }
 
         protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
@@ -30,7 +41,8 @@ namespace Scripts.Model.TextBoxes {
             this.color = color;
             this.timePerLetter = timePerLetter;
             this.soundLoc = soundLocation;
-            this.effect = effect;
+            this.effect = effect; 
+            this.tooltip = new TooltipBundle();
         }
 
         public Color Color { get { return color; } set { color = value; } }

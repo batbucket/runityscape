@@ -191,6 +191,10 @@ namespace Scripts.Model.Pages {
             return TypeText(new TextBox(s));
         }
 
+        public PooledBehaviour AddText(TextBox tb) {
+            return TypeText(tb);
+        }
+
         public override int GetHashCode() {
             return Location.GetHashCode();
         }

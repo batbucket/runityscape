@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
+using Scripts.View.Tooltip;
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
@@ -36,6 +37,9 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private Text text;
 
+        [SerializeField]
+        private Tip tip;
+
         private float BackgroundAlpha {
             set {
                 Util.SetImageAlpha(background, value);
@@ -58,6 +62,7 @@ namespace Scripts.View.TextBoxes {
             background.color = Color.black;
             outline.effectColor = Color.white;
             isSkip = false;
+            tip.Reset();
         }
 
         /// <summary>
@@ -67,6 +72,7 @@ namespace Scripts.View.TextBoxes {
         /// <param name="callBack">Action to be called after textbox finishes typing</param>
         public virtual void WriteText(TextBox textBox) {
             StartCoroutine(TypeWriter(text, textBox));
+            this.tip.Setup(textBox.Tooltip);
         }
 
         private IEnumerator TypeWriter(Text text, TextBox textBox) {

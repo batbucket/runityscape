@@ -50,6 +50,7 @@ GameObject:
   - component: {fileID: 11451644}
   - component: {fileID: 11492818}
   - component: {fileID: 11408472}
+  - component: {fileID: 114753131890740952}
   m_Layer: 0
   m_Name: Left_Box
   m_TagString: Untagged
@@ -71,6 +72,7 @@ MonoBehaviour:
   background: {fileID: 11451644}
   outline: {fileID: 11436610}
   text: {fileID: 11465298}
+  tip: {fileID: 114753131890740952}
 --- !u!114 &11408472
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -120,7 +122,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -330,3 +332,14 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &114753131890740952
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 179200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd27bb171feefdd4db56d07364895602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

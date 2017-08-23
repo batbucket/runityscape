@@ -39,6 +39,12 @@ namespace Scripts.View.Tooltip {
             }
         }
 
+        public void Setup(TooltipBundle bundle) {
+            this.sprite = bundle.Sprite;
+            this.title = bundle.Title;
+            this.body = bundle.Text;
+        }
+
         public void Setup(Sprite sprite, string title, string body) {
             this.sprite = sprite;
             this.title = title;

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 11405556}
   - component: {fileID: 11434320}
   - component: {fileID: 11475632}
+  - component: {fileID: 114891772570748886}
   m_Layer: 0
   m_Name: TextBox
   m_TagString: Untagged
@@ -64,7 +65,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -147,6 +148,7 @@ MonoBehaviour:
   background: {fileID: 11434320}
   outline: {fileID: 11405556}
   text: {fileID: 11477140}
+  tip: {fileID: 114891772570748886}
 --- !u!222 &22271664
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -232,3 +234,14 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 127482}
   m_IsPrefabParent: 1
+--- !u!114 &114891772570748886
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 127482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd27bb171feefdd4db56d07364895602, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
