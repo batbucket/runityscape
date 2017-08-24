@@ -315,7 +315,7 @@ namespace Scripts.Model.Pages {
                 previous,
                 et.Sprite,
                 Util.ColorString(et.Name, Color.grey),
-                string.Format("Equip an item in the <color=yellow>{0}</color> equipment slot.", et.Name)
+                string.Format("Equip an item in the <color=yellow>{0}</color> slot.", et.Name)
                 );
             foreach (EquippableItem ei in inv as IEnumerable<EquippableItem>) {
                 if (ei.Type.Equals(et)) {
