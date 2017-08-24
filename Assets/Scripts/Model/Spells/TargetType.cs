@@ -20,11 +20,11 @@ namespace Scripts.Model.Spells {
         }
 
         public static TargetType SELF = new TargetType("Self", (c, p) => new Character[] { c });
-        public static TargetType SINGLE_ALLY = new TargetType("Single ally", (c, p) => p.GetAllies(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
+        public static TargetType SINGLE_ALLY = new TargetType("One ally", (c, p) => p.GetAllies(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
         //public static TargetType ALL_ALLIES = new TargetType("All allies", (c, p) => p.GetAllies(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
-        public static TargetType SINGLE_ENEMY = new TargetType("Single enemy", (c, p) => p.GetFoes(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
+        public static TargetType SINGLE_ENEMY = new TargetType("One enemy", (c, p) => p.GetFoes(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
         //public static TargetType ALL_ENEMIES = new TargetType("All enemies", (c, p) => p.GetFoes(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
-        public static TargetType ANY = new TargetType("Single", (c, p) => p.GetAll().Where(a => a.Stats.State == State.ALIVE).ToArray());
+        public static TargetType ANY = new TargetType("Any", (c, p) => p.GetAll().Where(a => a.Stats.State == State.ALIVE).ToArray());
         //public static TargetType ALL = new TargetType("All", (c, p) => p.GetAll().Where(a => a.Stats.State == State.ALIVE).ToArray());
         public static TargetType NONE = new TargetType("None", (c, p) => new Character[0]);
 

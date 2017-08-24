@@ -31,9 +31,9 @@ namespace Scripts.Model.Items {
             return true;
         }
 
-        protected override string DescriptionHelper {
+        protected sealed override string DescriptionHelper {
             get {
-                return string.Empty;
+                return string.Format("Consumable\n{0}", Flavor);
             }
         }
 

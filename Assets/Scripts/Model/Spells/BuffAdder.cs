@@ -7,7 +7,7 @@ namespace Scripts.Model.Spells {
     public abstract class BuffAdder : BasicSpellbook {
         private Buff dummy;
 
-        public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name) : base(name, dummy.Sprite, target, spell) {
+        public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name) : base(name, dummy.Sprite, target, spell, PriorityType.LOW) {
             this.dummy = dummy;
         }
 
@@ -20,13 +20,13 @@ namespace Scripts.Model.Spells {
             };
         }
 
-        public sealed override string CreateDescriptionHelper(SpellParams caster) {
+        protected sealed override string CreateDescriptionHelper() {
             return CreateBuffDescription(dummy);
         }
 
         public static string CreateBuffDescription(Buff buff) {
             return string.Format(
-                "Target is affected by\n\n<color=cyan>{0}</color>\n{1}\nDuration: {2} turns.",
+                "Target is affected by\n\n<color=cyan>{0}</color>\n{1}\nLasts {2} turns.",
                 buff.Name,
                 buff.Description,
                 buff.DurationText

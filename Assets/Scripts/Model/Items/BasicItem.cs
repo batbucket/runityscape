@@ -19,7 +19,7 @@ namespace Scripts.Model.Items {
 
         protected sealed override string DescriptionHelper {
             get {
-                return string.Empty;
+                return string.Format("{0}", Flavor);
             }
         }
 

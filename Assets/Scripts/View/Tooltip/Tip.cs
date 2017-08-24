@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Scripts.Model;
+using Scripts.Model.Interfaces;
+using Scripts.Model.Tooltips;
 using UnityEngine;
 
 namespace Scripts.View.Tooltip {
@@ -43,12 +44,6 @@ namespace Scripts.View.Tooltip {
             this.sprite = bundle.Sprite;
             this.title = bundle.Title;
             this.body = bundle.Text;
-        }
-
-        public void Setup(Sprite sprite, string title, string body) {
-            this.sprite = sprite;
-            this.title = title;
-            this.body = body;
         }
 
         public void Reset() {

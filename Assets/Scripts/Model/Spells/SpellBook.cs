@@ -12,6 +12,8 @@ using System.Linq;
 using Scripts.Model.Pages;
 using Scripts.Game.Defined.SFXs;
 using Scripts.Presenter;
+using Scripts.Model.Tooltips;
+using System;
 
 namespace Scripts.Model.Spells {
 
@@ -50,7 +52,7 @@ namespace Scripts.Model.Spells {
         public readonly Sprite Icon;
         public readonly TargetType TargetType;
         public readonly SpellType SpellType;
-        public readonly int Priority;
+        public readonly PriorityType Priority;
 
         public readonly int CastTime;
         public readonly int Cooldown;
@@ -62,7 +64,7 @@ namespace Scripts.Model.Spells {
 
         public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, string verb) : this(spellName, sprite, target, spell, castTime, cooldown, 0, verb) { }
 
-        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, int priority, string verb) {
+        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, PriorityType priority, string verb) {
             this.Name = spellName;
             this.Icon = sprite;
             this.costs = new Dictionary<StatType, int>();
@@ -95,6 +97,20 @@ namespace Scripts.Model.Spells {
             }
         }
 
+        public virtual TooltipBundle TextboxTooltip {
+            get {
+                return new TooltipBundle(
+                    this.Icon,
+                    this.Name,
+                    string.Format("{0}{1}{2}",
+                        Priority == 0 ? string.Empty : string.Format("{0} priority", Priority.GetDescription()),
+                        Costs.Count == 0 ? string.Empty : string.Format("\nCosts {0}\n\n", GetCommaSeparatedCosts()),
+                        CreateDescriptionHelper()
+                        )
+                    );
+            }
+        }
+
         public override int GetHashCode() {
             return GetType().GetHashCode();
         }
@@ -104,11 +120,11 @@ namespace Scripts.Model.Spells {
         }
 
         public string CreateDescription(SpellParams caster) {
-            return string.Format("{0}{3}\n\nTarget: {1}\nCost: {2}",
+            return string.Format("{0}{1}{2}{3}",
                 CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n", Color.red),
-                TargetType.Name,
-                Costs.Count == 0 ? "<color=grey>None</color>" : GetCommaSeparatedCosts(caster.Stats),
-                CreateDescriptionHelper(caster)
+                Priority == 0 ? string.Empty : string.Format("{0} priority", Priority.GetDescription()),
+                Costs.Count == 0 ? string.Empty : string.Format("\nCosts {0}\n\n", GetCommaSeparatedCosts(caster.Stats)),
+                CreateDescriptionHelper()
                 );
         }
 
@@ -116,7 +132,7 @@ namespace Scripts.Model.Spells {
             return string.Format("{0} {1} on {2}.", this.Verb, this.Name, target.Look.DisplayName);
         }
 
-        public abstract string CreateDescriptionHelper(SpellParams caster);
+        protected abstract string CreateDescriptionHelper();
 
         public bool IsMeetPreTargetRequirements(Characters.Stats caster) {
             return CasterHasResources(caster) && IsMeetOtherPreTargetRequirements();
@@ -220,13 +236,13 @@ namespace Scripts.Model.Spells {
             return new IEnumerator[0];
         }
 
-        private string GetCommaSeparatedCosts(Characters.Stats caster) {
+        private string GetCommaSeparatedCosts(Characters.Stats caster = null) {
             string[] arr = new string[Costs.Count];
 
             int index = 0;
             foreach (KeyValuePair<StatType, int> pair in Costs) {
                 arr[index++] = string.Format("{0} {1}",
-                    Util.ColorString(pair.Value.ToString(), CasterHasResource(pair.Key, caster)),
+                    Util.ColorString(pair.Value.ToString(), caster != null && CasterHasResource(pair.Key, caster)),
                     Util.ColorString(pair.Key.Name, pair.Key.Color));
             }
             return string.Join(", ", arr);

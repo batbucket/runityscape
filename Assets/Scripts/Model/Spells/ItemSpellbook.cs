@@ -26,6 +26,10 @@ namespace Scripts.Model.Spells {
             return caster.Inventory.CountedItemName(item);
         }
 
+        protected override string CreateDescriptionHelper() {
+            return item.Description;
+        }
+
         protected override bool IsMeetOtherCastRequirements(SpellParams caster, SpellParams target) {
             return item.IsUsable(caster, target) && IsMeetOtherCastRequirements2(caster, target);
         }

@@ -10,6 +10,7 @@ using Scripts.Model.Processes;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
+using Scripts.Model.Tooltips;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
 using System;
@@ -29,7 +30,7 @@ namespace Scripts.Model.Pages {
 
         private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=cyan>{1}</color>.";
 
-        private const string BUFF_FADE = "<color=yellow>{0}</color>'s {1} fades.";
+        private const string BUFF_FADE = "<color=yellow>{0}</color>'s <color=cyan>{1}</color> fades.";
 
         private const int CAPACITY_FLAGGED_ITEM_LOOT_AMOUNT = 1;
 
@@ -313,7 +314,11 @@ namespace Scripts.Model.Pages {
 
                     if (brainIsPlayer) {
                         Spell spell = plays.Last().MySpell;
-                        declarations.Add(AddText(spell.SpellDeclareText)); // "X will do Y" helper textbox
+                        declarations.Add(AddText(
+                            new TextBox(
+                                spell.SpellDeclareText,
+                                spell.Book.TextboxTooltip
+                            ))); // "X will do Y" helper textbox
                     }
 
                 }
@@ -364,7 +369,14 @@ namespace Scripts.Model.Pages {
                     Buff b = myB;
                     if (myB.HasEndOfTurn) {
                         yield return new WaitForSeconds(0.02f);
-                        AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
+                        AddText(new TextBox(
+                            string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name),
+                            new TooltipBundle(
+                                b.Sprite,
+                                b.Name,
+                                b.Description
+                                )
+                            ));
                         b.OnEndOfTurn(c.Stats);
                     }
                     if (b.IsTimedOut) {
@@ -374,7 +386,14 @@ namespace Scripts.Model.Pages {
                 foreach (Buff myB in timedOut) {
                     yield return new WaitForSeconds(0.02f);
                     Buff b = myB;
-                    AddText(string.Format(BUFF_FADE, c.Look.DisplayName, b.Name));
+                    AddText(new TextBox(
+                        string.Format(BUFF_FADE, c.Look.DisplayName, b.Name),
+                        new TooltipBundle(
+                            b.Sprite,
+                            b.Name,
+                            b.Description
+                            )
+                        ));
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
                 }
             }
@@ -416,7 +435,9 @@ namespace Scripts.Model.Pages {
                     } else {
                         spellMessage = Spell.GetCastMessage(spell.Caster, spell.Target, spell.Book, ResultType.FAILED);
                     }
-                    AddText(play.Text);
+                    AddText(new TextBox(
+                        play.Text, 
+                        play.MySpell.Book.TextboxTooltip));
                     yield return play.Play();
                     yield return CharacterDialogue(spell.Target.Character, spell.Target.Character.Brain.ReactToSpell(spell));
                 }

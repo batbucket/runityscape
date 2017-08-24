@@ -1,11 +1,7 @@
-﻿using Scripts.Model.Stats;
-using Scripts.Presenter;
-using Scripts.View.Effects;
+﻿using Scripts.Model.Tooltips;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -57,7 +53,7 @@ namespace Scripts.View.Portraits {
         }
 
         public void Setup(Sprite sprite, string title, string body, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs, bool isRevealed) {
-            tip.Setup(sprite, title, body);
+            tip.Setup(new TooltipBundle(sprite, title, body));
             PortraitName = title;
             Sprite = sprite;
             if (isRevealed) {

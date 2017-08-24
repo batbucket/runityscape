@@ -1,4 +1,5 @@
 ﻿using Scripts.Model.Stats;
+using Scripts.Model.Tooltips;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
 using System;
@@ -58,7 +59,7 @@ namespace Scripts.View.Portraits {
             resourceIcon.sprite = sprite;
             text.text = barText;
             SetBarScale(numerator, denominator);
-            tip.Setup(sprite, title, string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, typeDescription));
+            tip.Setup(new TooltipBundle(sprite, title, string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, typeDescription)));
         }
 
         public override void Reset() {

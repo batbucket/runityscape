@@ -33,14 +33,7 @@ namespace Scripts.Model.Items {
 
         public string Description {
             get {
-                string other = DescriptionHelper;
-                string flavor = string.Empty;
-                if (string.IsNullOrEmpty(other)) {
-                    flavor = string.Format("{0}", Flavor);
-                } else {
-                    flavor = string.Format(flavor);
-                }
-                return string.Format("{0}{1}", other, flavor);
+                return DescriptionHelper;
             }
         }
 

@@ -1,8 +1,10 @@
-﻿using Scripts.Presenter;
+﻿using System;
+using Scripts.Presenter;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
 using UnityEngine;
 using UnityEngine.UI;
+using Scripts.Model.Tooltips;
 
 namespace Scripts.View.Portraits {
 
@@ -51,11 +53,7 @@ namespace Scripts.View.Portraits {
             image.sprite = icon;
             nameText.color = color;
 
-            Tip.Setup(
-                icon,
-                name,
-                body
-                );
+            Tip.Setup(new TooltipBundle(icon, name, body));
         }
 
         public override void Reset() {

@@ -28,7 +28,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public Attack() : base("Attack", Util.GetSprite("fist"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE) {
         }
 
-        public override string CreateDescriptionHelper(SpellParams caster) {
+        protected override string CreateDescriptionHelper() {
             return string.Format("A basic attack with the weapons or fists.");
         }
 
@@ -73,7 +73,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             this.flags.Remove(Model.Spells.Flag.CASTER_REQUIRES_SPELL);
         }
 
-        public override string CreateDescriptionHelper(SpellParams caster) {
+        protected override string CreateDescriptionHelper() {
             return "Literally do nothing.";
         }
 
@@ -87,7 +87,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) { }
 
-        public override string CreateDescriptionHelper(SpellParams caster) {
+        protected override string CreateDescriptionHelper() {
             return BuffAdder.CreateBuffDescription(dummy);
         }
 
@@ -124,9 +124,9 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class Heal : BasicSpellbook {
         private const int HEALING_AMOUNT = 10;
 
-        public Heal() : base("Heal", Util.GetSprite("health-normal"), TargetType.SINGLE_ALLY, SpellType.BOOST, 1) { }
+        public Heal() : base("Heal", Util.GetSprite("health-normal"), TargetType.SINGLE_ALLY, SpellType.BOOST, PriorityType.HIGH) { }
 
-        public override string CreateDescriptionHelper(SpellParams caster) {
+        protected override string CreateDescriptionHelper() {
             return "Restore a little health.";
         }
 
@@ -145,9 +145,9 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class ReflectiveClone : BasicSpellbook {
         private const int NUMBER_OF_CLONES = 4;
 
-        public ReflectiveClone() : base("Harmless Illusions", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, -1) { }
+        public ReflectiveClone() : base("Harmless Illusions", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, PriorityType.LOW) { }
 
-        public override string CreateDescriptionHelper(SpellParams caster) {
+        protected override string CreateDescriptionHelper() {
             return "Creates clones of the caster that vanish when the caster is attacked. Clones reflect attacks. Shuffles the caster's side.";
         }
 
@@ -190,7 +190,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
             this.flags.Remove(Model.Spells.Flag.CASTER_REQUIRES_SPELL);
         }
 
-        public override string CreateDescriptionHelper(SpellParams caster) {
+        protected override string CreateDescriptionHelper() {
             return string.Format("Escape back to {0}.", destination.Location);
         }
 
