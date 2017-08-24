@@ -41,7 +41,7 @@ namespace Scripts.Game.Pages {
 
                 root.AddCharacters(Side.LEFT, party.Collection);
                 root.Actions = new IButtonable[] {
-                new ExplorePages(root, party, flags),
+                new DungeonHub(root, party, flags),
                 new PlacePages(root, flags, party),
                 new LevelUpPages(Root, party.Default),
                 new InventoryPages(root, party.Default, party.shared),
