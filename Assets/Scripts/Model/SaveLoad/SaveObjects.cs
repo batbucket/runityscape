@@ -11,6 +11,8 @@ using UnityEngine;
 using System.Collections;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Game.Serialized;
+using Scripts.Game.Pages;
+using Scripts.Game.Dungeons;
 
 namespace Scripts.Model.SaveLoad.SaveObjects {
 

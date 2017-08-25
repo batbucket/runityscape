@@ -1,4 +1,6 @@
-﻿using Scripts.Model.SaveLoad;
+﻿using Scripts.Game.Dungeons;
+using Scripts.Game.Pages;
+using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using System;
 using System.Collections.Generic;
@@ -24,7 +26,8 @@ namespace Scripts.Game.Serialized {
     public class Flags : ISaveable<FlagsSave> {
         public TimeOfDay Time;
         public int DayCount;
-        public int TotalExploreCount;
+        public AreaType LastClearedArea;
+        public int LastClearedStage;
         public bool ShouldAdvanceTimeInCamp;
 
         public Flags() {

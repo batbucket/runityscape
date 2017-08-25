@@ -58,6 +58,8 @@ namespace Scripts.Model.Pages {
 
         private IDictionary<Item, int> loot;
 
+        private int experienceGiven;
+
         private bool wasExperienceGiven;
 
         private IList<ISpellable> temporarySpells;
@@ -86,6 +88,12 @@ namespace Scripts.Model.Pages {
                     PostBattle(PlayerStatus);
                 }
             };
+        }
+
+        public int ExperienceGiven {
+            get {
+                return this.experienceGiven;
+            }
         }
 
         public int TurnCount {
@@ -469,14 +477,13 @@ namespace Scripts.Model.Pages {
 
         private void GiveExperienceToVictors() {
             foreach (Character victor in VictoriousParty) {
-                int totalExp = 0;
                 foreach (Character defeated in AllDefeated) {
                     if (defeated.HasFlag(Characters.Flag.GIVES_EXPERIENCE)) {
-                        totalExp += CalculateExperience(victor.Stats, defeated.Stats);
+                        experienceGiven += CalculateExperience(victor.Stats, defeated.Stats);
                     }
                 }
-                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(1, totalExp));
-                this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(totalExp.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
+                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(1, experienceGiven));
+                this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(experienceGiven.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
             }
         }
 

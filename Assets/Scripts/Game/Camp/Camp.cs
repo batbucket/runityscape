@@ -1,6 +1,7 @@
 ﻿
 using Scripts.Game.Defined.Characters;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Game.Dungeons;
 using Scripts.Game.Serialized;
 using Scripts.Game.Undefined.Characters;
 using Scripts.Model.Acts;
@@ -41,7 +42,7 @@ namespace Scripts.Game.Pages {
 
                 root.AddCharacters(Side.LEFT, party.Collection);
                 root.Actions = new IButtonable[] {
-                new DungeonHub(root, party, flags),
+                new DungeonPages(root, party, flags),
                 new PlacePages(root, flags, party),
                 new LevelUpPages(Root, party.Default),
                 new InventoryPages(root, party.Default, party.shared),
