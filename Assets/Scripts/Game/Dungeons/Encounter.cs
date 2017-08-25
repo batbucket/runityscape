@@ -7,7 +7,7 @@ namespace Scripts.Game.Dungeons {
         public readonly Character[] Enemies;
         public readonly Music Music;
 
-        public Encounter(Character[] enemies, Music music) {
+        public Encounter(Music music, params Character[] enemies) {
             this.Enemies = enemies;
             this.Music = music;
         }

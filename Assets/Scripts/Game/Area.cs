@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scripts.Game.Pages {
+namespace Scripts.Game.Dungeons {
     public class Area {
         public readonly Act[] Intro;
         public readonly Act[] Outro;
@@ -17,15 +17,13 @@ namespace Scripts.Game.Pages {
         public readonly AreaType Type;
 
         private readonly Flags flags;
-        private readonly Music normal;
-        private readonly Music boss;
         private readonly string areaName;
         private readonly Party party;
         private readonly Page camp;
         private readonly Page quests;
         private int currentDungeonCount;
 
-        public Area(int dungeonCount, Flags flags, Party party, Page camp, Page quests, Music normal, Music boss, AreaType type, string areaName) {
+        public Area(int dungeonCount, Flags flags, Party party, Page camp, Page quests, AreaType type) {
             this.flags = flags;
             this.party = party;
             this.camp = camp;
@@ -33,35 +31,24 @@ namespace Scripts.Game.Pages {
 
             this.currentDungeonCount = 0;
 
-            this.normal = normal;
-            this.boss = boss;
-            this.areaName = areaName;
+            this.areaName = type.GetDescription();
             this.Intro = new Act[0];
             this.Outro = new Act[0];
             this.Dungeons = new Dungeon[dungeonCount];
             this.Places = new List<PageGroup>();
         }
 
-        public void AddNormalStage(string stageName, Func<Encounter[]> encounters) {
-            AddStage(stageName, normal, encounters);
-        }
-
-        public void AddBossStage(string stageName, Func<Encounter[]> encounters) {
-            AddStage(stageName, boss, encounters);
-        }
-
-        private bool IsStageCleared(int stageIndex) {
+        public bool IsStageCleared(int stageIndex) {
             return flags.LastClearedArea > this.Type || flags.LastClearedStage > stageIndex;
         }
 
-        private void AddStage(string stageName, Music music, Func<Encounter[]> encounters) {
+        public Area AddStage(string stageName, Func<Encounter[]> encounters) {
             this.Dungeons[currentDungeonCount] =
                 new Dungeon(
                     party, 
                     camp, 
                     quests,
                     camp,
-                    music, 
                     string.Format("{0}-{1}",
                     stageName, 
                     currentDungeonCount), 
@@ -82,6 +69,7 @@ namespace Scripts.Game.Pages {
                     }
                     );
             currentDungeonCount++;
+            return this;
         }
     }
 }

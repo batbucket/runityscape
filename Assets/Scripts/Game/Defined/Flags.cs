@@ -26,6 +26,7 @@ namespace Scripts.Game.Serialized {
     public class Flags : ISaveable<FlagsSave> {
         public TimeOfDay Time;
         public int DayCount;
+        public AreaType CurrentArea;
         public AreaType LastClearedArea;
         public int LastClearedStage;
         public bool ShouldAdvanceTimeInCamp;
