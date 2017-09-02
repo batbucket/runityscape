@@ -129,6 +129,7 @@ namespace Scripts.Model.Characters {
                 flags.Add(flag);
             }
             this.Stats.InitFromSaveObject(saveObject.Stats);
+
             this.Look.InitFromSaveObject(saveObject.Look);
             this.Spells.InitFromSaveObject(saveObject.Spells);
             // No equipment setup here!

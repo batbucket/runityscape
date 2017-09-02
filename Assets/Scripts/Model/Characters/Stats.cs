@@ -33,6 +33,10 @@ namespace Scripts.Model.Characters {
 
         private int resourceVisibility;
 
+        // Temporary fields for initing
+        private bool isSpoofed;
+        private bool isDoneIniting;
+
         public Stats() {
             this.dict = new Dictionary<StatType, Stat>();
             this.AddSplat = (a => { });
@@ -271,12 +275,17 @@ namespace Scripts.Model.Characters {
         }
 
         public CharacterStatsSave GetSaveObject() {
-            List<StatSave> list = new List<StatSave>();
+            List<StatSave> statistics = new List<StatSave>();
             foreach (KeyValuePair<StatType, Stat> pair in dict) {
                 Stat stat = pair.Value;
-                list.Add(stat.GetSaveObject());
+                statistics.Add(stat.GetSaveObject());
             }
-            return new CharacterStatsSave(this.resourceVisibility, this.Level, this.StatPoints, list);
+
+            List<EquipmentStatSave> equipmentBonuses = new List<EquipmentStatSave>();
+            foreach (StatType st in StatType.AllTypes) {
+                equipmentBonuses.Add(new EquipmentStatSave(st.GetSaveObject(), GetEquipmentBonus(st)));
+            }
+            return new CharacterStatsSave(this.resourceVisibility, this.Level, this.StatPoints, statistics, equipmentBonuses);
         }
 
         public void InitFromSaveObject(CharacterStatsSave saveObject) {
@@ -288,6 +297,24 @@ namespace Scripts.Model.Characters {
                 stat.InitFromSaveObject(save);
                 dict.Add(stat.Type, stat);
             }
+
+            // If we're spoofing the stats for a nonparty member, we want to include the equipment bonuses too,
+            // Otherwise buffs that scale off of mod + equip will have the equip portion be 0
+            // Example: DOT that deals damage based on caster's strength. Caster has a +10 strength sword and casts it on a party member
+            // After a save, we want to maintain the strength bonus.
+            if (isSpoofed) {
+                IDictionary<StatType, int> spoofedEquipment = new Dictionary<StatType, int>();
+                foreach (EquipmentStatSave save in saveObject.EquipmentBonuses) {
+                    spoofedEquipment.Add(save.StatType.Restore(), save.Bonus);
+                }
+                GetEquipmentBonus = (st => spoofedEquipment[st]);
+            }
+            isDoneIniting = true;
+        }
+
+        public void SetupTemporarySaveFields(bool isSpoofed) {
+            Util.Assert(!isDoneIniting, "Done initializing, this function can no longer be called.");
+            this.isSpoofed = isSpoofed;
         }
 
         public int CompareTo(Stats other) {

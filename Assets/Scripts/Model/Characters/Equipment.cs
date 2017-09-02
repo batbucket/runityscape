@@ -170,7 +170,6 @@ namespace Scripts.Model.Characters {
 
             foreach (EquipmentSave.EquipBuff eb in saveObject.Buffs) {
                 BuffSave bs = eb.Buff;
-
                 EquipType et = eb.EquipType.Restore();
                 Buff buff = CharacterBuffsSave.SetupBuffCasterFromSave(bs, partyMembers);
                 itemBuffs.Add(et, buff);

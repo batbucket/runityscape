@@ -16,6 +16,16 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
+    public class StrengthScalingPoison : Buff {
+        public StrengthScalingPoison() : base(2, Util.GetSprite("fox-head"), "StrengthScalingPoison", "Loses health at the end of each turn.", true) { }
+
+        protected override IList<SpellEffect> OnEndOfTurnHelper(Model.Characters.Stats owner) {
+            return new SpellEffect[] {
+                new AddToModStat(owner, StatType.HEALTH, BuffCaster.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH))
+            };
+        }
+    }
+
     public class Checked : Buff {
         public Checked() : base(5, Util.GetSprite("magnifying-glass"), "Checked", "Resource visibility increased.", true) { }
 

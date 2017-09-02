@@ -97,6 +97,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Counter>("counterBuff");
             Add<ReflectAttack>("reflectAttack");
             Add<SpiritLink>("spiritLink");
+            Add<StrengthScalingPoison>("strengthScalingPoison");
         }
 
         private void Brains() {

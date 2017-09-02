@@ -410,6 +410,37 @@ public class BasicTests {
             Assert.AreEqual(party, party2);
             Assert.AreNotSame(party.Collection.ToList()[1].Stats, party.Collection.ToList()[2].Buffs.ToList()[0].BuffCaster);
         }
+
+        [Test]
+        public void SaveLoadMaintainsEquipmentBonusesForNonPartyMemberCastedBuffs() {
+            Party party = new Party();
+            Character dummy = CharacterList.NotKitsune();
+            Character buffCaster = CharacterList.NotKitsune();
+
+            buffCaster.Inventory.ForceAdd(new BrokenSword());
+            buffCaster.Equipment.AddEquip(buffCaster.Inventory, new BuffParams(buffCaster.Stats, buffCaster.Id), new BrokenSword());
+
+            Character buffRecipient = CharacterList.NotKitsune();
+
+            StrengthScalingPoison poison = new StrengthScalingPoison();
+            Util.Log("BuffcasterID: " + buffCaster.Id);
+            poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
+
+            buffRecipient.Buffs.AddBuff(poison);
+
+            party.AddMember(dummy);
+            party.AddMember(CharacterList.NotKitsune());
+            party.AddMember(buffRecipient);
+
+            PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
+
+            Party party2 = new Party();
+            party2.InitFromSaveObject(retrieved);
+
+            int spoofedStrength = party2.Collection.ToArray()[2].Buffs.ToArray()[0].BuffCaster.GetEquipmentBonus(StatType.STRENGTH);
+            Assert.AreEqual(spoofedStrength, (new BrokenSword()).Stats[StatType.STRENGTH]);
+            Util.Log("" + spoofedStrength);
+        }
     }
 
     [TestFixture]

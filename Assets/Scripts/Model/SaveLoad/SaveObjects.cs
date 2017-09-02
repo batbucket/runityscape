@@ -72,16 +72,35 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         }
     }
 
+    /// <summary>
+    /// Save equipment bonuses to handle this rare situation:
+    /// 1. Enemy with +Stat gear equipped casts Buff that depends on Stat on Party member
+    /// 2. Save and Load
+    /// 3. Buff still needs to depend on +Stat gear of enemy that no longer exists
+    /// </summary>
+    [Serializable]
+    public sealed class EquipmentStatSave {
+        public StatTypeSave StatType;
+        public int Bonus;
+
+        public EquipmentStatSave(StatTypeSave statType, int value) {
+            this.StatType = statType;
+            this.Bonus = value;
+        }
+    }
+
     [Serializable]
     public sealed class CharacterStatsSave : IEnumerable<StatSave> {
         public List<StatSave> Stats;
+        public List<EquipmentStatSave> EquipmentBonuses;
         public int Level;
         public int StatBonusCount;
         public int ResourceVisibility;
 
-        public CharacterStatsSave(int resourceVisibility, int level, int statBonusCount, List<StatSave> stats) {
+        public CharacterStatsSave(int resourceVisibility, int level, int statBonusCount, List<StatSave> stats, List<EquipmentStatSave> equipmentBonuses) {
             this.ResourceVisibility = resourceVisibility;
             this.Stats = stats;
+            this.EquipmentBonuses = equipmentBonuses;
             this.Level = level;
             this.StatBonusCount = statBonusCount;
         }
@@ -277,9 +296,12 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
                     caster = character.Stats;
                     id = character.Id;
                     break;
+
+                // Spoof their stats, and equipment too!
                 case BuffSave.SaveType.CASTER_NOT_IN_PARTY:
                     Util.Assert(bs.StatCopy != null, "Statcopy is null.");
                     caster = new Characters.Stats();
+                    caster.SetupTemporarySaveFields(true);
                     caster.InitFromSaveObject(bs.StatCopy);
                     id = Character.UNKNOWN_ID;
                     break;
