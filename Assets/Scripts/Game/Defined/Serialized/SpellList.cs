@@ -99,12 +99,10 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         private static string CheckText(SpellParams target) {
-            string targetCheck = target.Look.Check;
             return string.Format(
-                "{0}\n{1}{2}",
+                "{0}\n{1}",
                 target.Look.DisplayName,
-                target.Stats.ShortAttributeDistribution,
-                string.IsNullOrEmpty(targetCheck) ? string.Empty : string.Format("\n{0}", targetCheck)
+                target.Stats.ShortAttributeDistribution
                 );
         }
     }
@@ -163,8 +161,8 @@ namespace Scripts.Game.Defined.Serialized.Spells {
                 () => {
                     Character c = new Character(
                         new Stats(caster.Stats.Level, 0, caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY), 1, 1),
-                        new Look(caster.Look.Name, caster.Look.Sprite, caster.Look.Tooltip, caster.Look.Check, caster.Look.Breed, caster.Look.TextColor),
-                        new RuinsBrains.KitsuneClone());
+                        new Look(caster.Look.Name, caster.Look.Sprite, caster.Look.Tooltip, caster.Look.Breed, caster.Look.TextColor),
+                        new FieldBrains.KitsuneClone());
                     c.AddFlag(Model.Characters.Flag.IS_CLONE);
                     c.Buffs.AddBuff(new ReflectAttack(), c);
                     c.Buffs.AddBuff(new SpiritLink(), caster.Character);
