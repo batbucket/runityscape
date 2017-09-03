@@ -32,7 +32,8 @@ namespace Scripts.Game.Serialized {
         public bool ShouldAdvanceTimeInCamp;
 
         public Flags() {
-            this.LastClearedArea = AreaType.FIELD;
+            this.LastClearedArea = AreaType.NONE;
+            this.CurrentArea = AreaType.FIELD;
         }
 
         public FlagsSave GetSaveObject() {
