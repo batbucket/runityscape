@@ -105,7 +105,7 @@ namespace Scripts.Game.Pages {
             Grid submenu = new Grid("Go to submenu");
             Grid mainDebug = new Grid("Return to main menu");
 
-            Character kitsune = CharacterList.NotKitsune();
+            Character kitsune = CharacterList.TestEnemy();
             debug.AddCharacters(Side.LEFT, kitsune);
             int level = 0;
 
@@ -118,7 +118,7 @@ namespace Scripts.Game.Pages {
                     Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
                     Presenter.Main.Instance.StartCoroutine(hpv.Animation(kitsune.Presenter.PortraitView.EffectsHolder, "Test", Color.cyan, Util.GetSprite("fox-head")));
                 }),
-                new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { CharacterList.Hero("Debug"), CharacterList.NotKitsune(), CharacterList.NotKitsune()  }, new Character[] { CharacterList.NotKitsune(), CharacterList.NotKitsune() }),
+                new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { CharacterList.Hero("Debug"), CharacterList.TestEnemy(), CharacterList.TestEnemy()  }, new Character[] { CharacterList.TestEnemy(), CharacterList.TestEnemy() }),
                 new Process("LongTalk Test", () => {
                     ActUtil.SetupScene(Get(DEBUGGING), ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>theaefaefef oieafoewjfoejfio oe foiawjefoawijef oj efjoiejfaoo oajeoaijfo wi best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
                 }),
