@@ -2,6 +2,8 @@
 
 namespace Scripts.Game.Dungeons {
     public enum AreaType {
+        [Description("None")]
+        NONE,
         [Description("Field")]
         FIELD
     }
