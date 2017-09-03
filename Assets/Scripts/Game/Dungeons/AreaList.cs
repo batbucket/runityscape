@@ -5,10 +5,14 @@ using Scripts.Model.Characters;
 using Scripts.Model.Pages;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Scripts.Game.Dungeons {
     public static class AreaList {
-        private const int DUNGEON_COUNT = 8;
+        public const int MINIBOSS_INDEX = 3;
+        public static readonly Color MINIBOSS_STAGE_TEXT_COLOR = Color.yellow;
+        public const int BOSS_INDEX = 7;
+        public static readonly Color BOSS_STAGE_TEXT_COLOR = Color.cyan;
 
         /// <summary>
         /// Flags = World flags for current save
@@ -23,25 +27,20 @@ namespace Scripts.Game.Dungeons {
                     { AreaType.FIELD, (f, p, c, q) => CreateField(f, p, c, q) }
         });
 
-        private static Area CreateArea(AreaType type, Flags flags, Party party, Page camp, Page quests) {
-            Area area = new Area(DUNGEON_COUNT, flags, party, camp, quests, type);
-            return area;
-        }
-
         private static Area CreateField(Flags flags, Party party, Page camp, Page quests) {
-            return CreateArea(AreaType.FIELD, flags, party, camp, quests)
-                .AddStage(
-                    "Zero Prairie",
-                    () => new Encounter[] {
-                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager()),
-                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
-                    })
-                .AddStage(
-                    "One Prairie",
-                    () => new Encounter[] {
-                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager()),
-                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
-                    }
+            return new Area(flags, party, camp, quests, AreaType.FIELD,
+                    new Stage(
+                        "Zero Prairie",
+                        () => new Encounter[] {
+                            new Encounter(CharacterList.Field.Minor()),
+                            new Encounter(CharacterList.Field.Minor(), CharacterList.Field.Minor())
+                        }),
+                    new Stage(
+                        "Zero Prairie",
+                        () => new Encounter[] {
+                            new Encounter(CharacterList.Field.Minor()),
+                            new Encounter(CharacterList.Field.Minor(), CharacterList.Field.Minor())
+                        })
                 );
         }
     }
