@@ -4,14 +4,12 @@ namespace Scripts.Game.Defined.Characters {
     public enum Breed {
         [Description("???")]
         UNKNOWN = 0,
-        [Description("Monster")]
-        MONSTER,
-        [Description("Human")]
-        HUMAN,
+        [Description("Programmer")]
+        PROGRAMMER,
+        [Description("Bug")]
+        BUG,
         [Description("Ghost")]
-        SPIRIT,
-        [Description("Kitsune")]
-        KITSUNE,
+        GHOST,
 
         // These are here for the credits
         [Description("Tester")]
