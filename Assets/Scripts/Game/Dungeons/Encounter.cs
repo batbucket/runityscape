@@ -11,5 +11,7 @@ namespace Scripts.Game.Dungeons {
             this.Enemies = enemies;
             this.Music = music;
         }
+
+        public Encounter(params Character[] enemies) : this(Music.NORMAL, enemies) {}
     }
 }
