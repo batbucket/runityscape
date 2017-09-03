@@ -49,10 +49,12 @@ namespace Scripts.Game.Dungeons {
                     camp, 
                     quests,
                     camp,
-                    string.Format("{0}-{1}",
                     stageName, 
-                    currentDungeonCount), 
-                    "Enter this stage?", 
+                    string.Format("You have selected stage ({0}-{1}):\n{2}.\nEnter?", 
+                        (int)Type, 
+                        currentDungeonCount, 
+                        stageName
+                        ), 
                     encounters,
                     () => {
                         if (!IsStageCleared(currentDungeonCount)) {

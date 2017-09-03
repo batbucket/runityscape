@@ -40,9 +40,15 @@ namespace Scripts.Game.Pages {
                     flags.ShouldAdvanceTimeInCamp = false;
                 }
 
+                if (party.members.Any(c => c.Stats.StatPoints > 0)) {
+                    root.AddText("<color=cyan>A party member has unallocated stat points to spend.</color>");
+                }
+
+                PageGroup dungeonSelectionPage = new DungeonPages(root, party, flags);
+
                 root.AddCharacters(Side.LEFT, party.Collection);
                 root.Actions = new IButtonable[] {
-                new DungeonPages(root, party, flags),
+                dungeonSelectionPage,
                 new PlacePages(root, flags, party),
                 new LevelUpPages(Root, party.Default),
                 new InventoryPages(root, party.Default, party.shared),

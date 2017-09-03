@@ -10,33 +10,37 @@ namespace Scripts.Game.Dungeons {
     public static class AreaList {
         private const int DUNGEON_COUNT = 8;
 
-        public static ReadOnlyDictionary<AreaType, Area> AllAreas {
-            get {
-                return new ReadOnlyDictionary<AreaType, Area>(ALL_AREAS);
-            }
-        }
-
-        private static readonly IDictionary<AreaType, Area> ALL_AREAS = new Dictionary<AreaType, Area>();
+        /// <summary>
+        /// Flags = World flags for current save
+        /// Party = current party
+        /// Page = Camp reference
+        /// Page = DungeonPages reference
+        /// Area = Area to return
+        /// </summary>
+        public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS 
+            = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
+                new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
+                    { AreaType.FIELD, (f, p, c, q) => CreateField(f, p, c, q) }
+        });
 
         private static Area CreateArea(AreaType type, Flags flags, Party party, Page camp, Page quests) {
             Area area = new Area(DUNGEON_COUNT, flags, party, camp, quests, type);
-            ALL_AREAS.Add(area.Type, area);
             return area;
         }
 
-        public static void CreateField(Flags flags, Party party, Page camp, Page quests) {
-            CreateArea(AreaType.FIELD, flags, party, camp, quests)
+        private static Area CreateField(Flags flags, Party party, Page camp, Page quests) {
+            return CreateArea(AreaType.FIELD, flags, party, camp, quests)
                 .AddStage(
-                    "Initial Prairie",
+                    "Zero Prairie",
                     () => new Encounter[] {
-                    new Encounter(Music.NORMAL, CharacterList.Ruins.Villager()),
-                    new Encounter(Music.NORMAL, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
+                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager()),
+                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
                     })
                 .AddStage(
-                    "Initial Prairie II",
+                    "One Prairie",
                     () => new Encounter[] {
-                    new Encounter(Music.NORMAL, CharacterList.Ruins.Villager()),
-                    new Encounter(Music.NORMAL, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
+                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager()),
+                        new Encounter(Music.NORMAL, CharacterList.Ruins.Villager(), CharacterList.Ruins.Villager())
                     }
                 );
         }

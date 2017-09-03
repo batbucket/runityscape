@@ -23,11 +23,11 @@ namespace Scripts.Game.Dungeons {
 
             buttons.Add(PageUtil.GenerateBack(previous));
 
-            Area area = GetCurrentArea(flags);
+            Area currentArea = GetCurrentArea(flags.CurrentArea);
 
-            for (int i = 0; i < area.Dungeons.Length; i++) {
-                if (IsStagePlayable(i, area)) {
-                    buttons.Add(GetDungeonEntryProcess(i, area));
+            for (int i = 0; i < currentArea.Dungeons.Length; i++) {
+                if (IsStagePlayable(i, currentArea)) {
+                    buttons.Add(GetDungeonEntryProcess(i, currentArea));
                 } else {
                     buttons.Add(new Process("<color=grey>???</color>", "Complete the previous stage to unlock."));
                 }
@@ -37,13 +37,13 @@ namespace Scripts.Game.Dungeons {
             Get(ROOT_INDEX).OnEnter = () => {
                 Get(ROOT_INDEX)
                 .AddText(
-                    "Where would you like to go?"
+                    "Select a stage."
                     );
             };
         }
 
-        private Area GetCurrentArea(Flags flags) {
-            return AreaList.AllAreas[flags.CurrentArea];
+        private Area GetCurrentArea(AreaType type) {
+            return AreaList.ALL_AREAS[type](flags, party, previous, Root);
         }
 
         private bool IsStagePlayable(int index, Area area) {
@@ -53,9 +53,8 @@ namespace Scripts.Game.Dungeons {
         private Process GetDungeonEntryProcess(int index, Area area) {
             Dungeon dungeon = area.Dungeons[index];
             return new Process(
-                    string.Format("{0}-{1}", area.Type.GetDescription(), index),
+                    dungeon.ButtonText,
                     dungeon.Sprite,
-                    string.Format("Enter stage {0}-{1}:\n<i>{2}</i>", (int)area.Type, index, dungeon.ButtonText),
                     () => dungeon.Invoke()
                 );
         }
