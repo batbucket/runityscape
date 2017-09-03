@@ -50,7 +50,7 @@ namespace Scripts.Game.Pages {
 
         private void StartPage() {
             Page start = Get(ROOT_INDEX);
-            start.Body = string.Format("Welcome to MonsterScape v{0}.", Main.VERSION);
+            start.Body = string.Format("Hello world.", Main.VERSION);
             start.OnEnter = () => {
                 List<IButtonable> buttons = new List<IButtonable>() {
                     Get(NEW_GAME),
