@@ -468,7 +468,7 @@ namespace Scripts.Model.Pages {
                     postBattle.List.Add(PageUtil.GenerateEquipmentGrid(postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(new Process("Continue", () => victory.Invoke()));
                 } else {
-                    postBattle.List.Add(defeat);
+                    postBattle.List.Add(new Process("Continue", () => defeat.Invoke()));
                 }
                 Actions = postBattle.List;
             };
@@ -477,12 +477,14 @@ namespace Scripts.Model.Pages {
 
         private void GiveExperienceToVictors() {
             foreach (Character victor in VictoriousParty) {
+                int rawExperience = 0;
                 foreach (Character defeated in AllDefeated) {
                     if (defeated.HasFlag(Characters.Flag.GIVES_EXPERIENCE)) {
-                        experienceGiven += CalculateExperience(victor.Stats, defeated.Stats);
+                        rawExperience += CalculateExperience(victor.Stats, defeated.Stats);
                     }
                 }
-                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(1, experienceGiven));
+                experienceGiven = Mathf.Max(MINIMUM_EXP_PER_BATTLE, rawExperience);
+                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(MINIMUM_EXP_PER_BATTLE, experienceGiven));
                 this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(experienceGiven.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
             }
         }
