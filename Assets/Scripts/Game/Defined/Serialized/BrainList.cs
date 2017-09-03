@@ -51,24 +51,12 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         }
     }
 
-    public static class RuinsBrains {
-        public class Villager : PriorityBrain {
+    public static class FieldBrains {
+        public class Attacker : PriorityBrain {
             public static readonly Attack ATTACK = new Attack();
 
             protected override IList<Func<IPlayable>> SetupPriorityPlays() {
                 return new Func<IPlayable>[] {
-                CastOnRandom(ATTACK)
-            };
-            }
-        }
-
-        public class Knight : PriorityBrain {
-            public static readonly Attack ATTACK = new Attack();
-            public static readonly SetupCounter COUNTER = new SetupCounter();
-
-            protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-                return new Func<IPlayable>[] {
-                CastOnRandom(COUNTER),
                 CastOnRandom(ATTACK)
             };
             }
@@ -85,7 +73,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             }
         }
 
-        public class Kitsune : BasicBrain {
+        public class Replicant : BasicBrain {
             private const int TURNS_BETWEEN_CLONES = 5;
             private const int LOW_HEALTH = 10;
             public static readonly SpellBook ATTACK = new Attack();

@@ -103,10 +103,9 @@ namespace Scripts.Model.SaveLoad {
         private void Brains() {
             Add<Player>("player");
             Add<DebugAI>("debugai");
-            Add<RuinsBrains.Villager>("villager");
-            Add<RuinsBrains.Knight>("knight");
-            Add<RuinsBrains.Healer>("healer");
-            Add<RuinsBrains.Kitsune>("kitsuneRuins");
+            Add<FieldBrains.Attacker>("villager");
+            Add<FieldBrains.Healer>("healer");
+            Add<FieldBrains.Replicant>("kitsuneRuins");
         }
 
         private void Add<Type>(string id) {

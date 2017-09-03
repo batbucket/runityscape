@@ -109,23 +109,21 @@ namespace Scripts.Game.Defined.Characters {
                     name,
                     "person",
                     "It's you!",
-                    "Did you really just check yourself?",
-                    Breed.HUMAN
+                    Breed.PROGRAMMER
                     ),
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
                 .AddStats(new Experience());
         }
 
-        public static Character NotKitsune() {
+        public static Character TestEnemy() {
             Character c = new Character(
                 new Stats(5, 55, 1, 5, 1),
                     new Look(
-                    "Kitsune",
+                    "Test Enemy",
                     "fox-head",
-                    "Humanoid fox creature. Those tails don't look very friendly...",
-                    "undfeined lol",
-                    Breed.MONSTER,
+                    "Hello???",
+                    Breed.UNKNOWN,
                     Color.magenta
                     ),
                 new Player())
@@ -134,45 +132,31 @@ namespace Scripts.Game.Defined.Characters {
             return c;
         }
 
-        public static class Ruins {
-            public static Character Maple() {
-                return new Character(
-                        new Stats(5, 6, 6, 6, 12),
-                        new Look(
-                            "Maple",
-                            "maple-leaf",
-                            "A very strange shopkeeper in the ruins. Named after a tree.",
-                            string.Empty,
-                            Breed.UNKNOWN
-                            ),
-                        new DebugAI());
-            }
+        public static class Field {
 
-            public static Character Villager() {
+            public static Character Minor() {
                 return StandardEnemy(
                     new Stats(2, 1, 1, 1, 2),
                     new Look(
-                        "F. Villager",
+                        "Trivial",
                         "haunting",
-                        "The spirit of some fallen villager.",
-                        "The easiest enemy. Can only do 0-1 damage.",
-                        Breed.SPIRIT
+                        "A trivial bug, easily defeated.",
+                        Breed.BUG
                         ),
-                    new RuinsBrains.Villager())
+                    new FieldBrains.Attacker())
                     .AddItem(new Money(), Util.Range(0, 3));
             }
 
-            public static Character Knight() {
+            public static Character Major() {
                 return StandardEnemy(
                     new Stats(3, 1, 2, 2, 5),
                     new Look(
-                        "F. Knight",
+                        "Major",
                         "spectre",
-                        "The spirit of some fallen knight.",
-                        "During its counter, avoid using Attack.",
-                        Breed.SPIRIT
+                        "A major bug, slightly harder to defeat than a Minor one.",
+                        Breed.BUG
                         ),
-                    new RuinsBrains.Knight())
+                    new FieldBrains.Attacker())
                     .AddItem(new Item[] { new BrokenSword(), new GhostArmor() }.ChooseRandom(), Util.IsChance(.50f))
                     .AddSpells(new SetupCounter());
             }
@@ -181,33 +165,31 @@ namespace Scripts.Game.Defined.Characters {
                 return StandardEnemy(
                     new Stats(3, 1, 5, 5, 1),
                     new Look(
-                        "F. Healer",
+                        "Blocker",
                         "spectre",
-                        "The spirit of some fallen healer.",
-                        "Will heal injured targets. Should be attacked first in most cases.",
-                        Breed.SPIRIT
+                        "A bug that prevents other bugs from being defeated.",
+                        Breed.BUG
                         ),
-                    new RuinsBrains.Healer())
+                    new FieldBrains.Healer())
                     .AddItem(new Apple())
                     .AddSpells(new Heal());
             }
 
-            private static Look KitsuneLook() {
+            private static Look ReplicantLook() {
                 return new Look(
-                        "Vitra",
-                        "fox-head",
-                        "A fox-type, humanoid monster known for using illusions.",
-                        "Its clones do no damage.",
-                        Breed.KITSUNE,
+                        "Replika",
+                        "spectre",
+                        string.Empty,
+                        Breed.GHOST,
                         Color.magenta
                         );
             }
 
-            public static Character Kitsune() {
+            public static Character Replicant() {
                 return StandardEnemy(
                     new Stats(10, 2, 5, 10, 30),
-                    KitsuneLook(),
-                    new RuinsBrains.Kitsune()
+                    ReplicantLook(),
+                    new FieldBrains.Replicant()
                     )
                 .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
                 .AddSpells(new ReflectiveClone(), new SetupCounter());
@@ -226,7 +208,7 @@ namespace Scripts.Game.Undefined.Characters {
             string spriteLoc,
             string tip)
             : base(new DummyStats(level),
-                  new Look(name, spriteLoc, tip, string.Empty, breed),
+                  new Look(name, spriteLoc, tip, breed),
                   new DebugAI()) {
 
         }
