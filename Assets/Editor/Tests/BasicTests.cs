@@ -255,7 +255,7 @@ public class BasicTests {
 
         [Test]
         public void LookIsSerializable() {
-            BasicSerializableHelper<Look, LookSave>(new Look("test", "fox-head", "test5", "testcheck", Breed.UNKNOWN));
+            BasicSerializableHelper<Look, LookSave>(new Look("test", "fox-head", "test5", Breed.UNKNOWN));
         }
 
         [Test]
@@ -295,7 +295,7 @@ public class BasicTests {
         private void SavingCharactersInPartyThrowsNoErrors(int characterCount) {
             Party party = new Party();
             for (int i = 0; i < characterCount; i++) {
-                party.AddMember(CharacterList.NotKitsune());
+                party.AddMember(CharacterList.TestEnemy());
             }
             ToJson(party.GetSaveObject());
         }
@@ -315,7 +315,7 @@ public class BasicTests {
         private void LoadingCharactersInPartyThrowsNoErrors(int characterCount) {
             Party party = new Party();
             for (int i = 0; i < characterCount; i++) {
-                party.AddMember(CharacterList.NotKitsune());
+                party.AddMember(CharacterList.TestEnemy());
             }
             string json = ToJson(party.GetSaveObject());
             PartySave partySave = JsonUtility.FromJson<PartySave>(json);
@@ -325,7 +325,7 @@ public class BasicTests {
 
         [Test]
         public void SettingCasterForBuffSetsEverythingCorrectly() {
-            Character caster = CharacterList.NotKitsune();
+            Character caster = CharacterList.TestEnemy();
             Buff poison = new Poison();
             poison.Caster = new BuffParams(caster.Stats, caster.Id);
             Assert.AreEqual(caster.Id, poison.CasterId);
@@ -334,7 +334,7 @@ public class BasicTests {
 
         [Test]
         public void EquippedItemsAreSaved() {
-            Character dummy = CharacterList.NotKitsune();
+            Character dummy = CharacterList.TestEnemy();
             dummy.Inventory.ForceAdd(new BrokenSword());
             dummy.Equipment.AddEquip(dummy.Inventory, new BuffParams(dummy.Stats, dummy.Id), new BrokenSword());
             Party party = new Party();
@@ -349,9 +349,9 @@ public class BasicTests {
         [Test, Timeout(2000)]
         public void SaveLoadMaintainsReferencesForPartyMemberCastedBuffs() {
             Party party = new Party();
-            Character dummy = CharacterList.NotKitsune();
-            Character buffCaster = CharacterList.NotKitsune();
-            Character buffRecipient = CharacterList.NotKitsune();
+            Character dummy = CharacterList.TestEnemy();
+            Character buffCaster = CharacterList.TestEnemy();
+            Character buffRecipient = CharacterList.TestEnemy();
 
             Poison poison = new Poison();
             Util.Log("BuffcasterID: " + buffCaster.Id);
@@ -381,9 +381,9 @@ public class BasicTests {
         [Test, Timeout(2000)]
         public void SaveLoadDoesNotMaintainsReferencesForNonPartyMemberCastedBuffs() {
             Party party = new Party();
-            Character dummy = CharacterList.NotKitsune();
-            Character buffCaster = CharacterList.NotKitsune();
-            Character buffRecipient = CharacterList.NotKitsune();
+            Character dummy = CharacterList.TestEnemy();
+            Character buffCaster = CharacterList.TestEnemy();
+            Character buffRecipient = CharacterList.TestEnemy();
 
             Poison poison = new Poison();
             Util.Log("BuffcasterID: " + buffCaster.Id);
@@ -392,7 +392,7 @@ public class BasicTests {
             buffRecipient.Buffs.AddBuff(poison);
 
             party.AddMember(dummy);
-            party.AddMember(CharacterList.NotKitsune());
+            party.AddMember(CharacterList.TestEnemy());
             party.AddMember(buffRecipient);
 
             PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
@@ -414,13 +414,13 @@ public class BasicTests {
         [Test]
         public void SaveLoadMaintainsEquipmentBonusesForNonPartyMemberCastedBuffs() {
             Party party = new Party();
-            Character dummy = CharacterList.NotKitsune();
-            Character buffCaster = CharacterList.NotKitsune();
+            Character dummy = CharacterList.TestEnemy();
+            Character buffCaster = CharacterList.TestEnemy();
 
             buffCaster.Inventory.ForceAdd(new BrokenSword());
             buffCaster.Equipment.AddEquip(buffCaster.Inventory, new BuffParams(buffCaster.Stats, buffCaster.Id), new BrokenSword());
 
-            Character buffRecipient = CharacterList.NotKitsune();
+            Character buffRecipient = CharacterList.TestEnemy();
 
             StrengthScalingPoison poison = new StrengthScalingPoison();
             Util.Log("BuffcasterID: " + buffCaster.Id);
@@ -429,7 +429,7 @@ public class BasicTests {
             buffRecipient.Buffs.AddBuff(poison);
 
             party.AddMember(dummy);
-            party.AddMember(CharacterList.NotKitsune());
+            party.AddMember(CharacterList.TestEnemy());
             party.AddMember(buffRecipient);
 
             PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
@@ -447,9 +447,9 @@ public class BasicTests {
     public class BattleLogicTests {
         [Test]
         public void CharacterWithHigherAgilityIsLessThanSlowerCharacter() {
-            Character fast = CharacterList.NotKitsune();
+            Character fast = CharacterList.TestEnemy();
             fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
-            Character slow = CharacterList.NotKitsune();
+            Character slow = CharacterList.TestEnemy();
             int difference = fast.Stats.CompareTo(slow.Stats);
             Util.Log("Difference is: " + difference);
             Assert.IsTrue(difference < 0);
@@ -457,9 +457,9 @@ public class BasicTests {
 
         [Test]
         public void SpellsAreSortedCorrectly() {
-            Character fast = CharacterList.NotKitsune();
+            Character fast = CharacterList.TestEnemy();
             fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
-            Character slow = CharacterList.NotKitsune();
+            Character slow = CharacterList.TestEnemy();
             Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
 
             IPlayable lowPriorityWithSlowCaster = new Spell(new ReflectiveClone(), new Result(), new SpellParams(slow, dummy), new SpellParams(fast, dummy));
