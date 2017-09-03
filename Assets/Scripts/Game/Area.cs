@@ -23,26 +23,34 @@ namespace Scripts.Game.Dungeons {
         private readonly Page quests;
         private int currentDungeonCount;
 
-        public Area(int dungeonCount, Flags flags, Party party, Page camp, Page quests, AreaType type) {
+        public Area(Flags flags, Party party, Page camp, Page quests, AreaType type, params Stage[] stages) {
             this.flags = flags;
             this.party = party;
             this.camp = camp;
             this.quests = quests;
+            this.Type = type;
 
             this.currentDungeonCount = 0;
 
             this.areaName = type.GetDescription();
             this.Intro = new Act[0];
             this.Outro = new Act[0];
-            this.Dungeons = new Dungeon[dungeonCount];
+            this.Dungeons = new Dungeon[stages.Length];
             this.Places = new List<PageGroup>();
+
+            for (int i = 0; i < stages.Length; i++) {
+                AddStage(stages[i]);
+            }
         }
 
         public bool IsStageCleared(int stageIndex) {
             return flags.LastClearedArea > this.Type || flags.LastClearedStage > stageIndex;
         }
 
-        public Area AddStage(string stageName, Func<Encounter[]> encounters) {
+        private void AddStage(Stage stage) {
+            string stageName = stage.StageName;
+            Func<Encounter[]> encounters = stage.Encounters;
+
             this.Dungeons[currentDungeonCount] =
                 new Dungeon(
                     party, 
@@ -50,14 +58,15 @@ namespace Scripts.Game.Dungeons {
                     quests,
                     camp,
                     stageName, 
-                    string.Format("You have selected stage ({0}-{1}):\n{2}.\nEnter?", 
+                    string.Format("Selected stage {0} of {1}:\n{2}.\n\nEnter?", 
                         (int)Type, 
-                        currentDungeonCount, 
+                        Type.GetDescription(), 
                         stageName
                         ), 
                     encounters,
                     () => {
                         if (!IsStageCleared(currentDungeonCount)) {
+
                             // Not the last stage in an area
                             if (currentDungeonCount < Dungeons.Length) {
                                 flags.LastClearedStage++;
@@ -71,7 +80,6 @@ namespace Scripts.Game.Dungeons {
                     }
                     );
             currentDungeonCount++;
-            return this;
         }
     }
 }
