@@ -179,15 +179,13 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public string Name;
         public Sprite Sprite;
         public Color TextColor;
-        public string Check;
         public string Tooltip;
         public Breed Breed;
 
-        public LookSave(string name, Sprite sprite, Color text, string check, string tooltip, Breed breed) {
+        public LookSave(string name, Sprite sprite, Color text, string tooltip, Breed breed) {
             this.Name = name;
             this.Sprite = sprite;
             this.TextColor = text;
-            this.Check = check;
             this.Tooltip = tooltip;
             this.Breed = breed;
         }

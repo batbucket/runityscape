@@ -12,27 +12,25 @@ namespace Scripts.Model.Characters {
         public string Name;
 
         protected Color textColor;
-        protected string check;
         protected string tooltip;
         protected Breed breed;
 
         private string suffix;
         private Sprite sprite;
 
-        public Look() : this("Default", "fox-head", string.Empty, string.Empty, Breed.UNKNOWN, Color.white) { }
+        public Look() : this("Default", "fox-head", string.Empty, Breed.UNKNOWN, Color.white) { }
 
-        public Look(string name, string spriteLoc, string tooltip, string check, Breed breed, Color textColor) : this(name, Util.GetSprite(spriteLoc), tooltip, check, breed, textColor) { }
+        public Look(string name, string spriteLoc, string tooltip, Breed breed, Color textColor) : this(name, Util.GetSprite(spriteLoc), tooltip, breed, textColor) { }
 
-        public Look(string name, Sprite sprite, string tooltip, string check, Breed breed, Color textColor) {
+        public Look(string name, Sprite sprite, string tooltip, Breed breed, Color textColor) {
             this.Name = name;
             this.sprite = sprite;
             this.tooltip = tooltip;
-            this.check = check;
             this.breed = breed;
             this.textColor = textColor;
         }
 
-        public Look(string name, string spriteLoc, string tooltip, string check, Breed breed) : this(name, spriteLoc, tooltip, check, breed, Color.white) { }
+        public Look(string name, string spriteLoc, string tooltip, Breed breed) : this(name, spriteLoc, tooltip, breed, Color.white) { }
 
         public Breed Breed {
             get {
@@ -60,12 +58,6 @@ namespace Scripts.Model.Characters {
             }
         }
 
-        public string Check {
-            get {
-                return check;
-            }
-        }
-
         public string DisplayName {
             get {
                 return string.Format("{0}{1}", Name, string.IsNullOrEmpty(suffix) ? "" : string.Format(" {0}", suffix));
@@ -90,8 +82,7 @@ namespace Scripts.Model.Characters {
                 && this.textColor.Equals(item.textColor)
                 && this.tooltip.Equals(item.tooltip)
                 && this.breed.Equals(item.breed)
-                && this.sprite.Equals(item.sprite)
-                && this.check.Equals(item.check);
+                && this.sprite.Equals(item.sprite);
         }
 
         public override int GetHashCode() {
@@ -99,14 +90,13 @@ namespace Scripts.Model.Characters {
         }
 
         public LookSave GetSaveObject() {
-            return new LookSave(Name, sprite, textColor, check, tooltip, breed);
+            return new LookSave(Name, sprite, textColor, tooltip, breed);
         }
 
         public void InitFromSaveObject(LookSave saveObject) {
             this.Name = saveObject.Name;
             this.sprite = saveObject.Sprite;
             this.textColor = saveObject.TextColor;
-            this.check = saveObject.Check;
             this.tooltip = saveObject.Tooltip;
             this.breed = saveObject.Breed;
             this.suffix = string.Empty;
