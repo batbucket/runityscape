@@ -4,6 +4,7 @@ using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Scripts.Game.Dungeons {
     public class DungeonPages : PageGroup {
@@ -52,8 +53,14 @@ namespace Scripts.Game.Dungeons {
 
         private Process GetDungeonEntryProcess(int index, Area area) {
             Dungeon dungeon = area.Dungeons[index];
+            Color buttonColor = Color.white;
+            if (index == AreaList.MINIBOSS_INDEX) {
+                buttonColor = AreaList.MINIBOSS_STAGE_TEXT_COLOR;
+            } else if (index == AreaList.BOSS_INDEX) {
+                buttonColor = AreaList.BOSS_STAGE_TEXT_COLOR;
+            }
             return new Process(
-                    dungeon.ButtonText,
+                    Util.ColorString(string.Format("{0}-{1}", (int)area.Type, index), buttonColor),
                     dungeon.Sprite,
                     () => dungeon.Invoke()
                 );
