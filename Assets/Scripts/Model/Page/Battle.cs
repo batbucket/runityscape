@@ -38,7 +38,7 @@ namespace Scripts.Model.Pages {
 
         private const string DEFEAT = "Defeat!";
 
-        private const string LOOT_MESSAGE = "{0}({1}) was added to the inventory.({2})";
+        private const string LOOT_MESSAGE = "{0}({1}) was added to the inventory.";
 
         private const string PLAYER_QUESTION = "What will <color=yellow>{0}</color> do?";
 
@@ -466,7 +466,7 @@ namespace Scripts.Model.Pages {
                     Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
                     postBattle.List.Add(PageUtil.GenerateItemsGrid(this, postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(PageUtil.GenerateEquipmentGrid(postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
-                    postBattle.List.Add(victory);
+                    postBattle.List.Add(new Process("Continue", () => victory.Invoke()));
                 } else {
                     postBattle.List.Add(defeat);
                 }
