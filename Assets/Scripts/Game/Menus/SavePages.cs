@@ -12,7 +12,7 @@ using System;
 namespace Scripts.Game.Pages {
     public class SavePages : PageGroup {
 
-        public SavePages(Page previous, Party party, Flags flags) : base(new Page("Save Game")) {
+        public SavePages(Page previous, Party party, Flags flags) : base(new Page("Save")) {
             Setup(previous, party, flags);
         }
 
