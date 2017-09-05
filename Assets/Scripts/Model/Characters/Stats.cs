@@ -104,6 +104,12 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public bool HasStatPoints {
+            get {
+                return this.StatPoints > 0;
+            }
+        }
+
         public State State {
             get {
                 if (GetStatCount(Get.MOD, StatType.HEALTH) <= 0) {

@@ -11,7 +11,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Game.Dungeons {
-    public class Dungeon : PageGroup, IButtonable {
+    public class Dungeon : PageGroup, IButtonable, IStageable {
         private readonly Func<Encounter[]> encounterGenerator;
         private readonly Action onClear;
 
@@ -75,6 +75,10 @@ namespace Scripts.Game.Dungeons {
                       )));
             };
             return results;
+        }
+
+        Dungeon IStageable.GetStageDungeon(int dungeonIndex, int areaDungeonCount, Flags flags, Party party, Page camp, Page quests, AreaType area) {
+            return this;
         }
     }
 }

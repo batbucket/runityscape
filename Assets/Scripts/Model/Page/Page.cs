@@ -27,6 +27,7 @@ namespace Scripts.Model.Pages {
         public bool HasInputField;
         public string Input;
 
+        private string tooltip;
         private IButtonable[] grid;
 
         public Page(string location) {
@@ -37,6 +38,7 @@ namespace Scripts.Model.Pages {
             this.OnEnter = () => { };
             this.Input = string.Empty;
             this.Condition = () => true;
+            this.tooltip = string.Empty;
         }
 
         public IList<IButtonable> Actions {
@@ -89,7 +91,7 @@ namespace Scripts.Model.Pages {
 
         public string TooltipText {
             get {
-                return string.Format("Go to {0}.", Location);
+                return tooltip;
             }
         }
 
@@ -97,6 +99,11 @@ namespace Scripts.Model.Pages {
             get {
                 return Icon;
             }
+        }
+
+        public Page SetTooltip(string tooltip) {
+            this.tooltip = tooltip;
+            return this;
         }
 
         public void AddCharacters(Side side, params Character[] chars) {

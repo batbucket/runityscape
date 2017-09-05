@@ -48,7 +48,7 @@ namespace Scripts.Game.Dungeons {
         }
 
         private bool IsStagePlayable(int index, Area area) {
-            return index <= 0 || area.IsStageCleared(index - 1);
+            return index <= 0 || Area.IsStageCleared(index - 1, area.Type, flags);
         }
 
         private Process GetDungeonEntryProcess(int index, Area area) {
