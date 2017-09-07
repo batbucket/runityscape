@@ -32,7 +32,7 @@ namespace Scripts.Game.Dungeons {
                         ),
                     Encounters,
                     () => {
-                        if (!Area.IsStageCleared(dungeonIndex, area, flags)) {
+                        if (!flags.IsStageCleared(dungeonIndex, area)) {
 
                             // Not the last stage in an area
                             if (dungeonIndex < areaDungeonCount) {
