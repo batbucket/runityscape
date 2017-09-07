@@ -17,7 +17,7 @@ namespace Scripts.Model.Pages {
         public static Func<TextBox, PooledBehaviour> TypeText;
 
         public HashList<Character> left;
-        public readonly string Location;
+        public string Location;
         public string Music;
         public HashList<Character> right;
         public string Body;
@@ -203,7 +203,7 @@ namespace Scripts.Model.Pages {
         }
 
         public override int GetHashCode() {
-            return Location.GetHashCode();
+            return 0;
         }
 
         public override bool Equals(object obj) {
