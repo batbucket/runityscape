@@ -61,7 +61,7 @@ public class BasicTests {
 
         public string ToJson(object o) {
             string json = JsonUtility.ToJson(o);
-            Util.Log("Serialized to:\n" + json);
+            Debug.Log("Serialized to:\n" + json);
             return json;
         }
 
@@ -354,7 +354,7 @@ public class BasicTests {
             Character buffRecipient = CharacterList.TestEnemy();
 
             Poison poison = new Poison();
-            Util.Log("BuffcasterID: " + buffCaster.Id);
+            Debug.Log("BuffcasterID: " + buffCaster.Id);
             poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
 
             buffRecipient.Buffs.AddBuff(poison);
@@ -386,7 +386,7 @@ public class BasicTests {
             Character buffRecipient = CharacterList.TestEnemy();
 
             Poison poison = new Poison();
-            Util.Log("BuffcasterID: " + buffCaster.Id);
+            Debug.Log("BuffcasterID: " + buffCaster.Id);
             poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
 
             buffRecipient.Buffs.AddBuff(poison);
@@ -423,7 +423,7 @@ public class BasicTests {
             Character buffRecipient = CharacterList.TestEnemy();
 
             StrengthScalingPoison poison = new StrengthScalingPoison();
-            Util.Log("BuffcasterID: " + buffCaster.Id);
+            Debug.Log("BuffcasterID: " + buffCaster.Id);
             poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
 
             buffRecipient.Buffs.AddBuff(poison);
@@ -439,7 +439,7 @@ public class BasicTests {
 
             int spoofedStrength = party2.Collection.ToArray()[2].Buffs.ToArray()[0].BuffCaster.GetEquipmentBonus(StatType.STRENGTH);
             Assert.AreEqual(spoofedStrength, (new BrokenSword()).Stats[StatType.STRENGTH]);
-            Util.Log("" + spoofedStrength);
+            Debug.Log("" + spoofedStrength);
         }
     }
 
@@ -451,7 +451,7 @@ public class BasicTests {
             fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
             Character slow = CharacterList.TestEnemy();
             int difference = fast.Stats.CompareTo(slow.Stats);
-            Util.Log("Difference is: " + difference);
+            Debug.Log("Difference is: " + difference);
             Assert.IsTrue(difference < 0);
         }
 
@@ -489,7 +489,7 @@ public class BasicTests {
             actualOrder.Sort();
 
             for (int i = 0; i < expectedOrder.Length; i++) {
-                Util.Log(string.Format("Index {0}\nExpected: {1}\nActual: {2}\n",
+                Debug.Log(string.Format("Index {0}\nExpected: {1}\nActual: {2}\n",
                     i,
                     GetSpellDetails(expectedOrder[i].MySpell),
                     GetSpellDetails(actualOrder[i].MySpell)));
