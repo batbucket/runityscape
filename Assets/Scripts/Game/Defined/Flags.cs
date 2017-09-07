@@ -5,6 +5,7 @@ using Scripts.Model.SaveLoad.SaveObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine;
 
 namespace Scripts.Game.Serialized {
     public enum TimeOfDay {
@@ -38,6 +39,14 @@ namespace Scripts.Game.Serialized {
 
         public FlagsSave GetSaveObject() {
             return new FlagsSave(this);
+        }
+
+        public bool IsStageCleared(int stageIndex, AreaType type) {
+            return this.LastClearedArea >= type || this.LastClearedStage > stageIndex;
+        }
+
+        public bool IsAreaUnlocked(AreaType type) {
+            return ((int)this.LastClearedArea + 1) >= (int) type;
         }
 
         public void InitFromSaveObject(FlagsSave saveObject) {

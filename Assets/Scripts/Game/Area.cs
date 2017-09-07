@@ -43,10 +43,6 @@ namespace Scripts.Game.Dungeons {
             }
         }
 
-        public static bool IsStageCleared(int stageIndex, AreaType type, Flags flags) {
-            return flags.LastClearedArea > type || flags.LastClearedStage > stageIndex;
-        }
-
         private void AddStage(IStageable stagable, int totalNumberOfStages) {
 
             this.Dungeons[currentDungeonCount] = stagable.GetStageDungeon(currentDungeonCount, totalNumberOfStages, flags, party, camp, quests, this.Type);
