@@ -40,7 +40,7 @@ namespace Scripts.Game.Pages {
                     flags.ShouldAdvanceTimeInCamp = false;
                 }
 
-                foreach (Character partyMember in party.Members) {
+                foreach (Character partyMember in party.Collection) {
                     if (partyMember.Stats.HasStatPoints) {
                         root.AddText(
                             string.Format(
@@ -55,7 +55,7 @@ namespace Scripts.Game.Pages {
                 root.Actions = new IButtonable[] {
                 dungeonSelectionPage,
                 new PlacePages(root, flags, party),
-                new WorldPages(root),
+                new WorldPages(root, flags, party),
                 new LevelUpPages(Root, party.Default),
                 new InventoryPages(root, party.Default, party.shared),
                 new EquipmentPages(root, party.Default),

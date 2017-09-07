@@ -18,34 +18,34 @@ namespace Scripts.Model.Characters {
     /// being added to a party.
     /// </summary>
     public class Party : IEnumerable<Character>, ISaveable<PartySave> {
-        public HashSet<Character> Members;
+        private HashSet<Character> members;
         public Inventory shared;
 
         public Party() {
-            this.Members = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
+            this.members = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
             this.shared = new Inventory();
         }
 
         public Character Default {
             get {
-                return Members.FirstOrDefault();
+                return members.FirstOrDefault();
             }
         }
 
         public ICollection<Character> Collection {
             get {
-                return new ReadOnlyCollection<Character>(Members.ToList());
+                return new ReadOnlyCollection<Character>(members.ToList());
             }
         }
 
         public void AddMember(Character c) {
-            this.Members.Add(c);
+            this.members.Add(c);
             c.Inventory = shared;
         }
 
         public PartySave GetSaveObject() {
             InventorySave inventory = shared.GetSaveObject();
-            List<CharacterSave> mems = Members.Select(c => c.GetSaveObject()).ToList();
+            List<CharacterSave> mems = members.Select(c => c.GetSaveObject()).ToList();
 
             // Go through all characters
             for (int i = 0; i < mems.Count; i++) {
@@ -101,12 +101,12 @@ namespace Scripts.Model.Characters {
             }
 
             foreach (Character c in memList) {
-                Members.Add(c);
+                members.Add(c);
             }
         }
 
         public void RemoveMember(Character c) {
-            Members.Remove(c);
+            members.Remove(c);
         }
 
         public override bool Equals(object obj) {
@@ -115,8 +115,8 @@ namespace Scripts.Model.Characters {
             if (item == null) {
                 return false;
             }
-            HashSet<Character> thisSet = new HashSet<Character>(Members);
-            HashSet<Character> thatSet = new HashSet<Character>(item.Members);
+            HashSet<Character> thisSet = new HashSet<Character>(members);
+            HashSet<Character> thatSet = new HashSet<Character>(item.members);
 
             return this.shared.Equals(item.shared) && thisSet.SetEquals(thatSet);
         }
@@ -126,11 +126,11 @@ namespace Scripts.Model.Characters {
         }
 
         IEnumerator<Character> IEnumerable<Character>.GetEnumerator() {
-            return Members.GetEnumerator();
+            return members.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator() {
-            return Members.GetEnumerator();
+            return members.GetEnumerator();
         }
     }
 }
