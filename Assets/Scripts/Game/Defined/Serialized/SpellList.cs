@@ -83,12 +83,12 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class Check : BasicSpellbook {
-        private static readonly Checked dummy = new Checked();
+        private static readonly Checked DUMMY = new Checked();
 
         public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) { }
 
         protected override string CreateDescriptionHelper() {
-            return BuffAdder.CreateBuffDescription(dummy);
+            return BuffAdder.CreateBuffDescription(DUMMY);
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
@@ -172,6 +172,24 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             return new SpellEffect[] {
                 new CloneEffect(NUMBER_OF_CLONES, caster.Page.GetSide(caster.Character), cloneFunc, caster.Page),
                 new ShuffleEffect(caster.Page, caster.Page.GetSide(caster.Character))
+            };
+        }
+    }
+
+    public class Blackout : BasicSpellbook {
+        private static readonly BlackedOut DUMMY = new BlackedOut();
+
+        public Blackout() : base("Blackout", Util.GetSprite("sight-disabled"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE, PriorityType.HIGH) {
+
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return BuffAdder.CreateBuffDescription(DUMMY);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+            return new SpellEffect[] {
+                new AddBuff(new BuffParams(caster.Stats, caster.CharacterId), target.Buffs, new BlackedOut())
             };
         }
     }

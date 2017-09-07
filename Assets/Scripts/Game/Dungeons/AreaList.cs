@@ -32,14 +32,15 @@ namespace Scripts.Game.Dungeons {
                     new Stage(
                         "Zero Prairie",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.Minor()),
-                            new Encounter(CharacterList.Field.Minor(), CharacterList.Field.Minor())
+                            new Encounter(CharacterList.Field.Illusionist()),
+                            new Encounter(CharacterList.Field.Villager()),
+                            new Encounter(CharacterList.Field.Villager(), CharacterList.Field.Villager())
                         }),
                     new Stage(
                         "Zero Prairie",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.Minor()),
-                            new Encounter(CharacterList.Field.Minor(), CharacterList.Field.Minor())
+                            new Encounter(CharacterList.Field.Villager()),
+                            new Encounter(CharacterList.Field.Villager(), CharacterList.Field.Villager())
                         })
                 );
         }

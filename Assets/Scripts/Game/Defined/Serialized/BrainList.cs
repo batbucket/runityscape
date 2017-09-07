@@ -73,6 +73,16 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             }
         }
 
+        public class Illusionist : PriorityBrain {
+            public static readonly Blackout BLACKOUT = new Blackout();
+
+            protected override IList<Func<IPlayable>> SetupPriorityPlays() {
+                return new Func<IPlayable>[] {
+                    CastOnRandom(BLACKOUT)
+                };
+            }
+        }
+
         public class Replicant : BasicBrain {
             private const int TURNS_BETWEEN_CLONES = 5;
             private const int LOW_HEALTH = 10;

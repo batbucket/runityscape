@@ -134,45 +134,57 @@ namespace Scripts.Game.Defined.Characters {
 
         public static class Field {
 
-            public static Character Minor() {
+            public static Character Villager() {
                 return StandardEnemy(
                     new Stats(2, 1, 1, 1, 2),
                     new Look(
-                        "Trivial",
+                        "Ghost",
                         "haunting",
-                        "A trivial bug, easily defeated.",
-                        Breed.BUG
+                        "A villager who didn't make it.",
+                        Breed.SPIRIT
                         ),
                     new FieldBrains.Attacker())
                     .AddItem(new Money(), Util.Range(0, 3));
             }
 
-            public static Character Major() {
+            public static Character Knight() {
                 return StandardEnemy(
                     new Stats(3, 1, 2, 2, 5),
                     new Look(
-                        "Major",
+                        "Spectre",
                         "spectre",
-                        "A major bug, slightly harder to defeat than a Minor one.",
-                        Breed.BUG
+                        "A knight who didn't make it. May be armed.",
+                        Breed.SPIRIT
                         ),
                     new FieldBrains.Attacker())
-                    .AddItem(new Item[] { new BrokenSword(), new GhostArmor() }.ChooseRandom(), Util.IsChance(.50f))
-                    .AddSpells(new SetupCounter());
+                    .AddItem(new Item[] { new BrokenSword(), new GhostArmor() }.ChooseRandom(), Util.IsChance(.50f));
             }
 
             public static Character Healer() {
                 return StandardEnemy(
                     new Stats(3, 1, 5, 5, 1),
                     new Look(
-                        "Blocker",
-                        "spectre",
-                        "A bug that prevents other bugs from being defeated.",
-                        Breed.BUG
+                        "Spirit Healer",
+                        "health-normal",
+                        "Healer in life. Healer in death.",
+                        Breed.SPIRIT
                         ),
                     new FieldBrains.Healer())
                     .AddItem(new Apple())
                     .AddSpells(new Heal());
+            }
+
+            public static Character Illusionist() {
+                return StandardEnemy(
+                    new Stats(3, 2, 3, 8, 15),
+                    new Look(
+                        "Illusionist",
+                        "spectre",
+                        "A wicked master of illusions.",
+                        Breed.SPIRIT
+                        ),
+                    new FieldBrains.Illusionist())
+                    .AddSpells(new Blackout());
             }
 
             private static Look ReplicantLook() {
@@ -180,7 +192,7 @@ namespace Scripts.Game.Defined.Characters {
                         "Replika",
                         "spectre",
                         string.Empty,
-                        Breed.GHOST,
+                        Breed.SPIRIT,
                         Color.magenta
                         );
             }

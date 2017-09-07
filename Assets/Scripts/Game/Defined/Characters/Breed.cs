@@ -6,10 +6,8 @@ namespace Scripts.Game.Defined.Characters {
         UNKNOWN = 0,
         [Description("Programmer")]
         PROGRAMMER,
-        [Description("Bug")]
-        BUG,
         [Description("Ghost")]
-        GHOST,
+        SPIRIT,
 
         // These are here for the credits
         [Description("Tester")]
