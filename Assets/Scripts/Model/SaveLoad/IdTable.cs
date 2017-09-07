@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace Scripts.Model.SaveLoad {
 
@@ -81,6 +82,7 @@ namespace Scripts.Model.SaveLoad {
             Add<SetupCounter>("setupCounter");
             Add<Heal>("heal");
             Add<ReflectiveClone>("reflectiveClone");
+            Add<Blackout>("blackout");
         }
 
         private void Items() {
@@ -98,6 +100,7 @@ namespace Scripts.Model.SaveLoad {
             Add<ReflectAttack>("reflectAttack");
             Add<SpiritLink>("spiritLink");
             Add<StrengthScalingPoison>("strengthScalingPoison");
+            Add<BlackedOut>("blackoutDebuff");
         }
 
         private void Brains() {
@@ -105,7 +108,8 @@ namespace Scripts.Model.SaveLoad {
             Add<DebugAI>("debugai");
             Add<FieldBrains.Attacker>("villager");
             Add<FieldBrains.Healer>("healer");
-            Add<FieldBrains.Replicant>("kitsuneRuins");
+            Add<FieldBrains.Replicant>("replicant");
+            Add<FieldBrains.Illusionist>("illusionist");
         }
 
         private void Add<Type>(string id) {
@@ -124,7 +128,7 @@ namespace Scripts.Model.SaveLoad {
             bool isEverythingIncludedInMap = true;
             foreach (Type t in types) {
                 if (!map.Contains(t) && !t.IsAbstract) {
-                    Util.Log(string.Format("Unable to locate {0} in Map.", t.ToString()));
+                    Debug.Log(string.Format("Unable to locate {0} in Map.", t.ToString()));
                     isEverythingIncludedInMap = false;
                 }
             }
@@ -137,7 +141,7 @@ namespace Scripts.Model.SaveLoad {
                 Type type = pair.Key;
                 ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
                 if (constructor == null) {
-                    Util.Log(string.Format("Unable to locate default constructor for {0} in map.", type.ToString()));
+                    Debug.Log(string.Format("Unable to locate default constructor for {0} in map.", type.ToString()));
                     isAllDefault = false;
                 }
             }
