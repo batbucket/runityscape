@@ -103,8 +103,8 @@ namespace Scripts.Model.Spells {
                     this.Icon,
                     this.Name,
                     string.Format("{0}{1}{2}",
-                        Priority == 0 ? string.Empty : string.Format("{0} priority", Priority.GetDescription()),
-                        Costs.Count == 0 ? string.Empty : string.Format("\nCosts {0}\n\n", GetCommaSeparatedCosts()),
+                        Priority == 0 ? string.Empty : string.Format("{0} priority\n", Priority.GetDescription()),
+                        Costs.Count == 0 ? string.Empty : string.Format("Costs {0}\n\n", GetCommaSeparatedCosts()),
                         CreateDescriptionHelper()
                         )
                     );
