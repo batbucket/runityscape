@@ -25,12 +25,14 @@ namespace Scripts.Game.Pages {
     public class Menus : PageGroup {
         public const int DEBUGGING = 1;
         public const int NEW_GAME = 2;
+        public const int HOTKEY_TUTORIAL = 3;
 
         private string name;
 
         public Menus() : base(new Page("Main Menu")) {
             Register(DEBUGGING, new Page("Debug"));
             Register(NEW_GAME, new Page("New Game"));
+            Register(HOTKEY_TUTORIAL, new Page("Some buttons have hotkeys!"));
             StartPage();
             DebugPage();
             NewGameNameInputPage();
@@ -107,13 +109,31 @@ namespace Scripts.Game.Pages {
                 "Confirm",
                 () => {
                     this.name = Get(NEW_GAME).Input;
-                    (new IntroPages(name)).Invoke();
+                    HotkeyTutorialPage(name);
+                    Get(HOTKEY_TUTORIAL).Invoke();
                 },
                 () => 2 <= Get(NEW_GAME).Input.Length && Get(NEW_GAME).Input.Length <= 10)
                 );
 
             page.Body = "What was the hero's name?";
             page.HasInputField = true;
+        }
+
+        private void HotkeyTutorialPage(string name) {
+            Page hotkeys = Get(HOTKEY_TUTORIAL);
+            hotkeys.OnEnter = (() => IsCursorEnabled(false));
+            hotkeys.Body = "Oh no! Your cursor has vanished!\n(Hint: Use your keyboard.)";
+            hotkeys.Actions = new IButtonable[] {
+                new Process("Advance!", () => {
+                        IsCursorEnabled(true);
+                        new IntroPages(name).Invoke();
+                    })
+            };
+        }
+
+        private void IsCursorEnabled(bool set) {
+            Cursor.visible = set;
+            Cursor.lockState = set ? CursorLockMode.None : CursorLockMode.Locked;
         }
     }
 
