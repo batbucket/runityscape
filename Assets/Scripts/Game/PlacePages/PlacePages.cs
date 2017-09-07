@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Serialized;
+﻿using Scripts.Game.Dungeons;
+using Scripts.Game.Serialized;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
@@ -28,7 +29,26 @@ namespace Scripts.Game.Pages {
             var buttons = new List<IButtonable>();
             buttons.Add(PageUtil.GenerateBack(previous));
 
+            foreach (PageGroup pg in GetCurrentArea(flags.CurrentArea).Places) {
+                buttons.Add(pg);
+            }
+
             p.Actions = buttons;
+        }
+
+        private Process GetPlaceProcess(PageGroup pg) {
+            return new Process(
+                    pg.Root.Location,
+                    pg.Root.TooltipText,
+                    () => {
+                        pg.Root.Invoke();
+                        flags.ShouldAdvanceTimeInCamp = true;
+                    }
+                );
+        }
+
+        private Area GetCurrentArea(AreaType type) {
+            return AreaList.ALL_AREAS[type](flags, party, previous, Root);
         }
     }
 }
