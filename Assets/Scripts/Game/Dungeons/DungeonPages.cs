@@ -48,7 +48,7 @@ namespace Scripts.Game.Dungeons {
         }
 
         private bool IsStagePlayable(int index, Area area) {
-            return index <= 0 || Area.IsStageCleared(index - 1, area.Type, flags);
+            return index <= 0 || flags.IsStageCleared(index - 1, area.Type);
         }
 
         private Process GetDungeonEntryProcess(int index, Area area) {
@@ -62,7 +62,10 @@ namespace Scripts.Game.Dungeons {
             return new Process(
                     Util.ColorString(string.Format("{0}-{1}", (int)area.Type, index), buttonColor),
                     dungeon.Sprite,
-                    () => dungeon.Invoke()
+                    () => {
+                        dungeon.Invoke();
+                        flags.ShouldAdvanceTimeInCamp = true;
+                        }
                 );
         }
     }
