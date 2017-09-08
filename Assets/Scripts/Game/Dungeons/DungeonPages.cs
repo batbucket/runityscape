@@ -16,7 +16,7 @@ namespace Scripts.Game.Dungeons {
             var buttons = new List<IButtonable>();
             this.party = party;
             this.flags = flags;
-            this.previous = previous;   
+            this.previous = previous;
 
             Root.Icon = Util.GetSprite("dungeon-gate");
             Root.AddCharacters(Side.LEFT, party);
@@ -62,10 +62,11 @@ namespace Scripts.Game.Dungeons {
             return new Process(
                     Util.ColorString(string.Format("{0}-{1}", (int)area.Type, index), buttonColor),
                     dungeon.Sprite,
+                    dungeon.Root.Location,
                     () => {
                         dungeon.Invoke();
                         flags.ShouldAdvanceTimeInCamp = true;
-                        }
+                    }
                 );
         }
     }
