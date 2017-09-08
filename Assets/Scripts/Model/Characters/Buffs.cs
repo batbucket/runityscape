@@ -59,7 +59,7 @@ namespace Scripts.Model.Characters {
                     Util.Assert(false, "Unknown removal type: " + type);
                     break;
             }
-            if (buff.IsDispellable) {
+            if (buff.IsDispellable || type == RemovalType.TIMED_OUT) {
                 set.Remove(buff);
                 AddSplat(new SplatDetails(Color.red, string.Format("-"), buff.Sprite));
             }
