@@ -40,7 +40,7 @@ namespace Scripts.Model.Spells {
 
         public bool IsPlayable {
             get {
-                return Book.IsCastable(Caster, Target);
+                return Book.IsCastableIgnoreResources(Caster, Target); // Resources already used up
             }
         }
 

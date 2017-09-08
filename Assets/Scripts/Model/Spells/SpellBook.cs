@@ -97,6 +97,14 @@ namespace Scripts.Model.Spells {
             }
         }
 
+        public int GetCost(StatType type) {
+            int cost = 0;
+            if (Costs.ContainsKey(type)) {
+                cost = Costs[type];
+            }
+            return cost;
+        }
+
         public virtual TooltipBundle TextboxTooltip {
             get {
                 return new TooltipBundle(
@@ -156,7 +164,11 @@ namespace Scripts.Model.Spells {
         }
 
         public bool IsCastable(SpellParams caster, SpellParams target) {
-            return !IsSilenced && CasterHasResources(caster.Stats) && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || !flags.Contains(Flag.CASTER_REQUIRES_SPELL));
+            return CasterHasResources(caster.Stats) && IsCastableIgnoreResources(caster, target);
+        }
+
+        public bool IsCastableIgnoreResources(SpellParams caster, SpellParams target) {
+            return !IsSilenced && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || !flags.Contains(Flag.CASTER_REQUIRES_SPELL));
         }
 
         public Spell BuildSpell(SpellParams caster, SpellParams target) {
