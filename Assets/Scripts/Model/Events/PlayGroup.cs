@@ -57,9 +57,9 @@ namespace Scripts.Model.Acts {
         }
 
         public IEnumerator Play() {
-            yield return ActUtil.SetupSceneRoutine(page, preActs);
+            yield return ActUtil.SetupSceneRoutine(preActs);
             yield return spell.Play();
-            yield return ActUtil.SetupSceneRoutine(page, postActs);
+            yield return ActUtil.SetupSceneRoutine(postActs);
         }
 
         public IEnumerator Skip() {

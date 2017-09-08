@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using Scripts.Model.World;
 using Scripts.Game.Pages;
 using Scripts.Model.SaveLoad;
+using Scripts.View.TextInput;
 
 namespace Scripts.Presenter {
 
@@ -56,7 +57,16 @@ namespace Scripts.Presenter {
         [SerializeField]
         private TitleView title;
 
+        [SerializeField]
+        private InputView input;
+
         public static Main Instance { get { return instance; } }
+
+        public InputView Input {
+            get {
+                return input;
+            }
+        }
 
         public SoundView Sound {
             get {

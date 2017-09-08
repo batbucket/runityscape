@@ -80,7 +80,7 @@ namespace Scripts.Game.Pages {
                 }),
                 new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { CharacterList.Hero("Debug"), CharacterList.TestEnemy(), CharacterList.TestEnemy()  }, new Character[] { CharacterList.TestEnemy(), CharacterList.TestEnemy() }),
                 new Process("LongTalk Test", () => {
-                    ActUtil.SetupScene(Get(DEBUGGING), ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>theaefaefef oieafoewjfoejfio oe foiawjefoawijef oj efjoiejfaoo oajeoaijfo wi best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
+                    ActUtil.SetupScene(ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>theaefaefef oieafoewjfoejfio oe foiawjefoawijef oj efjoiejfaoo oajeoaijfo wi best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
                 }),
                 new Process("Get level exp diff", () => {
                     Page.TypeText(new TextBox(string.Format("For level {0}-{1}: {2} exp", level, level + 1, Experience.GetExpDiffForLevel(level, level + 1))));
@@ -89,7 +89,7 @@ namespace Scripts.Game.Pages {
                 new Process("ALL saves", () => SaveLoad.PrintSaves()),
                 new Process("DELET all saves", () => SaveLoad.DeleteAllSaves()),
                 new Process("move fox", () => { debug.Left.Clear(); debug.AddCharacters(Side.RIGHT, kitsune); }),
-                new Process("test boss logo", () => ActUtil.SetupScene(debug, new BossTransitionAct(Root, kitsune.Look))),
+                new Process("test boss logo", () => ActUtil.SetupScene(new BossTransitionAct(Root, kitsune.Look))),
                 new Process("test trophy", () => GameJolt.API.Trophies.Unlock(80273)),
                 submenu
             };
@@ -115,7 +115,7 @@ namespace Scripts.Game.Pages {
                 () => 2 <= Get(NEW_GAME).Input.Length && Get(NEW_GAME).Input.Length <= 10)
                 );
 
-            page.Body = "What was the hero's name?";
+            page.Body = "What is your name?";
             page.HasInputField = true;
         }
 

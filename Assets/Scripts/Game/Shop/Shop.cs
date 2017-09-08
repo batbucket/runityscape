@@ -189,7 +189,6 @@ namespace Scripts.Game.Pages {
                 string.Format("Talk about this topic.", talk.Name),
                 () => {
                     ActUtil.SetupScene(
-                        Get(ROOT_INDEX),
                         ActUtil.LongTalk(
                             Get(ROOT_INDEX),
                             shopkeeper,

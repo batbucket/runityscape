@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using Scripts.Model.Spells;
 using Scripts.Game.Defined.SFXs;
+using Scripts.View.TextInput;
 
 namespace Scripts.Model.Acts {
     public static class ActUtil {
@@ -20,12 +21,12 @@ namespace Scripts.Model.Acts {
         private const int IDENTIFIER_POSITION = 1;
         private const int TAG_LENGTH = 3;
 
-        public static void SetupScene(Page page, params Act[] acts) {
-            SetupScene(page, acts, new Action[0]);
+        public static void SetupScene(params Act[] acts) {
+            SetupScene(acts, new Action[0]);
         }
 
-        public static void SetupScene(Page page, Act[] acts, params Action[] postActions) {
-            Main.Instance.StartCoroutine(SetupSceneRoutine(page, acts, postActions));
+        public static void SetupScene(Act[] acts, params Action[] postActions) {
+            Main.Instance.StartCoroutine(SetupSceneRoutine(acts, postActions));
         }
 
         public static Act[] LongTalk(Page p, Character c, string big, params Act[] postActions) {
@@ -41,11 +42,11 @@ namespace Scripts.Model.Acts {
             return events.ToArray();
         }
 
-        public static IEnumerator SetupSceneRoutine(Page page, Act[] acts) {
-            yield return SetupSceneRoutine(page, acts, new Action[0]);
+        public static IEnumerator SetupSceneRoutine(Act[] acts) {
+            yield return SetupSceneRoutine(acts, new Action[0]);
         }
 
-        public static IEnumerator SetupSceneRoutine(Page page, Act[] acts, Action[] postActions) {
+        public static IEnumerator SetupSceneRoutine(Act[] acts, Action[] postActions) {
             Grid grid = new Grid(string.Empty);
             Main.Instance.PagePresenter.Override = grid;
 
@@ -68,7 +69,7 @@ namespace Scripts.Model.Acts {
                     new Process("Skip All", string.Empty, () => isSkipAll = true)
                 };
                 }
-                yield return new WaitUntil(() => isStepped || i == (acts.Length - 1) || isSkipAll);
+                yield return new WaitUntil(() => isStepped || i == (acts.Length - 1) || isSkipAll || !act.IsSkippable);
             }
             if (isSkipAll) {
                 for (int i = lastIndex + 1; i < acts.Length; i++) {
@@ -118,6 +119,7 @@ namespace Scripts.Model.Acts {
     }
 
     public abstract class Act {
+
         public readonly bool IsSkippable;
         private bool hasEnded;
         private bool isSkip;
@@ -196,7 +198,7 @@ namespace Scripts.Model.Acts {
     public class ActionAct : Act {
         private Action action;
 
-        public ActionAct(Action action) {
+        public ActionAct(Action action) : base(false) {
             this.action = action;
         }
 
@@ -207,6 +209,43 @@ namespace Scripts.Model.Acts {
 
         protected override void Skip() {
 
+        }
+    }
+
+    public class InputAct : Act {
+        private const int MINIMUM_CHAR_COUNT = 3;
+        private Action<string> callback;
+        private string text;
+
+        public InputAct(string text, Action<string> callback) : base(false) {
+            this.text = text;
+            this.callback = callback;
+        }
+
+        protected override void Skip() {
+
+        }
+
+        protected override IEnumerator PlayHelper() {
+            InputView input = Main.Instance.Input;
+
+            input.gameObject.SetActive(true);
+            input.Request = text;
+            bool isInputConfirmed = false;
+            Grid inputGrid = new Grid("input");
+            Grid oldGrid = Main.Instance.PagePresenter.Override;
+
+            Main.Instance.PagePresenter.Override = inputGrid;
+
+            inputGrid.List.Add(new Process(
+                "Confirm",
+                () => isInputConfirmed = true,
+                () => input.Input.Length >= MINIMUM_CHAR_COUNT
+                ));
+            yield return new WaitUntil(() => isInputConfirmed);
+            input.gameObject.SetActive(false);
+            Main.Instance.PagePresenter.Override = oldGrid;
+            callback(input.Input);
         }
     }
 
