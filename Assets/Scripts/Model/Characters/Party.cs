@@ -19,11 +19,17 @@ namespace Scripts.Model.Characters {
     /// </summary>
     public class Party : IEnumerable<Character>, ISaveable<PartySave> {
         private HashSet<Character> members;
-        public Inventory shared;
+        private Inventory shared;
 
         public Party() {
             this.members = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
             this.shared = new Inventory();
+        }
+
+        public Inventory Shared {
+            get {
+                return shared;
+            }
         }
 
         public Character Default {
@@ -40,11 +46,11 @@ namespace Scripts.Model.Characters {
 
         public void AddMember(Character c) {
             this.members.Add(c);
-            c.Inventory = shared;
+            c.Inventory = Shared;
         }
 
         public PartySave GetSaveObject() {
-            InventorySave inventory = shared.GetSaveObject();
+            InventorySave inventory = Shared.GetSaveObject();
             List<CharacterSave> mems = members.Select(c => c.GetSaveObject()).ToList();
 
             // Go through all characters
@@ -79,12 +85,12 @@ namespace Scripts.Model.Characters {
             List<Character> memList = new List<Character>();
 
             // Inventory setup
-            this.shared.InitFromSaveObject(saveObject.Inventory);
+            this.Shared.InitFromSaveObject(saveObject.Inventory);
 
             // Setup everything EXCEPT buffs
             for (int i = 0; i < saveObject.Characters.Count; i++) {
                 CharacterSave charSave = saveObject.Characters[i];
-                Character restored = new Character(this.shared); // Inventory
+                Character restored = new Character(this.Shared); // Inventory
                 restored.InitFromSaveObject(charSave); // Everything else but buffs
 
                 memList.Add(restored);
@@ -118,7 +124,7 @@ namespace Scripts.Model.Characters {
             HashSet<Character> thisSet = new HashSet<Character>(members);
             HashSet<Character> thatSet = new HashSet<Character>(item.members);
 
-            return this.shared.Equals(item.shared) && thisSet.SetEquals(thatSet);
+            return this.Shared.Equals(item.Shared) && thisSet.SetEquals(thatSet);
         }
 
         public override int GetHashCode() {

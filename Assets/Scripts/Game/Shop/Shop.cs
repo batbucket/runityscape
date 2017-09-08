@@ -59,7 +59,7 @@ namespace Scripts.Game.Pages {
         }
 
         private bool CanBuy(Item item) {
-            return party.shared.HasItem(MONEY, GetFullBuyPrice(item)) && party.shared.IsAddable(item);
+            return party.Shared.HasItem(MONEY, GetFullBuyPrice(item)) && party.Shared.IsAddable(item);
         }
 
         private int GetFullSellPrice(Item item) {
@@ -68,9 +68,9 @@ namespace Scripts.Game.Pages {
 
         private void AddToMoney(int amount) {
             if (amount > 0) {
-                party.shared.Add(MONEY, amount);
+                party.Shared.Add(MONEY, amount);
             } else if (amount < 0) {
-                party.shared.Remove(MONEY, -amount);
+                party.Shared.Remove(MONEY, -amount);
             }
         }
 
@@ -79,11 +79,11 @@ namespace Scripts.Game.Pages {
         }
 
         private bool CanSell(Item item) {
-            return party.shared.HasItem(item) && item.BasePrice > 0;
+            return party.Shared.HasItem(item) && item.BasePrice > 0;
         }
 
         private int GetPartyMoneyCount() {
-            return party.shared.GetCount(MONEY);
+            return party.Shared.GetCount(MONEY);
         }
 
         private void SetupMenus() {
@@ -106,7 +106,7 @@ namespace Scripts.Game.Pages {
         }
 
         private void PostMoneyAmount() {
-            Get(ROOT_INDEX).AddText(string.Format("{0}s: {0}", MONEY.Name, party.shared.GetCount(MONEY)));
+            Get(ROOT_INDEX).AddText(string.Format("{0}s: {0}", MONEY.Name, party.Shared.GetCount(MONEY)));
         }
 
         private Grid SetupShopMenu<T>(IButtonable previous, string name, string spriteLoc, string tooltip, IEnumerable<T> items, Func<T, Action, Process> conversion) {
@@ -135,12 +135,12 @@ namespace Scripts.Game.Pages {
                 () => {
                     Item item = buy.GetItem();
                     AddToMoney(-GetFullBuyPrice(item));
-                    party.shared.Add(item);
+                    party.Shared.Add(item);
                     Root.AddText(string.Format("Purchased {0} for {1} {2}(s).\n\nInventory: ({3})\n{2}s now: {4}",
                         item.Name,
                         GetFullBuyPrice(item).Color(Color.red),
                         MONEY.Name,
-                        party.shared.Fraction,
+                        party.Shared.Fraction,
                         GetPartyMoneyCount()));
                     postBuy();
                 },
@@ -149,13 +149,13 @@ namespace Scripts.Game.Pages {
         }
 
         private Grid SetupSellMenu(IButtonable previous) {
-            return SetupShopMenu<Item>(previous, "Sell", "sell-card", string.Format("Sell items for {0}s.", MONEY.Name), party.shared, (i, a) => GetSellProcess(i, a));
+            return SetupShopMenu<Item>(previous, "Sell", "sell-card", string.Format("Sell items for {0}s.", MONEY.Name), party.Shared, (i, a) => GetSellProcess(i, a));
         }
 
         private Process GetSellProcess(Item item, Action postSell) {
             return new Process(
                 string.Format("{0}",
-                    party.shared.CountedItemName(item),
+                    party.Shared.CountedItemName(item),
                     !CanSell(item) ?
                     string.Empty :
                     string.Format("-{0}", GetFullSellPrice(item))),
@@ -165,12 +165,12 @@ namespace Scripts.Game.Pages {
                 string.Format("{0}\nSell this item for {1} {2}(s).", item.Description, GetFullSellPrice(item), MONEY.Name),
                 () => {
                     AddToMoney(GetFullSellPrice(item));
-                    party.shared.Remove(item);
+                    party.Shared.Remove(item);
                     Root.AddText(string.Format("Sold {0} for {1} {2}(s).\n\nInventory: ({3})\n{2}s now: {4}",
                         item.Name,
                         GetFullSellPrice(item).Color(Color.green),
                         MONEY.Name,
-                        party.shared.Fraction,
+                        party.Shared.Fraction,
                         GetPartyMoneyCount()));
                     postSell();
                 },
