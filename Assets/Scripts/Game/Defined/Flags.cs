@@ -34,7 +34,7 @@ namespace Scripts.Game.Serialized {
 
         public Flags() {
             this.LastClearedArea = AreaType.NONE;
-            this.CurrentArea = AreaType.FIELD;
+            this.CurrentArea = AreaType.RUINS;
         }
 
         public FlagsSave GetSaveObject() {

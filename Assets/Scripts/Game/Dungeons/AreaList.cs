@@ -24,11 +24,11 @@ namespace Scripts.Game.Dungeons {
         public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
-                    { AreaType.FIELD, (f, p, c, q) => CreateField(f, p, c, q) }
+                    { AreaType.RUINS, (f, p, c, q) => CreateField(f, p, c, q) }
         });
 
         private static Area CreateField(Flags flags, Party party, Page camp, Page quests) {
-            return new Area(flags, party, camp, quests, AreaType.FIELD,
+            return new Area(flags, party, camp, quests, AreaType.RUINS,
                     new Stage(
                         "Lots of stages",
                         () => new Encounter[] {
