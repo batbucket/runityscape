@@ -57,7 +57,7 @@ namespace Scripts.Game.Pages {
                 dungeonSelectionPage,
                 new PlacePages(root, flags, party),
                 new WorldPages(root, flags, party),
-                new LevelUpPages(Root, party.Default),
+                new LevelUpPages(Root, party),
                 new InventoryPages(root, party.Default, party.shared),
                 new EquipmentPages(root, party.Default),
                 RestProcess(root),
