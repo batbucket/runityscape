@@ -106,14 +106,17 @@ namespace Scripts.Model.Pages {
         /// <param name="previous">Main grid</param>
         /// <param name="owner">Owner of the inventory</param>
         /// <param name="addPlay">IPlayable handler</param>
+        /// <param name="isInBattle">If in battle, X will use Y on Z, if out of battle, Z would use Y on themself.</param>
         /// <returns></returns>
         public static Grid GenerateItemsGrid(
+                    bool isInBattle,
                     Page p,
                     IButtonable previous,
                     SpellParams owner,
                     Action<IPlayable> addPlay
                     ) {
             return GenerateSpellableGrid(
+                !isInBattle,
                 p,
                 previous,
                 owner,
@@ -146,6 +149,7 @@ namespace Scripts.Model.Pages {
             ) {
 
             return GenerateSpellableGrid(
+                false,
                 p,
                 previous,
                 owner,
@@ -171,6 +175,7 @@ namespace Scripts.Model.Pages {
             List<SpellBook> spellsThatHaveACost = new List<SpellBook>();
 
             return GenerateSpellableGrid(
+                false,
                 p,
                 previous,
                 owner,
@@ -192,8 +197,8 @@ namespace Scripts.Model.Pages {
         /// <param name="spellable">Spellable to use on target</param>
         /// <param name="handlePlayable">Playable handler</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
-            return GenerateTargets(p, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable);
+        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
+            return GenerateTargets(p, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable, isTargetingSelf);
         }
 
         /// <summary>
@@ -205,8 +210,9 @@ namespace Scripts.Model.Pages {
         /// <param name="owner">User of the Spellable</param>
         /// <param name="spellable">Spellable to use on target</param>
         /// <param name="handlePlayable">Playable handler</param>
+        /// <param name="isTargetingSelf">If true, the target will attempt to cast the spell on themselves (used for out of combat inventories)</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable) {
+        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
             SpellBook sb = spellable.GetSpellBook();
             ICollection<Character> targets = sb.TargetType.GetTargets(owner.Character, p);
             Grid grid = GenerateBackableGrid(previous, sb.Icon, sb.Name, sb.CreateDescription(owner));
@@ -215,7 +221,15 @@ namespace Scripts.Model.Pages {
 
             foreach (Character myTarget in targets) {
                 Character target = myTarget;
-                grid.List.Add(GenerateTargetProcess(previous, owner, new SpellParams(target, p), sb, handlePlayable));
+
+                SpellParams targetParams = new SpellParams(target, p);
+                SpellParams spellOwner = new SpellParams();
+                if (isTargetingSelf) {
+                    spellOwner = targetParams;
+                } else {
+                    spellOwner = owner;
+                }
+                grid.List.Add(GenerateTargetProcess(previous, spellOwner, targetParams, sb, handlePlayable));
             }
             Item item = spellable as Item;
             if (item != null && item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {
@@ -263,6 +277,7 @@ namespace Scripts.Model.Pages {
         }
 
         private static Grid GenerateSpellableGrid(
+                    bool isTargetingSelf,
                     Page p,
                     IButtonable previous,
                     SpellParams owner,
@@ -277,18 +292,18 @@ namespace Scripts.Model.Pages {
             foreach (ISpellable myS in spellCollection) {
                 ISpellable s = myS;
                 if (!s.Equals(excluded)) {
-                    grid.List.Add(GenerateSpellProcess(p, grid, owner, s, addPlay));
+                    grid.List.Add(GenerateSpellProcess(p, grid, owner, s, addPlay, isTargetingSelf));
                 }
             }
 
             return grid;
         }
-        private static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
+        private static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
             SpellBook sb = spellable.GetSpellBook();
             return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
                 () => {
                     if (sb.IsMeetPreTargetRequirements(owner.Stats)) {
-                        GenerateTargets(p, previous, owner, spellable, handlePlayable).Invoke();
+                        GenerateTargets(p, previous, owner, spellable, handlePlayable, isTargetingSelf).Invoke();
                     }
                 });
         }
@@ -297,7 +312,14 @@ namespace Scripts.Model.Pages {
             return GenerateTargetProcessHelper(previous, owner, target, sb, handlePlayable, CreateDetailedTargetName(owner, target, sb), target.Look.Sprite);
         }
 
-        private static Process GenerateTargetProcessHelper(IButtonable previous, SpellParams owner, SpellParams target, SpellBook sb, Action<IPlayable> handlePlayable, string name, Sprite icon) {
+        private static Process GenerateTargetProcessHelper(
+            IButtonable previous,
+            SpellParams owner,
+            SpellParams target,
+            SpellBook sb,
+            Action<IPlayable> handlePlayable,
+            string name,
+            Sprite icon) {
             return new Process(name,
                                icon,
                                 sb.CreateTargetDescription(owner, target),

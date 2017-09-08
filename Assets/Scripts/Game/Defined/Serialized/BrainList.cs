@@ -23,13 +23,13 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             Grid main = new Grid("Main");
 
             main.List = new IButtonable[] {
-                PageUtil.GenerateTargets(currentBattle, main, owner, ATTACK, GetAttackSprite(owner.Equipment), handlePlay),
+                PageUtil.GenerateTargets(currentBattle, main, owner, ATTACK, GetAttackSprite(owner.Equipment), handlePlay, false),
                 null,
                 null,
                 null,
                 PageUtil.GenerateActions(currentBattle, main, owner, ATTACK, temporarySpells, handlePlay),
                 PageUtil.GenerateSpellBooks(currentBattle, main, owner, ATTACK, handlePlay),
-                PageUtil.GenerateItemsGrid(currentBattle, main, owner, handlePlay),
+                PageUtil.GenerateItemsGrid(true, currentBattle, main, owner, handlePlay),
                 PageUtil.GenerateEquipmentGrid(main, owner, handlePlay),
             };
             currentBattle.Actions = main.List;

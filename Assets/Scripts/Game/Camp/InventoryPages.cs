@@ -24,6 +24,7 @@ namespace Scripts.Game.Pages {
             p.OnEnter = () => {
                 p.AddText(string.Format("{0}/{1} spaces used.", inventory.TotalOccupiedSpace, inventory.Capacity));
                 p.Actions = PageUtil.GenerateItemsGrid(
+                        false,
                         p,
                         previous,
                         new SpellParams(c, p),

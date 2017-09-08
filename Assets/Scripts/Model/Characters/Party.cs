@@ -24,6 +24,10 @@ namespace Scripts.Model.Characters {
         public Party() {
             this.members = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
             this.shared = new Inventory();
+            shared.Add(new Apple());
+            shared.Add(new Apple());
+            shared.Add(new Apple());
+            shared.Add(new Apple());
         }
 
         public Inventory Shared {
