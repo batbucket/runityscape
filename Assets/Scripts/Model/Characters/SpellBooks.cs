@@ -30,7 +30,11 @@ namespace Scripts.Model.Characters {
 
         public int HighestSkillCost {
             get {
-                return set.Select(s => s.Costs[StatType.SKILL]).Max();
+                int highest = 0;
+                if (set.Any(s => s.Costs.ContainsKey(StatType.SKILL))) {
+                    highest = set.Select(s => s.GetCost(StatType.SKILL)).DefaultIfEmpty().Max();
+                }
+                return highest;
             }
         }
 
