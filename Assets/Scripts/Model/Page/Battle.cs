@@ -262,7 +262,21 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator CheckForDeath() {
             foreach (Character c in GetAll()) {
-                if (c.Stats.State == State.DEAD) {
+                HashSet<Character> graveyard = null;
+
+                bool isLeftGrave = false;
+
+                if (Left.Contains(c)) {
+                    graveyard = leftGraveyard;
+                    isLeftGrave = true;
+                } else {
+                    graveyard = rightGraveyard;
+                    isLeftGrave = false;
+                }
+                bool characterIsInGraveyard = graveyard.Contains(c);
+
+                // Display death effect
+                if (c.Stats.State == State.DEAD && !characterIsInGraveyard) {
                     IList<Buff> dispellableOnDeath = c.Buffs.Where(b => b.IsDispellable).ToList();
                     foreach (Buff removableBuff in dispellableOnDeath) {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
@@ -270,16 +284,21 @@ namespace Scripts.Model.Pages {
                     Main.Instance.Sound.PlaySound("synthetic_explosion_1");
                     yield return SFX.Death(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
-                    HashSet<Character> graveyard = null;
-                    if (Left.Contains(c)) {
-                        graveyard = leftGraveyard;
-                    } else {
-                        graveyard = rightGraveyard;
-                    }
+
+                    graveyard.Add(c);
                     if (!c.HasFlag(Characters.Flag.PERSISTS_AFTER_DEFEAT)) {
-                        graveyard.Add(c);
                         Left.Remove(c);
                         Right.Remove(c);
+                    }
+                }
+
+                // Bring them back! (for revivals)
+                if (c.Stats.State == State.ALIVE && characterIsInGraveyard) {
+                    graveyard.Remove(c);
+                    if (isLeftGrave) {
+                        Left.Add(c);
+                    } else {
+                        Right.Add(c);
                     }
                 }
             }
@@ -385,8 +404,8 @@ namespace Scripts.Model.Pages {
                                 b.Description
                                 )
                             ));
-                        b.OnEndOfTurn(c.Stats);
                     }
+                    b.OnEndOfTurn(c.Stats);
                     if (b.IsTimedOut) {
                         timedOut.Add(b);
                     }
@@ -444,7 +463,7 @@ namespace Scripts.Model.Pages {
                         spellMessage = Spell.GetCastMessage(spell.Caster, spell.Target, spell.Book, ResultType.FAILED);
                     }
                     AddText(new TextBox(
-                        play.Text, 
+                        play.Text,
                         play.MySpell.Book.TextboxTooltip));
                     yield return play.Play();
                     yield return CharacterDialogue(spell.Target.Character, spell.Target.Character.Brain.ReactToSpell(spell));
@@ -545,7 +564,7 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator CharacterDialogue(Character speaker, string content) {
             if (!string.IsNullOrEmpty(content)) {
-                yield return ActUtil.SetupSceneRoutine(this, new Act[] { new TextAct(new AvatarBox(GetSide(speaker), speaker.Look.Sprite, speaker.Look.TextColor, content)) });
+                yield return ActUtil.SetupSceneRoutine(new Act[] { new TextAct(new AvatarBox(GetSide(speaker), speaker.Look.Sprite, speaker.Look.TextColor, content)) });
             }
             yield break;
         }
