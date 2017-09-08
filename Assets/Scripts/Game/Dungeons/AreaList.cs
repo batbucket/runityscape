@@ -21,7 +21,7 @@ namespace Scripts.Game.Dungeons {
         /// Page = DungeonPages reference
         /// Area = Area to return
         /// </summary>
-        public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS 
+        public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
                     { AreaType.FIELD, (f, p, c, q) => CreateField(f, p, c, q) }
@@ -30,17 +30,25 @@ namespace Scripts.Game.Dungeons {
         private static Area CreateField(Flags flags, Party party, Page camp, Page quests) {
             return new Area(flags, party, camp, quests, AreaType.FIELD,
                     new Stage(
-                        "Zero Prairie",
+                        "Lots of stages",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.Illusionist()),
                             new Encounter(CharacterList.Field.Villager()),
                             new Encounter(CharacterList.Field.Villager(), CharacterList.Field.Villager())
                         }),
                     new Stage(
-                        "Zero Prairie",
+                        "Illusionist",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.Villager()),
-                            new Encounter(CharacterList.Field.Villager(), CharacterList.Field.Villager())
+                            new Encounter(CharacterList.Field.Illusionist())
+                        }),
+                    new Stage(
+                        "Big Knight",
+                        () => new Encounter[] {
+                            new Encounter(CharacterList.Field.BigKnight())
+                        }),
+                    new Stage(
+                        "Replicant",
+                        () => new Encounter[] {
+                            new Encounter(CharacterList.Field.Replicant(), CharacterList.Field.Healer(), CharacterList.Field.Healer())
                         })
                 );
         }
