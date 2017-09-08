@@ -45,7 +45,7 @@ namespace Scripts.Game.Pages {
                     if (partyMember.Stats.HasStatPoints) {
                         root.AddText(
                             string.Format(
-                                "<color=cyan>{0}</color> has unallocated stat points. Points can be allocated in the <color=yellow>Characters</color> page.",
+                                "<color=cyan>{0}</color> has unallocated stat points. Points can be allocated in the <color=yellow>Party</color> page.",
                                 partyMember.Look.DisplayName));
                     }
                 }
