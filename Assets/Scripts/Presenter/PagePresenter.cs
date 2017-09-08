@@ -1,5 +1,6 @@
 ﻿using Script.View.Tooltip;
 using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
@@ -129,17 +130,21 @@ namespace Scripts.Presenter {
 
             actionGrid.IsEnabled = true;
             actionGrid.IsHotKeysEnabled = !page.HasInputField;
-            if (page.HasInputField) {
-                InputBoxView ibv = textBoxHolder.AddInputBox();
-                GetInputFunc = () => ibv.Input;
-            } else {
-                GetInputFunc = () => string.Empty;
-            }
+            SetInputField(page.HasInputField);
 
             actionGrid.ClearAll();
             page.OnEnter.Invoke();
 
             Tick();
+        }
+
+        private void SetInputField(bool isEnabled) {
+            if (isEnabled) {
+                InputBoxView ibv = textBoxHolder.AddInputBox();
+                GetInputFunc = () => ibv.Input;
+            } else {
+                GetInputFunc = () => string.Empty;
+            }
         }
 
         public PooledBehaviour AddTextBox(TextBox t) {
@@ -200,7 +205,7 @@ namespace Scripts.Presenter {
         }
 
         private bool IsRevealedCalculation(Stats stats, int contributionFromFlags) {
-            return Util.IS_DEBUG || ((stats.ResourceVisibility + contributionFromFlags) > 0);
+            return (stats.ResourceVisibility + contributionFromFlags) > 0;
         }
     }
 }
