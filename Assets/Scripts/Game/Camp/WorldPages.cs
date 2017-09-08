@@ -35,7 +35,6 @@ namespace Scripts.Game.Pages {
                         flags.CurrentArea = type;
                         previous.Invoke();
                         previous.AddText(string.Format("Moved to {0}.", type.GetDescription()));
-                        previous.Location = type.GetDescription();
                     }
                 );
         }
