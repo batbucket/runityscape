@@ -146,7 +146,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public ReflectiveClone() : base("Harmless Illusions", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, PriorityType.LOW) { }
 
         protected override string CreateDescriptionHelper() {
-            return "Creates clones of the caster that vanish when the caster is attacked. Clones reflect attacks. Shuffles the caster's side.";
+            return "Creates clones of the caster that die when the caster is attacked. Clones reflect attacks and do no damage.";
         }
 
         protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
