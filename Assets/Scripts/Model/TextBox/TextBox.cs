@@ -42,7 +42,7 @@ namespace Scripts.Model.TextBoxes {
             this.color = color;
             this.timePerLetter = timePerLetter;
             this.soundLoc = soundLocation;
-            this.effect = effect; 
+            this.effect = effect;
             this.tooltip = new TooltipBundle();
         }
 
