@@ -27,6 +27,11 @@ namespace Scripts.View.ActionGrid {
         private List<HotkeyButton> buttons;
 
         /// <summary>
+        /// Buttons may end up getting added.
+        /// </summary>
+        private bool isHotkeysEnabled;
+
+        /// <summary>
         /// Enables and disables the buttons
         /// </summary>
         public bool IsEnabled {
@@ -42,6 +47,7 @@ namespace Scripts.View.ActionGrid {
                 foreach (HotkeyButton b in buttons) {
                     b.IsHotkeyEnabled = value;
                 }
+                this.isHotkeysEnabled = value;
             }
         }
 
@@ -60,6 +66,7 @@ namespace Scripts.View.ActionGrid {
                     hb = buttons[i];
                 } else {
                     hb = ObjectPoolManager.Instance.Get(actionButtonPrefab);
+                    hb.IsHotkeyEnabled = isHotkeysEnabled;
                     Util.Parent(hb.gameObject, gameObject);
                     buttons.Add(hb);
                 }
