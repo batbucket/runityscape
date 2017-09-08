@@ -42,11 +42,11 @@ namespace Scripts.Game.Serialized {
         }
 
         public bool IsStageCleared(int stageIndex, AreaType type) {
-            return this.LastClearedArea >= type || this.LastClearedStage > stageIndex;
+            return this.LastClearedArea >= type || this.LastClearedStage > stageIndex || Util.IS_DEBUG;
         }
 
         public bool IsAreaUnlocked(AreaType type) {
-            return ((int)this.LastClearedArea + 1) >= (int) type;
+            return ((int)this.LastClearedArea + 1) >= (int)type || Util.IS_DEBUG;
         }
 
         public void InitFromSaveObject(FlagsSave saveObject) {
