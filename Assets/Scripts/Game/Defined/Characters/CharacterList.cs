@@ -104,7 +104,7 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character Hero(string name) {
             return new Character(
-                new Stats(0, 1, 1, 1, 5),
+                new Stats(0, 1, 1, 2, 5),
                 new Look(
                     name,
                     "person",
@@ -116,9 +116,23 @@ namespace Scripts.Game.Defined.Characters {
                 .AddStats(new Experience());
         }
 
+        public static Character Partner(string name) {
+            return new Character(
+                new Stats(0, 1, 2, 1, 5),
+                new Look(
+                    name,
+                    "visored-helm",
+                    "Has a helmet icon despite not wearing one.",
+                    Breed.HUMAN
+                    ),
+                new Player())
+                .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
+                .AddStats(new Experience());
+        }
+
         public static Character TestEnemy() {
             Character c = new Character(
-                new Stats(5, 55, 1, 5, 1),
+                new Stats(5, 1, 1, 5, 1),
                     new Look(
                     "Test Enemy",
                     "fox-head",
@@ -128,7 +142,9 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Player())
                 .AddItems(new ItemCount(new Apple(), 7), new ItemCount(new PoisonArmor()), new ItemCount(new Money(), 100))
-                .AddFlags(Model.Characters.Flag.DROPS_ITEMS);
+                .AddFlags(Model.Characters.Flag.DROPS_ITEMS)
+                .AddSpells(new InflictPoison(), new SetupCounter())
+                .AddStats(new Skill());
             return c;
         }
 
@@ -158,6 +174,20 @@ namespace Scripts.Game.Defined.Characters {
                         ),
                     new FieldBrains.Attacker())
                     .AddItem(new Item[] { new BrokenSword(), new GhostArmor() }.ChooseRandom(), Util.IsChance(.50f));
+            }
+
+            public static Character BigKnight() {
+                return StandardEnemy(
+                    new Stats(3, 1, 2, 2, 15),
+                    new Look(
+                        "Big Knight",
+                        "spectre",
+                        "It's a big guy.",
+                        Breed.SPIRIT
+                        ),
+                    new FieldBrains.BigKnight())
+                    .AddStats(new Skill())
+                    .AddSpells(new SetupCounter());
             }
 
             public static Character Healer() {
