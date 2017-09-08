@@ -108,14 +108,14 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class InflictPoison : BuffAdder {
-        public InflictPoison() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, new Poison(), "Infect") {
+        public InflictPoison() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, new Poison(), "Infect", PriorityType.NORMAL) {
             AddCost(StatType.MANA, 1);
         }
     }
 
     public class SetupCounter : BuffAdder {
-        public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, new Counter(), "Counter") {
-            AddCost(StatType.SKILL, 2);
+        public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, new Counter(), "Counter", PriorityType.LOW) {
+            AddCost(StatType.SKILL, 3);
         }
     }
 
@@ -162,7 +162,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
                     Character c = new Character(
                         new Stats(caster.Stats.Level, 0, caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY), 1, 1),
                         new Look(caster.Look.Name, caster.Look.Sprite, caster.Look.Tooltip, caster.Look.Breed, caster.Look.TextColor),
-                        new FieldBrains.KitsuneClone());
+                        new FieldBrains.ReplicantClone());
                     c.AddFlag(Model.Characters.Flag.IS_CLONE);
                     c.Buffs.AddBuff(new ReflectAttack(), c);
                     c.Buffs.AddBuff(new SpiritLink(), caster.Character);
@@ -176,21 +176,11 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
-    public class Blackout : BasicSpellbook {
+    public class Blackout : BuffAdder {
         private static readonly BlackedOut DUMMY = new BlackedOut();
 
-        public Blackout() : base("Blackout", Util.GetSprite("sight-disabled"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE, PriorityType.HIGH) {
+        public Blackout() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, DUMMY, "Blackout", PriorityType.HIGH) {
 
-        }
-
-        protected override string CreateDescriptionHelper() {
-            return BuffAdder.CreateBuffDescription(DUMMY);
-        }
-
-        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
-            return new SpellEffect[] {
-                new AddBuff(new BuffParams(caster.Stats, caster.CharacterId), target.Buffs, new BlackedOut())
-            };
         }
     }
 }
