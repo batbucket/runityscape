@@ -58,8 +58,8 @@ namespace Scripts.Game.Pages {
                 new PlacePages(root, flags, party),
                 new WorldPages(root, flags, party),
                 new LevelUpPages(Root, party),
-                new InventoryPages(root, party.Default, party.Shared),
-                new EquipmentPages(root, party.Default),
+                new InventoryPages(root, party, party.Shared),
+                new EquipmentPages(root, party),
                 RestProcess(root),
                 new SavePages(root, party, flags)
                 };

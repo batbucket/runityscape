@@ -30,7 +30,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
                 PageUtil.GenerateActions(currentBattle, main, owner, ATTACK, temporarySpells, handlePlay),
                 PageUtil.GenerateSpellBooks(currentBattle, main, owner, ATTACK, handlePlay),
                 PageUtil.GenerateItemsGrid(true, currentBattle, main, owner, handlePlay),
-                PageUtil.GenerateEquipmentGrid(main, owner, handlePlay),
+                PageUtil.GenerateEquipmentGrid(main, owner, handlePlay, true),
             };
             currentBattle.Actions = main.List;
         }

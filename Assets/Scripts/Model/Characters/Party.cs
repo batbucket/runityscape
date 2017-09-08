@@ -26,8 +26,8 @@ namespace Scripts.Model.Characters {
             this.shared = new Inventory();
             shared.Add(new Apple());
             shared.Add(new Apple());
-            shared.Add(new Apple());
-            shared.Add(new Apple());
+            shared.Add(new BrokenSword());
+            shared.Add(new BrokenSword());
         }
 
         public Inventory Shared {

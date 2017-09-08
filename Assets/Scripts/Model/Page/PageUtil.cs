@@ -106,17 +106,17 @@ namespace Scripts.Model.Pages {
         /// <param name="previous">Main grid</param>
         /// <param name="owner">Owner of the inventory</param>
         /// <param name="addPlay">IPlayable handler</param>
-        /// <param name="isInBattle">If in battle, X will use Y on Z, if out of battle, Z would use Y on themself.</param>
+        /// <param name="isInCombat">If in combat, X will use Y on Z, if out of battle, Z would use Y on themself.</param>
         /// <returns></returns>
         public static Grid GenerateItemsGrid(
-                    bool isInBattle,
+                    bool isInCombat,
                     Page p,
                     IButtonable previous,
                     SpellParams owner,
                     Action<IPlayable> addPlay
                     ) {
             return GenerateSpellableGrid(
-                !isInBattle,
+                !isInCombat,
                 p,
                 previous,
                 owner,
@@ -253,9 +253,10 @@ namespace Scripts.Model.Pages {
         /// <param name="previous">supergrid</param>
         /// <param name="owner">Owner of the equipment</param>
         /// <param name="handlePlayable">Playable handler</param>
+        /// <param name="isInCombat">If in combat, text is "Equipment", otherwise it's the owner's name</param>
         /// <returns></returns>
-        public static Grid GenerateEquipmentGrid(IButtonable previous, SpellParams owner, Action<IPlayable> handlePlayable) {
-            Grid grid = GenerateBackableGrid(previous, EQUIPMENT, "Equipment", "Manage equipped items.");
+        public static Grid GenerateEquipmentGrid(IButtonable previous, SpellParams owner, Action<IPlayable> handlePlayable, bool isInCombat) {
+            Grid grid = GenerateBackableGrid(previous, EQUIPMENT, isInCombat ? "Equipment" : owner.Look.DisplayName, string.Format("Manage {0}'s equipment.", owner.Look.DisplayName));
 
             foreach (EquipType myET in EquipType.AllTypes) {
                 EquipType et = myET;
@@ -269,6 +270,17 @@ namespace Scripts.Model.Pages {
                 }
                 grid.List.Add(ib);
             }
+            return grid;
+        }
+
+        public static Grid GenerateGroupEquipmentGrid(IButtonable previous, Page current, ICollection<Character> party, Action<IPlayable> handlePlayable, bool isInCombat) {
+            Grid grid = new Grid("Equipment");
+            grid.List.Add(GenerateBack(previous));
+
+            foreach (Character partyMember in party) {
+                grid.List.Add(GenerateEquipmentGrid(grid, new SpellParams(partyMember, current), handlePlayable, isInCombat));
+            }
+
             return grid;
         }
 

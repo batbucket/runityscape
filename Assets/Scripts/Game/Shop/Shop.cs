@@ -96,7 +96,7 @@ namespace Scripts.Game.Pages {
                 main.List.Add(SetupBuyMenu(main));
                 main.List.Add(null);
                 main.List.Add(PageUtil.GenerateItemsGrid(false, p, main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p)));
-                main.List.Add(PageUtil.GenerateEquipmentGrid(main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p)));
+                main.List.Add(PageUtil.GenerateEquipmentGrid(main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p), false));
                 main.List.Add(null);
                 main.List.Add(PageUtil.GenerateBack(previous));
             };

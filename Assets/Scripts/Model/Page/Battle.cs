@@ -484,7 +484,7 @@ namespace Scripts.Model.Pages {
                     }
                     Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
                     postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
-                    postBattle.List.Add(PageUtil.GenerateEquipmentGrid(postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(PageUtil.GenerateGroupEquipmentGrid(postBattle, this, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this), false));
                     postBattle.List.Add(new Process("Continue", () => victory.Invoke()));
                 } else {
                     postBattle.List.Add(new Process("Continue", () => defeat.Invoke()));

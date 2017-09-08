@@ -37,7 +37,7 @@ namespace Scripts.Model.Items {
                 foreach (KeyValuePair<StatType, int> pair in Stats) {
                     arr[index++] = string.Format("{0} {1}", StatUtil.ShowSigns(pair.Value), pair.Key.ColoredName);
                 }
-                return string.Format("{0}\n{1}\n{2}", Type.Name, string.Join("\n", arr), string.Format("<i>{0}</i>", Flavor));
+                return string.Format("{0}\n{1}\n{2}", Type.Name, string.Join("\n", arr), Util.ColorString(Flavor, Color.grey));
             }
         }
 
