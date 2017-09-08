@@ -41,7 +41,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class BlackedOut : Buff {
         public BlackedOut() : base(3, Util.GetSprite("sight-disabled"), "Blackout", "Resource visibility decreased.", true) { }
 
-        protected override IList<SpellEffect> OnApplyHelper(Stats owner) { // TODO UNSTACKABLE
+        protected override IList<SpellEffect> OnApplyHelper(Stats owner) {
             return new SpellEffect[] { new AddToResourceVisibility(owner, -1) };
         }
 
@@ -51,7 +51,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class Counter : Buff {
-        public Counter() : base(Util.GetSprite("round-shield"), "Counter", "Basic <color=yellow>Attack</color>s on this unit are reflected.", false) { }
+        public Counter() : base(2, Util.GetSprite("round-shield"), "Counter", "Basic <color=yellow>Attack</color>s on this unit are reflected.", false) { }
 
         public override bool IsReact(Spell s, Stats owner) {
             return s.Book is Attack && s.Target.Stats == owner;

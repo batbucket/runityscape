@@ -7,7 +7,7 @@ namespace Scripts.Model.Spells {
     public abstract class BuffAdder : BasicSpellbook {
         private Buff dummy;
 
-        public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name) : base(name, dummy.Sprite, target, spell, PriorityType.LOW) {
+        public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name, PriorityType priority) : base(name, dummy.Sprite, target, spell, priority) {
             this.dummy = dummy;
         }
 
