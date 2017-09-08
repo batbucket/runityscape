@@ -144,7 +144,6 @@ namespace Scripts.Model.Pages {
             SpellBook excluded,
             Action<IPlayable> addPlay
             ) {
-            List<SpellBook> spellsThatHaveACost = new List<SpellBook>();
 
             return GenerateSpellableGrid(
                 p,
