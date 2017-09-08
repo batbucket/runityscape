@@ -21,6 +21,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
         public override void DetermineAction() {
             Grid main = new Grid("Main");
+
             main.List = new IButtonable[] {
                 PageUtil.GenerateTargets(currentBattle, main, owner, ATTACK, GetAttackSprite(owner.Equipment), handlePlay),
                 null,
@@ -69,6 +70,18 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             protected override IList<Func<IPlayable>> SetupPriorityPlays() {
                 return new Func<IPlayable>[] {
                     CastOnTargetMeetingCondition(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH) > 0)
+                };
+            }
+        }
+
+        public class BigKnight : PriorityBrain {
+            public static readonly SetupCounter COUNTER = new SetupCounter();
+            public static readonly Attack ATTACK = new Attack();
+
+            protected override IList<Func<IPlayable>> SetupPriorityPlays() {
+                return new Func<IPlayable>[] {
+                    CastOnRandom(COUNTER),
+                    CastOnRandom(ATTACK)
                 };
             }
         }
@@ -141,7 +154,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             public override string StartOfRoundDialogue() {
                 if (!commentedOnDeadHealers && !IsAnyHealersAlive) {
                     commentedOnDeadHealers = true;
-                    return Util.PickRandom("Know that I will not fall as easily as these spirits, mayfly./Killing those who are already dead... How unimpressive./They would have only gotten in the way.");
+                    return Util.PickRandom("Killing those who are already dead... How unimpressive./They would have only gotten in the way.");
                 }
                 if (!commentedOnLowHealth && IsLowHealth) {
                     commentedOnLowHealth = true;
@@ -151,7 +164,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
             }
         }
 
-        public class KitsuneClone : BasicBrain {
+        public class ReplicantClone : BasicBrain {
             public static readonly Attack ATTACK = new Attack();
 
             private int CloneCount {
