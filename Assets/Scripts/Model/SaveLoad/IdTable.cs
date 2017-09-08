@@ -109,7 +109,9 @@ namespace Scripts.Model.SaveLoad {
             Add<FieldBrains.Attacker>("villager");
             Add<FieldBrains.Healer>("healer");
             Add<FieldBrains.Replicant>("replicant");
+            Add<FieldBrains.ReplicantClone>("replicantClone");
             Add<FieldBrains.Illusionist>("illusionist");
+            Add<FieldBrains.BigKnight>("bigKnight");
         }
 
         private void Add<Type>(string id) {
@@ -117,7 +119,7 @@ namespace Scripts.Model.SaveLoad {
         }
 
         private Type[] GetTypesInNamespace(Assembly assembly, string nameSpace) {
-            return assembly.GetTypes().Where(t => t.Namespace != null && !Regex.IsMatch(t.ToString(), "\\+|\\<|\\>|_") && t.Namespace.Contains(nameSpace)).ToArray();
+            return assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.Contains(nameSpace) && !t.ToString().Contains("c__AnonStorey0")).ToArray();
         }
 
         /// <summary>
