@@ -37,7 +37,6 @@ namespace Scripts.Presenter {
         private void SetupFuncs() {
             Character.Stats.AddSplat = (sd => AddHitsplat(sd));
             Character.Buffs.AddSplat = (sd => AddHitsplat(sd));
-            Character.Inventory.AddSplat = (sd => AddHitsplat(sd));
             Character.Equipment.AddSplat = (sd => AddHitsplat(sd));
         }
 

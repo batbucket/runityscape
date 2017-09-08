@@ -27,14 +27,11 @@ namespace Scripts.Model.Characters {
     public class Inventory : IEnumerable<Item>, IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
         private const int INITIAL_CAPACITY = 4;
 
-        public Action<SplatDetails> AddSplat;
-
         private IDictionary<Item, int> dict;
         private int capacity;
 
         public Inventory() {
             this.dict = new Dictionary<Item, int>();
-            this.AddSplat = ((p) => { });
             this.capacity = INITIAL_CAPACITY;
         }
 
@@ -106,7 +103,6 @@ namespace Scripts.Model.Characters {
             Util.Assert(IsAddable(itemToAdd, count), "No more room!");
             Util.Assert(count >= 0, string.Format("Invalid count: {0}", count));
             ForceAdd(itemToAdd, count);
-            AddSplat(new SplatDetails(Color.green, string.Format("+{0}", count), itemToAdd.Icon));
         }
 
         public bool HasItem(Item item, int count = 1) {
@@ -130,8 +126,6 @@ namespace Scripts.Model.Characters {
                 if (dict[itemToRemove] <= 0) {
                     dict.Remove(itemToRemove);
                 }
-
-                AddSplat(new SplatDetails(Color.red, string.Format("-{0}", count), itemToRemove.Icon));
 
             } else {
                 Util.Assert(false, "Unable to find item.");
