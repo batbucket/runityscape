@@ -18,12 +18,18 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private TextBoxView textBoxView;
 
+        /// <summary>
+        /// Set the icon seen on the avatarbox
+        /// </summary>
         public Sprite Sprite {
             set {
                 avatar.sprite = value;
             }
         }
 
+        /// <summary>
+        /// Reset the view. Remove the sprite.
+        /// </summary>
         public override void Reset() {
             textBoxView.Reset();
             avatar.sprite = null;

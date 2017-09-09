@@ -16,28 +16,39 @@ using Scripts.Model.Acts;
 
 namespace Scripts.Game.Defined.Serialized.Characters {
 
+    /// <summary>
+    /// Player character's brain.
+    /// </summary>
     public class Player : Brain {
         public static readonly Attack ATTACK = new Attack();
 
+        /// <summary>
+        /// Wait for an action to be chosen.
+        /// </summary>
         public override void DetermineAction() {
             Grid main = new Grid("Main");
 
             main.List = new IButtonable[] {
-                PageUtil.GenerateTargets(currentBattle, main, owner, ATTACK, GetAttackSprite(owner.Equipment), handlePlay, false),
+                PageUtil.GenerateTargets(currentBattle, main, brainOwner, ATTACK, GetAttackSprite(brainOwner.Equipment), handlePlay, false),
                 null,
                 null,
                 null,
-                PageUtil.GenerateActions(currentBattle, main, owner, ATTACK, temporarySpells, handlePlay),
-                PageUtil.GenerateSpellBooks(currentBattle, main, owner, ATTACK, handlePlay),
-                PageUtil.GenerateItemsGrid(true, currentBattle, main, owner, handlePlay),
-                PageUtil.GenerateEquipmentGrid(main, owner, handlePlay, true),
+                PageUtil.GenerateActions(currentBattle, main, brainOwner, ATTACK, temporarySpells, handlePlay),
+                PageUtil.GenerateSpellBooks(currentBattle, main, brainOwner, ATTACK, handlePlay),
+                PageUtil.GenerateItemsGrid(true, currentBattle, main, brainOwner, handlePlay),
+                PageUtil.GenerateEquipmentGrid(main, brainOwner, handlePlay, true),
             };
             currentBattle.Actions = main.List;
         }
 
-        private Sprite GetAttackSprite(Equipment equipment) {
-            if (equipment.HasEquip(EquipType.WEAPON)) {
-                return equipment.PeekItem(EquipType.WEAPON).Icon;
+        /// <summary>
+        /// Attack's button sprite depends on your currently equipped weapon.
+        /// </summary>
+        /// <param name="equipmentOfOwner">Reference to owner's equipment.</param>
+        /// <returns></returns>
+        private Sprite GetAttackSprite(Equipment equipmentOfOwner) {
+            if (equipmentOfOwner.HasEquip(EquipType.WEAPON)) {
+                return equipmentOfOwner.PeekItem(EquipType.WEAPON).Icon;
             } else {
                 return Util.GetSprite("fist");
             }
@@ -107,7 +118,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
             private bool IsAnyHealersAlive {
                 get {
-                    return currentBattle.GetAllies(owner.Character).Count(c => c.Brain is Healer) > 0;
+                    return currentBattle.GetAllies(brainOwner.Character).Count(c => c.Brain is Healer) > 0;
                 }
             }
 
@@ -119,13 +130,13 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
             private bool IsLowHealth {
                 get {
-                    return owner.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH) <= LOW_HEALTH;
+                    return brainOwner.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH) <= LOW_HEALTH;
                 }
             }
 
             private int CloneCount {
                 get {
-                    return currentBattle.GetAllies(owner.Character).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
+                    return currentBattle.GetAllies(brainOwner.Character).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
                 }
             }
 
@@ -145,7 +156,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
             public override string ReactToSpell(Spell spell) {
                 int cloneCount = CloneCount;
-                if (cloneCount > 0 && spell.Book.SpellType == SpellType.OFFENSE && spell.Result.Type.IsSuccessfulType && owner.Stats.State == State.ALIVE) {
+                if (cloneCount > 0 && spell.Book.SpellType == SpellType.OFFENSE && spell.Result.Type.IsSuccessfulType && brainOwner.Stats.State == State.ALIVE) {
                     return Util.PickRandom("A little observant, huh?/You will not land another./Nothing but luck./How did you...?/");
                 }
                 return string.Empty;
@@ -169,7 +180,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
 
             private int CloneCount {
                 get {
-                    return currentBattle.GetAllies(owner.Character).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
+                    return currentBattle.GetAllies(brainOwner.Character).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
                 }
             }
 

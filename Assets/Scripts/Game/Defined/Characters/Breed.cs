@@ -1,6 +1,10 @@
 ﻿using System.ComponentModel;
 
 namespace Scripts.Game.Defined.Characters {
+
+    /// <summary>
+    /// Represents the enemy's "race" seen on icon hover-over.
+    /// </summary>
     public enum Breed {
         [Description("???")]
         UNKNOWN = 0,

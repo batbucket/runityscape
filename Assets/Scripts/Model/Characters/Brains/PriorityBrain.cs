@@ -26,7 +26,7 @@ namespace Scripts.Model.Characters {
                 }
             }
             // Unable to find anything, perform a wait so the battle doesn't get stuck
-            return owner.Character.Spells.CreateSpell(DEFAULT_ACTION, owner, owner);
+            return brainOwner.Character.Spells.CreateSpell(DEFAULT_ACTION, brainOwner, brainOwner);
         }
 
         protected new Func<IPlayable> CastOnRandom(SpellBook sb) {
@@ -39,13 +39,13 @@ namespace Scripts.Model.Characters {
                 Character specificTarget =
                     sb
                     .TargetType
-                    .GetTargets(owner.Character, currentBattle)
+                    .GetTargets(brainOwner.Character, currentBattle)
                     .Where(
-                        c => sb.IsCastable(owner, new SpellParams(c, currentBattle)) && requirement(c))
+                        c => sb.IsCastable(brainOwner, new SpellParams(c, currentBattle)) && requirement(c))
                     .ChooseRandom();
 
                 if (specificTarget != null) {
-                    return owner.Spells.CreateSpell(sb, owner, new SpellParams(specificTarget, currentBattle));
+                    return brainOwner.Spells.CreateSpell(sb, brainOwner, new SpellParams(specificTarget, currentBattle));
                 }
                 return null;
             };

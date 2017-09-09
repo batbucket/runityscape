@@ -21,6 +21,10 @@ using UnityEngine;
 [TestFixture]
 public class BasicTests {
 
+    /// <summary>
+    /// Tests whether all serializable content has been added
+    /// to the IDTable.
+    /// </summary>
     [TestFixture]
     public class IDTableTests {
         [OneTimeSetUp]
@@ -48,6 +52,9 @@ public class BasicTests {
         }
     }
 
+    /// <summary>
+    /// Tests to see if saving and loading is working.
+    /// </summary>
     [TestFixture]
     public class SerializationTests {
         [OneTimeSetUp]
@@ -439,6 +446,9 @@ public class BasicTests {
         }
     }
 
+    /// <summary>
+    /// Tests advanced battle logic.
+    /// </summary>
     [TestFixture]
     public class BattleLogicTests {
         [Test]

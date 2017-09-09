@@ -26,7 +26,7 @@ namespace Scripts.Game.Dungeons {
 
             Area currentArea = GetCurrentArea(flags.CurrentArea);
 
-            for (int i = 0; i < currentArea.Dungeons.Length; i++) {
+            for (int i = 0; i < currentArea.Stages.Length; i++) {
                 if (IsStagePlayable(i, currentArea)) {
                     buttons.Add(GetDungeonEntryProcess(i, currentArea));
                 } else {
@@ -52,7 +52,7 @@ namespace Scripts.Game.Dungeons {
         }
 
         private Process GetDungeonEntryProcess(int index, Area area) {
-            Dungeon dungeon = area.Dungeons[index];
+            Dungeon dungeon = area.Stages[index];
             Color buttonColor = Color.white;
             if (index == AreaList.MINIBOSS_INDEX) {
                 buttonColor = AreaList.MINIBOSS_STAGE_TEXT_COLOR;

@@ -9,8 +9,16 @@ using UnityEngine;
 
 namespace Scripts.Game.Dungeons {
     public static class AreaList {
+
+        /// <summary>
+        /// Index of the stage with a miniboss
+        /// </summary>
         public const int MINIBOSS_INDEX = 3;
         public static readonly Color MINIBOSS_STAGE_TEXT_COLOR = Color.yellow;
+
+        /// <summary>
+        /// Index of the stage with the area's boss
+        /// </summary>
         public const int BOSS_INDEX = 7;
         public static readonly Color BOSS_STAGE_TEXT_COLOR = Color.cyan;
 

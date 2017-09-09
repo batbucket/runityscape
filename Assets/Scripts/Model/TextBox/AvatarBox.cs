@@ -15,6 +15,13 @@ namespace Scripts.Model.TextBoxes {
         public readonly Sprite Sprite;
         private readonly TextBoxType type;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="side">Which side of the page the portrait should be on.</param>
+        /// <param name="sprite">Sprite to use on the box</param>
+        /// <param name="color">Main color of the text</param>
+        /// <param name="text">Dialogue to be spoken.</param>
         public AvatarBox(Side side,
                          Sprite sprite,
                          Color color,
@@ -28,12 +35,19 @@ namespace Scripts.Model.TextBoxes {
             }
         }
 
+        /// <summary>
+        /// Type determines how the box's contents will be written out.
+        /// </summary>
         public override TextBoxType Type {
             get {
                 return this.type;
             }
         }
 
+        /// <summary>
+        /// Setup the gameobject's image's sprite.
+        /// </summary>
+        /// <param name="textBoxPrefab">Reference to the avatarbox prefab object.</param>
         protected override void SetupHelper(GameObject textBoxPrefab) {
             textBoxPrefab.GetComponent<AvatarBoxView>().Sprite = Sprite;
         }

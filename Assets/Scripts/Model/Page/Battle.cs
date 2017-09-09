@@ -21,6 +21,9 @@ using UnityEngine;
 
 namespace Scripts.Model.Pages {
 
+    /// <summary>
+    /// This page represents a battle between two sides.
+    /// </summary>
     public class Battle : Page {
         private const int MINIMUM_EXP_PER_BATTLE = 1;
 
@@ -64,6 +67,15 @@ namespace Scripts.Model.Pages {
 
         private IList<ISpellable> temporarySpells;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="defeat">Page to go to on defeat</param>
+        /// <param name="victory">Page to go to on victory</param>
+        /// <param name="music">Music to be played</param>
+        /// <param name="location">Location of the battle</param>
+        /// <param name="left">Characters on the left in battle</param>
+        /// <param name="right">Characters on the right in battle</param>
         public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right) : base(location) {
             this.wasExperienceGiven = false;
             this.loot = new Dictionary<Item, int>();
@@ -90,18 +102,28 @@ namespace Scripts.Model.Pages {
             };
         }
 
+        /// <summary>
+        /// After resolution this will return the EXP given out.
+        /// </summary>
         public int ExperienceGiven {
             get {
                 return this.experienceGiven;
             }
         }
 
+        /// <summary>
+        /// Turns elapsed in this battle.
+        /// </summary>
         public int TurnCount {
             get {
                 return turnCount;
             }
         }
 
+        /// <summary>
+        /// Adds in the Flee spell, which requires
+        /// a page to be constructed.
+        /// </summary>
         private void SetupTempSpells() {
             AddTempSpell(new Flee(defeat, () => {
                 Main.Instance.StopAllCoroutines();
@@ -502,7 +524,7 @@ namespace Scripts.Model.Pages {
                         rawExperience += CalculateExperience(victor.Stats, defeated.Stats);
                     }
                 }
-                experienceGiven = Mathf.Max(MINIMUM_EXP_PER_BATTLE, rawExperience);
+                experienceGiven += Mathf.Max(MINIMUM_EXP_PER_BATTLE, rawExperience);
                 victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(MINIMUM_EXP_PER_BATTLE, experienceGiven));
                 this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(experienceGiven.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
             }
