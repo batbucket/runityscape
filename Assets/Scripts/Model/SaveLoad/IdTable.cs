@@ -1,11 +1,12 @@
 ﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Game.Defined.Serialized.Brains;
 using Scripts.Game.Defined.Serialized.Items.Consumables;
 using Scripts.Game.Defined.Serialized.Items.Equipment;
 using Scripts.Game.Defined.Serialized.Items.Misc;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Defined.Spells;
+using Scripts.Game.Serialized.Brains;
 using Scripts.Model.Initable;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Items;
@@ -126,12 +127,12 @@ namespace Scripts.Model.SaveLoad {
         private void Brains() {
             Add<Player>("player");
             Add<DebugAI>("debugai");
-            Add<FieldBrains.Attacker>("villager");
-            Add<FieldBrains.Healer>("healer");
-            Add<FieldBrains.Replicant>("replicant");
-            Add<FieldBrains.ReplicantClone>("replicantClone");
-            Add<FieldBrains.Illusionist>("illusionist");
-            Add<FieldBrains.BigKnight>("bigKnight");
+            Add<Attacker>("villager");
+            Add<Healer>("healer");
+            Add<Replicant>("replicant");
+            Add<ReplicantClone>("replicantClone");
+            Add<Illusionist>("illusionist");
+            Add<BigKnight>("bigKnight");
         }
 
         private void Add<Type>(string id) {

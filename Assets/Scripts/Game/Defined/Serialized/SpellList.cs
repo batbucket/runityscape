@@ -3,16 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using Scripts.Model.Stats;
 using Scripts.View.Portraits;
-using Scripts.Model.Items;
 using Scripts.Model.Spells;
 using Scripts.Game.Defined.SFXs;
 using Scripts.Model.Characters;
 using Scripts.Game.Defined.Spells;
 using Scripts.Model.Buffs;
-using UnityEngine;
 using Scripts.Model.Pages;
-using Scripts.Game.Defined.Serialized.Characters;
 using Scripts.View.Effects;
+using Scripts.Game.Serialized.Brains;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -162,7 +160,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
                     Character c = new Character(
                         new Stats(caster.Stats.Level, 0, caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY), 1, 1),
                         new Look(caster.Look.Name, caster.Look.Sprite, caster.Look.Tooltip, caster.Look.Breed, caster.Look.TextColor),
-                        new FieldBrains.ReplicantClone());
+                        new ReplicantClone());
                     c.AddFlag(Model.Characters.Flag.IS_CLONE);
                     c.Buffs.AddBuff(new ReflectAttack(), c);
                     c.Buffs.AddBuff(new SpiritLink(), caster.Character);

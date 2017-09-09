@@ -1,4 +1,5 @@
-﻿using Scripts.Model.Interfaces;
+﻿using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Model.Interfaces;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
@@ -125,7 +126,7 @@ namespace Scripts.Model.Characters {
         /// Used in serialization for parties
         /// </summary>
         /// <param name="inventory">Reference to the shared inventory</param>
-        public Character(Inventory inventory) : this(new Stats(), new Look(), new Game.Defined.Serialized.Characters.Player(), new SpellBooks(), inventory, new Equipment()) { }
+        public Character(Inventory inventory) : this(new Stats(), new Look(), new Player(), new SpellBooks(), inventory, new Equipment()) { }
 
         /// <summary>
         /// Get the unique id

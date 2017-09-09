@@ -1,5 +1,5 @@
 ﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Game.Defined.Serialized.Brains;
 using Scripts.Game.Defined.Serialized.Items.Consumables;
 using Scripts.Game.Defined.Serialized.Items.Equipment;
 using Scripts.Game.Defined.Serialized.Items.Misc;
@@ -12,14 +12,14 @@ using Scripts.Model.Stats;
 using UnityEngine;
 
 namespace Scripts.Game.Defined.Characters {
-    public static class CharacterList {
-        #region Character Builder stuff
-        private static Character RemoveFlag(this Character c, Model.Characters.Flag flag) {
+    public static class CharacterUtil {
+
+        public static Character RemoveFlag(this Character c, Model.Characters.Flag flag) {
             c.RemoveFlag(flag);
             return c;
         }
 
-        private struct ItemCount {
+        public struct ItemCount {
             public readonly Item Item;
             public readonly int Count;
             public ItemCount(Item item, int count) {
@@ -33,53 +33,53 @@ namespace Scripts.Game.Defined.Characters {
             }
         }
 
-        private static Character StandardEnemy(Stats stats, Look look, Brain brain) {
+        public static Character StandardEnemy(Stats stats, Look look, Brain brain) {
             Character enemy = new Character(stats, look, brain);
             enemy.AddFlag(Model.Characters.Flag.DROPS_ITEMS);
             enemy.AddFlag(Model.Characters.Flag.GIVES_EXPERIENCE);
             return enemy;
         }
 
-        private static Character AddStats(this Character c, params Stat[] stats) {
+        public static Character AddStats(this Character c, params Stat[] stats) {
             foreach (Stat stat in stats) {
                 c.Stats.AddStat(stat);
             }
             return c;
         }
 
-        private static Character AddSpells(this Character c, params SpellBook[] books) {
+        public static Character AddSpells(this Character c, params SpellBook[] books) {
             foreach (SpellBook sb in books) {
                 c.Spells.AddSpellBook(sb);
             }
             return c;
         }
 
-        private static Character AddFlags(this Character c, params Model.Characters.Flag[] flags) {
+        public static Character AddFlags(this Character c, params Model.Characters.Flag[] flags) {
             foreach (Model.Characters.Flag flag in flags) {
                 c.AddFlag(flag);
             }
             return c;
         }
 
-        private static Character AddItems(this Character c, params ItemCount[] items) {
+        public static Character AddItems(this Character c, params ItemCount[] items) {
             foreach (ItemCount itemCount in items) {
                 c.Inventory.ForceAdd(itemCount.Item, itemCount.Count);
             }
             return c;
         }
 
-        private static Character AddItem(this Character c, Item item, int count, bool isAdded = true) {
+        public static Character AddItem(this Character c, Item item, int count, bool isAdded = true) {
             if (isAdded) {
                 c.Inventory.ForceAdd(item, count);
             }
             return c;
         }
 
-        private static Character AddItem(this Character c, Item item, bool isAdded = true) {
+        public static Character AddItem(this Character c, Item item, bool isAdded = true) {
             return c.AddItem(item, 1, isAdded);
         }
 
-        private static Character AddEquips(this Character c, params EquippableItem[] equips) {
+        public static Character AddEquips(this Character c, params EquippableItem[] equips) {
             foreach (EquippableItem equip in equips) {
                 Inventory dummy = new Inventory();
                 dummy.ForceAdd(equip);
@@ -88,7 +88,7 @@ namespace Scripts.Game.Defined.Characters {
             return c;
         }
 
-        private static Character AddEquip(this Character c, EquippableItem equip, bool isAdded = true) {
+        public static Character AddEquip(this Character c, EquippableItem equip, bool isAdded = true) {
             if (isAdded) {
                 Inventory dummy = new Inventory();
                 dummy.ForceAdd(equip);
@@ -96,8 +96,10 @@ namespace Scripts.Game.Defined.Characters {
             }
             return c;
         }
+    }
 
-        #endregion
+    public static class CharacterList {
+
 
         public static Character Hero(string name) {
             return new Character(
@@ -138,102 +140,14 @@ namespace Scripts.Game.Defined.Characters {
                     Color.magenta
                     ),
                 new Player())
-                .AddItems(new ItemCount(new Apple(), 7), new ItemCount(new PoisonArmor()), new ItemCount(new Money(), 100))
+                .AddItems(new CharacterUtil.ItemCount(new Apple(), 7), new CharacterUtil.ItemCount(new PoisonArmor()), new CharacterUtil.ItemCount(new Money(), 100))
                 .AddFlags(Model.Characters.Flag.DROPS_ITEMS)
                 .AddSpells(new InflictPoison(), new SetupCounter())
                 .AddStats(new Skill());
             return c;
         }
 
-        public static class Field {
 
-            public static Character Villager() {
-                return StandardEnemy(
-                    new Stats(2, 1, 1, 1, 2),
-                    new Look(
-                        "Ghost",
-                        "haunting",
-                        "A villager who didn't make it.",
-                        Breed.SPIRIT
-                        ),
-                    new FieldBrains.Attacker())
-                    .AddItem(new Money(), Util.Range(0, 3));
-            }
-
-            public static Character Knight() {
-                return StandardEnemy(
-                    new Stats(3, 1, 2, 2, 5),
-                    new Look(
-                        "Spectre",
-                        "spectre",
-                        "A knight who didn't make it. May be armed.",
-                        Breed.SPIRIT
-                        ),
-                    new FieldBrains.Attacker())
-                    .AddItem(new Item[] { new BrokenSword(), new GhostArmor() }.ChooseRandom(), Util.IsChance(.50f));
-            }
-
-            public static Character BigKnight() {
-                return StandardEnemy(
-                    new Stats(3, 1, 2, 2, 15),
-                    new Look(
-                        "Big Knight",
-                        "spectre",
-                        "It's a big guy.",
-                        Breed.SPIRIT
-                        ),
-                    new FieldBrains.BigKnight())
-                    .AddStats(new Skill())
-                    .AddSpells(new SetupCounter());
-            }
-
-            public static Character Healer() {
-                return StandardEnemy(
-                    new Stats(3, 1, 5, 5, 1),
-                    new Look(
-                        "Spirit Healer",
-                        "health-normal",
-                        "Healer in life. Healer in death.",
-                        Breed.SPIRIT
-                        ),
-                    new FieldBrains.Healer())
-                    .AddItem(new Apple())
-                    .AddSpells(new Heal());
-            }
-
-            public static Character Illusionist() {
-                return StandardEnemy(
-                    new Stats(3, 2, 3, 8, 15),
-                    new Look(
-                        "Illusionist",
-                        "spectre",
-                        "A wicked master of illusions.",
-                        Breed.SPIRIT
-                        ),
-                    new FieldBrains.Illusionist())
-                    .AddSpells(new Blackout());
-            }
-
-            private static Look ReplicantLook() {
-                return new Look(
-                        "Replika",
-                        "spectre",
-                        string.Empty,
-                        Breed.SPIRIT,
-                        Color.magenta
-                        );
-            }
-
-            public static Character Replicant() {
-                return StandardEnemy(
-                    new Stats(10, 2, 5, 10, 30),
-                    ReplicantLook(),
-                    new FieldBrains.Replicant()
-                    )
-                .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
-                .AddSpells(new ReflectiveClone(), new SetupCounter());
-            }
-        }
     }
 
 }

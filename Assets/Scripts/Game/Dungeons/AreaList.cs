@@ -40,23 +40,23 @@ namespace Scripts.Game.Dungeons {
                     new Stage(
                         "Lots of stages",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.Villager()),
-                            new Encounter(CharacterList.Field.Villager(), CharacterList.Field.Villager())
+                            new Encounter(FieldNPCs.Villager()),
+                            new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager())
                         }),
                     new Stage(
                         "Illusionist",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.Illusionist())
+                            new Encounter(FieldNPCs.Illusionist())
                         }),
                     new Stage(
                         "Big Knight",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.BigKnight())
+                            new Encounter(FieldNPCs.BigKnight())
                         }),
                     new Stage(
                         "Replicant",
                         () => new Encounter[] {
-                            new Encounter(CharacterList.Field.Replicant(), CharacterList.Field.Healer(), CharacterList.Field.Healer())
+                            new Encounter(FieldNPCs.Replicant(), FieldNPCs.Healer(), FieldNPCs.Healer())
                         })
                 );
         }

@@ -1,4 +1,4 @@
-﻿using Scripts.Game.Defined.Serialized.Characters;
+﻿using Scripts.Game.Defined.Serialized.Brains;
 using Scripts.Game.Defined.SFXs;
 using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Model.Acts;

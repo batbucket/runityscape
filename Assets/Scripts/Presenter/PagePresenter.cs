@@ -1,5 +1,5 @@
 ﻿using Script.View.Tooltip;
-using Scripts.Game.Defined.Serialized.Characters;
+using Scripts.Game.Defined.Serialized.Brains;
 using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
