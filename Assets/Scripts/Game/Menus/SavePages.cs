@@ -62,7 +62,7 @@ namespace Scripts.Game.Pages {
             world.InitFromSaveObject(currentSaveInTheSlot);
             Party party = world.Party;
             Flags flags = world.Flags;
-            string saveName = SaveLoad.SaveFileDisplay(party.Default.Look.Name, party.Default.Stats.Level);
+            string saveName = SaveLoad.GetSaveFileDisplay(world.Flags.LastClearedArea.GetDescription(), world.Flags.LastClearedStage);
 
             Page page = PageUtil.GetConfirmationPage(
                 previous,

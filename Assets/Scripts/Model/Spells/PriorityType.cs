@@ -1,6 +1,10 @@
 ﻿using System.ComponentModel;
 
 namespace Scripts.Model.Spells {
+
+    /// <summary>
+    /// List of priorities for spells.
+    /// </summary>
     public enum PriorityType {
         [Description("<color=cyan>Highest</color>")]
         HIGHEST = 3,

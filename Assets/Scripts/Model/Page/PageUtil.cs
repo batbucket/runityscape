@@ -48,6 +48,16 @@ namespace Scripts.Model.Pages {
             return g;
         }
 
+        /// <summary>
+        /// Gets a confirmation page asking if the user is sure they want to do a particular action.
+        /// </summary>
+        /// <param name="current">The current.</param>
+        /// <param name="previous">The previous.</param>
+        /// <param name="confirm">The confirm.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="tooltip">The tooltip.</param>
+        /// <param name="confirmationQuestion">The confirmation question.</param>
+        /// <returns></returns>
         public static Page GetConfirmationPage(Page current, IButtonable previous, Process confirm, string name, string tooltip, string confirmationQuestion) {
             Page p = new Page(name);
             p.Body = confirmationQuestion;
@@ -74,6 +84,14 @@ namespace Scripts.Model.Pages {
                 );
         }
 
+        /// <summary>
+        /// Gets the out of battle playable handler.
+        /// Allows me to use the same Item usage logic in battle
+        /// as out of battle, allowing for
+        /// CODE REUSE!
+        /// </summary>
+        /// <param name="page">The page.</param>
+        /// <returns></returns>
         public static Action<IPlayable> GetOutOfBattlePlayableHandler(Page page) {
             return (ip) => {
                 Main.Instance.StartCoroutine(PerformInOrder(page, ip, page.OnEnter));
@@ -102,7 +120,7 @@ namespace Scripts.Model.Pages {
         /// Generates a grid with inventory items
         /// to use
         /// </summary>
-        /// <param name="p">Page the owner is on</param>
+        /// <param name="current">Page the owner is on</param>
         /// <param name="previous">Main grid</param>
         /// <param name="owner">Owner of the inventory</param>
         /// <param name="addPlay">IPlayable handler</param>
@@ -110,14 +128,14 @@ namespace Scripts.Model.Pages {
         /// <returns></returns>
         public static Grid GenerateItemsGrid(
                     bool isInCombat,
-                    Page p,
+                    Page current,
                     IButtonable previous,
                     SpellParams owner,
                     Action<IPlayable> addPlay
                     ) {
             return GenerateSpellableGrid(
                 !isInCombat,
-                p,
+                current,
                 previous,
                 owner,
                 null,
@@ -133,7 +151,7 @@ namespace Scripts.Model.Pages {
         /// Generate a Grid containing all SpellBooks
         /// in Characters.SpellBooks
         /// </summary>
-        /// <param name="p">Page the Owner is on</param>
+        /// <param name="current">Page the Owner is on</param>
         /// <param name="previous">Previous IButtonable you want this Grid to go back to</param>
         /// <param name="owner">Owner of the SpellBooks</param>
         /// <param name="excluded">SpellBook to exclude, typically 'Attack'</param>
@@ -141,7 +159,7 @@ namespace Scripts.Model.Pages {
         /// <param name="addPlay">Chosen action handler</param>
         /// <returns></returns>
         public static Grid GenerateSpellBooks(
-            Page p,
+            Page current,
             IButtonable previous,
             SpellParams owner,
             SpellBook excluded,
@@ -150,7 +168,7 @@ namespace Scripts.Model.Pages {
 
             return GenerateSpellableGrid(
                 false,
-                p,
+                current,
                 previous,
                 owner,
                 excluded,
@@ -164,24 +182,31 @@ namespace Scripts.Model.Pages {
         /// <summary>
         /// Actions are spells without a cost.
         /// </summary>
+        /// <param name="current">The current page.</param>
+        /// <param name="previous">The previous page.</param>
+        /// <param name="owner">The owner of the action.</param>
+        /// <param name="excluded">The excluded spell.</param>
+        /// <param name="concat">The spells to add alongside the spellbook's.</param>
+        /// <param name="playHandler">The play handler.</param>
+        /// <returns></returns>
         public static Grid GenerateActions(
-            Page p,
+            Page current,
             IButtonable previous,
             SpellParams owner,
             SpellBook excluded,
             IEnumerable<ISpellable> concat,
-            Action<IPlayable> addPlay
+            Action<IPlayable> playHandler
             ) {
             List<SpellBook> spellsThatHaveACost = new List<SpellBook>();
 
             return GenerateSpellableGrid(
                 false,
-                p,
+                current,
                 previous,
                 owner,
                 excluded,
                 ((IEnumerable<ISpellable>)owner.Spells).Where(s => s.GetSpellBook().Costs.Count <= 0).ToList().Concat(concat),
-                addPlay,
+                playHandler,
                 ACTION,
                 "Action",
                 "Perform an action.");
@@ -191,30 +216,30 @@ namespace Scripts.Model.Pages {
         /// Creates a subGrid containing all possible targets
         /// of spellable
         /// </summary>
-        /// <param name="p">Page that owner is on</param>
+        /// <param name="current">Page that owner is on</param>
         /// <param name="previous">supergrid containing a list of possible ISpellables to use</param>
         /// <param name="owner">User of the Spellable</param>
         /// <param name="spellable">Spellable to use on target</param>
         /// <param name="handlePlayable">Playable handler</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
-            return GenerateTargets(p, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable, isTargetingSelf);
+        public static Grid GenerateTargets(Page current, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
+            return GenerateTargets(current, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable, isTargetingSelf);
         }
 
         /// <summary>
         /// Creates a subGrid containing all possible targets
         /// of spellable
         /// </summary>
-        /// <param name="p">Page that owner is on</param>
+        /// <param name="current">Page that owner is on</param>
         /// <param name="previous">supergrid containing a list of possible ISpellables to use</param>
         /// <param name="owner">User of the Spellable</param>
         /// <param name="spellable">Spellable to use on target</param>
         /// <param name="handlePlayable">Playable handler</param>
         /// <param name="isTargetingSelf">If true, the target will attempt to cast the spell on themselves (used for out of combat inventories)</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
+        public static Grid GenerateTargets(Page current, IButtonable previous, SpellParams owner, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
             SpellBook sb = spellable.GetSpellBook();
-            ICollection<Character> targets = sb.TargetType.GetTargets(owner.Character, p);
+            ICollection<Character> targets = sb.TargetType.GetTargets(owner.Character, current);
             Grid grid = GenerateBackableGrid(previous, sb.Icon, sb.Name, sb.CreateDescription(owner));
 
             grid.Icon = sprite;
@@ -222,7 +247,7 @@ namespace Scripts.Model.Pages {
             foreach (Character myTarget in targets) {
                 Character target = myTarget;
 
-                SpellParams targetParams = new SpellParams(target, p);
+                SpellParams targetParams = new SpellParams(target, current);
                 SpellParams spellOwner = new SpellParams();
                 if (isTargetingSelf) {
                     spellOwner = targetParams;
@@ -290,7 +315,7 @@ namespace Scripts.Model.Pages {
 
         private static Grid GenerateSpellableGrid(
                     bool isTargetingSelf,
-                    Page p,
+                    Page current,
                     IButtonable previous,
                     SpellParams owner,
                     SpellBook excluded,
@@ -304,18 +329,18 @@ namespace Scripts.Model.Pages {
             foreach (ISpellable myS in spellCollection) {
                 ISpellable s = myS;
                 if (!s.Equals(excluded)) {
-                    grid.List.Add(GenerateSpellProcess(p, grid, owner, s, addPlay, isTargetingSelf));
+                    grid.List.Add(GenerateSpellProcess(current, grid, owner, s, addPlay, isTargetingSelf));
                 }
             }
 
             return grid;
         }
-        private static Process GenerateSpellProcess(Page p, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
+        private static Process GenerateSpellProcess(Page current, IButtonable previous, SpellParams owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
             SpellBook sb = spellable.GetSpellBook();
             return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
                 () => {
                     if (sb.IsMeetPreTargetRequirements(owner.Stats)) {
-                        GenerateTargets(p, previous, owner, spellable, handlePlayable, isTargetingSelf).Invoke();
+                        GenerateTargets(current, previous, owner, spellable, handlePlayable, isTargetingSelf).Invoke();
                     }
                 });
         }
@@ -377,8 +402,8 @@ namespace Scripts.Model.Pages {
         /// Item buttons get setup
         /// Used item is decremented in count by 1
         /// </summary>
-        /// <param name="en">PlayGroup</param>
-        /// <param name="a">Action to perform after PlayGroup is finished.</param>
+        /// <param name="playgroup">PlayGroup</param>
+        /// <param name="postAction">Action to perform after PlayGroup is finished.</param>
         /// <returns></returns>
         private static IEnumerator PerformInOrder(Page page, IPlayable play, Action postAction) {
             yield return play.Play();

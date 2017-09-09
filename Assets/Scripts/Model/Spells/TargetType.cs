@@ -7,7 +7,7 @@ using System.Linq;
 namespace Scripts.Model.Spells {
 
     /// <summary>
-    /// Who a Spell can target.
+    /// Whomst a Spell can target.
     /// </summary>
     public sealed class TargetType {
 

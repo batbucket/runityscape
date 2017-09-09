@@ -12,14 +12,51 @@ namespace Scripts.View.Portraits {
     /// </summary>
     public class PortraitHolderView : MonoBehaviour, IHolderView<PortraitHolderView.PortraitContent> {
         public struct PortraitContent {
+            /// <summary>
+            /// The identifier
+            /// </summary>
             public readonly int Id;
+
+            /// <summary>
+            /// The name
+            /// </summary>
             public readonly string Name;
+
+            /// <summary>
+            /// The tip
+            /// </summary>
             public readonly string Tip;
+
+            /// <summary>
+            /// The sprite
+            /// </summary>
             public readonly Sprite Sprite;
+
+            /// <summary>
+            /// The resources
+            /// </summary>
             public readonly IEnumerable<ResourceHolderView.ResourceContent> Resources;
+
+            /// <summary>
+            /// The buffs
+            /// </summary>
             public readonly IEnumerable<BuffHolderView.BuffContent> Buffs;
+
+            /// <summary>
+            /// The is revealed
+            /// </summary>
             public readonly bool IsRevealed;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PortraitContent"/> struct.
+            /// </summary>
+            /// <param name="id">The identifier.</param>
+            /// <param name="name">The name of the portrait.</param>
+            /// <param name="tip">The hoverover tooltip.</param>
+            /// <param name="sprite">The sprite.</param>
+            /// <param name="resources">The resources.</param>
+            /// <param name="buffs">The buffs.</param>
+            /// <param name="isRevealed">if set to <c>true</c> resources and buffs are revealed.</param>
             public PortraitContent(int id, string name, string tip, Sprite sprite, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs, bool isRevealed) {
                 Id = id;
                 Name = name;
@@ -51,6 +88,11 @@ namespace Scripts.View.Portraits {
                 (v, c) => SetupViewFromContent(v, c));
         }
 
+        /// <summary>
+        /// Gets the portrait.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns></returns>
         public PortraitView GetPortrait(int id) {
             return previous[id];
         }

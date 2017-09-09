@@ -3,6 +3,11 @@ using System;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Characters {
+
+    /// <summary>
+    /// Character has a specific rotation that it always does.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Characters.BasicBrain" />
     public abstract class RotationBrain : BasicBrain {
         private IList<Func<IPlayable>> rotation;
 

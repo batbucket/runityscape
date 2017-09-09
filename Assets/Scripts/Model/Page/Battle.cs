@@ -304,7 +304,7 @@ namespace Scripts.Model.Pages {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
                     }
                     Main.Instance.Sound.PlaySound("synthetic_explosion_1");
-                    yield return SFX.Death(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
+                    yield return SFX.DoDeathEffect(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
 
                     graveyard.Add(c);

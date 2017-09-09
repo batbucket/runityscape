@@ -29,6 +29,10 @@ namespace Scripts.View.Sounds {
             ObjectPoolManager.Instance.Register(clipPrefab);
         }
 
+        /// <summary>
+        /// Loops the music.
+        /// </summary>
+        /// <param name="resourceLocation">The resource location.</param>
         public void LoopMusic(string resourceLocation) {
             if (string.IsNullOrEmpty(resourceLocation)) {
                 return;
@@ -45,6 +49,10 @@ namespace Scripts.View.Sounds {
             loopHolder.Add(clip);
         }
 
+        /// <summary>
+        /// Plays the sound.
+        /// </summary>
+        /// <param name="resourceLocation">The resource location.</param>
         public void PlaySound(string resourceLocation) {
             if (string.IsNullOrEmpty(resourceLocation)) {
                 return;
@@ -57,6 +65,9 @@ namespace Scripts.View.Sounds {
             StartCoroutine(PlayThenDestroy(resourceLocation));
         }
 
+        /// <summary>
+        /// Stops all sounds.
+        /// </summary>
         public void StopAllSounds() {
             oneShotHolder.StopAllSounds();
             loopHolder.StopAllSounds();
@@ -66,6 +77,11 @@ namespace Scripts.View.Sounds {
             this.Sound = new Dictionary<string, AudioClip>();
         }
 
+        /// <summary>
+        /// Plays the clip then destroys it.
+        /// </summary>
+        /// <param name="resourceLocation">The resource location.</param>
+        /// <returns></returns>
         private IEnumerator PlayThenDestroy(string resourceLocation) {
             ClipView clip = ObjectPoolManager.Instance.Get<ClipView>(clipPrefab);
             clip.Clip = Sound[resourceLocation];

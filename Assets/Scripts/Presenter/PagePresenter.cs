@@ -40,6 +40,16 @@ namespace Scripts.Presenter {
 
         private InputBoxView inputBox;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PagePresenter"/> class.
+        /// </summary>
+        /// <param name="initial">The initial.</param>
+        /// <param name="textBoxHolder">The text box holder.</param>
+        /// <param name="actionGrid">The action grid.</param>
+        /// <param name="left">The left portraits.</param>
+        /// <param name="right">The right portraits.</param>
+        /// <param name="header">The header.</param>
+        /// <param name="sound">The sound.</param>
         public PagePresenter(Page initial, TextBoxHolderView textBoxHolder, ActionGridView actionGrid, PortraitHolderView left, PortraitHolderView right, HeaderView header, SoundView sound) {
             this.textBoxHolder = textBoxHolder;
             this.actionGrid = actionGrid;
@@ -52,6 +62,15 @@ namespace Scripts.Presenter {
             this.Page = initial;
         }
 
+        /// <summary>
+        /// Gets or sets the override grid.
+        /// Used for making sure the user can't
+        /// do anything during events while
+        /// also ensuring that the buttons remain.
+        /// </summary>
+        /// <value>
+        /// The override.
+        /// </value>
         public Grid Override {
             set {
                 actionGrid.ClearAll();
@@ -62,6 +81,12 @@ namespace Scripts.Presenter {
             }
         }
 
+        /// <summary>
+        /// Gets or sets the page.
+        /// </summary>
+        /// <value>
+        /// The page.
+        /// </value>
         public Page Page {
             set {
                 SetPage(value);
@@ -72,6 +97,9 @@ namespace Scripts.Presenter {
             }
         }
 
+        /// <summary>
+        /// Initializes the functions.
+        /// </summary>
         private void InitializeFunctions() {
             Grid.ChangeGridFunc = (a => {
                 Page.Actions = a;
@@ -91,6 +119,9 @@ namespace Scripts.Presenter {
             };
         }
 
+        /// <summary>
+        /// Ticks this instance.
+        /// </summary>
         public void Tick() {
             page.Input = GetInputFunc.Invoke();
             Page.Tick();
@@ -104,6 +135,10 @@ namespace Scripts.Presenter {
             SetCharacterPresenters(Page.Right, right);
         }
 
+        /// <summary>
+        /// Sets the page.
+        /// </summary>
+        /// <param name="page">The page.</param>
         private void SetPage(Page page) {
 
             // Music decision
@@ -138,6 +173,10 @@ namespace Scripts.Presenter {
             Tick();
         }
 
+        /// <summary>
+        /// Sets the input field.
+        /// </summary>
+        /// <param name="isEnabled">if set to <c>true</c> [is enabled].</param>
         private void SetInputField(bool isEnabled) {
             if (isEnabled) {
                 InputBoxView ibv = textBoxHolder.AddInputBox();
@@ -147,6 +186,11 @@ namespace Scripts.Presenter {
             }
         }
 
+        /// <summary>
+        /// Adds the text box.
+        /// </summary>
+        /// <param name="t">The t.</param>
+        /// <returns></returns>
         public PooledBehaviour AddTextBox(TextBox t) {
             textBoxHolder.GetComponent<RectTransform>().pivot = new Vector2(0, 0);
             return textBoxHolder.AddTextBox(t);

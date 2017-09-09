@@ -458,7 +458,7 @@ namespace Scripts.Model.Acts {
         /// </summary>
         /// <returns>Coroutine.</returns>
         protected override IEnumerator PlayHelper() {
-            yield return SFX.PageTransition(sprite, text);
+            yield return SFX.DoPageTransition(sprite, text);
             destination.Invoke();
         }
 

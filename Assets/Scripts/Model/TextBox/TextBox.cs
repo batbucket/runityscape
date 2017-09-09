@@ -20,13 +20,27 @@ namespace Scripts.Model.TextBoxes {
         private float timePerLetter;
         private TooltipBundle tooltip;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextBox"/> class.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="tooltip">The tooltip.</param>
         public TextBox(string text, TooltipBundle tooltip) : this(text) {
             this.tooltip = tooltip;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextBox"/> class.
+        /// </summary>
+        /// <param name="text">The text.</param>
         public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextBox"/> class.
+        /// </summary>
+        /// <param name="c">The c.</param>
+        /// <param name="text">The text.</param>
         public TextBox(Color c, string text) : this(text, c, TextEffect.FADE_IN, "Blip_0", 0) {
         }
 

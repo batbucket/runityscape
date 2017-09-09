@@ -13,6 +13,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.Game.Shopkeeper {
+    /// <summary>
+    /// Shops sell things!
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class Shop : PageGroup {
         private static readonly Money MONEY = new Money();
 
@@ -25,6 +29,16 @@ namespace Scripts.Game.Shopkeeper {
         private Character shopkeeper;
         private Page previous;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Shop"/> class.
+        /// </summary>
+        /// <param name="previous">The previous.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="flags">The flags.</param>
+        /// <param name="party">The party.</param>
+        /// <param name="sellPriceModifier">The sell price modifier.</param>
+        /// <param name="buyPriceModifier">The buy price modifier.</param>
+        /// <param name="shopkeeper">The shopkeeper.</param>
         public Shop(Page previous, string name, Flags flags, Party party, float sellPriceModifier, float buyPriceModifier, Character shopkeeper) : base(new Page(name)) {
             this.previous = previous;
             this.flags = flags;
@@ -39,11 +53,21 @@ namespace Scripts.Game.Shopkeeper {
             SetupMenus();
         }
 
+        /// <summary>
+        /// Adds an on enter event
+        /// </summary>
+        /// <param name="action">The action.</param>
+        /// <returns></returns>
         public Shop AddOnEnter(Action action) {
             Root.OnEnter += action;
             return this;
         }
 
+        /// <summary>
+        /// Adds a purchasable item
+        /// </summary>
+        /// <param name="buys">The buys.</param>
+        /// <returns></returns>
         public Shop AddBuys(params Buy[] buys) {
             foreach (Buy buy in buys) {
                 this.buys.Add(buy);
@@ -51,6 +75,11 @@ namespace Scripts.Game.Shopkeeper {
             return this;
         }
 
+        /// <summary>
+        /// Adds a talk button.
+        /// </summary>
+        /// <param name="talks">The talks.</param>
+        /// <returns></returns>
         public Shop AddTalks(params Talk[] talks) {
             foreach (Talk talk in talks) {
                 this.talks.Add(talk);
@@ -58,14 +87,30 @@ namespace Scripts.Game.Shopkeeper {
             return this;
         }
 
+        /// <summary>
+        /// Determines whether the party can buy the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance can buy the specified item; otherwise, <c>false</c>.
+        /// </returns>
         private bool CanBuy(Item item) {
             return party.Shared.HasItem(MONEY, GetFullBuyPrice(item)) && party.Shared.IsAddable(item);
         }
 
+        /// <summary>
+        /// Gets the full sell price.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns></returns>
         private int GetFullSellPrice(Item item) {
             return Mathf.Max((int)(item.BasePrice * sellPriceModifier), 1);
         }
 
+        /// <summary>
+        /// Adds/removes to/from party's money.
+        /// </summary>
+        /// <param name="amount">The amount.</param>
         private void AddToMoney(int amount) {
             if (amount > 0) {
                 party.Shared.Add(MONEY, amount);
@@ -74,14 +119,30 @@ namespace Scripts.Game.Shopkeeper {
             }
         }
 
+        /// <summary>
+        /// Gets the full buy price.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns></returns>
         private int GetFullBuyPrice(Item item) {
             return Mathf.Max((int)(item.BasePrice * buyPriceModifier), 1);
         }
 
+        /// <summary>
+        /// Determines whether this instance can sell the specified item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>
+        ///   <c>true</c> if this instance can sell the specified item; otherwise, <c>false</c>.
+        /// </returns>
         private bool CanSell(Item item) {
             return party.Shared.HasItem(item) && item.BasePrice > 0;
         }
 
+        /// <summary>
+        /// Gets the party money count.
+        /// </summary>
+        /// <returns></returns>
         private int GetPartyMoneyCount() {
             return party.Shared.GetCount(MONEY);
         }

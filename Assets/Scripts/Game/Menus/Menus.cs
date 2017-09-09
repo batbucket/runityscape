@@ -22,6 +22,10 @@ using Scripts.Model.SaveLoad;
 
 namespace Scripts.Game.Pages {
 
+    /// <summary>
+    /// Main menu.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class Menus : PageGroup {
         public const int DEBUGGING = 1;
         public const int NEW_GAME = 2;

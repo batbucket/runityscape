@@ -5,8 +5,16 @@ using System;
 
 namespace Scripts.View.Sounds {
 
+    /// <summary>
+    /// One shot sounds play once, hence they are not modified at all!
+    /// </summary>
+    /// <seealso cref="Scripts.View.Sounds.SoundHolderView" />
     public class OneShotHolderView : SoundHolderView {
-        protected override void ClipModifier(ClipView clip) {
+        /// <summary>
+        /// Modifies the clip.
+        /// </summary>
+        /// <param name="clip">The clip.</param>
+        protected override void ModifyClip(ClipView clip) {
 
         }
     }

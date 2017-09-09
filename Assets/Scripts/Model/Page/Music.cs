@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel;
 
 namespace Scripts.Model.Pages {
+    /// <summary>
+    /// Enum with various soundtracks.
+    /// </summary>
     public enum Music {
-        [Description("Hero Immortal")]
-        NORMAL,
         [Description("Pixel River")]
-        CATHEDRAL,
+        NORMAL,
         [Description("enchanted tiki 86")]
         BOSS,
 

@@ -8,11 +8,20 @@ using System.Linq;
 using Scripts.Game.Defined.Serialized.Spells;
 
 namespace Scripts.Model.Characters {
+
+    /// <summary>
+    /// A priority brain bases its decisions on a fallthrough list, stopping
+    /// at the first condition that evaluates to true.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Characters.BasicBrain" />
     public abstract class PriorityBrain : BasicBrain {
         private static readonly SpellBook DEFAULT_ACTION = new Wait();
 
         private IList<Func<IPlayable>> priorityActionList;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PriorityBrain"/> class.
+        /// </summary>
         public PriorityBrain() : base() {
             this.priorityActionList = SetupPriorityPlays();
         }
@@ -33,7 +42,13 @@ namespace Scripts.Model.Characters {
             return CastOnTargetMeetingCondition(sb, c => true);
         }
 
-        // Doesn't cast wait if sb is uncastable (since we then go down the prioritylist)
+
+        /// <summary>
+        /// Doesn't cast wait if spellbook is uncastable (since we then go down the prioritylist)
+        /// </summary>
+        /// <param name="sb">The sb.</param>
+        /// <param name="requirement">The requirement.</param>
+        /// <returns></returns>
         protected new Func<IPlayable> CastOnTargetMeetingCondition(SpellBook sb, Func<Character, bool> requirement) {
             return () => {
                 Character specificTarget =
@@ -51,6 +66,10 @@ namespace Scripts.Model.Characters {
             };
         }
 
+        /// <summary>
+        /// Setups the priority plays.
+        /// </summary>
+        /// <returns></returns>
         protected abstract IList<Func<IPlayable>> SetupPriorityPlays();
 
     }

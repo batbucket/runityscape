@@ -70,7 +70,7 @@ namespace Scripts.Presenter {
         /// <param name="details">The details needed to customize the splat.</param>
         private void AddHitsplat(SplatDetails details) {
             if (PortraitView != null && PortraitView.isActiveAndEnabled) {
-                PortraitView.StartCoroutine(SFX.HitSplat(PortraitView.EffectsHolder, details));
+                PortraitView.StartCoroutine(SFX.DoHitSplat(PortraitView.EffectsHolder, details));
             }
         }
     }

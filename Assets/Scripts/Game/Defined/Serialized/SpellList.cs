@@ -33,7 +33,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
-            return new IEnumerator[] { SFX.Melee(caster.Image.gameObject, target.Image.gameObject, 0.5f, "Slash_0") };
+            return new IEnumerator[] { SFX.DoMeleeEffect(caster.Image.gameObject, target.Image.gameObject, 0.5f, "Slash_0") };
         }
 
         protected override bool IsHit(SpellParams caster, SpellParams target) {

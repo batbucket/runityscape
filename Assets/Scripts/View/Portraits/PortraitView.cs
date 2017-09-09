@@ -31,7 +31,17 @@ namespace Scripts.View.Portraits {
         [SerializeField]
         private Tooltip.Tip tip;
 
-        public GameObject EffectsHolder { get { return effectsHolder; } }
+        /// <summary>
+        /// Gets the effects holder. Effects are children of this!
+        /// </summary>
+        /// <value>
+        /// The effects holder.
+        /// </value>
+        public GameObject EffectsHolder {
+            get {
+                return effectsHolder;
+            }
+        }
 
         public Image Image {
             get {
@@ -42,9 +52,29 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public string PortraitName { get { return portraitName.text; } set { portraitName.text = value; } }
-        public Text PortraitText { get { return portraitName; } }
-        public Sprite Sprite { get { return iconImage.sprite; } set { iconImage.sprite = value; } }
+        public string PortraitName {
+            get {
+                return portraitName.text;
+            }
+            set {
+                portraitName.text = value;
+            }
+        }
+
+        public Text PortraitText {
+            get {
+                return portraitName;
+            }
+        }
+
+        public Sprite Sprite {
+            get {
+                return iconImage.sprite;
+            }
+            set {
+                iconImage.sprite = value;
+            }
+        }
 
         Tip ITippable.Tip {
             get {
@@ -52,6 +82,15 @@ namespace Scripts.View.Portraits {
             }
         }
 
+        /// <summary>
+        /// Setups the specified sprite.
+        /// </summary>
+        /// <param name="sprite">The sprite.</param>
+        /// <param name="title">The title.</param>
+        /// <param name="body">The body.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="buffs">The buffs.</param>
+        /// <param name="isRevealed">if set to <c>true</c> [is revealed].</param>
         public void Setup(Sprite sprite, string title, string body, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs, bool isRevealed) {
             tip.Setup(new TooltipBundle(sprite, title, body));
             PortraitName = title;
@@ -65,6 +104,9 @@ namespace Scripts.View.Portraits {
             }
         }
 
+        /// <summary>
+        /// Reset the state of this MonoBehavior.
+        /// </summary>
         public override void Reset() {
             PortraitName = "";
             PortraitText.color = Color.white;

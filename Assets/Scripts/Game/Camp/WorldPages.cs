@@ -8,7 +8,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace Scripts.Game.Pages {
+
+    /// <summary>
+    /// Area selection page.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class WorldPages : PageGroup {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WorldPages"/> class.
+        /// </summary>
+        /// <param name="previous">The previous.</param>
+        /// <param name="flags">The flags.</param>
+        /// <param name="party">The party.</param>
         public WorldPages(Page previous, Flags flags, Party party) : base(new Page("Areas")) {
             Root.Body = "Which area would you like to go to?";
 
@@ -27,6 +38,14 @@ namespace Scripts.Game.Pages {
             Root.Actions = buttons;
         }
 
+        /// <summary>
+        /// Gets the area change process.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="flags">The flags.</param>
+        /// <param name="party">The party.</param>
+        /// <param name="previous">The previous.</param>
+        /// <returns></returns>
         private Process GetAreaChangeProcess(AreaType type, Flags flags, Party party, Page previous) {
             return new Process(
                     type.GetDescription(),

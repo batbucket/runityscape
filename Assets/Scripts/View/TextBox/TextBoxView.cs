@@ -106,6 +106,12 @@ namespace Scripts.View.TextBoxes {
             }
         }
 
+
+        /// <summary>
+        /// Types out a textbox's contents. one by one.
+        /// </summary>
+        /// <param name="textBox">The text box.</param>
+        /// <returns></returns>
         private IEnumerator TypeWriter(TextBox textBox) {
 
             string[] currentTextArray = new string[textBox.TextArray.Length];

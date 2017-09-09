@@ -1,13 +1,10 @@
 ﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Characters.StartingSpells;
 using Scripts.Game.Defined.Serialized.Characters;
 using Scripts.Game.Defined.Serialized.Items.Consumables;
 using Scripts.Game.Defined.Serialized.Items.Equipment;
 using Scripts.Game.Defined.Serialized.Items.Misc;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
-using Scripts.Game.Defined.StartingStats;
-using Scripts.Game.Undefined.StartingStats;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
 using Scripts.Model.Spells;
@@ -249,7 +246,7 @@ namespace Scripts.Game.Undefined.Characters {
             string name,
             string spriteLoc,
             string tip)
-            : base(new DummyStats(level),
+            : base(new Stats(level, 1, 1, 1, 10),
                   new Look(name, spriteLoc, tip, breed),
                   new DebugAI()) {
 

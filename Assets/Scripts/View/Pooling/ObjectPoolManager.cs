@@ -26,6 +26,12 @@ namespace Scripts.View.ObjectPool {
         /// </summary>
         private HashSet<int> ids;
 
+        /// <summary>
+        /// Gets the instance.
+        /// </summary>
+        /// <value>
+        /// The instance.
+        /// </value>
         public static ObjectPoolManager Instance {
             get {
                 if (instance == null) {

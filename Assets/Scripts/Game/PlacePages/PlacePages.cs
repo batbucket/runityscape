@@ -7,11 +7,22 @@ using Scripts.Model.Processes;
 using System.Collections.Generic;
 
 namespace Scripts.Game.Pages {
+
+    /// <summary>
+    /// Pages showing off the bonus areas of a particular aea.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class PlacePages : PageGroup {
         private readonly Page previous;
         private readonly Flags flags;
         private readonly Party party;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlacePages"/> class.
+        /// </summary>
+        /// <param name="previous">The previous.</param>
+        /// <param name="flags">The flags.</param>
+        /// <param name="party">The party.</param>
         public PlacePages(Page previous, Flags flags, Party party) : base(new Page("Places")) {
             this.previous = previous;
             this.flags = flags;
@@ -36,6 +47,11 @@ namespace Scripts.Game.Pages {
             p.Actions = buttons;
         }
 
+        /// <summary>
+        /// Gets the place process.
+        /// </summary>
+        /// <param name="pg">The pg.</param>
+        /// <returns></returns>
         private Process GetPlaceProcess(PageGroup pg) {
             return new Process(
                     pg.Root.Location,
@@ -47,6 +63,11 @@ namespace Scripts.Game.Pages {
                 );
         }
 
+        /// <summary>
+        /// Gets the current area.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
         private Area GetCurrentArea(AreaType type) {
             return AreaList.ALL_AREAS[type](flags, party, previous, Root);
         }
