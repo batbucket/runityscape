@@ -12,13 +12,33 @@ using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Items {
 
+    /// <summary>
+    /// Equippable items can be worn in a particular slot. Denoted by EquipType
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Items.UseableItem" />
+    /// <seealso cref="Scripts.Model.SaveLoad.ISaveable{Scripts.Model.SaveLoad.SaveObjects.EquipItemSave}" />
     public abstract class EquippableItem : UseableItem, ISaveable<EquipItemSave> {
 
+        /// <summary>
+        /// The equipment slot this item is equipped in.
+        /// </summary>
         public readonly EquipType Type;
+
+        /// <summary>
+        /// The stat bonuses of this item.
+        /// </summary>
         public readonly IDictionary<StatType, int> Stats;
 
         private readonly SpellBook book;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EquippableItem"/> class.
+        /// </summary>
+        /// <param name="sprite">The sprite.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="basePrice">The base price.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="description">The description.</param>
         public EquippableItem(Sprite sprite, EquipType type, int basePrice, string name, string description)
             : base(sprite, basePrice, TargetType.SINGLE_ALLY, name, description) {
             this.Type = type;
@@ -26,6 +46,13 @@ namespace Scripts.Model.Items {
             this.book = new CastEquipItem(this);
         }
 
+        /// <summary>
+        /// Spriteless constructor.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="basePrice">The base price.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="description">The description.</param>
         public EquippableItem(EquipType type, int basePrice, string name, string description)
             : this(GetDefaultSprite(type), type, basePrice, name, description) { }
 
@@ -41,26 +68,55 @@ namespace Scripts.Model.Items {
             }
         }
 
+        /// <summary>
+        /// Creates the buff associated with this equippable item.
+        /// </summary>
+        /// <returns>A buff, possibly.</returns>
         public virtual Buff CreateBuff() {
             return null;
         }
 
+        /// <summary>
+        /// Gets the spell book associated with equipping this item.
+        /// </summary>
+        /// <returns>A spellbook associated with equipping this item.</returns>
         public sealed override SpellBook GetSpellBook() {
             return book;
         }
 
+        /// <summary>
+        /// Determines whether the other requirements for caster to equip this item on target are met.
+        /// </summary>
+        /// <param name="caster">The character equipping the item onto someone.</param>
+        /// <param name="target">The character who is getting an item equipped onto them..</param>
+        /// <returns>
+        ///   <c>true</c> if requirements are met; otherwise, <c>false</c>.
+        /// </returns>
         protected override bool IsMeetOtherRequirements(SpellParams caster, SpellParams target) {
             return caster.Stats.State == Characters.State.ALIVE && target.Stats.State == Characters.State.ALIVE;
         }
 
+        /// <summary>
+        /// Gets the default sprite.
+        /// </summary>
+        /// <param name="type">The type to get the default sprite of.</param>
+        /// <returns></returns>
         private static Sprite GetDefaultSprite(EquipType type) {
             return type.Sprite;
         }
 
+        /// <summary>
+        /// Gets the save object.
+        /// </summary>
+        /// <returns></returns>
         EquipItemSave ISaveable<EquipItemSave>.GetSaveObject() {
             return new EquipItemSave(Type.GetSaveObject(), GetType());
         }
 
+        /// <summary>
+        /// Initializes from save object.
+        /// </summary>
+        /// <param name="saveObject">The save object.</param>
         public void InitFromSaveObject(EquipItemSave saveObject) {
             // Nothing
         }

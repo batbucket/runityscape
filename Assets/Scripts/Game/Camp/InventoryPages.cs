@@ -11,10 +11,19 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Scripts.Game.Pages {
+    /// <summary>
+    /// Inventory pages for managing items in camp.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class InventoryPages : PageGroup {
 
-        public InventoryPages(Page previous, Party party, Inventory inventory) : base(new Page(string.Format("Inventory ({0})", inventory.Fraction))) {
-            Inventory(previous, party, inventory);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="InventoryPages"/> class.
+        /// </summary>
+        /// <param name="previous">The previous page to back out to.</param>
+        /// <param name="party">The party whose inventory needs to be managed.</param>
+        public InventoryPages(Page previous, Party party) : base(new Page(string.Format("Inventory ({0})", party.Shared.Fraction))) {
+            Inventory(previous, party, party.Shared);
         }
 
         private void Inventory(Page previous, Party party, Inventory inventory) {

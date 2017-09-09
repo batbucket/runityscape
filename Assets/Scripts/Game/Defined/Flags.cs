@@ -5,7 +5,6 @@ using Scripts.Model.SaveLoad.SaveObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using UnityEngine;
 
 namespace Scripts.Game.Serialized {
     public enum TimeOfDay {
@@ -23,6 +22,10 @@ namespace Scripts.Game.Serialized {
         NIGHT,
     }
 
+    /// <summary>
+    /// Game state flags.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.SaveLoad.ISaveable{Scripts.Model.SaveLoad.SaveObjects.FlagsSave}" />
     [Serializable]
     public class Flags : ISaveable<FlagsSave> {
         public TimeOfDay Time;
@@ -32,23 +35,50 @@ namespace Scripts.Game.Serialized {
         public int LastClearedStage;
         public bool ShouldAdvanceTimeInCamp;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Flags"/> class.
+        /// </summary>
         public Flags() {
             this.LastClearedArea = AreaType.NONE;
             this.CurrentArea = AreaType.RUINS;
         }
 
+        /// <summary>
+        /// Gets the save object.
+        /// </summary>
+        /// <returns></returns>
         public FlagsSave GetSaveObject() {
             return new FlagsSave(this);
         }
 
+        /// <summary>
+        /// Determines true if the particular stage index of area is cleared.
+        /// </summary>
+        /// <param name="stageIndex">Index of the stage.</param>
+        /// <param name="type">The type.</param>
+        /// <returns>
+        ///   <c>true</c> if the particular stage index of area is cleared.; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsStageCleared(int stageIndex, AreaType type) {
             return this.LastClearedArea >= type || this.LastClearedStage > stageIndex || Util.IS_DEBUG;
         }
 
+
+        /// <summary>
+        /// Determines whether the area is unlocked.
+        /// </summary>
+        /// <param name="type">The type of area to check for unlockage.</param>
+        /// <returns>
+        ///   <c>true</c> if the area is unlocked with this flag.; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsAreaUnlocked(AreaType type) {
             return ((int)this.LastClearedArea + 1) >= (int)type || Util.IS_DEBUG;
         }
 
+        /// <summary>
+        /// Initializes from save object.
+        /// </summary>
+        /// <param name="saveObject">The save object.</param>
         public void InitFromSaveObject(FlagsSave saveObject) {
 
         }

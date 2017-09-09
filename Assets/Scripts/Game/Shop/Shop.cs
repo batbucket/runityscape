@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scripts.Game.Pages {
+namespace Scripts.Game.Shopkeeper {
     public class Shop : PageGroup {
         private static readonly Money MONEY = new Money();
 

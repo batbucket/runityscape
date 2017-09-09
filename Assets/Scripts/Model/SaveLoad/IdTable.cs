@@ -20,14 +20,29 @@ using UnityEngine;
 
 namespace Scripts.Model.SaveLoad {
 
+    /// <summary>
+    /// Table holding various Ids
+    /// </summary>
     public static class IdTable {
+        /// <summary>
+        /// Mapping of types to unique strings
+        /// </summary>
         public static TypeMap Types = new TypeMap();
+        /// <summary>
+        /// Mapping of type safe enums
+        /// </summary>
         public static EnumMap<StatType> Stats = new EnumMap<StatType>(StatType.AllTypes);
+        /// <summary>
+        /// Mapping of type safe enums
+        /// </summary>
         public static EnumMap<EquipType> Equips = new EnumMap<EquipType>(EquipType.AllTypes);
 
         private static HashSet<IInitable> initables;
         private static bool isInited;
 
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
         public static void Init() {
             if (!isInited) {
                 foreach (IInitable init in initables) {
@@ -50,6 +65,11 @@ namespace Scripts.Model.SaveLoad {
         }
     }
 
+    /// <summary>
+    /// TypeMap holds the mappings of type and a string,
+    /// used for saving and loading even if class names are refactored.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.SaveLoad.IdMap{System.Type}" />
     public class TypeMap : IdMap<Type> {
         protected override void InitHelper() {
             Stats();

@@ -47,7 +47,7 @@ namespace Scripts.Game.Defined.Serialized.Characters {
         /// <param name="equipmentOfOwner">Reference to owner's equipment.</param>
         /// <returns></returns>
         private Sprite GetAttackSprite(Equipment equipmentOfOwner) {
-            if (equipmentOfOwner.HasEquip(EquipType.WEAPON)) {
+            if (equipmentOfOwner.Contains(EquipType.WEAPON)) {
                 return equipmentOfOwner.PeekItem(EquipType.WEAPON).Icon;
             } else {
                 return Util.GetSprite("fist");

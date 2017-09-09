@@ -5,16 +5,31 @@ using System.Collections.Generic;
 using Scripts.View.Portraits;
 using System.Collections;
 using Scripts.Game.Defined.SFXs;
-using System;
 
 namespace Scripts.Model.Items {
+    /// <summary>
+    /// Equips the item
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.ItemSpellBook" />
     public class CastEquipItem : ItemSpellBook {
         private EquippableItem equip;
 
-        public CastEquipItem(EquippableItem equip) : base(equip, "Equip") {
-            this.equip = equip;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CastEquipItem"/> class.
+        /// </summary>
+        /// <param name="itemToEquip">The item to equip.</param>
+        public CastEquipItem(EquippableItem itemToEquip) : base(itemToEquip, "Equip") {
+            this.equip = itemToEquip;
         }
 
+        /// <summary>
+        /// Can this item be equipped on target?
+        /// </summary>
+        /// <param name="caster">The caster.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>
+        ///   <c>true</c> if [is meet other cast requirements2] [the specified caster]; otherwise, <c>false</c>.
+        /// </returns>
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
             return caster.Inventory.HasItem(equip) && (!target.Equipment.Contains(equip.Type) || caster.Inventory.IsAddable(target.Equipment.PeekItem(equip.Type)));
         }
@@ -26,17 +41,35 @@ namespace Scripts.Model.Items {
         }
     }
 
+    /// <summary>
+    /// Unequip item spell.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.ItemSpellBook" />
     public class CastUnequipItem : ItemSpellBook {
         private Inventory caster;
-        private Equipment targetEq;
+        private Equipment targetEquipment;
         private new EquippableItem item;
 
-        public CastUnequipItem(Inventory caster, Equipment targetEq, EquippableItem item) : base(item, "Unequip") {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CastUnequipItem"/> class.
+        /// </summary>
+        /// <param name="caster">The caster.</param>
+        /// <param name="targetEquipment">The target's equipment.</param>
+        /// <param name="item">The item.</param>
+        public CastUnequipItem(Inventory caster, Equipment targetEquipment, EquippableItem item) : base(item, "Unequip") {
             this.caster = caster;
-            this.targetEq = targetEq;
+            this.targetEquipment = targetEquipment;
             this.item = item;
         }
 
+        /// <summary>
+        /// Can we unequip this item?
+        /// </summary>
+        /// <param name="caster">The caster.</param>
+        /// <param name="target">The target.</param>
+        /// <returns>
+        ///   <c>true</c> if [is meet other cast requirements2] [the specified caster]; otherwise, <c>false</c>.
+        /// </returns>
         protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
             return target.Equipment.Contains(item.Type) && caster.Inventory.IsAddable(item);
         }
@@ -48,6 +81,10 @@ namespace Scripts.Model.Items {
         }
     }
 
+    /// <summary>
+    /// Dummy class for unusable items eg basic items
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.ItemSpellBook" />
     public class Dummy : ItemSpellBook {
         public Dummy(BasicItem basic) : base(basic, string.Empty) { }
 
@@ -60,6 +97,10 @@ namespace Scripts.Model.Items {
         }
     }
 
+    /// <summary>
+    /// Consumable item spell
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.ItemSpellBook" />
     public class UseItem : ItemSpellBook {
         private readonly ConsumableItem consume;
 
@@ -86,6 +127,10 @@ namespace Scripts.Model.Items {
         }
     }
 
+    /// <summary>
+    /// Throw the item away.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.ItemSpellBook" />
     public class TossItem : ItemSpellBook {
         private Inventory inventory;
 

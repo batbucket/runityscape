@@ -20,20 +20,70 @@ namespace Scripts.Model.Characters {
     public class Character : ISaveable<CharacterSave>, IIdNumberable {
         public const int UNKNOWN_ID = -1;
 
+        /// <summary>
+        /// Character's statistics.
+        /// </summary>
         public readonly Stats Stats;
+
+        /// <summary>
+        /// Buffs currently on the character
+        /// </summary>
         public readonly Buffs Buffs;
+
+        /// <summary>
+        /// Character's appearance
+        /// </summary>
         public readonly Look Look;
+
+        /// <summary>
+        /// Character's spells
+        /// </summary>
         public readonly SpellBooks Spells;
+
+        /// <summary>
+        /// Character's user control / AI
+        /// </summary>
         public Brain Brain;
+
+        /// <summary>
+        /// Character's inventory, typically shared reference
+        /// </summary>
         public Inventory Inventory;
+
+        /// <summary>
+        /// Character's equipment.
+        /// </summary>
         public readonly Equipment Equipment;
 
+        /// <summary>
+        /// Presenter reference
+        /// </summary>
         public CharacterPresenter Presenter;
 
+        /// <summary>
+        /// Character specific flags
+        /// </summary>
         protected readonly HashSet<Flag> flags;
+
+        /// <summary>
+        /// Keeps track of how many characters have been created
+        /// </summary>
         private static int idCounter;
+
+        /// <summary>
+        /// Unique id for this character.
+        /// </summary>
         private int id;
 
+        /// <summary>
+        /// Main constructor
+        /// </summary>
+        /// <param name="stats">Stats to use for this character</param>
+        /// <param name="look">Look to use for this character</param>
+        /// <param name="brain">Brain to use for this character</param>
+        /// <param name="spells">Spells to use for this character</param>
+        /// <param name="inventory">Inventory to use for this character</param>
+        /// <param name="equipment">Equipment to use for this character</param>
         public Character(Stats stats, Look look, Brain brain, SpellBooks spells, Inventory inventory, Equipment equipment) {
             this.Stats = stats;
             this.Buffs = new Buffs();
@@ -54,8 +104,21 @@ namespace Scripts.Model.Characters {
             this.id = idCounter++;
         }
 
+        /// <summary>
+        /// Inventoryless, equipmentless constructor
+        /// </summary>
+        /// <param name="stats">Stats to use for this character</param>
+        /// <param name="look">Look to use for this character</param>
+        /// <param name="brain">Brain to use for this character</param>
+        /// <param name="spells">Spells to use for this character</param>
         public Character(Stats stats, Look look, Brain brain, SpellBooks spells) : this(stats, look, brain, spells, new Inventory(), new Equipment()) { }
 
+        /// <summary>
+        /// Spellless constructor
+        /// </summary>
+        /// <param name="stats">Stats to use for this character</param>
+        /// <param name="look">Look to use for this character</param>
+        /// <param name="brain">Brain to use for this character</param>
         public Character(Stats stats, Look look, Brain brain) : this(stats, look, brain, new SpellBooks(), new Inventory(), new Equipment()) { }
 
         /// <summary>
@@ -64,16 +127,28 @@ namespace Scripts.Model.Characters {
         /// <param name="inventory">Reference to the shared inventory</param>
         public Character(Inventory inventory) : this(new Stats(), new Look(), new Game.Defined.Serialized.Characters.Player(), new SpellBooks(), inventory, new Equipment()) { }
 
+        /// <summary>
+        /// Get the unique id
+        /// </summary>
         public int Id {
             get {
                 return id;
             }
         }
 
+        /// <summary>
+        /// Stats are updated each tick to ensure dependent stats
+        /// are updated
+        /// </summary>
         public void Update() {
             Stats.Update(this);
         }
 
+        /// <summary>
+        /// Check all fields for equality. (excluding ID)
+        /// </summary>
+        /// <param name="obj">Object to check</param>
+        /// <returns>True if equal</returns>
         public override bool Equals(object obj) {
             var item = obj as Character;
 
@@ -91,25 +166,40 @@ namespace Scripts.Model.Characters {
                 && this.Equipment.Equals(item.Equipment);
         }
 
-        public void AddFlag(Flag f) {
-            flags.Add(f);
+        /// <summary>
+        /// Add a flag
+        /// </summary>
+        /// <param name="flagToAdd">Flag to add</param>
+        public void AddFlag(Flag flagToAdd) {
+            flags.Add(flagToAdd);
         }
 
-        public bool HasFlag(Flag f) {
-            return this.flags.Contains(f);
+
+        /// <summary>
+        /// Determines whether the character has the specified flag.
+        /// </summary>
+        /// <param name="flagToCheck">The flag to check.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified f has flag; otherwise, <c>false</c>.
+        /// </returns>
+        public bool HasFlag(Flag flagToCheck) {
+            return this.flags.Contains(flagToCheck);
         }
 
+        /// <summary>
+        /// Returns a hash code for this instance.
+        /// </summary>
+        /// <returns>
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
+        /// </returns>
         public override int GetHashCode() {
             return 0;
         }
 
-        public virtual void OnBattleStart() {
-        }
-
-        public virtual void OnKill() {
-
-        }
-
+        /// <summary>
+        /// Gets the save object.
+        /// </summary>
+        /// <returns>A serializable character save object</returns>
         public CharacterSave GetSaveObject() {
             return new CharacterSave(
                 this.id,
@@ -123,6 +213,10 @@ namespace Scripts.Model.Characters {
                 );
         }
 
+        /// <summary>
+        /// Initializes from save object.
+        /// </summary>
+        /// <param name="saveObject">The save object to initialize from.</param>
         public void InitFromSaveObject(CharacterSave saveObject) {
             // No special classes - set fields
             foreach (Flag flag in saveObject.Flags) {

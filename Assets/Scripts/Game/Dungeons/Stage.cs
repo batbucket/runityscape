@@ -2,6 +2,7 @@
 using System;
 using Scripts.Game.Serialized;
 using Scripts.Model.Characters;
+using System.Collections.Generic;
 
 namespace Scripts.Game.Dungeons {
     public class Stage : IStageable {
@@ -18,7 +19,7 @@ namespace Scripts.Game.Dungeons {
             this.Encounters = () => new Encounter[] { new Encounter(Music.NORMAL) };
         }
 
-        Dungeon IStageable.GetStageDungeon(int dungeonIndex, int areaDungeonCount, Flags flags, Party party, Page camp, Page quests, AreaType area) {
+        Dungeon IStageable.GetStageDungeon(int dungeonIndex, int areaDungeonCount, Flags flags, IEnumerable<Character> party, Page camp, Page quests, AreaType area) {
             return new Dungeon(
                     party,
                     camp,

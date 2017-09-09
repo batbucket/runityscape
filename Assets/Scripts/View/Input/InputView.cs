@@ -1,5 +1,6 @@
 ﻿using Scripts.View.ActionGrid;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Scripts.View.TextInput {
@@ -29,6 +30,10 @@ namespace Scripts.View.TextInput {
 
         private void OnEnable() {
             actionGrid.IsHotKeysEnabled = false;
+
+            //Force focus on InputField
+            EventSystem.current.SetSelectedGameObject(field.gameObject, null);
+            field.OnPointerClick(new PointerEventData(EventSystem.current));
         }
 
         private void OnDisable() {

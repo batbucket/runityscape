@@ -4,13 +4,30 @@ using System;
 using System.Collections.Generic;
 
 namespace Scripts.Model.Spells {
+
+    /// <summary>
+    /// Convenience spellbook extension for creating SpellBooks
+    /// that only add a buff.
+    /// </summary>
     public abstract class BuffAdder : BasicSpellbook {
         private Buff dummy;
 
+        /// <summary>
+        /// Main
+        /// </summary>
+        /// <param name="target">Type of targets</param>
+        /// <param name="spell">Type of spell</param>
+        /// <param name="dummy">Dummy buff to create text and copies</param>
+        /// <param name="name">Spell name</param>
+        /// <param name="priority">Priority of the spell</param>
         public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name, PriorityType priority) : base(name, dummy.Sprite, target, spell, priority) {
             this.dummy = dummy;
         }
 
+        /// <summary>
+        /// Does the buff adding
+        /// </summary>
+        /// <returns>IList with neccessar spell effects for adding a buff</returns>
         protected sealed override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
             return new SpellEffect[] {
                 new AddBuff(
@@ -24,6 +41,11 @@ namespace Scripts.Model.Spells {
             return CreateBuffDescription(dummy);
         }
 
+        /// <summary>
+        /// Used to create a descriptive buff tooltip.
+        /// </summary>
+        /// <param name="buff">Buff to create a description for.</param>
+        /// <returns>Descriptive buff tooltip</returns>
         public static string CreateBuffDescription(Buff buff) {
             return string.Format(
                 "Target is affected by\n\n<color=cyan>{0}</color>\n{1}\nLasts {2} turns.",

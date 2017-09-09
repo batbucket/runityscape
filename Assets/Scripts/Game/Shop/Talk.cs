@@ -1,7 +1,7 @@
 ﻿using Scripts.Game.Serialized;
 using System;
 
-namespace Scripts.Game.Pages {
+namespace Scripts.Game.Shopkeeper {
     public class Talk {
         public readonly string Name;
         public readonly string Big;

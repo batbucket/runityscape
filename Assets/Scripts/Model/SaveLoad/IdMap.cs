@@ -13,17 +13,30 @@ namespace Scripts.Model.SaveLoad {
     public abstract class IdMap<T> : IEnumerable<KeyValuePair<T, string>>, IInitable {
         protected Map<T, string> map;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdMap{T}"/> class.
+        /// </summary>
         public IdMap() {
             this.map = new Map<T, string>();
             IdTable.AddInit(this);
         }
 
-        public string Get(T t) {
-            return map.Get(t);
+        /// <summary>
+        /// Gets the specified t.
+        /// </summary>
+        /// <param name="idType">Get the string mapped with a type.</param>
+        /// <returns></returns>
+        public string Get(T idType) {
+            return map.Get(idType);
         }
 
-        public T Get(string s) {
-            return map.Get(s);
+        /// <summary>
+        /// Gets the specified identifier string's mapped type.
+        /// </summary>
+        /// <param name="idString">The identifier string.</param>
+        /// <returns></returns>
+        public T Get(string idString) {
+            return map.Get(idString);
         }
 
         /// <summary>
@@ -32,6 +45,9 @@ namespace Scripts.Model.SaveLoad {
         /// <returns>True if all elements are included in the map.</returns>
         public abstract bool IsAllIncluded();
 
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
         protected void Init() {
             Util.Log("Starting init for " + typeof(T).ToString());
             InitHelper();

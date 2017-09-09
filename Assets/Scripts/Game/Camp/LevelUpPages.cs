@@ -8,15 +8,24 @@ using Scripts.Model.TextBoxes;
 using System.Collections.Generic;
 
 namespace Scripts.Game.Pages {
+    /// <summary>
+    /// Pages for performing level ups and viewing stats on party members.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class LevelUpPages : PageGroup {
 
-        public LevelUpPages(Page previous, Party party) : base(new Page("Party")) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LevelUpPages"/> class.
+        /// </summary>
+        /// <param name="previous">The previous.</param>
+        /// <param name="party">The party.</param>
+        public LevelUpPages(Page previous, IEnumerable<Character> party) : base(new Page("Party")) {
             SetupRoot(previous, party);
         }
 
-        private void SetupRoot(Page previous, Party party) {
+        private void SetupRoot(Page previous, IEnumerable<Character> party) {
             Page p = Get(ROOT_INDEX);
-            p.AddCharacters(Side.LEFT, party.Collection);
+            p.AddCharacters(Side.LEFT, party);
             p.Icon = Util.GetSprite("person");
 
             List<IButtonable> buttons = new List<IButtonable>();
@@ -27,92 +36,133 @@ namespace Scripts.Game.Pages {
             p.Actions = buttons;
         }
 
-        private Page GetSpecificCharacterStats(Character c, Page previous) {
-            Page p = new Page(string.Format("{0}", c.Look.DisplayName));
-            p.AddCharacters(Side.LEFT, c);
-            p.Icon = c.Look.Sprite;
+        /// <summary>
+        /// Gets a specific character's stats.
+        /// </summary>
+        /// <param name="characterToViewStatsOf">The c.</param>
+        /// <param name="previous">The previous.</param>
+        /// <returns></returns>
+        private Page GetSpecificCharacterStats(Character characterToViewStatsOf, Page previous) {
+            Page p = new Page(string.Format("{0}", characterToViewStatsOf.Look.DisplayName));
+            p.AddCharacters(Side.LEFT, characterToViewStatsOf);
+            p.Icon = characterToViewStatsOf.Look.Sprite;
             p.OnEnter = () => {
                 List<IButtonable> actions = new List<IButtonable>();
                 actions.Add(PageUtil.GenerateBack(previous));
-                actions.Add(GetSendPlayerToPointAllocationPageProcess(c, p));
+                actions.Add(GetSendPlayerToPointAllocationPageProcess(characterToViewStatsOf, p));
                 if (Util.IS_DEBUG) {
-                    actions.Add(ExpHack(c));
+                    actions.Add(ExpHack(characterToViewStatsOf));
                 }
-                DisplayStats(p, c);
-                LevelUpPage(c, p);
+                DisplayStats(p, characterToViewStatsOf);
+                LevelUpPage(characterToViewStatsOf, p);
                 p.Actions = actions.ToArray();
             };
             return p;
         }
 
-        private void DisplayStats(Page p, Character c) {
-            int level = c.Stats.Level;
-            int diffToLevelUp = c.Stats.GetStatCount(Stats.Get.MAX, StatType.EXPERIENCE) - c.Stats.GetStatCount(Stats.Get.MOD, StatType.EXPERIENCE);
-            int statPoints = c.Stats.StatPoints;
-            p.AddText(c.Stats.LongAttributeDistribution);
-            p.AddText(string.Format("{0} Experience until level up.", diffToLevelUp));
-            p.AddText(string.Format("{0} Stat Point(s) to allocate.", statPoints));
+        /// <summary>
+        /// Displays the stats.
+        /// </summary>
+        /// <param name="current">The p.</param>
+        /// <param name="characterToDisplayStatsOf">The c.</param>
+        private void DisplayStats(Page current, Character characterToDisplayStatsOf) {
+            int level = characterToDisplayStatsOf.Stats.Level;
+            int diffToLevelUp = characterToDisplayStatsOf.Stats.GetStatCount(Stats.Get.MAX, StatType.EXPERIENCE) - characterToDisplayStatsOf.Stats.GetStatCount(Stats.Get.MOD, StatType.EXPERIENCE);
+            int statPoints = characterToDisplayStatsOf.Stats.StatPoints;
+            current.AddText(characterToDisplayStatsOf.Stats.LongAttributeDistribution);
+            current.AddText(string.Format("{0} Experience until level up.", diffToLevelUp));
+            current.AddText(string.Format("{0} Stat Point(s) to allocate.", statPoints));
         }
 
-        private Process ExpHack(Character c) {
+        /// <summary>
+        /// Hacks experience. Usable in debug mode.
+        /// </summary>
+        /// <param name="characterToAddExperiencePointsTo">The character to add experience points to.</param>
+        /// <returns></returns>
+        private Process ExpHack(Character characterToAddExperiencePointsTo) {
             return new Process(
                 "Exp HACK!",
-                () => c.Stats.AddToStat(StatType.EXPERIENCE, Stats.Set.MOD_UNBOUND, 10)
+                () => characterToAddExperiencePointsTo.Stats.AddToStat(StatType.EXPERIENCE, Stats.Set.MOD_UNBOUND, 10)
                 );
         }
 
-        private Process GetSendPlayerToPointAllocationPageProcess(Character c, Page previous) {
+        /// <summary>
+        /// Gets the process that sends the user to the allocation page for a particular character.
+        /// </summary>
+        /// <param name="characterToAllocatePointsTo">Character to allocate points to.</param>
+        /// <param name="previous">The previous page.</param>
+        /// <returns></returns>
+        private Process GetSendPlayerToPointAllocationPageProcess(Character characterToAllocatePointsTo, Page previous) {
             return new Process(
                     string.Format("Allocate ({0})",
-                        c.Stats.StatPoints),
+                        characterToAllocatePointsTo.Stats.StatPoints),
                     "Allocate stat points.",
-                    () => LevelUpPage(c, previous).Invoke()
+                    () => LevelUpPage(characterToAllocatePointsTo, previous).Invoke()
                     );
         }
 
-        private Page LevelUpPage(Character c, Page previous) {
-            Page p = new Page(string.Format("{0}'s stat allocation", c.Look.DisplayName));
-            p.AddCharacters(Side.LEFT, c);
+        /// <summary>
+        /// Levels up page.
+        /// </summary>
+        /// <param name="characterToDoAllocationsFor">The character to do allocations for.</param>
+        /// <param name="previous">The previous page.</param>
+        /// <returns></returns>
+        private Page LevelUpPage(Character characterToDoAllocationsFor, Page previous) {
+            Page p = new Page(string.Format("{0}'s stat allocation", characterToDoAllocationsFor.Look.DisplayName));
+            p.AddCharacters(Side.LEFT, characterToDoAllocationsFor);
             p.OnEnter = () => {
-                LetUserSelectAStatToIncrease(previous, p, c);
+                LetUserSelectAStatToIncrease(previous, p, characterToDoAllocationsFor);
             };
             return p;
         }
 
-        private void LetUserSelectAStatToIncrease(Page previous, Page current, Character c) {
+        /// <summary>
+        /// Lets the user select a stat to increase.
+        /// </summary>
+        /// <param name="previous">The previous page.</param>
+        /// <param name="current">The current page.</param>
+        /// <param name="characterWhoIsBeingAllocated">The c.</param>
+        private void LetUserSelectAStatToIncrease(Page previous, Page current, Character characterWhoIsBeingAllocated) {
             List<IButtonable> actions = new List<IButtonable>();
             actions.Add(PageUtil.GenerateBack(previous));
 
             foreach (StatType st in StatType.ASSIGNABLES) {
-                if (c.Stats.HasStat(st)) {
+                if (characterWhoIsBeingAllocated.Stats.HasStat(st)) {
                     actions.Add(
-                        AddStatProcess(current, c.Stats, st)
+                        AddStatProcess(current, characterWhoIsBeingAllocated.Stats, st)
                         );
                 }
             }
 
-            if (c.Stats.StatPoints > 0) {
-                current.AddText(string.Format("Select a stat to increase.\nPoints remaining: {0}.", c.Stats.StatPoints));
+            if (characterWhoIsBeingAllocated.Stats.StatPoints > 0) {
+                current.AddText(string.Format("Select a stat to increase.\nPoints remaining: {0}.", characterWhoIsBeingAllocated.Stats.StatPoints));
             } else {
-                current.AddText(string.Format("{0} has no stat points to spend.", c.Look.DisplayName));
+                current.AddText(string.Format("{0} has no stat points to spend.", characterWhoIsBeingAllocated.Look.DisplayName));
             }
             current.Actions = actions.ToArray();
         }
 
-        private Process AddStatProcess(Page p, Stats stats, StatType st) {
+        /// <summary>
+        /// Gets a process that adds to a particular stat.
+        /// </summary>
+        /// <param name="current">The current.</param>
+        /// <param name="statsToAddTo">The stats to add to.</param>
+        /// <param name="statTypeToAddTo">The stat type to add to.</param>
+        /// <returns></returns>
+        private Process AddStatProcess(Page current, Stats statsToAddTo, StatType statTypeToAddTo) {
             return new Process(
-                st.ColoredName,
-                st.Sprite,
+                statTypeToAddTo.ColoredName,
+                statTypeToAddTo.Sprite,
                 string.Format("Add {0} point(s) in\n{1}\n{2}",
-                    st.StatPointIncreaseAmount,
-                    st.ColoredName,
-                    st.Description),
+                    statTypeToAddTo.StatPointIncreaseAmount,
+                    statTypeToAddTo.ColoredName,
+                    statTypeToAddTo.Description),
                 () => {
-                    stats.StatPoints--;
-                    stats.AddToStat(st, Stats.Set.MAX, st.StatPointIncreaseAmount);
-                    p.AddText(string.Format("Maximum {0} was increased to {1}.\nPoints remaining: {2}.", st.Name, stats.GetStatCount(Stats.Get.MAX, st), stats.StatPoints));
+                    statsToAddTo.StatPoints--;
+                    statsToAddTo.AddToStat(statTypeToAddTo, Stats.Set.MAX, statTypeToAddTo.StatPointIncreaseAmount);
+                    current.AddText(string.Format("Maximum {0} was increased to {1}.\nPoints remaining: {2}.", statTypeToAddTo.Name, statsToAddTo.GetStatCount(Stats.Get.MAX, statTypeToAddTo), statsToAddTo.StatPoints));
                 },
-                () => stats.StatPoints > 0
+                () => statsToAddTo.StatPoints > 0
                 );
         }
     }

@@ -8,6 +8,10 @@ using System;
 using UnityEngine;
 
 namespace Scripts.Game.Pages {
+    /// <summary>
+    /// Pages used in the game introduction.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class IntroPages : PageGroup {
         public IntroPages(string name) : base(new Page("Unknown")) {
             SetupIntro(name);

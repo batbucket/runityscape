@@ -20,16 +20,27 @@ using System.Linq;
 using UnityEngine;
 namespace Scripts.Game.Pages {
 
+    /// <summary>
+    /// The hub of the game, from which all other parts can be visited.
+    /// </summary>
     public class Camp : PageGroup {
         private Flags flags;
         private Party party;
 
+        /// <summary>
+        /// Main
+        /// </summary>
+        /// <param name="party">Party for this particular game.</param>
+        /// <param name="flags">Flags for this particular game.</param>
         public Camp(Party party, Flags flags) : base(new Page("Campsite")) {
             this.party = party;
             this.flags = flags;
             SetupCamp();
         }
 
+        /// <summary>
+        /// Setup on enter events.
+        /// </summary>
         private void SetupCamp() {
             Page root = Get(ROOT_INDEX);
             root.OnEnter = () => {
@@ -58,7 +69,7 @@ namespace Scripts.Game.Pages {
                 new PlacePages(root, flags, party),
                 new WorldPages(root, flags, party),
                 new LevelUpPages(Root, party),
-                new InventoryPages(root, party, party.Shared),
+                new InventoryPages(root, party),
                 new EquipmentPages(root, party),
                 RestProcess(root),
                 new SavePages(root, party, flags)
@@ -68,6 +79,10 @@ namespace Scripts.Game.Pages {
             };
         }
 
+        /// <summary>
+        /// Posts the time onto the textholder.
+        /// </summary>
+        /// <param name="current"></param>
         private void PostTime(Page current) {
             current.AddText(string.Format("{0} of day {1}.", flags.Time.GetDescription(), flags.DayCount));
             if (flags.Time == TimeOfDay.NIGHT) {
@@ -75,6 +90,11 @@ namespace Scripts.Game.Pages {
             }
         }
 
+        /// <summary>
+        /// Creates the process for resting.
+        /// </summary>
+        /// <param name="current">Current page</param>
+        /// <returns>A rest process.</returns>
         private Process RestProcess(Page current) {
             TimeOfDay[] times = Util.EnumAsArray<TimeOfDay>();
             int currentIndex = (int)flags.Time;
@@ -105,12 +125,16 @@ namespace Scripts.Game.Pages {
                 );
         }
 
-        private void AdvanceTime(Page p) {
+        /// <summary>
+        /// Makes time go forward in camp. From visiting places.
+        /// </summary>
+        /// <param name="current">The current page.</param>
+        private void AdvanceTime(Page current) {
             TimeOfDay[] times = Util.EnumAsArray<TimeOfDay>();
             int currentIndex = (int)flags.Time;
             int newIndex = (currentIndex + 1) % times.Length;
             flags.Time = times[newIndex];
-            p.AddText("Some time has passed.");
+            current.AddText("Some time has passed.");
         }
     }
 

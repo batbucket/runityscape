@@ -5,15 +5,51 @@ using UnityEngine;
 using System;
 
 namespace Scripts.View.Portraits {
+
+    /// <summary>
+    /// Holds the buffs for a particular portrait.
+    /// </summary>
     public class BuffHolderView : MonoBehaviour, IHolderView<BuffHolderView.BuffContent> {
         public struct BuffContent {
+            /// <summary>
+            /// Unique identifier to tell buffviews apart
+            /// </summary>
             public readonly int Id;
+
+            /// <summary>
+            /// Color of the buff's text
+            /// </summary>
             public readonly Color Color;
+
+            /// <summary>
+            /// Sprite of the buff
+            /// </summary>
             public readonly Sprite Sprite;
+
+            /// <summary>
+            /// Name of the buff
+            /// </summary>
             public readonly string Name;
+
+            /// <summary>
+            /// Buff duration
+            /// </summary>
             public readonly string Duration;
+
+            /// <summary>
+            /// Buff description/tooltip
+            /// </summary>
             public readonly string Description;
 
+            /// <summary>
+            /// Main
+            /// </summary>
+            /// <param name="id">Unique identifier to tell buffviews apart</param>
+            /// <param name="color">Color of the buff's text</param>
+            /// <param name="sprite">Sprite of the buff</param>
+            /// <param name="name">Name of the buff</param>
+            /// <param name="duration">Buff duration</param>
+            /// <param name="description">Buff description/tooltip</param>
             public BuffContent(int id, Color color, Sprite sprite, string name, string duration, string description) {
                 Id = id;
                 Color = color;

@@ -5,8 +5,19 @@ using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Game.Pages {
+
+    /// <summary>
+    /// Utility methods for Camp.
+    /// </summary>
     public static class CampUtil {
+        /// <summary>
+        /// Missing percentage to restore when resting
+        /// </summary>
         private const float MISSING_RESTORE_PERCENTAGE = .2f;
+
+        /// <summary>
+        /// Minimum amount a stat is restored by.
+        /// </summary>
         private const int MINIMUM_RESTORE_AMOUNT = 1;
 
         public static void RestoreStats(StatType type, Stats stats, bool isLastTime) {
@@ -22,10 +33,14 @@ namespace Scripts.Game.Pages {
             }
         }
 
-        public static void CureMostBuffs(Buffs buffs) {
-            Buff[] allBuffs = buffs.ToArray();
+        /// <summary>
+        /// Attempts to remove buffs by dispelling them.
+        /// </summary>
+        /// <param name="partyMemberBuffs">Buffs of a party member.</param>
+        public static void CureMostBuffs(Buffs partyMemberBuffs) {
+            Buff[] allBuffs = partyMemberBuffs.ToArray();
             foreach (Buff buff in allBuffs) {
-                buffs.RemoveBuff(RemovalType.DISPEL, buff);
+                partyMemberBuffs.RemoveBuff(RemovalType.DISPEL, buff);
             }
         }
     }

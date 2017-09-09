@@ -44,7 +44,7 @@ namespace Scripts.Game.Dungeons {
 
         private readonly Flags flags;
         private readonly string areaName;
-        private readonly Party party;
+        private readonly IEnumerable<Character> party;
         private readonly Page camp;
         private readonly Page quests;
         private int currentDungeonCount;
@@ -58,7 +58,7 @@ namespace Scripts.Game.Dungeons {
         /// <param name="quests">Reference to quest page, go where if one wants to back out of entering</param>
         /// <param name="type">Type of area. Should be unique.</param>
         /// <param name="stagables">List of stageable objects that can be converted into stages.</param>
-        public Area(Flags flags, Party party, Page camp, Page quests, AreaType type, params IStageable[] stagables) {
+        public Area(Flags flags, IEnumerable<Character> party, Page camp, Page quests, AreaType type, params IStageable[] stagables) {
             this.flags = flags;
             this.party = party;
             this.camp = camp;

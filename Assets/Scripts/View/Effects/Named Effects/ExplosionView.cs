@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace Scripts.View.Effects {
 
+    /// <summary>
+    /// Creates the explosion effect.
+    /// </summary>
+    /// <seealso cref="Scripts.View.ObjectPool.PooledBehaviour" />
     public class ExplosionView : PooledBehaviour {
 
         [SerializeField]

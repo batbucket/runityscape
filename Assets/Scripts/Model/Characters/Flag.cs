@@ -1,4 +1,7 @@
 ﻿namespace Scripts.Model.Characters {
+    /// <summary>
+    /// Character flags.
+    /// </summary>
     public enum Flag {
         PLAYER,
         PERSISTS_AFTER_DEFEAT,
