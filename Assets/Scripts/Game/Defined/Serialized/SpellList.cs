@@ -11,15 +11,18 @@ using Scripts.Model.Buffs;
 using Scripts.Model.Pages;
 using Scripts.View.Effects;
 using Scripts.Game.Serialized.Brains;
+using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class Attack : BasicSpellbook {
         public const float PERCENT = 0.01f;
-        public const float CRITICAL_MULTIPLIER = 1f;
-        public const float CRITICAL_VARIABILITY = 0f;
-        public const float BASE_ACCURACY = .90f;
-        public const float BASE_CRITICAL_RATE = .10f;
+        public const float HIT_VARIANCE = .25f;
+        public const float HIT_STRENGTH_RATIO = 0.5f;
+        public const float CRITICAL_STRENGTH_RATIO = 1f;
+        public const float CRITICAL_VARIANCE = .125f;
+        public const float BASE_ACCURACY = .80f;
+        public const float BASE_CRITICAL_RATE = 0f;
         public const int SKILL_ON_HIT = 1;
         public const int SKILL_ON_CRIT = 2;
 
@@ -43,22 +46,18 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
-            int damage = 0;
-            if (caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) > 0) {
-                int lowerBound = (caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) > 0) ? 1 : 0;
-                damage = -Util.RandomRange(lowerBound, caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH));
-            }
+            int totalCasterStrength = caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH);
+            int damage = -Util.Random(Mathf.CeilToInt(totalCasterStrength * HIT_STRENGTH_RATIO), HIT_VARIANCE);
+
             return new SpellEffect[] {
-                    new AddToModStat(target.Stats, StatType.HEALTH, damage), // Range(0, CurrentStrength)
+                    new AddToModStat(target.Stats, StatType.HEALTH, damage),
                     new AddToModStat(caster.Stats, StatType.SKILL, 1)
                 };
         }
 
         protected override IList<SpellEffect> GetCriticalEffects(SpellParams caster, SpellParams target) {
-            int damage = 0;
-            if (caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) > 0) {
-                damage = -Util.Random(((int)(caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH) * CRITICAL_MULTIPLIER)), CRITICAL_VARIABILITY);
-            }
+            int totalCasterStrength = caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH);
+            int damage = -Util.Random(totalCasterStrength, CRITICAL_VARIANCE);
             return new SpellEffect[] {
                     new AddToModStat(target.Stats, StatType.HEALTH, damage),
                     new AddToModStat(caster.Stats, StatType.SKILL, 2)
