@@ -1,4 +1,4 @@
-﻿using Scripts.Game.Defined.Serialized.Items.Misc;
+﻿using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Serialized;
 using Scripts.Model.Acts;
 using Scripts.Model.Characters;
@@ -7,7 +7,6 @@ using Scripts.Model.Items;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.Model.Spells;
-using Scripts.Model.TextBoxes;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,8 +21,8 @@ namespace Scripts.Game.Shopkeeper {
 
         private Flags flags;
         private Party party;
-        private float sellPriceModifier;
-        private float buyPriceModifier;
+        private float sellPriceMultiplier;
+        private float buyPriceMultiplier;
         private ICollection<Talk> talks;
         private ICollection<Buy> buys;
         private Character shopkeeper;
@@ -36,15 +35,15 @@ namespace Scripts.Game.Shopkeeper {
         /// <param name="name">The name.</param>
         /// <param name="flags">The flags.</param>
         /// <param name="party">The party.</param>
-        /// <param name="sellPriceModifier">The sell price modifier.</param>
-        /// <param name="buyPriceModifier">The buy price modifier.</param>
+        /// <param name="sellPriceMultiplier">The sell price modifier.</param>
+        /// <param name="buyPriceMultiplier">The buy price modifier.</param>
         /// <param name="shopkeeper">The shopkeeper.</param>
-        public Shop(Page previous, string name, Flags flags, Party party, float sellPriceModifier, float buyPriceModifier, Character shopkeeper) : base(new Page(name)) {
+        public Shop(Page previous, string name, Flags flags, Party party, float sellPriceMultiplier, float buyPriceMultiplier, Character shopkeeper) : base(new Page(name)) {
             this.previous = previous;
             this.flags = flags;
             this.party = party;
-            this.sellPriceModifier = sellPriceModifier;
-            this.buyPriceModifier = buyPriceModifier;
+            this.sellPriceMultiplier = sellPriceMultiplier;
+            this.buyPriceMultiplier = buyPriceMultiplier;
             this.shopkeeper = shopkeeper;
             this.talks = new List<Talk>();
             this.buys = new List<Buy>();
@@ -104,7 +103,7 @@ namespace Scripts.Game.Shopkeeper {
         /// <param name="item">The item.</param>
         /// <returns></returns>
         private int GetFullSellPrice(Item item) {
-            return Mathf.Max((int)(item.BasePrice * sellPriceModifier), 1);
+            return Mathf.Max((int)(item.BasePrice * sellPriceMultiplier), 1);
         }
 
         /// <summary>
@@ -125,7 +124,7 @@ namespace Scripts.Game.Shopkeeper {
         /// <param name="item">The item.</param>
         /// <returns></returns>
         private int GetFullBuyPrice(Item item) {
-            return Mathf.Max((int)(item.BasePrice * buyPriceModifier), 1);
+            return Mathf.Max((int)(item.BasePrice * buyPriceMultiplier), 1);
         }
 
         /// <summary>
