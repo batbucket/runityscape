@@ -4,7 +4,7 @@
 
 # TODOs after Downloading #
 * Setup the fields needed for the GameJolt API to work. From the editor, Edit → Project Settings → Game Jolt API
-* If you don't do this the game will run fine, but the export and import feature will not work.
+* If you don't do this the game will run fine, but the export and import feature will not work
 
 # Game Features #
 * Turn-based combat
