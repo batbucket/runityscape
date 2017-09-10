@@ -189,7 +189,7 @@ public static class Util {
     }
 
     public static bool IsChance(double probability) {
-        return UnityEngine.Random.Range(0f, 1f) < probability;
+        return UnityEngine.Random.value < probability;
     }
 
     public static int Range(double min, double max) {
