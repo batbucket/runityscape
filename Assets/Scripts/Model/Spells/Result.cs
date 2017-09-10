@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Scripts.Game.Defined.Spells;
+using Scripts.Model.Stats;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,6 +51,18 @@ namespace Scripts.Model.Spells {
         public IList<SpellEffect> Effects {
             get {
                 return effects;
+            }
+        }
+
+        public bool IsDealDamage {
+            get {
+                foreach (SpellEffect effect in Effects) {
+                    AddToModStat modStat = effect as AddToModStat;
+                    if (modStat != null && modStat.AffectedStat == StatType.HEALTH && modStat.Value < 0) {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 

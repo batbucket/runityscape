@@ -72,7 +72,10 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         public override bool IsReact(Spell s, Stats buffHolder) {
-            return s.Book.SpellType == SpellType.OFFENSE && s.Target.Stats == this.BuffCaster && s.Result.Type.IsSuccessfulType;
+            return s.Book.SpellType == SpellType.OFFENSE
+                && s.Target.Stats == this.BuffCaster
+                && s.Result.Type.IsSuccessfulType
+                && s.Result.IsDealDamage;
         }
 
         protected override void ReactHelper(Spell s, Stats buffHolder) {
@@ -94,7 +97,10 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public ReflectAttack() : base(Util.GetSprite("round-shield"), "Reflect Attack", "Next <color=yellow>Attack</color> on this unit is reflected.", false) { }
 
         public override bool IsReact(Spell s, Stats owner) {
-            return s.Book is Attack && s.Target.Stats == owner && s.Result.Type.IsSuccessfulType;
+            return s.Book.SpellType == SpellType.OFFENSE
+                && s.Target.Stats == owner
+                && s.Result.Type.IsSuccessfulType
+                && s.Result.IsDealDamage;
         }
 
         protected override void ReactHelper(Spell s, Stats owner) {
