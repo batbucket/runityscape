@@ -1,6 +1,4 @@
-﻿using Scripts.Game.Defined.Serialized.Items.Consumables;
-using Scripts.Game.Defined.Serialized.Items.Equipment;
-using Scripts.Game.Defined.Serialized.Items.Misc;
+﻿using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Serialized.Brains;
