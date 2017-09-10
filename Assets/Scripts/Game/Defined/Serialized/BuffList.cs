@@ -53,15 +53,15 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class Counter : Buff {
         public Counter() : base(2, Util.GetSprite("round-shield"), "Counter", "Basic <color=yellow>Attack</color>s on this unit are reflected.", false) { }
 
-        public override bool IsReact(Spell s, Stats owner) {
-            return s.Book is Attack && s.Target.Stats == owner;
+        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+            return spellToReactTo.Book is Attack && spellToReactTo.Target.Stats == owner;
         }
 
-        protected override void ReactHelper(Spell s, Stats owner) {
-            s.Result.Effects.Clear();
-            s.Result.AddEffect(
+        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+            spellToReactTo.Result.Effects.Clear();
+            spellToReactTo.Result.AddEffect(
                 new AddToModStat(
-                    s.Caster.Stats, StatType.HEALTH, -s.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH))
+                    spellToReactTo.Caster.Stats, StatType.HEALTH, -spellToReactTo.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH))
                 );
         }
     }
@@ -71,17 +71,20 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         }
 
-        public override bool IsReact(Spell s, Stats buffHolder) {
-            return s.Book.SpellType == SpellType.OFFENSE
-                && s.Target.Stats == this.BuffCaster
-                && s.Result.Type.IsSuccessfulType
-                && s.Result.IsDealDamage;
+        /// <summary>
+        /// The caster of the buff (the non-clone) is hit by an offensive spell that deals damage.
+        /// </summary>
+        public override bool IsReact(Spell spellToReactTo, Stats buffHolder) {
+            return spellToReactTo.Book.SpellType == SpellType.OFFENSE
+                && spellToReactTo.Target.Stats == this.BuffCaster
+                && spellToReactTo.Result.Type.IsSuccessfulType
+                && spellToReactTo.Result.IsDealDamage;
         }
 
-        protected override void ReactHelper(Spell s, Stats buffHolder) {
+        protected override void ReactHelper(Spell spellToReactTo, Stats buffHolder) {
             SpellEffect healthDamage = null;
-            for (int i = 0; (i < s.Result.Effects.Count) && (healthDamage == null); i++) {
-                SpellEffect se = s.Result.Effects[i];
+            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
+                SpellEffect se = spellToReactTo.Result.Effects[i];
                 AddToModStat addToModStat = se as AddToModStat;
                 if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
                     healthDamage = addToModStat;
@@ -96,24 +99,30 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class ReflectAttack : Buff {
         public ReflectAttack() : base(Util.GetSprite("round-shield"), "Reflect Attack", "Next <color=yellow>Attack</color> on this unit is reflected.", false) { }
 
-        public override bool IsReact(Spell s, Stats owner) {
-            return s.Book.SpellType == SpellType.OFFENSE
-                && s.Target.Stats == owner
-                && s.Result.Type.IsSuccessfulType
-                && s.Result.IsDealDamage;
+        /// <summary>
+        /// The owner of the buff (the clone) is hit by an offensive spell that deals damage.
+        /// </summary>
+        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+            return spellToReactTo.Book.SpellType == SpellType.OFFENSE
+                && spellToReactTo.Target.Stats == owner
+                && spellToReactTo.Result.Type.IsSuccessfulType
+                && spellToReactTo.Result.IsDealDamage;
         }
 
-        protected override void ReactHelper(Spell s, Stats owner) {
+        /// <summary>
+        ///  Add a self damage effect, reflecting the same amount as the attack.
+        /// </summary>
+        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
             int damageToReflect = 0;
-            foreach (SpellEffect se in s.Result.Effects) {
+            foreach (SpellEffect se in spellToReactTo.Result.Effects) {
                 AddToModStat damageHealth = se as AddToModStat;
                 if (damageHealth != null && damageHealth.AffectedStat == StatType.HEALTH) {
                     damageToReflect = damageHealth.Value;
                 }
             }
-            s.Result.AddEffect(
+            spellToReactTo.Result.AddEffect(
                 new AddToModStat(
-                    s.Caster.Stats, StatType.HEALTH, damageToReflect)
+                    spellToReactTo.Caster.Stats, StatType.HEALTH, damageToReflect)
                 );
         }
     }
