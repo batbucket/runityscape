@@ -18,6 +18,11 @@ namespace Scripts.Model.Buffs {
         public readonly Characters.Stats Caster;
         public readonly int CasterId;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BuffParams"/> struct.
+        /// </summary>
+        /// <param name="caster">The caster's stats.</param>
+        /// <param name="casterId">A unique id number associated with a character.</param>
         public BuffParams(Characters.Stats caster, int casterId) {
             this.Caster = caster;
             this.CasterId = casterId;
