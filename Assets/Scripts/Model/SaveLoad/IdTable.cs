@@ -1,22 +1,16 @@
-﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Brains;
-using Scripts.Game.Defined.Serialized.Items.Consumables;
-using Scripts.Game.Defined.Serialized.Items.Equipment;
-using Scripts.Game.Defined.Serialized.Items.Misc;
+﻿using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
-using Scripts.Game.Defined.Spells;
 using Scripts.Game.Serialized.Brains;
 using Scripts.Model.Initable;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Items;
-using Scripts.Model.SaveLoad;
 using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Scripts.Model.SaveLoad {
