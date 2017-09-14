@@ -13,6 +13,7 @@ namespace Scripts.Game.Defined.SFXs {
     /// Various special effects for battle
     /// </summary>
     public static class SFX {
+
         /// <summary>
         /// Creates a hitsplat.
         /// </summary>

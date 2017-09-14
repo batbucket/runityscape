@@ -23,7 +23,7 @@ namespace Scripts.Game.Pages {
     /// <summary>
     /// The hub of the game, from which all other parts can be visited.
     /// </summary>
-    public class Camp : PageGroup {
+    public class Camp : Model.Pages.PageGroup {
         private Flags flags;
         private Party party;
 
@@ -61,7 +61,7 @@ namespace Scripts.Game.Pages {
                     }
                 }
 
-                PageGroup dungeonSelectionPage = new DungeonPages(root, party, flags);
+                Model.Pages.PageGroup dungeonSelectionPage = new StagePages(root, party, flags);
 
                 root.AddCharacters(Side.LEFT, party.Collection);
                 root.Actions = new IButtonable[] {
