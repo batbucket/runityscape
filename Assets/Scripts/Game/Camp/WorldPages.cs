@@ -32,7 +32,6 @@ namespace Scripts.Game.Pages {
             Root.AddCharacters(Side.LEFT, party.Collection);
 
             foreach (AreaType type in AreaList.ALL_AREAS.Keys) {
-                Util.Log(type.ToString());
                 if (flags.IsAreaUnlocked(type) && flags.CurrentArea != type) {
                     buttons.Add(GetAreaChangeProcess(type, flags, party, previous));
                 }
