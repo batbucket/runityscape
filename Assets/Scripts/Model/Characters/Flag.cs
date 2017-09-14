@@ -1,4 +1,5 @@
 ﻿namespace Scripts.Model.Characters {
+
     /// <summary>
     /// Character flags.
     /// </summary>
@@ -7,6 +8,8 @@
         PERSISTS_AFTER_DEFEAT,
         DROPS_ITEMS,
         GIVES_EXPERIENCE,
-        IS_CLONE
+        IS_CLONE,
+        HERO,
+        PARTNER
     }
 }
