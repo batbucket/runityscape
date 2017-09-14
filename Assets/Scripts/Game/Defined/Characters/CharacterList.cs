@@ -105,7 +105,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Stats(0, 1, 1, 2, 5),
                 new Look(
                     name,
-                    "person",
+                    "player",
                     "It's you!",
                     Breed.PROGRAMMER
                     ),
