@@ -1,5 +1,6 @@
 ﻿using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -60,6 +61,10 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public Character GetCharacter(Func<Character, bool> predicate) {
+            return members.Where(predicate).FirstOrDefault();
+        }
+
         /// <summary>
         /// Adds a member and makes its inventory
         /// reference the shared one.
@@ -88,7 +93,6 @@ namespace Scripts.Model.Characters {
 
                     // Search party list to see if any party member is the caster
                     for (int j = 0; j < mems.Count && !isPartyMemberFound; j++) {
-
                         // Id match -- Ref party member mode: we want to reference the member again on Load.
                         if (mems[j].Id.Equals(pb.CasterCharacterId)) {
                             pb.SetupAsCasterInParty(j);

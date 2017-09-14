@@ -19,10 +19,16 @@ namespace Scripts.View.Title {
         [SerializeField]
         private Text text;
 
-        private const float FADE_TIME = 0.5f;
-        private const float DURATION = 4f;
+        private const float DEFAULT_FADE_TIME = 0.5f;
+        private const float DEFAULT_DURATION = 4f;
 
-        public bool IsDone;
+        public bool IsDone {
+            get {
+                return this.isDone;
+            }
+        }
+
+        private bool isDone;
 
         private Coroutine routine;
 
@@ -35,24 +41,31 @@ namespace Scripts.View.Title {
         }
 
         public void Cancel() {
-            this.IsDone = true;
+            this.isDone = true;
             StopAllCoroutines();
             alpha = 0;
         }
 
         public void Play(Sprite sprite, string text) {
-            routine = StartCoroutine(TitleTransition(sprite, text, DURATION));
+            routine = StartCoroutine(TitleTransition(sprite, text, DEFAULT_FADE_TIME, DEFAULT_DURATION));
         }
 
-        private IEnumerator TitleTransition(Sprite sprite, string text, float duration) {
-            this.IsDone = false;
+        public void Play(float duration) {
+            routine = StartCoroutine(TitleTransition(null, string.Empty, 0.125f, 0.1f));
+        }
+
+        private IEnumerator TitleTransition(Sprite sprite, string text, float fadeTime, float duration) {
+            this.isDone = false;
+
             image.sprite = sprite;
+            image.enabled = (sprite != null);
+
             this.text.text = text;
             float timer = 0;
 
             // Fade in
-            while ((timer += Time.deltaTime) < FADE_TIME) {
-                alpha = Mathf.Lerp(0, 1, timer / FADE_TIME);
+            while ((timer += Time.deltaTime) < fadeTime) {
+                alpha = Mathf.Lerp(0, 1, timer / fadeTime);
                 yield return null;
             }
             alpha = 1;
@@ -60,12 +73,12 @@ namespace Scripts.View.Title {
             timer = 0;
 
             // Fade out
-            while ((timer += Time.deltaTime) < FADE_TIME) {
-                alpha = Mathf.Lerp(1, 0, timer / FADE_TIME);
+            while ((timer += Time.deltaTime) < fadeTime) {
+                alpha = Mathf.Lerp(1, 0, timer / fadeTime);
                 yield return null;
             }
             alpha = 0;
-            this.IsDone = true;
+            this.isDone = true;
         }
     }
 }

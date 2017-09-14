@@ -1,4 +1,6 @@
-﻿using Scripts.Game.Serialized;
+﻿using Scripts.Game.Areas;
+using Scripts.Game.Serialized;
+using Scripts.Game.Stages;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
@@ -6,24 +8,24 @@ using Scripts.Model.Processes;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Scripts.Game.Dungeons {
+namespace Scripts.Game.Pages {
 
     /// <summary>
     /// Stage selection menu.
     /// </summary>
     /// <seealso cref="Scripts.Model.Pages.PageGroup" />
-    public class DungeonPages : PageGroup {
+    public class StagePages : PageGroup {
         private readonly Party party;
         private readonly Flags flags;
         private readonly Page previous;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DungeonPages"/> class.
+        /// Initializes a new instance of the <see cref="StagePages"/> class.
         /// </summary>
         /// <param name="previous">The previous page to back to.</param>
         /// <param name="party">The current party.</param>
         /// <param name="flags">The game's flags.</param>
-        public DungeonPages(Page previous, Party party, Flags flags) : base(new Page("Quest")) {
+        public StagePages(Page previous, Party party, Flags flags) : base(new Page("Quest")) {
             var buttons = new List<IButtonable>();
             this.party = party;
             this.flags = flags;
@@ -37,9 +39,9 @@ namespace Scripts.Game.Dungeons {
 
             Area currentArea = GetCurrentArea(flags.CurrentArea);
 
-            for (int i = 0; i < currentArea.Stages.Length; i++) {
+            for (int i = 0; i < currentArea.Stages.Count; i++) {
                 if (IsStagePlayable(i, currentArea)) {
-                    buttons.Add(GetDungeonEntryProcess(i, currentArea));
+                    buttons.Add(GetPageEntryProcess(i, currentArea));
                 } else {
                     buttons.Add(new Process("<color=grey>???</color>", "Complete the previous stage to unlock."));
                 }
@@ -81,21 +83,25 @@ namespace Scripts.Game.Dungeons {
         /// <param name="index">The index of this dungeon.</param>
         /// <param name="area">The area this dungeon is in.</param>
         /// <returns></returns>
-        private Process GetDungeonEntryProcess(int index, Area area) {
-            Dungeon dungeon = area.Stages[index];
-            Color buttonColor = Color.white;
-            if (index == AreaList.MINIBOSS_INDEX) {
-                buttonColor = AreaList.MINIBOSS_STAGE_TEXT_COLOR;
-            } else if (index == AreaList.BOSS_INDEX) {
-                buttonColor = AreaList.BOSS_STAGE_TEXT_COLOR;
+        private Process GetPageEntryProcess(int index, Area area) {
+            Stage stage = area.Stages[index];
+            Page page = stage.GetPage(index, area.Stages.Count, flags, party, previous, this.Root, area.Type);
+
+            Color color = Color.white;
+            string prefix = string.Empty;
+            if (stage is SceneStage) {
+                prefix = "Scene";
+                color = Color.yellow;
+            } else {
+                prefix = "Dungeon";
             }
+
             return new Process(
-                    Util.ColorString(string.Format("{0}-{1}", (int)area.Type, index), buttonColor),
-                    dungeon.Sprite,
-                    dungeon.Root.Location,
+                    Util.ColorString(string.Format("{0}-{1}", (int)area.Type, index), color),
+                    Util.GetSprite("dungeon-gate"),
+                    string.Format("{0}\n{1}", stage.StageName, prefix),
                     () => {
-                        dungeon.Invoke();
-                        flags.ShouldAdvanceTimeInCamp = true;
+                        page.Invoke();
                     }
                 );
         }

@@ -9,6 +9,7 @@ using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Scripts.Model.Characters {
 
@@ -18,7 +19,7 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : ISaveable<CharacterSave>, IIdNumberable {
+    public class Character : ISaveable<CharacterSave>, IIdNumberable, IAvatarable {
         public const int UNKNOWN_ID = -1;
 
         /// <summary>
@@ -137,6 +138,18 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public Sprite Sprite {
+            get {
+                return Look.Sprite;
+            }
+        }
+
+        public Color TextColor {
+            get {
+                return Look.TextColor;
+            }
+        }
+
         /// <summary>
         /// Stats are updated each tick to ensure dependent stats
         /// are updated
@@ -174,7 +187,6 @@ namespace Scripts.Model.Characters {
         public void AddFlag(Flag flagToAdd) {
             flags.Add(flagToAdd);
         }
-
 
         /// <summary>
         /// Determines whether the character has the specified flag.

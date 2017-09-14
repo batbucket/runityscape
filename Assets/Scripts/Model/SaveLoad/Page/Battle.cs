@@ -142,6 +142,7 @@ namespace Scripts.Model.Pages {
             DEAD,
             NOT_FOUND
         }
+
         private bool IsResolved {
             get {
                 return Left.All(c => c.Stats.State == State.DEAD) || Right.All(c => c.Stats.State == State.DEAD);
@@ -198,6 +199,7 @@ namespace Scripts.Model.Pages {
                 }
             }
         }
+
         private static void AddEquipmentToLoot(IDictionary<Item, int> loot, Equipment equipment) {
             List<EquippableItem> equipmentItems = ((IEnumerable<EquippableItem>)equipment).ToList();
             foreach (EquippableItem item in equipmentItems) {
@@ -369,7 +371,6 @@ namespace Scripts.Model.Pages {
                                 spell.Book.TextboxTooltip
                             ))); // "X will do Y" helper textbox
                     }
-
                 }
             }
 
@@ -485,13 +486,14 @@ namespace Scripts.Model.Pages {
                         spellMessage = Spell.GetCastMessage(spell.Caster, spell.Target, spell.Book, ResultType.FAILED);
                     }
                     AddText(new TextBox(
-                        play.Text,
+                        spellMessage,
                         play.MySpell.Book.TextboxTooltip));
                     yield return play.Play();
                     yield return CharacterDialogue(spell.Target.Character, spell.Target.Character.Brain.ReactToSpell(spell));
                 }
             }
         }
+
         private void PostBattle(PlayerPartyStatus status) {
             Grid postBattle = new Grid("Main");
             postBattle.OnEnter = () => {
@@ -524,9 +526,10 @@ namespace Scripts.Model.Pages {
                         rawExperience += CalculateExperience(victor.Stats, defeated.Stats);
                     }
                 }
-                experienceGiven += Mathf.Max(MINIMUM_EXP_PER_BATTLE, rawExperience);
-                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(MINIMUM_EXP_PER_BATTLE, experienceGiven));
-                this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(experienceGiven.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
+                int calculatedExperience = Mathf.Max(MINIMUM_EXP_PER_BATTLE, rawExperience);
+                experienceGiven += calculatedExperience;
+                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(MINIMUM_EXP_PER_BATTLE, calculatedExperience));
+                this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(calculatedExperience.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
             }
         }
 
@@ -551,18 +554,16 @@ namespace Scripts.Model.Pages {
             PlayerPartyStatus result = PlayerStatus;
             if (result == PlayerPartyStatus.ALIVE) {
                 message = VICTORY;
-
             } else if (result == PlayerPartyStatus.DEAD) {
                 message = DEFEAT;
-
             } else { // Didn't find party
                 message = "...";
-
             }
 
             AddText(message);
             PostBattle(result);
         }
+
         private IEnumerator startRound() {
             AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
             List<IPlayable> plays = new List<IPlayable>();

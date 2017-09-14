@@ -12,13 +12,15 @@ using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Game.Dungeons {
+
     /// <summary>
     /// Dungeons are pagegroups with multiple battle encounters.
     /// </summary>
     /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     /// <seealso cref="Scripts.Model.Interfaces.IButtonable" />
     /// <seealso cref="Scripts.Game.Dungeons.IStageable" />
-    public class Dungeon : PageGroup, IButtonable, IStageable {
+    public class Dungeon : PageGroup, IButtonable {
+
         /// <summary>
         /// The encounter generator. Creates the encounters for the dungeon.
         /// </summary>
@@ -30,7 +32,7 @@ namespace Scripts.Game.Dungeons {
         private readonly Action onClear;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Dungeon" /> class.
+        /// Initializes a new instance of the <see cref="PageGroup" /> class.
         /// </summary>
         /// <param name="party">The party to enter the dungeon.</param>
         /// <param name="defeat">The page to go to if the party is defeated.</param>
@@ -115,21 +117,6 @@ namespace Scripts.Game.Dungeons {
                       )));
             };
             return results;
-        }
-
-        /// <summary>
-        /// Gets a dungeon from this class.
-        /// </summary>
-        /// <param name="dungeonIndex">Index of the dungeon.</param>
-        /// <param name="areaDungeonCount">The number of dungeons in the area.</param>
-        /// <param name="flags">The current game's flags.</param>
-        /// <param name="party">The party who will traverse the dungeon.</param>
-        /// <param name="camp">The camp to return to on defeat and victory.</param>
-        /// <param name="quests">The quests page to back out of the dungeon.</param>
-        /// <param name="area">The are this dungeon is in.</param>
-        /// <returns></returns>
-        Dungeon IStageable.GetStageDungeon(int dungeonIndex, int areaDungeonCount, Flags flags, IEnumerable<Character> party, Page camp, Page quests, AreaType area) {
-            return this;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Script.View.Tooltip;
 using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.SFXs;
 using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
@@ -140,7 +141,6 @@ namespace Scripts.Presenter {
         /// </summary>
         /// <param name="page">The page.</param>
         private void SetPage(Page page) {
-
             // Music decision
             if (string.IsNullOrEmpty(page.Music)) {
                 sound.StopAllSounds();
@@ -250,6 +250,10 @@ namespace Scripts.Presenter {
 
         private bool IsRevealedCalculation(Stats stats, int contributionFromFlags) {
             return (stats.ResourceVisibility + contributionFromFlags) > 0;
+        }
+
+        private void DoPageTransition() {
+            Main.Instance.Title.Play(0.25f);
         }
     }
 }

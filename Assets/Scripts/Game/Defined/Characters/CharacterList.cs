@@ -10,6 +10,7 @@ using Scripts.Model.Stats;
 using UnityEngine;
 
 namespace Scripts.Game.Defined.Characters {
+
     public static class CharacterUtil {
 
         public static Character RemoveFlag(this Character c, Model.Characters.Flag flag) {
@@ -20,6 +21,7 @@ namespace Scripts.Game.Defined.Characters {
         public struct ItemCount {
             public readonly Item Item;
             public readonly int Count;
+
             public ItemCount(Item item, int count) {
                 this.Count = count;
                 this.Item = item;
@@ -98,18 +100,17 @@ namespace Scripts.Game.Defined.Characters {
 
     public static class CharacterList {
 
-
         public static Character Hero(string name) {
             return new Character(
                 new Stats(0, 1, 1, 2, 5),
                 new Look(
                     name,
-                    "person",
+                    "player",
                     "It's you!",
                     Breed.PROGRAMMER
                     ),
                 new Player())
-                .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
+                .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.HERO)
                 .AddStats(new Experience());
         }
 
@@ -123,7 +124,7 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.HUMAN
                     ),
                 new Player())
-                .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
+                .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.PARTNER)
                 .AddStats(new Experience());
         }
 
@@ -144,14 +145,13 @@ namespace Scripts.Game.Defined.Characters {
                 .AddStats(new Skill());
             return c;
         }
-
-
     }
-
 }
 
 namespace Scripts.Game.Undefined.Characters {
+
     public class CreditsDummy : Character {
+
         public CreditsDummy(
             Breed breed,
             int level,
@@ -161,7 +161,6 @@ namespace Scripts.Game.Undefined.Characters {
             : base(new Stats(level, 1, 1, 1, 10),
                   new Look(name, spriteLoc, tip, breed),
                   new DebugAI()) {
-
         }
     }
 }
