@@ -21,42 +21,52 @@ namespace Scripts.Model.Spells {
     /// SpellParams hold information needed for the spellbook.
     /// </summary>
     public struct SpellParams {
+
         /// <summary>
         /// The character identifier
         /// </summary>
         public readonly int CharacterId;
+
         /// <summary>
         /// The character
         /// </summary>
         public readonly Character Character;
+
         /// <summary>
         /// The look
         /// </summary>
         public readonly Characters.Look Look;
+
         /// <summary>
         /// The stats
         /// </summary>
         public readonly Characters.Stats Stats;
+
         /// <summary>
         /// The spells
         /// </summary>
         public readonly Characters.SpellBooks Spells;
+
         /// <summary>
         /// The buffs
         /// </summary>
         public readonly Characters.Buffs Buffs;
+
         /// <summary>
         /// The inventory
         /// </summary>
         public readonly Characters.Inventory Inventory;
+
         /// <summary>
         /// The equipment
         /// </summary>
         public readonly Characters.Equipment Equipment;
+
         /// <summary>
         /// The page
         /// </summary>
         public readonly Page Page;
+
         /// <summary>
         /// Gets the portrait.
         /// </summary>
@@ -98,18 +108,22 @@ namespace Scripts.Model.Spells {
         /// The name
         /// </summary>
         public readonly string Name;
+
         /// <summary>
         /// The icon
         /// </summary>
         public readonly Sprite Icon;
+
         /// <summary>
         /// The target type
         /// </summary>
         public readonly TargetType TargetType;
+
         /// <summary>
         /// The spell type
         /// </summary>
         public readonly SpellType SpellType;
+
         /// <summary>
         /// The priority
         /// </summary>
@@ -119,14 +133,17 @@ namespace Scripts.Model.Spells {
         /// The cast time
         /// </summary>
         public readonly int CastTime;
+
         /// <summary>
         /// The cooldown
         /// </summary>
         public readonly int Cooldown;
+
         /// <summary>
         /// The is silenced
         /// </summary>
         public readonly bool IsSilenced;
+
         /// <summary>
         /// The verb
         /// </summary>
@@ -136,6 +153,7 @@ namespace Scripts.Model.Spells {
         /// The flags
         /// </summary>
         protected readonly HashSet<Flag> flags;
+
         /// <summary>
         /// The costs
         /// </summary>
