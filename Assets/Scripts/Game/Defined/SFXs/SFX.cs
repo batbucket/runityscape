@@ -25,8 +25,7 @@ namespace Scripts.Game.Defined.SFXs {
         /// <returns></returns>
         public static IEnumerator DoHitSplat(IPortraitable parent, string splatText, Color splatColor, Sprite sprite = null) {
             HitsplatView hp = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
-            parent.ParentToEffects(hp.gameObject);
-            return hp.Animation(splatText, splatColor, sprite);
+            return hp.Animation(go => parent.ParentToEffects(go), splatText, splatColor, sprite);
         }
 
         /// <summary>
@@ -70,7 +69,8 @@ namespace Scripts.Game.Defined.SFXs {
             // Move mover to upper layer so it is on top of all elements
             int index = mover.RectTransform.GetSiblingIndex();
             GameObject parent = mover.RectTransform.parent.gameObject;
-            Util.Parent(parent, EffectsManager.Instance.Foreground);
+
+            Util.Parent(mover.RectTransform.gameObject, EffectsManager.Instance.Foreground);
 
             Vector2 moverOriginalPos = mover.RectTransform.position;
             yield return MoveTowards(mover.RectTransform, destination.RectTransform, duration / 3);
@@ -78,7 +78,8 @@ namespace Scripts.Game.Defined.SFXs {
             yield return Shake(destination.RectTransform, 100, duration / 3);
             yield return MoveBack(mover.RectTransform, moverOriginalPos, duration / 3);
 
-            parent.transform.SetParent(mover.RectTransform, false);
+            Util.Parent(mover.RectTransform.gameObject, parent);
+
             mover.RectTransform.SetSiblingIndex(index);
         }
 
