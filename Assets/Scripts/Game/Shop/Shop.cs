@@ -185,14 +185,14 @@ namespace Scripts.Game.Shopkeeper {
         }
 
         private Grid SetupBuyMenu(IButtonable previous) {
-            return SetupShopMenu<Buy>(previous, "Buy", "buy-card", string.Format("Purchase items with {0}s.", MONEY.Name), buys, (b, a) => GetBuyProcess(b, a));
+            return SetupShopMenu<Buy>(previous, "Buy", "buy-card", string.Format("Buy items with {0}s.", MONEY.Name), buys, (b, a) => GetBuyProcess(b, a));
         }
 
         private Process GetBuyProcess(Buy buy, Action postBuy) {
             return new Process(
                 string.Format("{0}-{1}", buy.Name, GetFullBuyPrice(buy.GetItem())),
                 buy.Sprite,
-                string.Format("{0}\nPurchase this item for {1} {2}(s).", buy.Description, GetFullBuyPrice(buy.GetItem()), MONEY.Name),
+                string.Format("{0}\n\nBuy this item for {1} {2}(s).", buy.Description, GetFullBuyPrice(buy.GetItem()), MONEY.Name),
                 () => {
                     Item item = buy.GetItem();
                     AddToMoney(-GetFullBuyPrice(item));
