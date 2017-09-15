@@ -5,6 +5,7 @@ using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
 using Scripts.Model.Processes;
 using Scripts.Model.TextBoxes;
+using Scripts.Presenter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -77,17 +78,20 @@ namespace Scripts.Game.Dungeons {
 
             for (int i = battles.Length - 1; i >= 0; i--) {
                 Encounter encounter = encounters[i];
+                bool isLastBattle = (i == battles.Length - 1);
 
                 encounter.Enemies.Shuffle();
                 Page victoryDestination = null;
-                if (i == battles.Length - 1) {
+                if (isLastBattle) {
                     Page results = GetResults(destination, battles);
                     results.OnEnter += onClear;
                     victoryDestination = results;
                 } else {
                     victoryDestination = battles[i + 1];
                 }
-                battles[i] = new Battle(defeat, victoryDestination, encounter.Music, string.Format("{0} - {1}", Root.Location, i), party, encounter.Enemies);
+                Battle battle = new Battle(defeat, victoryDestination, encounter.Music, string.Format("{0} - {1}", Root.Location, i), party, encounter.Enemies);
+
+                battles[i] = battle;
             }
             return new Process(
                     "Enter",
@@ -97,6 +101,10 @@ namespace Scripts.Game.Dungeons {
                         battles[0].Invoke();
                     }
                 );
+        }
+
+        private void DoPageTransition(string name, int index, Action callMiddle) {
+            Main.Instance.Title.Play(Util.GetSprite("dungeon-gate"), string.Format("{0}\n{1}", name, index), callMiddle);
         }
 
         /// <summary>
