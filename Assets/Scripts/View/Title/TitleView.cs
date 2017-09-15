@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Scripts.Presenter;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,7 +22,7 @@ namespace Scripts.View.Title {
         private Text text;
 
         private const float DEFAULT_FADE_TIME = 0.5f;
-        private const float DEFAULT_DURATION = 4f;
+        private const float DEFAULT_DURATION = 1f;
 
         public bool IsDone {
             get {
@@ -46,15 +48,11 @@ namespace Scripts.View.Title {
             alpha = 0;
         }
 
-        public void Play(Sprite sprite, string text) {
-            routine = StartCoroutine(TitleTransition(sprite, text, DEFAULT_FADE_TIME, DEFAULT_DURATION));
+        public void Play(Sprite sprite, string text, Action callMiddle) {
+            routine = StartCoroutine(TitleTransition(sprite, text, DEFAULT_FADE_TIME, DEFAULT_DURATION, callMiddle));
         }
 
-        public void Play(float duration) {
-            routine = StartCoroutine(TitleTransition(null, string.Empty, 0.125f, 0.1f));
-        }
-
-        private IEnumerator TitleTransition(Sprite sprite, string text, float fadeTime, float duration) {
+        private IEnumerator TitleTransition(Sprite sprite, string text, float fadeTime, float duration, Action callMiddle) {
             this.isDone = false;
 
             image.sprite = sprite;
@@ -62,6 +60,9 @@ namespace Scripts.View.Title {
 
             this.text.text = text;
             float timer = 0;
+
+            Util.SetCursorActive(false);
+            Main.Instance.ActionGrid.IsEnabled = false;
 
             // Fade in
             while ((timer += Time.deltaTime) < fadeTime) {
@@ -72,6 +73,8 @@ namespace Scripts.View.Title {
             yield return new WaitForSeconds(duration);
             timer = 0;
 
+            callMiddle();
+
             // Fade out
             while ((timer += Time.deltaTime) < fadeTime) {
                 alpha = Mathf.Lerp(1, 0, timer / fadeTime);
@@ -79,6 +82,8 @@ namespace Scripts.View.Title {
             }
             alpha = 0;
             this.isDone = true;
+            Util.SetCursorActive(true);
+            Main.Instance.ActionGrid.IsEnabled = true;
         }
     }
 }
