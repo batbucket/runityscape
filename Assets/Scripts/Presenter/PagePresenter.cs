@@ -96,7 +96,7 @@ namespace Scripts.Presenter {
                 SetPage(value);
             }
 
-            get {
+            private get {
                 return page;
             }
         }
@@ -259,10 +259,6 @@ namespace Scripts.Presenter {
 
         private bool IsRevealedCalculation(Stats stats, int contributionFromFlags) {
             return (stats.ResourceVisibility + contributionFromFlags) > 0;
-        }
-
-        private void DoPageTransition() {
-            Main.Instance.Title.Play(0.25f);
         }
     }
 }
