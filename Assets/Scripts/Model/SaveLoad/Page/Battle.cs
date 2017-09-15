@@ -65,6 +65,8 @@ namespace Scripts.Model.Pages {
 
         private bool wasExperienceGiven;
 
+        private bool isUseTransition;
+
         private IList<ISpellable> temporarySpells;
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace Scripts.Model.Pages {
         /// <param name="location">Location of the battle</param>
         /// <param name="left">Characters on the left in battle</param>
         /// <param name="right">Characters on the right in battle</param>
-        public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right) : base(location) {
+        public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right, bool isUseTransition = false) : base(location) {
             this.wasExperienceGiven = false;
             this.loot = new Dictionary<Item, int>();
             this.leftGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());
@@ -84,6 +86,7 @@ namespace Scripts.Model.Pages {
             this.defeat = defeat;
             this.victory = victory;
             this.Music = music.GetDescription();
+            this.isUseTransition = isUseTransition;
             turnCount = 0;
             temporarySpells = new List<ISpellable>();
             foreach (Character c in left) {
@@ -147,6 +150,11 @@ namespace Scripts.Model.Pages {
             get {
                 return Left.All(c => c.Stats.State == State.DEAD) || Right.All(c => c.Stats.State == State.DEAD);
             }
+        }
+
+        public static void DoPageTransition(Page destination) {
+            Main.Instance.Title.Play(destination.Sprite, string.Format("{0}", destination.Location), () => destination.Invoke());
+            Main.Instance.Sound.PlaySound("Steps_0");
         }
 
         private PlayerPartyStatus PlayerStatus {
@@ -509,13 +517,25 @@ namespace Scripts.Model.Pages {
                     Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
                     postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, anyoneFromVictorParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(PageUtil.GenerateGroupEquipmentGrid(postBattle, this, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this), false));
-                    postBattle.List.Add(new Process("Continue", () => victory.Invoke()));
+                    postBattle.List.Add(new Process("Continue", () => GoToPage(victory)));
                 } else {
-                    postBattle.List.Add(new Process("Continue", () => defeat.Invoke()));
+                    postBattle.List.Add(new Process("Continue", () => GoToPage(defeat)));
                 }
                 Actions = postBattle.List;
             };
             postBattle.Invoke();
+        }
+
+        /// <summary>
+        /// Goes to page.
+        /// </summary>
+        /// <param name="page">The page.</param>
+        private void GoToPage(Page page) {
+            if (isUseTransition) {
+                DoPageTransition(page);
+            } else {
+                page.Invoke();
+            }
         }
 
         private void GiveExperienceToVictors() {

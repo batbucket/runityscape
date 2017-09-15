@@ -89,7 +89,7 @@ namespace Scripts.Game.Dungeons {
                 } else {
                     victoryDestination = battles[i + 1];
                 }
-                Battle battle = new Battle(defeat, victoryDestination, encounter.Music, string.Format("{0} - {1}", Root.Location, i), party, encounter.Enemies);
+                Battle battle = new Battle(defeat, victoryDestination, encounter.Music, string.Format("{0}\n{1}", Root.Location, i), party, encounter.Enemies, true);
 
                 battles[i] = battle;
             }
@@ -97,14 +97,8 @@ namespace Scripts.Game.Dungeons {
                     "Enter",
                     Util.GetSprite("dungeon-gate"),
                     "Enter this stage.",
-                    () => {
-                        battles[0].Invoke();
-                    }
+                    () => Battle.DoPageTransition(battles[0])
                 );
-        }
-
-        private void DoPageTransition(string name, int index, Action callMiddle) {
-            Main.Instance.Title.Play(Util.GetSprite("dungeon-gate"), string.Format("{0}\n{1}", name, index), callMiddle);
         }
 
         /// <summary>
@@ -114,8 +108,8 @@ namespace Scripts.Game.Dungeons {
         /// <param name="battles">The battles in the dungeon to track.</param>
         /// <returns></returns>
         private Page GetResults(Page destination, Battle[] battles) {
-            Page results = new Page(string.Format("{0} - {1}", Root.Location, "Results"));
-            results.Actions = new IButtonable[] { destination };
+            Page results = new Page(string.Format("{0}\n{1}", Root.Location, "Results"));
+            results.Actions = new IButtonable[] { new Process("Return", () => Battle.DoPageTransition(destination)) };
             results.OnEnter = () => {
                 results.AddText(new TextBox(string.Format(
                     "{0} was cleared in {1} turns.\nTotal experience gained: {1}.",
