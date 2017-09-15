@@ -41,6 +41,12 @@ namespace Scripts.Game.Areas {
                                 new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager())
                             }),
                         new BattleStage(
+                            "Stronger monsters",
+                            () => new Encounter[] {
+                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager()),
+                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Knight())
+                            }),
+                        new BattleStage(
                             "Restoration",
                             () => new Encounter[] {
                                 new Encounter(FieldNPCs.Healer(), FieldNPCs.Healer()),
@@ -50,8 +56,9 @@ namespace Scripts.Game.Areas {
                             "VS " + FieldNPCs.BigKnight().Look.Name,
                             () => new Encounter[] {
                                 new Encounter(Music.BOSS, FieldNPCs.Healer(), FieldNPCs.BigKnight(), FieldNPCs.Healer())
-                            })
-                    }
+                            }),
+                    },
+                    new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
                 );
         }
 
@@ -70,7 +77,8 @@ namespace Scripts.Game.Areas {
                 new ActionAct(() => page.AddCharacters(Side.RIGHT, partner)),
                 new TextAct(partner, Side.RIGHT, "Neato!"),
                 new CoroutineAct(SFX.DoMeleeEffect(hero, partner, 1.0f, "Slash_0")),
-                new TextAct(partner, Side.RIGHT, "Ouch.")
+                new TextAct(partner, Side.RIGHT, "Ouch."),
+                new TextAct(hero, Side.LEFT, "<color=lime>Wow</color> <color=red>look</color> <color=magenta>at</color> <color=green>this</color> <color=cyan>colored</color> <color=yellow>text</color>!")
                 );
 
             return scene;
