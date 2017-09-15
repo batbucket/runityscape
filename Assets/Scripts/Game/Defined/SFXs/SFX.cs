@@ -104,17 +104,6 @@ namespace Scripts.Game.Defined.SFXs {
         }
 
         /// <summary>
-        /// Does a page transition
-        /// </summary>
-        /// <param name="sprite">The sprite.</param>
-        /// <param name="text">The text.</param>
-        /// <returns></returns>
-        public static IEnumerator DoPageTransition(Sprite sprite, string text) {
-            Main.Instance.Title.Play(sprite, text);
-            yield return new WaitUntil(() => Main.Instance.Title.IsDone);
-        }
-
-        /// <summary>
         /// Moves mover towards a destination.
         /// </summary>
         /// <param name="mover">The mover.</param>
