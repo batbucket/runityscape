@@ -27,7 +27,7 @@ namespace Scripts.Game.Areas {
         public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
-                    { AreaType.TINY_WOODS, (f, p, c, q) => CreateRuins(f, p, c, q) }
+                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) }
         });
 
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
