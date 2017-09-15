@@ -120,19 +120,14 @@ namespace Scripts.Game.Pages {
 
         private void HotkeyTutorialPage(string name) {
             Page hotkeys = Get(HOTKEY_TUTORIAL);
-            hotkeys.OnEnter = (() => IsCursorEnabled(false));
+            hotkeys.OnEnter = (() => Util.SetCursorActive(false));
             hotkeys.Body = "Oh no! Your cursor has vanished!\n(Hint: Use your keyboard.)";
             hotkeys.Actions = new IButtonable[] {
                 new Process("Advance!", () => {
-                        IsCursorEnabled(true);
+                        Util.SetCursorActive(true);
                         new IntroPages(name).Invoke();
                     })
             };
-        }
-
-        private void IsCursorEnabled(bool set) {
-            Cursor.visible = set;
-            Cursor.lockState = set ? CursorLockMode.None : CursorLockMode.Locked;
         }
     }
 }
