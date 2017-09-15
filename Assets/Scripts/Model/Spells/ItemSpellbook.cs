@@ -5,6 +5,7 @@ using UnityEngine;
 using Scripts.Model.Characters;
 
 namespace Scripts.Model.Spells {
+
     /// <summary>
     /// Unserialized Spellbooks associated with item usage.
     /// </summary>
@@ -36,7 +37,7 @@ namespace Scripts.Model.Spells {
         /// </summary>
         /// <param name="caster">The caster.</param>
         /// <returns></returns>
-        public override string GetDetailedName(SpellParams caster) {
+        public override string GetDetailedName(Character caster) {
             int count = caster.Inventory.GetCount(item);
 
             Color color = Color.white;
@@ -59,8 +60,8 @@ namespace Scripts.Model.Spells {
         /// <returns>
         ///   <c>true</c> if [is meet other cast requirements] [the specified caster]; otherwise, <c>false</c>.
         /// </returns>
-        protected override bool IsMeetOtherCastRequirements(SpellParams caster, SpellParams target) {
-            return item.IsUsable(caster, target) && IsMeetOtherCastRequirements2(caster, target);
+        protected sealed override bool IsMeetOtherCastRequirements(Character caster, Character target) {
+            return item.IsUsable(caster, target) && IsMeetItemCastRequirements(caster, target);
         }
 
         /// <summary>
@@ -71,7 +72,7 @@ namespace Scripts.Model.Spells {
         /// <returns>
         ///   <c>true</c> if [is meet other cast requirements2] [the specified caster]; otherwise, <c>false</c>.
         /// </returns>
-        protected virtual bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+        protected virtual bool IsMeetItemCastRequirements(Character caster, Character target) {
             return true;
         }
     }

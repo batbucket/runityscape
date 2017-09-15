@@ -41,6 +41,8 @@ namespace Scripts.Presenter {
 
         private InputBoxView inputBox;
 
+        private IDictionary<Character, CharacterPresenter> presenters;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PagePresenter"/> class.
         /// </summary>
@@ -60,6 +62,7 @@ namespace Scripts.Presenter {
             this.sound = sound;
             this.characterPresenters = new List<CharacterPresenter>();
             InitializeFunctions();
+            this.presenters = new Dictionary<Character, CharacterPresenter>(new IdNumberEqualityComparer<Character>());
             this.Page = initial;
         }
 
@@ -141,6 +144,8 @@ namespace Scripts.Presenter {
         /// </summary>
         /// <param name="page">The page.</param>
         private void SetPage(Page page) {
+            presenters.Clear();
+
             // Music decision
             if (string.IsNullOrEmpty(page.Music)) {
                 sound.StopAllSounds();
@@ -199,8 +204,12 @@ namespace Scripts.Presenter {
         private void SetCharacterPresenters(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
             AddCharactersToPortraitHolder(characters, portraitHolder);
             foreach (Character c in characters) {
-                c.Presenter = new CharacterPresenter(c, portraitHolder.GetPortrait(c.Id));
-                c.Presenter.Tick();
+                CharacterPresenter presenter = new CharacterPresenter(c, portraitHolder.GetPortrait(c.Id));
+                presenter.Tick();
+                if (!presenters.ContainsKey(c)) {
+                    presenters.Add(c, null);
+                }
+                presenters[c] = presenter;
             }
         }
 

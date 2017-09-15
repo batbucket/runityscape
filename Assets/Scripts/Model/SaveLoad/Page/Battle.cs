@@ -280,7 +280,7 @@ namespace Scripts.Model.Pages {
             return lootAmount;
         }
 
-        private bool CharacterCanCast(SpellParams c) {
+        private bool CharacterCanCast(Character c) {
             return c.Stats.State == State.ALIVE;
         }
 
@@ -306,7 +306,7 @@ namespace Scripts.Model.Pages {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
                     }
                     Main.Instance.Sound.PlaySound("synthetic_explosion_1");
-                    yield return SFX.DoDeathEffect(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
+                    yield return SFX.DoDeathEffect(c, 1f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
 
                     graveyard.Add(c);
@@ -489,7 +489,7 @@ namespace Scripts.Model.Pages {
                         spellMessage,
                         play.MySpell.Book.TextboxTooltip));
                     yield return play.Play();
-                    yield return CharacterDialogue(spell.Target.Character, spell.Target.Character.Brain.ReactToSpell(spell));
+                    yield return CharacterDialogue(spell.Target, spell.Target.Brain.ReactToSpell(spell));
                 }
             }
         }
@@ -507,7 +507,7 @@ namespace Scripts.Model.Pages {
                         }
                     }
                     Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
-                    postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, anyoneFromVictorParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(PageUtil.GenerateGroupEquipmentGrid(postBattle, this, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this), false));
                     postBattle.List.Add(new Process("Continue", () => victory.Invoke()));
                 } else {
@@ -580,7 +580,7 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator StartOfRound(IEnumerable<Character> battlers) {
             foreach (Character c in battlers) {
-                c.Brain.StartOfRoundSetup(this, new SpellParams(c, this));
+                c.Brain.StartOfRoundSetup(this, c);
                 yield return CharacterDialogue(c, c.Brain.StartOfRoundDialogue());
             }
         }

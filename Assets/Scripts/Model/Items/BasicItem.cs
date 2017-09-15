@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Scripts.Model.Spells;
 using UnityEngine;
+using Scripts.Model.Characters;
 
 namespace Scripts.Model.Items {
 
@@ -20,7 +21,6 @@ namespace Scripts.Model.Items {
         /// <param name="description">Item's description</param>
         public BasicItem(Sprite icon, int basePrice, string name, string description)
             : base(icon, basePrice, TargetType.NONE, name, description) {
-
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Scripts.Model.Items {
         /// <param name="caster">Item User</param>
         /// <param name="target">Item Target</param>
         /// <returns></returns>
-        protected sealed override bool IsMeetOtherRequirements(SpellParams caster, SpellParams target) {
+        protected sealed override bool IsMeetOtherRequirements(Character caster, Character target) {
             return true;
         }
     }

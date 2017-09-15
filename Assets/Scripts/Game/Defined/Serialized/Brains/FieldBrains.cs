@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Scripts.Game.Serialized.Brains {
+
     public class Attacker : PriorityBrain {
         public static readonly Attack ATTACK = new Attack();
 
@@ -61,7 +62,7 @@ namespace Scripts.Game.Serialized.Brains {
 
         private bool IsAnyHealersAlive {
             get {
-                return currentBattle.GetAllies(brainOwner.Character).Count(c => c.Brain is Healer) > 0;
+                return currentBattle.GetAllies(brainOwner).Count(c => c.Brain is Healer) > 0;
             }
         }
 
@@ -79,7 +80,7 @@ namespace Scripts.Game.Serialized.Brains {
 
         private int CloneCount {
             get {
-                return currentBattle.GetAllies(brainOwner.Character).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
+                return currentBattle.GetAllies(brainOwner).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
             }
         }
 
@@ -123,7 +124,7 @@ namespace Scripts.Game.Serialized.Brains {
 
         private int CloneCount {
             get {
-                return currentBattle.GetAllies(brainOwner.Character).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
+                return currentBattle.GetAllies(brainOwner).Count(c => c.HasFlag(Model.Characters.Flag.IS_CLONE));
             }
         }
 

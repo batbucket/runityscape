@@ -69,7 +69,7 @@ namespace Scripts.Game.Areas {
                 new TextAct(partner, Side.RIGHT, "I will now appear on the RIGHT side."),
                 new ActionAct(() => page.AddCharacters(Side.RIGHT, partner)),
                 new TextAct(partner, Side.RIGHT, "Neato!"),
-                new CoroutineAct(SFX.DoMeleeEffect(hero.Presenter.PortraitView.Image.gameObject, partner.Presenter.PortraitView.Image.gameObject, 1.0f, "Slash_0")),
+                new CoroutineAct(SFX.DoMeleeEffect(hero, partner, 1.0f, "Slash_0")),
                 new TextAct(partner, Side.RIGHT, "Ouch.")
                 );
 

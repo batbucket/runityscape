@@ -35,13 +35,12 @@ namespace Scripts.Model.Characters {
                 }
             }
             // Unable to find anything, perform a wait so the battle doesn't get stuck
-            return brainOwner.Character.Spells.CreateSpell(DEFAULT_ACTION, brainOwner, brainOwner);
+            return brainOwner.Spells.CreateSpell(currentBattle, DEFAULT_ACTION, brainOwner, brainOwner);
         }
 
         protected new Func<IPlayable> CastOnRandom(SpellBook sb) {
             return CastOnTargetMeetingCondition(sb, c => true);
         }
-
 
         /// <summary>
         /// Doesn't cast wait if spellbook is uncastable (since we then go down the prioritylist)
@@ -54,13 +53,13 @@ namespace Scripts.Model.Characters {
                 Character specificTarget =
                     sb
                     .TargetType
-                    .GetTargets(brainOwner.Character, currentBattle)
+                    .GetTargets(brainOwner, currentBattle)
                     .Where(
-                        c => sb.IsCastable(brainOwner, new SpellParams(c, currentBattle)) && requirement(c))
+                        c => sb.IsCastable(brainOwner, c) && requirement(c))
                     .ChooseRandom();
 
                 if (specificTarget != null) {
-                    return brainOwner.Spells.CreateSpell(sb, brainOwner, new SpellParams(specificTarget, currentBattle));
+                    return brainOwner.Spells.CreateSpell(currentBattle, sb, brainOwner, specificTarget);
                 }
                 return null;
             };
@@ -71,6 +70,5 @@ namespace Scripts.Model.Characters {
         /// </summary>
         /// <returns></returns>
         protected abstract IList<Func<IPlayable>> SetupPriorityPlays();
-
     }
 }

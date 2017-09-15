@@ -77,11 +77,6 @@ namespace Scripts.Game.Pages {
                 Get(ROOT_INDEX),
                 new Process("Say", "Hello", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox("Hello"))),
                 new Process("AttDisb", () => Presenter.Main.Instance.TextBoxes.AddTextBox(new Model.TextBoxes.TextBox(kitsune.Stats.LongAttributeDistribution))),
-                new Process("hitsplat test", () => {
-                    HitsplatView hpv = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
-                    Util.Parent(hpv.gameObject, kitsune.Presenter.PortraitView.EffectsHolder);
-                    Presenter.Main.Instance.StartCoroutine(hpv.Animation(kitsune.Presenter.PortraitView.EffectsHolder, "Test", Color.cyan, Util.GetSprite("fox-head")));
-                }),
                 new Battle(debug, debug, Music.BOSS, "Battle Test", new Character[] { CharacterList.Hero("Debug"), CharacterList.TestEnemy(), CharacterList.TestEnemy()  }, new Character[] { CharacterList.TestEnemy(), CharacterList.TestEnemy() }),
                 new Process("LongTalk Test", () => {
                     ActUtil.SetupScene(ActUtil.LongTalk(debug, kitsune, "<t>we have the best <b>guns</b><s>theaefaefef oieafoewjfoejfio oe foiawjefoawijef oj efjoiejfaoo oajeoaijfo wi best guns<a>the best gonzos the best gonzos the best gonzosthe best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos the best gonzos<a>helloworld<t>this is the captian speak"));
@@ -140,5 +135,4 @@ namespace Scripts.Game.Pages {
             Cursor.lockState = set ? CursorLockMode.None : CursorLockMode.Locked;
         }
     }
-
 }

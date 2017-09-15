@@ -44,20 +44,20 @@ namespace Scripts.Model.Characters {
             Character specificTarget =
                 spellToCast
                 .TargetType
-                .GetTargets(brainOwner.Character, currentBattle)
+                .GetTargets(brainOwner, currentBattle)
                 .Where(
-                    c => spellToCast.IsCastable(brainOwner, new SpellParams(c, currentBattle)) && isCharacterMeetRequirement(c))
+                    c => spellToCast.IsCastable(brainOwner, c) && isCharacterMeetRequirement(c))
                 .ChooseRandom();
 
             // If spell is not castable, default to waiting.
             if (specificTarget != null) {
                 SpellBook castableSpell = null;
-                if (spellToCast.IsCastable(brainOwner, new SpellParams(specificTarget, currentBattle))) {
+                if (spellToCast.IsCastable(brainOwner, specificTarget)) {
                     castableSpell = spellToCast;
                 } else {
                     castableSpell = DEFAULT_SPELL;
                 }
-                return brainOwner.Spells.CreateSpell(spellToCast, brainOwner, new SpellParams(specificTarget, currentBattle));
+                return brainOwner.Spells.CreateSpell(currentBattle, spellToCast, brainOwner, specificTarget);
             }
             return null;
         }

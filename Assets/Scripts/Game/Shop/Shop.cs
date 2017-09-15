@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.Game.Shopkeeper {
+
     /// <summary>
     /// Shops sell things!
     /// </summary>
@@ -155,8 +156,8 @@ namespace Scripts.Game.Shopkeeper {
                 main.List.Add(SetupSellMenu(main));
                 main.List.Add(SetupBuyMenu(main));
                 main.List.Add(null);
-                main.List.Add(PageUtil.GenerateItemsGrid(false, p, main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p)));
-                main.List.Add(PageUtil.GenerateEquipmentGrid(main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p), false));
+                main.List.Add(PageUtil.GenerateItemsGrid(false, p, main, party.Default, PageUtil.GetOutOfBattlePlayableHandler(p)));
+                main.List.Add(PageUtil.GenerateEquipmentGrid(p, main, party.Default, PageUtil.GetOutOfBattlePlayableHandler(p), false));
                 main.List.Add(null);
                 main.List.Add(PageUtil.GenerateBack(previous));
             };
@@ -261,6 +262,5 @@ namespace Scripts.Game.Shopkeeper {
                 () => talk.Condition(flags)
                 ).SetVisibleOnDisable(false);
         }
-
     }
 }

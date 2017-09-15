@@ -10,28 +10,6 @@ using UnityEngine;
 namespace Scripts.Presenter {
 
     /// <summary>
-    /// Details needed to add a hitsplat
-    /// </summary>
-    public struct SplatDetails {
-        public readonly Sprite Sprite;
-        public readonly Color Color;
-        public readonly string Text;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SplatDetails"/> struct.
-        /// </summary>
-        /// <param name="color">The color of the hitsplat.</param>
-        /// <param name="text">The text of the splat.</param>
-        /// <param name="sprite">The sprite of the plat.</param>
-        public SplatDetails(Color color, string text, Sprite sprite = null) {
-            this.Color = color;
-            this.Text = text;
-            this.Sprite = sprite;
-        }
-    }
-
-
-    /// <summary>
     /// Updates the portraitview from the character.
     /// </summary>
     public class CharacterPresenter {
@@ -55,10 +33,28 @@ namespace Scripts.Presenter {
             SetupFuncs();
         }
 
+        private RectTransform IconRect {
+            get {
+                if (PortraitView == null) {
+                    return null;
+                }
+                return PortraitView.Image.rectTransform;
+            }
+        }
+
+        private void ParentToEffects(GameObject go) {
+            if (PortraitView != null) {
+                Util.Parent(go, PortraitView.EffectsHolder);
+            }
+        }
+
         /// <summary>
         /// Setups functions in character.
         /// </summary>
         private void SetupFuncs() {
+            Character.GetIconRectFunc = () => IconRect;
+            Character.ParentToEffectsFunc = (go) => ParentToEffects(go);
+
             Character.Stats.AddSplat = (sd => AddHitsplat(sd));
             Character.Buffs.AddSplat = (sd => AddHitsplat(sd));
             Character.Equipment.AddSplat = (sd => AddHitsplat(sd));
@@ -70,7 +66,7 @@ namespace Scripts.Presenter {
         /// <param name="details">The details needed to customize the splat.</param>
         private void AddHitsplat(SplatDetails details) {
             if (PortraitView != null && PortraitView.isActiveAndEnabled) {
-                PortraitView.StartCoroutine(SFX.DoHitSplat(PortraitView.EffectsHolder, details));
+                PortraitView.StartCoroutine(SFX.DoHitSplat(Character, details));
             }
         }
     }
