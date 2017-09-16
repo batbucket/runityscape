@@ -13,26 +13,31 @@ namespace Scripts.Model.Spells {
     /// <seealso cref="IPlayable" />
     /// <seealso cref="System.IComparable{Scripts.Model.Spells.Spell}" />
     public class Spell : IPlayable, IComparable<Spell> {
+
         /// <summary>
         /// The spell text
         /// </summary>
         public const string SPELL_TEXT = "<color=yellow>{0}</color> {1} <color=cyan>{2}</color>{3}.{4}";
+
         /// <summary>
         /// The book
         /// </summary>
         public readonly SpellBook Book;
+
         /// <summary>
         /// The result
         /// </summary>
         public readonly Result Result;
+
         /// <summary>
         /// The caster
         /// </summary>
-        public readonly SpellParams Caster;
+        public readonly Character Caster;
+
         /// <summary>
         /// The target
         /// </summary>
-        public readonly SpellParams Target;
+        public readonly Character Target;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Spell"/> class.
@@ -41,7 +46,7 @@ namespace Scripts.Model.Spells {
         /// <param name="result">The result.</param>
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
-        public Spell(SpellBook book, Result result, SpellParams caster, SpellParams target) {
+        public Spell(SpellBook book, Result result, Character caster, Character target) {
             this.Book = book;
             this.Result = result;
             this.Caster = caster;
@@ -121,7 +126,7 @@ namespace Scripts.Model.Spells {
         /// <param name="book">The book.</param>
         /// <param name="result">The result.</param>
         /// <returns></returns>
-        public static string GetCastMessage(SpellParams caster, SpellParams target, SpellBook book, ResultType result) {
+        public static string GetCastMessage(Character caster, Character target, SpellBook book, ResultType result) {
             return string.Format("<color=yellow>{0}</color> {1} <color=cyan>{2}</color>{3}.{4}",
               caster.Look.DisplayName,
               book.Verb.ToLower() + 's',

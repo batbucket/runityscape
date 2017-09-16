@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Dungeons;
+﻿using Scripts.Game.Areas;
+using Scripts.Game.Dungeons;
 using Scripts.Game.Serialized;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
@@ -7,13 +8,15 @@ using Scripts.Model.Processes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Scripts.Game.Pages {
 
     /// <summary>
     /// Area selection page.
     /// </summary>
     /// <seealso cref="Scripts.Model.Pages.PageGroup" />
-    public class WorldPages : PageGroup {
+    public class WorldPages : Model.Pages.PageGroup {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="WorldPages"/> class.
         /// </summary>
@@ -29,7 +32,6 @@ namespace Scripts.Game.Pages {
             Root.AddCharacters(Side.LEFT, party.Collection);
 
             foreach (AreaType type in AreaList.ALL_AREAS.Keys) {
-                Util.Log(type.ToString());
                 if (flags.IsAreaUnlocked(type) && flags.CurrentArea != type) {
                     buttons.Add(GetAreaChangeProcess(type, flags, party, previous));
                 }

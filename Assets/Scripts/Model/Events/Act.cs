@@ -19,6 +19,7 @@ namespace Scripts.Model.Acts {
     /// Utility class to setup in game scenes, like two characters talking to each other.
     /// </summary>
     public static class ActUtil {
+
         /// <summary>
         /// Symbol representing that the text after it should be in a standard textbox.
         /// </summary>
@@ -121,13 +122,11 @@ namespace Scripts.Model.Acts {
                 yield return act.Play();
 
                 // If not the last act, allow for stepping to the next one.
-                if (i < acts.Length - 1) {
-                    grid.List = new IButtonable[] {
-                    new Process("Step", string.Empty, () => isStepped = true),
-                    new Process("Skip All", string.Empty, () => isSkipAll = true)
-                };
-                }
-                yield return new WaitUntil(() => isStepped || i == (acts.Length - 1) || isSkipAll || !act.IsSkippable);
+                grid.List = new IButtonable[] {
+                        new Process("Step", string.Empty, () => isStepped = true),
+                        new Process("Skip All", string.Empty, () => isSkipAll = true)
+                    };
+                yield return new WaitUntil(() => isStepped || isSkipAll || !act.IsSkippable);
             }
 
             // Skip all acts possible
@@ -215,6 +214,9 @@ namespace Scripts.Model.Acts {
         /// </summary>
         /// <returns>A coroutine.</returns>
         public IEnumerator Play() {
+            if (isSkip) {
+                Skip();
+            }
             Coroutine co = Main.Instance.StartCoroutine(PlayTemplate());
             bool wasSkipped = false;
             while (!hasEnded && !wasSkipped) {
@@ -252,7 +254,6 @@ namespace Scripts.Model.Acts {
             yield return PlayHelper();
             hasEnded = true;
         }
-
     }
 
     /// <summary>
@@ -270,11 +271,18 @@ namespace Scripts.Model.Acts {
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="TextAct"/> class.
+        /// </summary>
+        /// <param name="avatar">The avatar.</param>
+        /// <param name="side">The side.</param>
+        /// <param name="message">The message.</param>
+        public TextAct(IAvatarable avatar, Side side, string message) : this(new AvatarBox(avatar, side, message)) { }
+
+        /// <summary>
         /// Vanilla textbox constructor.
         /// </summary>
         /// <param name="message">Message to enclose in a textbox.</param>
-        public TextAct(string message) {
-            this.box = new TextBox(message);
+        public TextAct(string message) : this(new TextBox(message)) {
         }
 
         /// <summary>
@@ -323,7 +331,22 @@ namespace Scripts.Model.Acts {
         /// Skipping cannot affect this.
         /// </summary>
         protected override void Skip() {
+        }
+    }
 
+    public class CoroutineAct : Act {
+        private IEnumerator routine;
+
+        public CoroutineAct(IEnumerator routine) : base(false) {
+            this.routine = routine;
+        }
+
+        protected override IEnumerator PlayHelper() {
+            yield return routine;
+        }
+
+        protected override void Skip() {
+            this.routine = SFX.Wait(0);
         }
     }
 
@@ -354,7 +377,6 @@ namespace Scripts.Model.Acts {
         /// Unskippable
         /// </summary>
         protected override void Skip() {
-
         }
     }
 
@@ -364,6 +386,7 @@ namespace Scripts.Model.Acts {
     /// Where the returned string will be the inputted value.
     /// </summary>
     public class InputAct : Act {
+
         /// <summary>
         /// Minimum number of characters allowed in input before allowing confirmation.
         /// </summary>
@@ -393,7 +416,6 @@ namespace Scripts.Model.Acts {
         /// Unskippable.
         /// </summary>
         protected override void Skip() {
-
         }
 
         /// <summary>
@@ -427,6 +449,7 @@ namespace Scripts.Model.Acts {
     /// Fades in and out the boss transition window.
     /// </summary>
     public class BossTransitionAct : Act {
+
         /// <summary>
         /// What page to go to after the act finishes
         /// </summary>
@@ -458,7 +481,7 @@ namespace Scripts.Model.Acts {
         /// </summary>
         /// <returns>Coroutine.</returns>
         protected override IEnumerator PlayHelper() {
-            yield return SFX.DoPageTransition(sprite, text);
+            yield return null;
             destination.Invoke();
         }
 

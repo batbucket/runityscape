@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using Scripts.View.Portraits;
 using System.Collections;
 using Scripts.Game.Defined.SFXs;
+using Scripts.Model.Pages;
 
 namespace Scripts.Model.Items {
+
     /// <summary>
     /// Equips the item
     /// </summary>
@@ -30,13 +32,13 @@ namespace Scripts.Model.Items {
         /// <returns>
         ///   <c>true</c> if [is meet other cast requirements2] [the specified caster]; otherwise, <c>false</c>.
         /// </returns>
-        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+        protected override bool IsMeetItemCastRequirements(Character caster, Character target) {
             return caster.Inventory.HasItem(equip) && (!target.Equipment.Contains(equip.Type) || caster.Inventory.IsAddable(target.Equipment.PeekItem(equip.Type)));
         }
 
-        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip), new Buffs.BuffParams(caster.Stats, caster.CharacterId))
+                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip), new Buffs.BuffParams(caster.Stats, caster.Id))
                 };
         }
     }
@@ -70,11 +72,11 @@ namespace Scripts.Model.Items {
         /// <returns>
         ///   <c>true</c> if [is meet other cast requirements2] [the specified caster]; otherwise, <c>false</c>.
         /// </returns>
-        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+        protected override bool IsMeetItemCastRequirements(Character caster, Character target) {
             return target.Equipment.Contains(item.Type) && caster.Inventory.IsAddable(item);
         }
 
-        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
                     new UnequipItemEffect(new EquipParams(caster.Inventory, target.Equipment, item))
                 };
@@ -86,13 +88,15 @@ namespace Scripts.Model.Items {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.ItemSpellBook" />
     public class Dummy : ItemSpellBook {
-        public Dummy(BasicItem basic) : base(basic, string.Empty) { }
+
+        public Dummy(BasicItem basic) : base(basic, string.Empty) {
+        }
 
         protected override string CreateDescriptionHelper() {
             return string.Format("{0}", item.Description);
         }
 
-        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[0];
         }
     }
@@ -108,7 +112,7 @@ namespace Scripts.Model.Items {
             this.consume = consume;
         }
 
-        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             IList<SpellEffect> itemEffects = consume.GetEffects(caster, target);
             SpellEffect[] allEffects = new SpellEffect[itemEffects.Count + 1];
             allEffects[0] = new ConsumeItemEffect(consume, caster.Inventory);
@@ -118,11 +122,11 @@ namespace Scripts.Model.Items {
             return allEffects;
         }
 
-        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+        protected override bool IsMeetItemCastRequirements(Character caster, Character target) {
             return caster.Inventory.HasItem(consume);
         }
 
-        protected override IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
             return new IEnumerator[] { SFX.PlaySound("healspell1") };
         }
     }
@@ -138,11 +142,11 @@ namespace Scripts.Model.Items {
             this.inventory = inventory;
         }
 
-        protected override bool IsMeetOtherCastRequirements2(SpellParams caster, SpellParams target) {
+        protected override bool IsMeetItemCastRequirements(Character caster, Character target) {
             return caster.Inventory.HasItem(item);
         }
 
-        protected override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
                 new ConsumeItemEffect(item, inventory)
             };

@@ -1,5 +1,6 @@
 ﻿using Script.View.Tooltip;
 using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.SFXs;
 using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
@@ -40,6 +41,8 @@ namespace Scripts.Presenter {
 
         private InputBoxView inputBox;
 
+        private IDictionary<Character, CharacterPresenter> presenters;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PagePresenter"/> class.
         /// </summary>
@@ -59,6 +62,7 @@ namespace Scripts.Presenter {
             this.sound = sound;
             this.characterPresenters = new List<CharacterPresenter>();
             InitializeFunctions();
+            this.presenters = new Dictionary<Character, CharacterPresenter>(new IdNumberEqualityComparer<Character>());
             this.Page = initial;
         }
 
@@ -92,7 +96,7 @@ namespace Scripts.Presenter {
                 SetPage(value);
             }
 
-            get {
+            private get {
                 return page;
             }
         }
@@ -140,6 +144,7 @@ namespace Scripts.Presenter {
         /// </summary>
         /// <param name="page">The page.</param>
         private void SetPage(Page page) {
+            presenters.Clear();
 
             // Music decision
             if (string.IsNullOrEmpty(page.Music)) {
@@ -199,8 +204,12 @@ namespace Scripts.Presenter {
         private void SetCharacterPresenters(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
             AddCharactersToPortraitHolder(characters, portraitHolder);
             foreach (Character c in characters) {
-                c.Presenter = new CharacterPresenter(c, portraitHolder.GetPortrait(c.Id));
-                c.Presenter.Tick();
+                CharacterPresenter presenter = new CharacterPresenter(c, portraitHolder.GetPortrait(c.Id));
+                presenter.Tick();
+                if (!presenters.ContainsKey(c)) {
+                    presenters.Add(c, null);
+                }
+                presenters[c] = presenter;
             }
         }
 

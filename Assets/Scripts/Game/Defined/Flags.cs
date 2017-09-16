@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Dungeons;
+﻿using Scripts.Game.Areas;
+using Scripts.Game.Dungeons;
 using Scripts.Game.Pages;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
@@ -7,17 +8,24 @@ using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace Scripts.Game.Serialized {
+
     public enum TimeOfDay {
+
         [Description("<color=white>Dawn</color>")]
         DAWN,
+
         [Description("<color=yellow>Morning</color>")]
         MORNING,
+
         [Description("<color=orange>Midday</color>")]
         MIDDAY,
+
         [Description("<color=red>Afternoon</color>")]
         AFTERNOON,
+
         [Description("<color=magenta>Dusk</color>")]
         DUSK,
+
         [Description("<color=blue>Night</color>")]
         NIGHT,
     }
@@ -40,7 +48,7 @@ namespace Scripts.Game.Serialized {
         /// </summary>
         public Flags() {
             this.LastClearedArea = AreaType.NONE;
-            this.CurrentArea = AreaType.RUINS;
+            this.CurrentArea = AreaType.TINY_WOODS;
         }
 
         /// <summary>
@@ -63,7 +71,6 @@ namespace Scripts.Game.Serialized {
             return this.LastClearedArea >= type || this.LastClearedStage > stageIndex || Util.IS_DEBUG;
         }
 
-
         /// <summary>
         /// Determines whether the area is unlocked.
         /// </summary>
@@ -80,7 +87,6 @@ namespace Scripts.Game.Serialized {
         /// </summary>
         /// <param name="saveObject">The save object.</param>
         public void InitFromSaveObject(FlagsSave saveObject) {
-
         }
     }
 }

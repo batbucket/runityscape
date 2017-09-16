@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using Scripts.Game.Defined.Spells;
 using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Model.Characters;
 
 namespace Scripts.Model.Items {
 
@@ -13,6 +14,7 @@ namespace Scripts.Model.Items {
     /// </summary>
     /// <seealso cref="Scripts.Model.Items.UseableItem" />
     public abstract class ConsumableItem : UseableItem {
+
         /// <summary>
         /// Item spellbook associated with this item.
         /// </summary>
@@ -60,7 +62,7 @@ namespace Scripts.Model.Items {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        public abstract IList<SpellEffect> GetEffects(SpellParams caster, SpellParams target);
+        public abstract IList<SpellEffect> GetEffects(Character caster, Character target);
 
         /// <summary>
         /// Determines whether having the caster use an item on a target meets particular requirements.
@@ -70,7 +72,7 @@ namespace Scripts.Model.Items {
         /// <returns>
         ///   <c>true</c> if caster can use the item on target; otherwise, <c>false</c>.
         /// </returns>
-        protected override bool IsMeetOtherRequirements(SpellParams caster, SpellParams target) {
+        protected override bool IsMeetOtherRequirements(Character caster, Character target) {
             return true;
         }
 
@@ -79,6 +81,5 @@ namespace Scripts.Model.Items {
                 return string.Format("Consumable\n{0}", Flavor);
             }
         }
-
     }
 }

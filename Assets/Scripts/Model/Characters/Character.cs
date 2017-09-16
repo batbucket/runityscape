@@ -1,4 +1,5 @@
 ﻿using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.SFXs;
 using Scripts.Model.Interfaces;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
@@ -9,6 +10,7 @@ using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Scripts.Model.Characters {
 
@@ -18,7 +20,7 @@ namespace Scripts.Model.Characters {
     ///
     /// They can participate in battles.
     /// </summary>
-    public class Character : ISaveable<CharacterSave>, IIdNumberable {
+    public class Character : ISaveable<CharacterSave>, IIdNumberable, IAvatarable, IPortraitable {
         public const int UNKNOWN_ID = -1;
 
         /// <summary>
@@ -57,9 +59,26 @@ namespace Scripts.Model.Characters {
         public readonly Equipment Equipment;
 
         /// <summary>
-        /// Presenter reference
+        /// The get icon position function
         /// </summary>
-        public CharacterPresenter Presenter;
+        public Func<RectTransform> GetIconRectFunc {
+            set {
+                getIconRectFunc = value;
+            }
+        }
+
+        private Func<RectTransform> getIconRectFunc;
+
+        /// <summary>
+        /// The parent to effects function
+        /// </summary>
+        public Action<GameObject> ParentToEffectsFunc {
+            set {
+                this.parentToEffectsFunc = value;
+            }
+        }
+
+        private Action<GameObject> parentToEffectsFunc;
 
         /// <summary>
         /// Character specific flags
@@ -137,6 +156,24 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public Sprite Sprite {
+            get {
+                return Look.Sprite;
+            }
+        }
+
+        public Color TextColor {
+            get {
+                return Look.TextColor;
+            }
+        }
+
+        public RectTransform RectTransform {
+            get {
+                return getIconRectFunc();
+            }
+        }
+
         /// <summary>
         /// Stats are updated each tick to ensure dependent stats
         /// are updated
@@ -174,7 +211,6 @@ namespace Scripts.Model.Characters {
         public void AddFlag(Flag flagToAdd) {
             flags.Add(flagToAdd);
         }
-
 
         /// <summary>
         /// Determines whether the character has the specified flag.
@@ -234,6 +270,10 @@ namespace Scripts.Model.Characters {
             this.Brain = brain;
 
             // Buffs and inventory must be setup in Party!
+        }
+
+        public void ParentToEffects(GameObject go) {
+            parentToEffectsFunc(go);
         }
     }
 }

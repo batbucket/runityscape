@@ -11,6 +11,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Scripts.Game.Pages {
+
     /// <summary>
     /// Inventory pages for managing items in camp.
     /// </summary>
@@ -36,7 +37,7 @@ namespace Scripts.Game.Pages {
                         false,
                         p,
                         previous,
-                        new SpellParams(party.Default, p),
+                        party.Default,
                         PageUtil.GetOutOfBattlePlayableHandler(p))
                         .List;
             };

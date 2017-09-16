@@ -4,17 +4,34 @@ using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Pages;
 using Scripts.Model.TextBoxes;
-using System;
 using UnityEngine;
 
 namespace Scripts.Game.Pages {
+
     /// <summary>
     /// Pages used in the game introduction.
     /// </summary>
     /// <seealso cref="Scripts.Model.Pages.PageGroup" />
     public class IntroPages : PageGroup {
+        private static readonly Sprite hero = CharacterList.Hero(string.Empty).Look.Sprite;
+
+        private static readonly Sprite partner = CharacterList.Partner(string.Empty).Look.Sprite;
+
         public IntroPages(string name) : base(new Page("Unknown")) {
             SetupIntro(name);
+        }
+
+        private void GoToCamp(Character you, Character partner) {
+            Party party = new Party();
+            Flags flags = new Flags();
+            party.AddMember(you);
+            party.AddMember(partner);
+            Camp camp = new Camp(party, flags);
+            camp.Root.Invoke();
+        }
+
+        private TextAct PartnerVoice(string message) {
+            return new TextAct(new AvatarBox(Side.RIGHT, partner, Color.white, message));
         }
 
         private void SetupIntro(string name) {
@@ -41,28 +58,12 @@ namespace Scripts.Game.Pages {
             };
         }
 
-        private void GoToCamp(Character you, Character partner) {
-            Party party = new Party();
-            Flags flags = new Flags();
-            party.AddMember(you);
-            party.AddMember(partner);
-            Camp camp = new Camp(party, flags);
-            camp.Root.Invoke();
+        private TextAct UnknownVoice(string message) {
+            return new TextAct(new AvatarBox(Side.RIGHT, Util.GetSprite("question-mark"), Color.grey, message));
         }
-
-        private static readonly Sprite hero = CharacterList.Hero(string.Empty).Look.Sprite;
-        private static readonly Sprite partner = CharacterList.Partner(string.Empty).Look.Sprite;
 
         private TextAct YourVoice(string message) {
             return new TextAct(new AvatarBox(Side.RIGHT, hero, Color.white, message));
-        }
-
-        private TextAct PartnerVoice(string message) {
-            return new TextAct(new AvatarBox(Side.RIGHT, partner, Color.white, message));
-        }
-
-        private TextAct UnknownVoice(string message) {
-            return new TextAct(new AvatarBox(Side.RIGHT, Util.GetSprite("question-mark"), Color.grey, message));
         }
     }
 }

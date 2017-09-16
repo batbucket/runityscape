@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Dungeons;
+﻿using Scripts.Game.Areas;
+using Scripts.Game.Dungeons;
 using Scripts.Game.Serialized;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
@@ -12,7 +13,7 @@ namespace Scripts.Game.Pages {
     /// Pages showing off the bonus areas of a particular aea.
     /// </summary>
     /// <seealso cref="Scripts.Model.Pages.PageGroup" />
-    public class PlacePages : PageGroup {
+    public class PlacePages : Model.Pages.PageGroup {
         private readonly Page previous;
         private readonly Flags flags;
         private readonly Party party;
@@ -41,7 +42,7 @@ namespace Scripts.Game.Pages {
             buttons.Add(PageUtil.GenerateBack(previous));
 
             foreach (PageGroup pg in GetCurrentArea(flags.CurrentArea).Places) {
-                buttons.Add(pg);
+                buttons.Add(GetPlaceProcess(pg));
             }
 
             p.Actions = buttons;
@@ -52,7 +53,7 @@ namespace Scripts.Game.Pages {
         /// </summary>
         /// <param name="pg">The pg.</param>
         /// <returns></returns>
-        private Process GetPlaceProcess(PageGroup pg) {
+        private Process GetPlaceProcess(Model.Pages.PageGroup pg) {
             return new Process(
                     pg.Root.Location,
                     pg.Root.TooltipText,

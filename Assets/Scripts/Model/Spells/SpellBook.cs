@@ -18,76 +18,6 @@ using System;
 namespace Scripts.Model.Spells {
 
     /// <summary>
-    /// SpellParams hold information needed for the spellbook.
-    /// </summary>
-    public struct SpellParams {
-        /// <summary>
-        /// The character identifier
-        /// </summary>
-        public readonly int CharacterId;
-        /// <summary>
-        /// The character
-        /// </summary>
-        public readonly Character Character;
-        /// <summary>
-        /// The look
-        /// </summary>
-        public readonly Characters.Look Look;
-        /// <summary>
-        /// The stats
-        /// </summary>
-        public readonly Characters.Stats Stats;
-        /// <summary>
-        /// The spells
-        /// </summary>
-        public readonly Characters.SpellBooks Spells;
-        /// <summary>
-        /// The buffs
-        /// </summary>
-        public readonly Characters.Buffs Buffs;
-        /// <summary>
-        /// The inventory
-        /// </summary>
-        public readonly Characters.Inventory Inventory;
-        /// <summary>
-        /// The equipment
-        /// </summary>
-        public readonly Characters.Equipment Equipment;
-        /// <summary>
-        /// The page
-        /// </summary>
-        public readonly Page Page;
-        /// <summary>
-        /// Gets the portrait.
-        /// </summary>
-        /// <value>
-        /// The portrait.
-        /// </value>
-        public PortraitView Portrait {
-            get {
-                return Character.Presenter.PortraitView;
-            }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SpellParams"/> struct.
-        /// </summary>
-        /// <param name="c">The c.</param>
-        /// <param name="currentPage">The current page.</param>
-        public SpellParams(Characters.Character c, Page currentPage) {
-            this.CharacterId = c.Id;
-            this.Character = c;
-            this.Look = c.Look;
-            this.Stats = c.Stats;
-            this.Spells = c.Spells;
-            this.Buffs = c.Buffs;
-            this.Inventory = c.Inventory;
-            this.Equipment = c.Equipment;
-            this.Page = currentPage;
-        }
-    }
-
-    /// <summary>
     /// Creates spells.
     /// </summary>
     /// <seealso cref="Scripts.Model.Interfaces.ISpellable" />
@@ -98,18 +28,22 @@ namespace Scripts.Model.Spells {
         /// The name
         /// </summary>
         public readonly string Name;
+
         /// <summary>
         /// The icon
         /// </summary>
         public readonly Sprite Icon;
+
         /// <summary>
         /// The target type
         /// </summary>
         public readonly TargetType TargetType;
+
         /// <summary>
         /// The spell type
         /// </summary>
         public readonly SpellType SpellType;
+
         /// <summary>
         /// The priority
         /// </summary>
@@ -119,14 +53,17 @@ namespace Scripts.Model.Spells {
         /// The cast time
         /// </summary>
         public readonly int CastTime;
+
         /// <summary>
         /// The cooldown
         /// </summary>
         public readonly int Cooldown;
+
         /// <summary>
         /// The is silenced
         /// </summary>
         public readonly bool IsSilenced;
+
         /// <summary>
         /// The verb
         /// </summary>
@@ -136,6 +73,7 @@ namespace Scripts.Model.Spells {
         /// The flags
         /// </summary>
         protected readonly HashSet<Flag> flags;
+
         /// <summary>
         /// The costs
         /// </summary>
@@ -278,7 +216,7 @@ namespace Scripts.Model.Spells {
         /// </summary>
         /// <param name="caster">The caster.</param>
         /// <returns></returns>
-        public string CreateDescription(SpellParams caster) {
+        public string CreateDescription(Character caster) {
             return string.Format("{0}{1}{2}{3}",
                 CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n", Color.red),
                 Priority == 0 ? string.Empty : string.Format("{0} priority", Priority.GetDescription()),
@@ -293,7 +231,7 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        public string CreateTargetDescription(SpellParams caster, SpellParams target) {
+        public string CreateTargetDescription(Character caster, Character target) {
             return string.Format("{0} {1} on {2}.", this.Verb, this.Name, target.Look.DisplayName);
         }
 
@@ -356,7 +294,7 @@ namespace Scripts.Model.Spells {
         /// <returns>
         ///   <c>true</c> if the specified caster is castable; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsCastable(SpellParams caster, SpellParams target) {
+        public bool IsCastable(Character caster, Character target) {
             return CasterHasResources(caster.Stats) && IsCastableIgnoreResources(caster, target);
         }
 
@@ -368,7 +306,7 @@ namespace Scripts.Model.Spells {
         /// <returns>
         ///   <c>true</c> if [is castable ignore resources] [the specified caster]; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsCastableIgnoreResources(SpellParams caster, SpellParams target) {
+        public bool IsCastableIgnoreResources(Character caster, Character target) {
             return !IsSilenced && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || !flags.Contains(Flag.CASTER_REQUIRES_SPELL));
         }
 
@@ -378,7 +316,7 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        public Spell BuildSpell(SpellParams caster, SpellParams target) {
+        public Spell BuildSpell(Page page, Character caster, Character target) {
             Util.Assert(
                 IsCastable(caster, target),
                 string.Format(
@@ -392,31 +330,32 @@ namespace Scripts.Model.Spells {
                 caster.Stats.AddToStat(pair.Key, Characters.Stats.Set.MOD, -pair.Value);
             }
 
-            return ForceSpell(caster, target);
+            return ForceSpell(page, caster, target);
         }
 
         /// <summary>
         /// Forces the spell.
         /// </summary>
+        /// <param name="current">The current page.</param>
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        public Spell ForceSpell(SpellParams caster, SpellParams target) {
+        public Spell ForceSpell(Page current, Character caster, Character target) {
             Result res = new Result();
             if (IsHit(caster, target)) {
-                res.AddSFX(GetHitSFX(caster.Portrait, target.Portrait));
+                res.AddSFX(GetHitSFX(caster, target));
                 if (IsCritical(caster, target)) {
                     res.Type = ResultType.CRITICAL;
-                    res.AddEffects(GetCriticalEffects(caster, target));
+                    res.AddEffects(GetCriticalEffects(current, caster, target));
                 } else {
                     res.Type = ResultType.HIT;
-                    res.AddEffects(GetHitEffects(caster, target));
+                    res.AddEffects(GetHitEffects(current, caster, target));
                 }
             } else {
-                res.AddSFX(GetMissSFX(caster.Portrait, target.Portrait));
-                res.AddSFX(SFX.DoHitSplat(target.Portrait.EffectsHolder, new SplatDetails(Color.grey, "MISS!")));
+                res.AddSFX(GetMissSFX(caster, target));
+                res.AddSFX(SFX.DoHitSplat(target, new SplatDetails(Color.grey, "MISS!")));
                 res.Type = ResultType.MISS;
-                res.AddEffects(GetMissEffects(caster, target));
+                res.AddEffects(GetMissEffects(current, caster, target));
             }
 
             return new Spell(this, res, caster, target);
@@ -440,7 +379,7 @@ namespace Scripts.Model.Spells {
         /// <returns>
         ///   <c>true</c> if [is meet other cast requirements] [the specified caster]; otherwise, <c>false</c>.
         /// </returns>
-        protected virtual bool IsMeetOtherCastRequirements(SpellParams caster, SpellParams target) {
+        protected virtual bool IsMeetOtherCastRequirements(Character caster, Character target) {
             return true;
         }
 
@@ -452,7 +391,7 @@ namespace Scripts.Model.Spells {
         /// <returns>
         ///   <c>true</c> if the specified caster is hit; otherwise, <c>false</c>.
         /// </returns>
-        protected virtual bool IsHit(SpellParams caster, SpellParams target) {
+        protected virtual bool IsHit(Character caster, Character target) {
             return true;
         }
 
@@ -462,7 +401,7 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        protected abstract IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target);
+        protected abstract IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target);
 
         /// <summary>
         /// Determines whether the specified caster is critical.
@@ -472,7 +411,7 @@ namespace Scripts.Model.Spells {
         /// <returns>
         ///   <c>true</c> if the specified caster is critical; otherwise, <c>false</c>.
         /// </returns>
-        protected virtual bool IsCritical(SpellParams caster, SpellParams target) {
+        protected virtual bool IsCritical(Character caster, Character target) {
             return false;
         }
 
@@ -482,7 +421,7 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        protected virtual IList<SpellEffect> GetCriticalEffects(SpellParams caster, SpellParams target) {
+        protected virtual IList<SpellEffect> GetCriticalEffects(Page page, Character caster, Character target) {
             return new SpellEffect[0];
         }
 
@@ -492,7 +431,7 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        protected virtual IList<SpellEffect> GetMissEffects(SpellParams caster, SpellParams target) {
+        protected virtual IList<SpellEffect> GetMissEffects(Page page, Character caster, Character target) {
             return new SpellEffect[0];
         }
 
@@ -502,7 +441,7 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        protected virtual IList<IEnumerator> GetHitSFX(PortraitView caster, PortraitView target) {
+        protected virtual IList<IEnumerator> GetHitSFX(Character caster, Character target) {
             return new IEnumerator[0];
         }
 
@@ -522,7 +461,7 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        protected virtual IList<IEnumerator> GetMissSFX(PortraitView caster, PortraitView target) {
+        protected virtual IList<IEnumerator> GetMissSFX(Character caster, Character target) {
             return new IEnumerator[0];
         }
 
@@ -556,7 +495,7 @@ namespace Scripts.Model.Spells {
         /// </summary>
         /// <param name="caster">The caster.</param>
         /// <returns></returns>
-        public virtual string GetDetailedName(SpellParams caster) {
+        public virtual string GetDetailedName(Character caster) {
             return Util.ColorString(string.Format("{0}", Name), CasterHasResources(caster.Stats));
         }
 

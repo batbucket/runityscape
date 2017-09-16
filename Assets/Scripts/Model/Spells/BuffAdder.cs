@@ -1,5 +1,7 @@
 ﻿using Scripts.Game.Defined.Spells;
 using Scripts.Model.Buffs;
+using Scripts.Model.Characters;
+using Scripts.Model.Pages;
 using System;
 using System.Collections.Generic;
 
@@ -28,10 +30,10 @@ namespace Scripts.Model.Spells {
         /// Does the buff adding
         /// </summary>
         /// <returns>IList with neccessar spell effects for adding a buff</returns>
-        protected sealed override IList<SpellEffect> GetHitEffects(SpellParams caster, SpellParams target) {
+        protected sealed override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
                 new AddBuff(
-                    new BuffParams(caster.Stats, caster.CharacterId),
+                    new BuffParams(caster.Stats, caster.Id),
                     target.Buffs,
                     Util.TypeToObject<Buff>(dummy.GetType()))
             };
@@ -54,6 +56,5 @@ namespace Scripts.Model.Spells {
                 buff.DurationText
                 );
         }
-
     }
 }
