@@ -19,6 +19,7 @@ namespace Scripts.Model.TextBoxes {
         private string[] textArray;
         private float timePerLetter;
         private TooltipBundle tooltip;
+        private bool isSkip;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TextBox"/> class.
@@ -72,10 +73,10 @@ namespace Scripts.Model.TextBoxes {
         public void SetupPrefab(GameObject textBoxPrefab) {
             this.view = textBoxPrefab.GetComponent<TextBoxView>();
             SetupHelper(textBoxPrefab);
+            view.IsSkip = isSkip;
         }
 
         protected virtual void SetupHelper(GameObject textBoxPrefab) {
-
         }
 
         public void Write() {
@@ -83,7 +84,10 @@ namespace Scripts.Model.TextBoxes {
         }
 
         public void Skip() {
-            view.IsSkip = true;
+            this.isSkip = true;
+            if (view != null) {
+                view.IsSkip = true;
+            }
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Scripts.Presenter;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,10 +21,16 @@ namespace Scripts.View.Title {
         [SerializeField]
         private Text text;
 
-        private const float FADE_TIME = 0.5f;
-        private const float DURATION = 4f;
+        private const float DEFAULT_FADE_TIME = 0.5f;
+        private const float DEFAULT_DURATION = 1f;
 
-        public bool IsDone;
+        public bool IsDone {
+            get {
+                return this.isDone;
+            }
+        }
+
+        private bool isDone;
 
         private Coroutine routine;
 
@@ -35,37 +43,47 @@ namespace Scripts.View.Title {
         }
 
         public void Cancel() {
-            this.IsDone = true;
+            this.isDone = true;
             StopAllCoroutines();
             alpha = 0;
         }
 
-        public void Play(Sprite sprite, string text) {
-            routine = StartCoroutine(TitleTransition(sprite, text, DURATION));
+        public void Play(Sprite sprite, string text, Action callMiddle) {
+            routine = StartCoroutine(TitleTransition(sprite, text, DEFAULT_FADE_TIME, DEFAULT_DURATION, callMiddle));
         }
 
-        private IEnumerator TitleTransition(Sprite sprite, string text, float duration) {
-            this.IsDone = false;
+        private IEnumerator TitleTransition(Sprite sprite, string text, float fadeTime, float duration, Action callMiddle) {
+            this.isDone = false;
+
             image.sprite = sprite;
+            image.enabled = (sprite != null);
+
             this.text.text = text;
             float timer = 0;
 
+            Util.SetCursorActive(false);
+            Main.Instance.ActionGrid.IsEnabled = false;
+
             // Fade in
-            while ((timer += Time.deltaTime) < FADE_TIME) {
-                alpha = Mathf.Lerp(0, 1, timer / FADE_TIME);
+            while ((timer += Time.deltaTime) < fadeTime) {
+                alpha = Mathf.Lerp(0, 1, timer / fadeTime);
                 yield return null;
             }
             alpha = 1;
             yield return new WaitForSeconds(duration);
             timer = 0;
 
+            callMiddle();
+
             // Fade out
-            while ((timer += Time.deltaTime) < FADE_TIME) {
-                alpha = Mathf.Lerp(1, 0, timer / FADE_TIME);
+            while ((timer += Time.deltaTime) < fadeTime) {
+                alpha = Mathf.Lerp(1, 0, timer / fadeTime);
                 yield return null;
             }
             alpha = 0;
-            this.IsDone = true;
+            this.isDone = true;
+            Util.SetCursorActive(true);
+            Main.Instance.ActionGrid.IsEnabled = true;
         }
     }
 }

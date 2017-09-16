@@ -14,6 +14,7 @@ namespace Script.View.Tooltip {
     /// </summary>
     /// <seealso cref="UnityEngine.MonoBehaviour" />
     public class TooltipManager : MonoBehaviour {
+
         /// <summary>
         /// The box
         /// </summary>
@@ -36,6 +37,7 @@ namespace Script.View.Tooltip {
         /// The is over tooltip content
         /// </summary>
         private bool isOverTooltipContent;
+
         /// <summary>
         /// The content identifier
         /// </summary>
@@ -48,7 +50,7 @@ namespace Script.View.Tooltip {
             box.Pivot = CalculatePivot();
             box.Position = CalculatePosition();
             UpdateTooltip();
-            if (isOverTooltipContent) {
+            if (isOverTooltipContent && Cursor.visible) {
                 StartCoroutine(DisplayTooltip(contentID));
             } else {
                 SetRenderers(false);

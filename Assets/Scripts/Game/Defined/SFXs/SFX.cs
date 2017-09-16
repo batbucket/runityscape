@@ -1,4 +1,5 @@
-﻿using Scripts.Model.Spells;
+﻿using Scripts.Model.Characters;
+using Scripts.Model.Spells;
 using Scripts.Presenter;
 using Scripts.View.Effects;
 using Scripts.View.ObjectPool;
@@ -13,6 +14,7 @@ namespace Scripts.Game.Defined.SFXs {
     /// Various special effects for battle
     /// </summary>
     public static class SFX {
+
         /// <summary>
         /// Creates a hitsplat.
         /// </summary>
@@ -21,9 +23,9 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="splatColor">The splat color.</param>
         /// <param name="sprite">The sprite.</param>
         /// <returns></returns>
-        public static IEnumerator DoHitSplat(GameObject parent, string splatText, Color splatColor, Sprite sprite = null) {
+        public static IEnumerator DoHitSplat(IPortraitable parent, string splatText, Color splatColor, Sprite sprite = null) {
             HitsplatView hp = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Hitsplat);
-            return hp.Animation(parent, splatText, splatColor, sprite);
+            return hp.Animation(go => parent.ParentToEffects(go), splatText, splatColor, sprite);
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="parent">The parent.</param>
         /// <param name="splat">The splat.</param>
         /// <returns></returns>
-        public static IEnumerator DoHitSplat(GameObject parent, SplatDetails splat) {
+        public static IEnumerator DoHitSplat(IPortraitable parent, SplatDetails splat) {
             return DoHitSplat(parent, splat.Text, splat.Color, splat.Sprite);
         }
 
@@ -63,20 +65,22 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="duration">The duration.</param>
         /// <param name="soundLoc">The sound loc.</param>
         /// <returns></returns>
-        public static IEnumerator DoMeleeEffect(GameObject mover, GameObject destination, float duration, string soundLoc) {
+        public static IEnumerator DoMeleeEffect(IPortraitable mover, IPortraitable destination, float duration, string soundLoc) {
             // Move mover to upper layer so it is on top of all elements
-            int index = mover.transform.GetSiblingIndex();
-            GameObject parent = mover.transform.parent.gameObject;
-            Util.Parent(mover, EffectsManager.Instance.Foreground);
+            int index = mover.RectTransform.GetSiblingIndex();
+            GameObject parent = mover.RectTransform.parent.gameObject;
 
-            Vector2 moverOriginalPos = mover.transform.position;
-            yield return MoveTowards(mover, destination, duration / 3);
+            Util.Parent(mover.RectTransform.gameObject, EffectsManager.Instance.Foreground);
+
+            Vector2 moverOriginalPos = mover.RectTransform.position;
+            yield return MoveTowards(mover.RectTransform, destination.RectTransform, duration / 3);
             Presenter.Main.Instance.Sound.PlaySound(soundLoc);
-            yield return Shake(destination, 100, duration / 3);
-            yield return MoveBack(mover, moverOriginalPos, duration / 3);
+            yield return Shake(destination.RectTransform, 100, duration / 3);
+            yield return MoveBack(mover.RectTransform, moverOriginalPos, duration / 3);
 
-            Util.Parent(mover, parent);
-            mover.transform.SetSiblingIndex(index);
+            Util.Parent(mover.RectTransform.gameObject, parent);
+
+            mover.RectTransform.SetSiblingIndex(index);
         }
 
         /// <summary>
@@ -86,28 +90,17 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="effectHolder">The effect holder.</param>
         /// <param name="fadeDuration">Duration of the fade.</param>
         /// <returns></returns>
-        public static IEnumerator DoDeathEffect(GameObject portrait, GameObject effectHolder, float fadeDuration) {
-            Rect rect = effectHolder.GetComponent<RectTransform>().rect;
+        public static IEnumerator DoDeathEffect(IPortraitable portrait, float fadeDuration) {
+            Rect rect = portrait.RectTransform.rect;
             Vector2 dimensions = new Vector2(rect.width, rect.height);
 
             ExplosionView ev = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Explosion);
             ev.Dimensions = dimensions;
-            Util.Parent(ev.gameObject, effectHolder);
+            portrait.ParentToEffects(ev.gameObject);
             ev.Play();
-            yield return DoHitSplat(effectHolder, "DEFEAT", Color.red, Util.GetSprite("skull-crossed-bones")); // this one is causing issues
+            yield return DoHitSplat(portrait, "DEFEAT", Color.red, Util.GetSprite("skull-crossed-bones")); // this one is causing issues
             yield return new WaitUntil(() => ev.IsDone);
             ObjectPoolManager.Instance.Return(ev);
-        }
-
-        /// <summary>
-        /// Does a page transition
-        /// </summary>
-        /// <param name="sprite">The sprite.</param>
-        /// <param name="text">The text.</param>
-        /// <returns></returns>
-        public static IEnumerator DoPageTransition(Sprite sprite, string text) {
-            Main.Instance.Title.Play(sprite, text);
-            yield return new WaitUntil(() => Main.Instance.Title.IsDone);
         }
 
         /// <summary>
@@ -117,22 +110,22 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="destination">The destination.</param>
         /// <param name="duration">The duration.</param>
         /// <returns></returns>
-        private static IEnumerator MoveTowards(GameObject mover, GameObject destination, float duration) {
+        private static IEnumerator MoveTowards(RectTransform mover, RectTransform destination, float duration) {
             float timer = 0;
 
-            Vector3 destinationPos = destination.transform.position;
-            float width = destination.GetComponent<RectTransform>().rect.width;
+            Vector3 destinationPos = destination.position;
+            float width = destination.rect.width;
 
             // Do position corrections so we end up next to the icon instead of on top of it, but the mover needs to be on the inner side always
 
             // Mover ---- Destination,
-            if (mover.transform.position.x < destinationPos.x) {
+            if (mover.position.x < destinationPos.x) {
                 destinationPos -= new Vector3(width, 0, 0);
             } else { // Destination ---- Mover
                 destinationPos += new Vector3(width, 0, 0);
             }
             while ((timer += Time.deltaTime) < duration) {
-                mover.transform.position = Vector2.Lerp(mover.transform.position, destinationPos, Mathf.SmoothStep(0, 1, timer / duration));
+                mover.position = Vector2.Lerp(mover.position, destinationPos, Mathf.SmoothStep(0, 1, timer / duration));
                 yield return null;
             }
         }
@@ -144,15 +137,15 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="maxIntensity">The maximum intensity.</param>
         /// <param name="duration">The duration.</param>
         /// <returns></returns>
-        private static IEnumerator Shake(GameObject item, float maxIntensity, float duration) {
-            Vector2 original = item.transform.position;
+        private static IEnumerator Shake(Transform item, float maxIntensity, float duration) {
+            Vector2 original = item.position;
             float timer = 0;
             while ((timer += Time.deltaTime) < duration) {
                 float intensity = Mathf.SmoothStep(maxIntensity, 0, timer / duration);
                 item.transform.position = new Vector2(Mathf.Sin(Random.value) * intensity + original.x, Mathf.Sin(Random.value) * intensity + original.y);
                 yield return null;
             }
-            item.transform.position = original;
+            item.position = original;
         }
 
         /// <summary>
@@ -162,15 +155,15 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="destination">The destination.</param>
         /// <param name="duration">The duration.</param>
         /// <returns></returns>
-        private static IEnumerator MoveBack(GameObject mover, Vector2 destination, float duration) {
+        private static IEnumerator MoveBack(Transform mover, Vector2 destination, float duration) {
             float timer = 0;
 
             // Move towards destination
             while ((timer += Time.deltaTime) < duration) {
-                mover.transform.position = Vector2.Lerp(mover.transform.position, destination, Mathf.SmoothStep(0, 1, timer / duration));
+                mover.position = Vector2.Lerp(mover.position, destination, Mathf.SmoothStep(0, 1, timer / duration));
                 yield return null;
             }
-            mover.transform.position = destination;
+            mover.position = destination;
         }
     }
 }

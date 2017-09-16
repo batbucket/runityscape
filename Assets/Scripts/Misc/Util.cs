@@ -19,6 +19,10 @@ public static class Util {
     public static readonly bool IS_DEBUG = true && Application.isEditor;
     private static char RANDOM_STRING_DELIMITER = '/';
 
+    public static void SetCursorActive(bool set) {
+        Cursor.visible = set;
+    }
+
     public static string PickRandom(string big) {
         string[] split = big.Split(RANDOM_STRING_DELIMITER);
         return split.ChooseRandom();
@@ -389,6 +393,7 @@ public static class Util {
     public static TKey GetKey<TKey>(this Dictionary<TKey, string> dictionary, string value) {
         return dictionary.FirstOrDefault(x => x.Value.Equals(value)).Key;
     }
+
     public static string GetDescription(this Enum value) {
         FieldInfo field = value.GetType().GetField(value.ToString());
         object[] attribs = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
@@ -397,6 +402,7 @@ public static class Util {
         }
         return string.Empty;
     }
+
     public static bool EqualsIgnoreCase(this char a, char b) {
         return char.ToLower(a) == char.ToLower(b);
     }
@@ -413,7 +419,9 @@ public static class Util {
         return new UnityEngine.Color(color.r, color.g, color.b, alpha);
     }
 }
+
 public static class IListExtensions {
+
     /// <summary>
     /// Shuffles the element order of the specified list.
     /// </summary>

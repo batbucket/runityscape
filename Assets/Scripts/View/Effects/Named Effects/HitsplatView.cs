@@ -1,4 +1,5 @@
 ﻿using Scripts.View.ObjectPool;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,6 @@ namespace Scripts.View.Effects {
     /// </summary>
     /// <seealso cref="Scripts.View.ObjectPool.PooledBehaviour" />
     public class HitsplatView : PooledBehaviour {
-
         private const float ACCEL_RATE = 3.0f;
 
         private const float TIME_BEFORE_DECAY = .75f;
@@ -37,8 +37,7 @@ namespace Scripts.View.Effects {
         /// <param name="splatColor">The color of the splat.</param>
         /// <param name="splatSprite">The sprite of the splat.</param>
         /// <returns>Coroutine</returns>
-        public IEnumerator Animation(GameObject parent, string splatText, Color splatColor, Sprite splatSprite) {
-            Util.Parent(this.gameObject, parent);
+        public IEnumerator Animation(Action<GameObject> parentFunc, string splatText, Color splatColor, Sprite splatSprite) {
             this.image.sprite = splatSprite;
             image.gameObject.SetActive(splatSprite != null);
             this.text.color = splatColor;
@@ -47,6 +46,8 @@ namespace Scripts.View.Effects {
 
             float timer = 0;
             float accel = 0;
+
+            parentFunc(this.gameObject);
 
             // Shrink
             while ((timer += Time.deltaTime * accel) < TIME_UPSIZED) {

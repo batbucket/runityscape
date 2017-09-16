@@ -36,6 +36,15 @@ namespace Scripts.Model.TextBoxes {
         }
 
         /// <summary>
+        /// Interface constructor for the lazy
+        /// </summary>
+        /// <param name="avatar">The avatar.</param>
+        /// <param name="side">The side.</param>
+        /// <param name="text">The text.</param>
+        public AvatarBox(IAvatarable avatar, Side side, string text) : this(side, avatar.Sprite, avatar.TextColor, text) {
+        }
+
+        /// <summary>
         /// Type determines how the box's contents will be written out.
         /// </summary>
         public override TextBoxType Type {

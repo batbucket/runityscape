@@ -26,6 +26,7 @@ public class BasicTests {
     /// </summary>
     [TestFixture]
     public class IDTableTests {
+
         [OneTimeSetUp]
         public void Setup() {
             IdTable.Init();
@@ -56,6 +57,7 @@ public class BasicTests {
     /// </summary>
     [TestFixture]
     public class SerializationTests {
+
         [OneTimeSetUp]
         public void Setup() {
             IdTable.Init();
@@ -450,6 +452,7 @@ public class BasicTests {
     /// </summary>
     [TestFixture]
     public class BattleLogicTests {
+
         [Test]
         public void CharacterWithHigherAgilityIsLessThanSlowerCharacter() {
             Character fast = CharacterList.TestEnemy();
@@ -467,13 +470,12 @@ public class BasicTests {
             Character slow = CharacterList.TestEnemy();
             Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
 
-            IPlayable lowPriorityWithSlowCaster = new Spell(new ReflectiveClone(), new Result(), new SpellParams(slow, dummy), new SpellParams(fast, dummy));
-            IPlayable lowPriorityWithFastCaster = new Spell(new ReflectiveClone(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
-            IPlayable normalPriorityWithSlowCaster = new Spell(new Attack(), new Result(), new SpellParams(slow, dummy), new SpellParams(fast, dummy));
-            IPlayable normalPriorityWithFastCaster = new Spell(new Attack(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
-            IPlayable highPriorityWithSlowCaster = new Spell(new Heal(), new Result(), new SpellParams(slow, dummy), new SpellParams(slow, dummy));
-            IPlayable highPriorityWithFastCaster = new Spell(new Heal(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
-
+            IPlayable lowPriorityWithSlowCaster = new Spell(new ReflectiveClone(), new Result(), slow, fast);
+            IPlayable lowPriorityWithFastCaster = new Spell(new ReflectiveClone(), new Result(), fast, slow);
+            IPlayable normalPriorityWithSlowCaster = new Spell(new Attack(), new Result(), slow, fast);
+            IPlayable normalPriorityWithFastCaster = new Spell(new Attack(), new Result(), fast, slow);
+            IPlayable highPriorityWithSlowCaster = new Spell(new Heal(), new Result(), slow, slow);
+            IPlayable highPriorityWithFastCaster = new Spell(new Heal(), new Result(), fast, slow);
 
             IPlayable[] expectedOrder = new IPlayable[] {
                 highPriorityWithFastCaster,
