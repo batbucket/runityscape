@@ -3,9 +3,40 @@ using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
+    public class DamageResist : Buff {
+        private const float DAMAGE_MULTIPLIER = 0.7f;
+        public DamageResist() 
+            : base(Util.GetSprite("round-shield"), 
+                  "Damage Resist", 
+                  String.Format("Reduces incident damage by {0} %.", 
+                      (1 - DAMAGE_MULTIPLIER)), false) { }
+
+        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+            return spellToReactTo.Book is Attack && spellToReactTo.Target.Stats == owner;
+        }
+
+        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+            SpellEffect healthDamage = null;
+            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
+                SpellEffect se = spellToReactTo.Result.Effects[i];
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
+                    healthDamage = addToModStat;
+                }
+            }
+            if (healthDamage != null) {
+                int tempValue = healthDamage.Value;
+                healthDamage.Value = (int) Math.Floor(healthDamage.Value*DAMAGE_MULTIPLIER);
+                Debug.Log(String.Format("Damage reduced from {0} to {1}", tempValue, healthDamage.Value));
+            }
+        }
+    }
+
     public class Poison : Buff {
         public Poison() : base(2, Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.", true) { }
 
