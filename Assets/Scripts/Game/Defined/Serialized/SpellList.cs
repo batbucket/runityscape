@@ -21,7 +21,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public const float HIT_STRENGTH_RATIO = 0.5f;
         public const float CRITICAL_STRENGTH_RATIO = 1f;
         public const float CRITICAL_VARIANCE = .125f;
-        public const float BASE_ACCURACY = .80f;
+        public const float BASE_ACCURACY = .90f;
         public const float BASE_CRITICAL_RATE = 0f;
         public const int SKILL_ON_HIT = 1;
         public const int SKILL_ON_CRIT = 2;
@@ -84,6 +84,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         private static readonly Checked DUMMY = new Checked();
 
         public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) {
+            AddCost(StatType.EXPERIENCE, 1);
         }
 
         protected override string CreateDescriptionHelper() {
