@@ -23,7 +23,8 @@ namespace Scripts.Game.Defined.Characters {
                 1f,
                 Villager())
                 .AddTalks(new Talk("Test", "<a>Buy some apples."))
-                .AddBuys(new Buy(new Apple()));
+                .AddTalks(new Talk("Shield", "<a>A fine wooden shield, complete with a steel band around the rim."))
+                .AddBuys(new Buy(new Apple()), new Buy(new Shield()));
         }
 
         public static Character Villager() {
@@ -54,7 +55,7 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character BigKnight() {
             return CharacterUtil.StandardEnemy(
-                new Stats(3, 1, 2, 2, 15),
+                new Stats(3, 10, 2, 2, 15),
                 new Look(
                     "Big Knight",
                     "spectre",

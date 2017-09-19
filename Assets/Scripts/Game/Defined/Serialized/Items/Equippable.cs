@@ -29,4 +29,14 @@ namespace Scripts.Game.Defined.Serialized.Items {
             Stats.Add(StatType.AGILITY, -10);
         }
     }
+
+    public class Shield : EquippableItem {
+        public Shield() : base(Util.GetSprite("round-shield"), EquipType.OFFHAND, 0, "Basic Shield ", "A basic wooden shield.") {
+            Stats.Add(StatType.AGILITY, -10);
+            Stats.Add(StatType.VITALITY, 10);
+        }
+        public override Buff CreateBuff() {
+            return new DamageResist();
+        }
+    }
 }
