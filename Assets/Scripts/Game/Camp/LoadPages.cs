@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.Game.Pages {
+
     /// <summary>
     /// Loading serializing page.
     /// </summary>
@@ -20,7 +21,7 @@ namespace Scripts.Game.Pages {
     public class LoadPages : PageGroup {
         private bool isUploadingToGameJolt;
 
-        public LoadPages(Page previous) : base(new Page("Load Game")) {
+        public LoadPages(Page previous) : base(new Page("Load")) {
             SetupRoot(previous);
         }
 
