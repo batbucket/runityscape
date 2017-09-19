@@ -39,6 +39,13 @@ namespace Scripts.Game.Serialized.Brains {
                     CastOnRandom(ATTACK)
                 };
         }
+
+        public override string StartOfRoundDialogue() {
+            if (currentBattle.TurnCount == 0) {
+                return "Stand and deliver!";
+            }
+            return string.Empty;
+        }
     }
 
     public class Illusionist : PriorityBrain {
