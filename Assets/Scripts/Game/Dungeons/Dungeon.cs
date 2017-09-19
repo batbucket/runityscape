@@ -90,6 +90,7 @@ namespace Scripts.Game.Dungeons {
                     victoryDestination = battles[i + 1];
                 }
                 Battle battle = new Battle(defeat, victoryDestination, encounter.Music, string.Format("{0}\n{1}", Root.Location, i), party, encounter.Enemies, true);
+                battle.Icon = Util.GetSprite("dungeon-gate");
 
                 battles[i] = battle;
             }
