@@ -57,6 +57,11 @@ namespace Scripts.Game.Areas {
                             () => new Encounter[] {
                                 new Encounter(Music.BOSS, FieldNPCs.Healer(), FieldNPCs.BigKnight(), FieldNPCs.Healer())
                             }),
+                        new BattleStage(
+                            "VS " + FieldNPCs.Replicant().Look.Name,
+                            () => new Encounter[] {
+                                new Encounter(Music.BOSS, FieldNPCs.Healer(), FieldNPCs.Replicant(), FieldNPCs.Healer())
+                            }),
                     },
                     new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
                 );
