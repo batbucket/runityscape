@@ -3,6 +3,7 @@ using Scripts.Model.Characters;
 using Scripts.Model.Pages;
 
 namespace Scripts.Game.Dungeons {
+
     public struct Encounter {
         public readonly Character[] Enemies;
         public readonly Music Music;

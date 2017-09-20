@@ -1,13 +1,31 @@
 ﻿using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Game.Serialized;
 using Scripts.Game.Serialized.Brains;
+using Scripts.Game.Shopkeeper;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
+using Scripts.Model.Pages;
 using UnityEngine;
 
 namespace Scripts.Game.Defined.Characters {
+
     public static class FieldNPCs {
+
+        public static Shop AppleDealer(Page previous, Flags flags, Party party) {
+            return new Shop(
+                previous,
+                "Apples",
+                flags,
+                party,
+                0.5f,
+                1f,
+                Villager())
+                .AddTalks(new Talk("Test", "<a>Buy some apples."))
+                .AddTalks(new Talk("Shield", "<a>A fine wooden shield, complete with a steel band around the rim."))
+                .AddBuys(new Buy(new Apple()), new Buy(new Shield()));
+        }
 
         public static Character Villager() {
             return CharacterUtil.StandardEnemy(
@@ -37,7 +55,7 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character BigKnight() {
             return CharacterUtil.StandardEnemy(
-                new Stats(3, 1, 2, 2, 15),
+                new Stats(3, 10, 2, 2, 15),
                 new Look(
                     "Big Knight",
                     "spectre",

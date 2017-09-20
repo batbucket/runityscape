@@ -118,6 +118,12 @@ namespace Scripts.Presenter {
             }
         }
 
+        public ActionGridView ActionGrid {
+            get {
+                return actionGrid;
+            }
+        }
+
         private void Start() {
             instance = this;
 
@@ -130,7 +136,7 @@ namespace Scripts.Presenter {
         }
 
         private void Update() {
-            if (pagePresenter != null && pagePresenter.Page != null) {
+            if (pagePresenter != null) {
                 pagePresenter.Tick();
             }
         }

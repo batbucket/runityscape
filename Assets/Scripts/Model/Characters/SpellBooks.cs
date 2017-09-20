@@ -8,8 +8,10 @@ using Scripts.Model.Stats;
 using Scripts.Model.SaveLoad;
 using System;
 using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Model.Pages;
 
 namespace Scripts.Model.Characters {
+
     /// <summary>
     /// Character's spells
     /// </summary>
@@ -17,6 +19,7 @@ namespace Scripts.Model.Characters {
     /// <seealso cref="System.Collections.Generic.IEnumerable{Scripts.Model.Spells.SpellBook}" />
     /// <seealso cref="Scripts.Model.SaveLoad.ISaveable{Scripts.Model.SaveLoad.SaveObjects.CharacterSpellBooksSave}" />
     public class SpellBooks : IEnumerable<ISpellable>, IEnumerable<SpellBook>, ISaveable<CharacterSpellBooksSave> {
+
         /// <summary>
         /// The default spells
         /// </summary>
@@ -102,8 +105,8 @@ namespace Scripts.Model.Characters {
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
-        public Spell CreateSpell(SpellBook spell, SpellParams caster, SpellParams target) {
-            return spell.BuildSpell(caster, target);
+        public Spell CreateSpell(Page page, SpellBook spell, Character caster, Character target) {
+            return spell.BuildSpell(page, caster, target);
         }
 
         /// <summary>

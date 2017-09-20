@@ -111,7 +111,8 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.HERO)
-                .AddStats(new Experience());
+                .AddStats(new Experience())
+                .AddSpells(new Check());
         }
 
         public static Character Partner(string name) {
@@ -125,7 +126,8 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.PARTNER)
-                .AddStats(new Experience());
+                .AddStats(new Experience())
+                .AddSpells(new Check());
         }
 
         public static Character TestEnemy() {

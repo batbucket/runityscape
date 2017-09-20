@@ -41,8 +41,8 @@ namespace Scripts.Game.Pages {
             var buttons = new List<IButtonable>();
             buttons.Add(PageUtil.GenerateBack(previous));
 
-            foreach (Model.Pages.PageGroup pg in GetCurrentArea(flags.CurrentArea).Places) {
-                buttons.Add(pg);
+            foreach (PageGroup pg in GetCurrentArea(flags.CurrentArea).Places) {
+                buttons.Add(GetPlaceProcess(pg));
             }
 
             p.Actions = buttons;

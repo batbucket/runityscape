@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.Game.Shopkeeper {
+
     /// <summary>
     /// Shops sell things!
     /// </summary>
@@ -155,8 +156,8 @@ namespace Scripts.Game.Shopkeeper {
                 main.List.Add(SetupSellMenu(main));
                 main.List.Add(SetupBuyMenu(main));
                 main.List.Add(null);
-                main.List.Add(PageUtil.GenerateItemsGrid(false, p, main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p)));
-                main.List.Add(PageUtil.GenerateEquipmentGrid(main, new SpellParams(party.Default, p), PageUtil.GetOutOfBattlePlayableHandler(p), false));
+                main.List.Add(PageUtil.GenerateItemsGrid(false, p, main, party.Default, PageUtil.GetOutOfBattlePlayableHandler(p)));
+                main.List.Add(PageUtil.GenerateEquipmentGrid(p, main, party.Default, PageUtil.GetOutOfBattlePlayableHandler(p), false));
                 main.List.Add(null);
                 main.List.Add(PageUtil.GenerateBack(previous));
             };
@@ -184,14 +185,14 @@ namespace Scripts.Game.Shopkeeper {
         }
 
         private Grid SetupBuyMenu(IButtonable previous) {
-            return SetupShopMenu<Buy>(previous, "Buy", "buy-card", string.Format("Purchase items with {0}s.", MONEY.Name), buys, (b, a) => GetBuyProcess(b, a));
+            return SetupShopMenu<Buy>(previous, "Buy", "buy-card", string.Format("Buy items with {0}s.", MONEY.Name), buys, (b, a) => GetBuyProcess(b, a));
         }
 
         private Process GetBuyProcess(Buy buy, Action postBuy) {
             return new Process(
                 string.Format("{0}-{1}", buy.Name, GetFullBuyPrice(buy.GetItem())),
                 buy.Sprite,
-                string.Format("{0}\nPurchase this item for {1} {2}(s).", buy.Description, GetFullBuyPrice(buy.GetItem()), MONEY.Name),
+                string.Format("{0}\n\nBuy this item for {1} {2}(s).", buy.Description, GetFullBuyPrice(buy.GetItem()), MONEY.Name),
                 () => {
                     Item item = buy.GetItem();
                     AddToMoney(-GetFullBuyPrice(item));
@@ -261,6 +262,5 @@ namespace Scripts.Game.Shopkeeper {
                 () => talk.Condition(flags)
                 ).SetVisibleOnDisable(false);
         }
-
     }
 }

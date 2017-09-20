@@ -9,6 +9,7 @@ using Scripts.Game.Defined.Spells;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
+using Scripts.Model.Characters;
 
 namespace Scripts.Model.Items {
 
@@ -92,7 +93,7 @@ namespace Scripts.Model.Items {
         /// <returns>
         ///   <c>true</c> if requirements are met; otherwise, <c>false</c>.
         /// </returns>
-        protected override bool IsMeetOtherRequirements(SpellParams caster, SpellParams target) {
+        protected override bool IsMeetOtherRequirements(Character caster, Character target) {
             return caster.Stats.State == Characters.State.ALIVE && target.Stats.State == Characters.State.ALIVE;
         }
 

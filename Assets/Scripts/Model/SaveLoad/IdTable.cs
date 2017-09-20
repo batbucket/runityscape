@@ -106,6 +106,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Money>("money");
             Add<GhostArmor>("ghostArmor");
             Add<BrokenSword>("ghostSword");
+            Add<Shield>("shield");
         }
 
         private void Buffs() {
@@ -116,6 +117,7 @@ namespace Scripts.Model.SaveLoad {
             Add<SpiritLink>("spiritLink");
             Add<StrengthScalingPoison>("strengthScalingPoison");
             Add<BlackedOut>("blackoutDebuff");
+            Add<DamageResist>("damageResist");
         }
 
         private void Brains() {

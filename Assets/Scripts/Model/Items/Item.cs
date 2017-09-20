@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Scripts.Model.Interfaces;
+using Scripts.Model.Characters;
 
 namespace Scripts.Model.Items {
 
@@ -19,18 +20,22 @@ namespace Scripts.Model.Items {
         /// The item name
         /// </summary>
         public readonly string Name;
+
         /// <summary>
         /// The item icon
         /// </summary>
         public readonly Sprite Icon;
+
         /// <summary>
         /// The item's flavor text
         /// </summary>
         public readonly string Flavor;
+
         /// <summary>
         /// The targets this item can target
         /// </summary>
         public readonly TargetType Target;
+
         /// <summary>
         /// The base price of this item
         /// </summary>
@@ -93,7 +98,7 @@ namespace Scripts.Model.Items {
         /// <returns>
         ///   <c>true</c> if the item is usable; otherwise, <c>false</c>.
         /// </returns>
-        public bool IsUsable(SpellParams caster, SpellParams target) {
+        public bool IsUsable(Character caster, Character target) {
             return caster.Stats.State == Characters.State.ALIVE;
         }
 
@@ -130,7 +135,7 @@ namespace Scripts.Model.Items {
         /// <returns>
         ///   <c>true</c> if other requirements for casting using this item on target are met.; otherwise, <c>false</c>.
         /// </returns>
-        protected abstract bool IsMeetOtherRequirements(SpellParams caster, SpellParams target);
+        protected abstract bool IsMeetOtherRequirements(Character caster, Character target);
 
         /// <summary>
         /// Gets the save object. A save object contains the neccessary

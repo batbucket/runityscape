@@ -87,19 +87,20 @@ namespace Scripts.Game.Pages {
             Stage stage = area.Stages[index];
             Page page = stage.GetPage(index, area.Stages.Count, flags, party, previous, this.Root, area.Type);
 
-            Color color = Color.white;
+            string sprite = string.Empty;
             string prefix = string.Empty;
             if (stage is SceneStage) {
                 prefix = "Scene";
-                color = Color.yellow;
+                sprite = "paranoia";
             } else {
                 prefix = "Dungeon";
+                sprite = "dungeon-gate";
             }
 
             return new Process(
-                    Util.ColorString(string.Format("{0}-{1}", (int)area.Type, index), color),
-                    Util.GetSprite("dungeon-gate"),
-                    string.Format("{0}\n{1}", stage.StageName, prefix),
+                    string.Format("{0}-{1}", (int)area.Type, index),
+                    Util.GetSprite(sprite),
+                    string.Format("{0}\n{1}", prefix, stage.StageName),
                     () => {
                         page.Invoke();
                     }

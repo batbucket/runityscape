@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Scripts.Model.Characters;
+using UnityEngine;
 
 namespace Scripts.Model.Spells {
 
@@ -28,13 +29,12 @@ namespace Scripts.Model.Spells {
         /// <param name="priority">Spell's priority</param>
         public BasicSpellbook(string spellName, Sprite sprite, TargetType target, SpellType spell, PriorityType priority) : base(spellName, sprite, target, spell, 0, 0, priority, "Perform") { }
 
-        protected sealed override bool IsMeetOtherCastRequirements(SpellParams caster, SpellParams target) {
+        protected sealed override bool IsMeetOtherCastRequirements(Character caster, Character target) {
             return caster.Stats.State == Characters.State.ALIVE && target.Stats.State == Characters.State.ALIVE && IsMeetCastRequirements(caster, target);
         }
 
-        protected virtual bool IsMeetCastRequirements(SpellParams caster, SpellParams target) {
+        protected virtual bool IsMeetCastRequirements(Character caster, Character target) {
             return true;
         }
     }
-
 }

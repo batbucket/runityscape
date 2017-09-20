@@ -42,7 +42,7 @@ namespace Scripts.View.ActionGrid {
         public bool IsEnabled {
             set {
                 foreach (HotkeyButton b in buttons) {
-                    b.IsVisible = value;
+                    b.enabled = value;
                 }
             }
         }

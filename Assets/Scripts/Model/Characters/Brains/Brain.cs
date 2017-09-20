@@ -19,21 +19,23 @@ namespace Scripts.Model.Characters {
         public SpellBooks Spells;
 
         // Refreshed every turn
-        protected ICollection<SpellParams> allies;
-        protected ICollection<SpellParams> foes;
+        protected ICollection<Character> allies;
 
-        protected SpellParams brainOwner;
+        protected ICollection<Character> foes;
+
+        protected Character brainOwner;
         protected Battle currentBattle;
         protected IEnumerable<ISpellable> temporarySpells;
         protected Action<IPlayable> handlePlay;
 
-        public Brain() { }
+        public Brain() {
+        }
 
-        public void StartOfRoundSetup(Battle currentBattle, SpellParams brainOwner) {
+        public void StartOfRoundSetup(Battle currentBattle, Character brainOwner) {
             this.brainOwner = brainOwner;
             this.currentBattle = currentBattle;
-            allies = currentBattle.GetAllies(brainOwner.Character).Select(c => new SpellParams(c, currentBattle)).ToArray();
-            foes = currentBattle.GetFoes(brainOwner.Character).Select(c => new SpellParams(c, currentBattle)).ToArray();
+            allies = currentBattle.GetAllies(brainOwner).ToArray();
+            foes = currentBattle.GetFoes(brainOwner).ToArray();
         }
 
         /// <summary>

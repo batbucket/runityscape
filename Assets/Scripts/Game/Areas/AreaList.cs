@@ -27,7 +27,7 @@ namespace Scripts.Game.Areas {
         public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
-                    { AreaType.TINY_WOODS, (f, p, c, q) => CreateRuins(f, p, c, q) }
+                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) }
         });
 
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
@@ -41,6 +41,12 @@ namespace Scripts.Game.Areas {
                                 new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager())
                             }),
                         new BattleStage(
+                            "Stronger monsters",
+                            () => new Encounter[] {
+                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager()),
+                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Knight())
+                            }),
+                        new BattleStage(
                             "Restoration",
                             () => new Encounter[] {
                                 new Encounter(FieldNPCs.Healer(), FieldNPCs.Healer()),
@@ -50,8 +56,14 @@ namespace Scripts.Game.Areas {
                             "VS " + FieldNPCs.BigKnight().Look.Name,
                             () => new Encounter[] {
                                 new Encounter(Music.BOSS, FieldNPCs.Healer(), FieldNPCs.BigKnight(), FieldNPCs.Healer())
-                            })
-                    }
+                            }),
+                        new BattleStage(
+                            "VS " + FieldNPCs.Replicant().Look.Name,
+                            () => new Encounter[] {
+                                new Encounter(Music.BOSS, FieldNPCs.Healer(), FieldNPCs.Replicant(), FieldNPCs.Healer())
+                            }),
+                    },
+                    new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
                 );
         }
 
@@ -69,8 +81,9 @@ namespace Scripts.Game.Areas {
                 new TextAct(partner, Side.RIGHT, "I will now appear on the RIGHT side."),
                 new ActionAct(() => page.AddCharacters(Side.RIGHT, partner)),
                 new TextAct(partner, Side.RIGHT, "Neato!"),
-                new CoroutineAct(SFX.DoMeleeEffect(hero.Presenter.PortraitView.Image.gameObject, partner.Presenter.PortraitView.Image.gameObject, 1.0f, "Slash_0")),
-                new TextAct(partner, Side.RIGHT, "Ouch.")
+                new CoroutineAct(SFX.DoMeleeEffect(hero, partner, 1.0f, "Slash_0")),
+                new TextAct(partner, Side.RIGHT, "Ouch."),
+                new TextAct(hero, Side.LEFT, "<color=lime>Wow</color> <color=red>look</color> <color=magenta>at</color> <color=green>this</color> <color=cyan>colored</color> <color=yellow>text</color>!")
                 );
 
             return scene;

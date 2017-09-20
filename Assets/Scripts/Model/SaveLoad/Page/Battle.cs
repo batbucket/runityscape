@@ -65,6 +65,8 @@ namespace Scripts.Model.Pages {
 
         private bool wasExperienceGiven;
 
+        private bool isUseTransition;
+
         private IList<ISpellable> temporarySpells;
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace Scripts.Model.Pages {
         /// <param name="location">Location of the battle</param>
         /// <param name="left">Characters on the left in battle</param>
         /// <param name="right">Characters on the right in battle</param>
-        public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right) : base(location) {
+        public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right, bool isUseTransition = false) : base(location) {
             this.wasExperienceGiven = false;
             this.loot = new Dictionary<Item, int>();
             this.leftGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());
@@ -84,6 +86,7 @@ namespace Scripts.Model.Pages {
             this.defeat = defeat;
             this.victory = victory;
             this.Music = music.GetDescription();
+            this.isUseTransition = isUseTransition;
             turnCount = 0;
             temporarySpells = new List<ISpellable>();
             foreach (Character c in left) {
@@ -147,6 +150,11 @@ namespace Scripts.Model.Pages {
             get {
                 return Left.All(c => c.Stats.State == State.DEAD) || Right.All(c => c.Stats.State == State.DEAD);
             }
+        }
+
+        public static void DoPageTransition(Page destination) {
+            Main.Instance.Title.Play(destination.Sprite, string.Format("{0}", destination.Location), () => destination.Invoke());
+            Main.Instance.Sound.PlaySound("Steps_0");
         }
 
         private PlayerPartyStatus PlayerStatus {
@@ -280,7 +288,7 @@ namespace Scripts.Model.Pages {
             return lootAmount;
         }
 
-        private bool CharacterCanCast(SpellParams c) {
+        private bool CharacterCanCast(Character c) {
             return c.Stats.State == State.ALIVE;
         }
 
@@ -306,7 +314,7 @@ namespace Scripts.Model.Pages {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
                     }
                     Main.Instance.Sound.PlaySound("synthetic_explosion_1");
-                    yield return SFX.DoDeathEffect(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
+                    yield return SFX.DoDeathEffect(c, 1f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
 
                     graveyard.Add(c);
@@ -489,7 +497,7 @@ namespace Scripts.Model.Pages {
                         spellMessage,
                         play.MySpell.Book.TextboxTooltip));
                     yield return play.Play();
-                    yield return CharacterDialogue(spell.Target.Character, spell.Target.Character.Brain.ReactToSpell(spell));
+                    yield return CharacterDialogue(spell.Target, spell.Target.Brain.ReactToSpell(spell));
                 }
             }
         }
@@ -507,15 +515,27 @@ namespace Scripts.Model.Pages {
                         }
                     }
                     Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
-                    postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, anyoneFromVictorParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(PageUtil.GenerateGroupEquipmentGrid(postBattle, this, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this), false));
-                    postBattle.List.Add(new Process("Continue", () => victory.Invoke()));
+                    postBattle.List.Add(new Process("Continue", () => GoToPage(victory)));
                 } else {
-                    postBattle.List.Add(new Process("Continue", () => defeat.Invoke()));
+                    postBattle.List.Add(new Process("Continue", () => GoToPage(defeat)));
                 }
                 Actions = postBattle.List;
             };
             postBattle.Invoke();
+        }
+
+        /// <summary>
+        /// Goes to page.
+        /// </summary>
+        /// <param name="page">The page.</param>
+        private void GoToPage(Page page) {
+            if (isUseTransition) {
+                DoPageTransition(page);
+            } else {
+                page.Invoke();
+            }
         }
 
         private void GiveExperienceToVictors() {
@@ -580,7 +600,7 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator StartOfRound(IEnumerable<Character> battlers) {
             foreach (Character c in battlers) {
-                c.Brain.StartOfRoundSetup(this, new SpellParams(c, this));
+                c.Brain.StartOfRoundSetup(this, c);
                 yield return CharacterDialogue(c, c.Brain.StartOfRoundDialogue());
             }
         }
