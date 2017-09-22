@@ -14,6 +14,6 @@ namespace Scripts.View.Portraits {
         /// Populates the holder's appearance based on the contents.
         /// </summary>
         /// <param name="contents">Group of contents to use to populate the holder.</param>
-        void AddContents(IEnumerable<C> contents);
+        void AddContents(IList<C> contents);
     }
 }

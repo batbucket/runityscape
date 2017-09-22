@@ -11,7 +11,9 @@ namespace Scripts.View.Portraits {
     /// where Character portraits may appear.
     /// </summary>
     public class PortraitHolderView : MonoBehaviour, IHolderView<PortraitHolderView.PortraitContent> {
+
         public struct PortraitContent {
+
             /// <summary>
             /// The identifier
             /// </summary>
@@ -35,12 +37,12 @@ namespace Scripts.View.Portraits {
             /// <summary>
             /// The resources
             /// </summary>
-            public readonly IEnumerable<ResourceHolderView.ResourceContent> Resources;
+            public readonly List<ResourceHolderView.ResourceContent> Resources;
 
             /// <summary>
             /// The buffs
             /// </summary>
-            public readonly IEnumerable<BuffHolderView.BuffContent> Buffs;
+            public readonly IList<BuffHolderView.BuffContent> Buffs;
 
             /// <summary>
             /// The is revealed
@@ -57,7 +59,7 @@ namespace Scripts.View.Portraits {
             /// <param name="resources">The resources.</param>
             /// <param name="buffs">The buffs.</param>
             /// <param name="isRevealed">if set to <c>true</c> resources and buffs are revealed.</param>
-            public PortraitContent(int id, string name, string tip, Sprite sprite, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs, bool isRevealed) {
+            public PortraitContent(int id, string name, string tip, Sprite sprite, List<ResourceHolderView.ResourceContent> resources, IList<BuffHolderView.BuffContent> buffs, bool isRevealed) {
                 Id = id;
                 Name = name;
                 Tip = tip;
@@ -79,7 +81,7 @@ namespace Scripts.View.Portraits {
         /// This allows us to use the shake effect.
         /// </summary>
         /// <param name="characters"></param>
-        public void AddContents(IEnumerable<PortraitContent> contents) {
+        public void AddContents(IList<PortraitContent> contents) {
             PortraitUtil.GetDifferences(ref previous,
                 contents,
                 portraitPrefab,

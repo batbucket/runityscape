@@ -4,17 +4,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Scripts.View.Portraits {
+
     /// <summary>
     /// Holds any number of resources for a particular portrait.
     /// </summary>
     /// <seealso cref="UnityEngine.MonoBehaviour" />
     /// <seealso cref="Scripts.View.Portraits.IHolderView{Scripts.View.Portraits.ResourceHolderView.ResourceContent}" />
     public class ResourceHolderView : MonoBehaviour, IHolderView<ResourceHolderView.ResourceContent> {
+
         /// <summary>
         ///
         /// </summary>
         public struct ResourceContent {
+
             /// <summary>
             /// The identifier
             /// </summary>
@@ -118,7 +122,7 @@ namespace Scripts.View.Portraits {
         /// Adds the contents.
         /// </summary>
         /// <param name="contents">The contents.</param>
-        public void AddContents(IEnumerable<ResourceContent> contents) {
+        public void AddContents(IList<ResourceContent> contents) {
             PortraitUtil.GetDifferences(ref previous, contents, resourcePrefab, gameObject, c => c.Id, (v, c) => SetupViewFromContent(v, c));
         }
 
