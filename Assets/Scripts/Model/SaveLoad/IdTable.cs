@@ -129,6 +129,7 @@ namespace Scripts.Model.SaveLoad {
             Add<ReplicantClone>("replicantClone");
             Add<Illusionist>("illusionist");
             Add<BigKnight>("bigKnight");
+            Add<BlackShuck>("blackShuck");
         }
 
         private void Add<Type>(string id) {
