@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Defined.Serialized.Items;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Serialized;
@@ -81,9 +82,24 @@ namespace Scripts.Game.Defined.Characters {
                 .AddSpells(new SetupCounter());
         }
 
+        public static Character Wizard() {
+            return CharacterUtil.StandardEnemy(
+                new Stats(3, 1, 1, 2, 3),
+                new Look(
+                    "Wizard",
+                    "wizard",
+                    "Can dish it out but cannot take it.",
+                    Breed.SPIRIT
+                    ),
+                new Wizard())
+                .AddStats(new Mana())
+                .AddSpells(new Ignite())
+                .AddBuff(new Insight());
+        }
+
         public static Character Healer() {
             return CharacterUtil.StandardEnemy(
-                new Stats(3, 1, 5, 5, 1),
+                new Stats(3, 1, 5, 5, 2),
                 new Look(
                     "Healer",
                     "white-mage",
@@ -91,7 +107,7 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.SPIRIT
                     ),
                 new Healer())
-                .AddItem(new Apple())
+                .AddItem(new Money(), Util.RandomRange(5, 15))
                 .AddSpells(new Heal());
         }
 

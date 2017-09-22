@@ -31,6 +31,18 @@ namespace Scripts.Game.Serialized.Brains {
         }
     }
 
+    public class Wizard : PriorityBrain {
+        public static readonly Ignite IGNITE = new Ignite();
+        public static readonly Attack ATTACK = new Attack();
+
+        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
+            return new Func<IPlayable>[] {
+                    CastOnRandom(IGNITE),
+                    CastOnRandom(ATTACK)
+                };
+        }
+    }
+
     public class BigKnight : PriorityBrain {
         public static readonly SetupCounter COUNTER = new SetupCounter();
         public static readonly Attack ATTACK = new Attack();
