@@ -89,7 +89,23 @@ namespace Scripts.Game.Dungeons {
                 } else {
                     victoryDestination = battles[i + 1];
                 }
-                Battle battle = new Battle(defeat, victoryDestination, encounter.Music, string.Format("{0}\n{1}", Root.Location, i), party, encounter.Enemies, true);
+
+                string location = string.Empty;
+
+                if (i == 0) {
+                    location = Root.Location;
+                } else {
+                    location = string.Format("{0}\n{1}", Root.Location, i);
+                }
+
+                Battle battle = new Battle(
+                        defeat,
+                        victoryDestination,
+                        encounter.Music,
+                        location,
+                        party,
+                        encounter.Enemies,
+                        true);
                 battle.Icon = Util.GetSprite("dungeon-gate");
 
                 battles[i] = battle;
