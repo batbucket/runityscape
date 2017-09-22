@@ -1,25 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Scripts.Model.Characters;
 using Scripts.Model.Stats;
-using UnityEngine;
-using System.Text;
 using Scripts.Model.Buffs;
 using Scripts.Model.Items;
 using Scripts.Model.Spells;
 using Scripts.Model.Pages;
+using Scripts.Game.Defined.SFXs;
+using Scripts.Presenter;
 
 namespace Scripts.Game.Defined.Spells {
+
     /// <summary>
     /// Adds to a stat's mod value.
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class AddToModStat : SpellEffect {
+
         /// <summary>
         /// The affected
         /// </summary>
         private readonly StatType affected;
+
         /// <summary>
         /// The target
         /// </summary>
@@ -61,10 +63,12 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class AddBuff : SpellEffect {
+
         /// <summary>
         /// The buff
         /// </summary>
         private readonly Buff buff;
+
         /// <summary>
         /// The target
         /// </summary>
@@ -94,14 +98,17 @@ namespace Scripts.Game.Defined.Spells {
     /// Params needed to equip an item
     /// </summary>
     public struct EquipParams {
+
         /// <summary>
         /// The caster
         /// </summary>
         public readonly Inventory Caster;
+
         /// <summary>
         /// The target
         /// </summary>
         public readonly Equipment Target;
+
         /// <summary>
         /// The item
         /// </summary>
@@ -125,10 +132,12 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class EquipItemEffect : SpellEffect {
+
         /// <summary>
         /// The ep
         /// </summary>
         private EquipParams ep;
+
         /// <summary>
         /// The bp
         /// </summary>
@@ -157,6 +166,7 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class UnequipItemEffect : SpellEffect {
+
         /// <summary>
         /// The ep
         /// </summary>
@@ -178,15 +188,31 @@ namespace Scripts.Game.Defined.Spells {
         }
     }
 
+    public class ChangeLookEffect : SpellEffect {
+        private Character caster;
+        private Look targetLook;
+
+        public ChangeLookEffect(Character caster, Look target) : base(1) {
+            this.caster = caster;
+            this.targetLook = target;
+        }
+
+        public override void CauseEffect() {
+            caster.Look = targetLook;
+        }
+    }
+
     /// <summary>
     /// Consumes an item
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class ConsumeItemEffect : SpellEffect {
+
         /// <summary>
         /// The caster
         /// </summary>
         private Inventory caster;
+
         /// <summary>
         /// The item
         /// </summary>
@@ -215,6 +241,7 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class AddToResourceVisibility : SpellEffect {
+
         /// <summary>
         /// The target
         /// </summary>
@@ -246,6 +273,7 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class PostText : SpellEffect {
+
         /// <summary>
         /// The message
         /// </summary>
@@ -272,10 +300,12 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class GoToPage : SpellEffect {
+
         /// <summary>
         /// The destination
         /// </summary>
         private Page destination;
+
         /// <summary>
         /// The stop battle
         /// </summary>
@@ -305,14 +335,17 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class CloneEffect : SpellEffect {
+
         /// <summary>
         /// To be cloned
         /// </summary>
         private Func<Character> toBeCloned;
+
         /// <summary>
         /// The side
         /// </summary>
         private Side side;
+
         /// <summary>
         /// The current page
         /// </summary>
@@ -332,7 +365,7 @@ namespace Scripts.Game.Defined.Spells {
         }
 
         /// <summary>
-        /// Causes the effect.
+        /// Causes the effect. Kill existing clones. Make new ones.
         /// </summary>
         public override void CauseEffect() {
             List<Character> clonesToBeKilled = new List<Character>();
@@ -347,7 +380,7 @@ namespace Scripts.Game.Defined.Spells {
             for (int i = 0; i < Value; i++) {
                 Character clone = toBeCloned();
                 clone.AddFlag(Model.Characters.Flag.IS_CLONE);
-                currentPage.AddCharacters(side, toBeCloned());
+                currentPage.AddCharacters(side, clone);
             }
         }
     }
@@ -357,10 +390,12 @@ namespace Scripts.Game.Defined.Spells {
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
     public class ShuffleEffect : SpellEffect {
+
         /// <summary>
         /// The page
         /// </summary>
         private Page page;
+
         /// <summary>
         /// The side
         /// </summary>
@@ -380,6 +415,9 @@ namespace Scripts.Game.Defined.Spells {
         /// Causes the effect.
         /// </summary>
         public override void CauseEffect() {
+            foreach (Character toBeShuffled in page.GetCharacters(side)) {
+                Main.Instance.StartCoroutine(SFX.DoSteamEffect(toBeShuffled));
+            }
             page.Shuffle(side);
         }
     }

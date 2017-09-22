@@ -108,24 +108,34 @@ namespace Scripts.Game.Defined.Characters {
                 .AddSpells(new Blackout());
         }
 
-        private static Look ReplicantLook() {
+        public static Look ReplicantLook() {
             return new Look(
                     "Xirdneth",
                     "replicant",
                     "Its form is incomprehensible.",
-                    Breed.SPIRIT,
+                    Breed.UNKNOWN,
                     Color.magenta
                     );
+        }
+
+        private static Look ReplicantDisguisedLook() {
+            return new Look(
+                "Irdne",
+                "villager",
+                "An innocent villager.",
+                Breed.SPIRIT,
+                Color.magenta
+                );
         }
 
         public static Character Replicant() {
             return CharacterUtil.StandardEnemy(
                 new Stats(10, 2, 5, 10, 30),
-                ReplicantLook(),
+                ReplicantDisguisedLook(),
                 new Replicant()
                 )
             .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
-            .AddSpells(new ReflectiveClone(), new SetupCounter());
+            .AddSpells(new ReflectiveClone(), new RevealTrueForm());
         }
     }
 }

@@ -19,14 +19,17 @@ namespace Scripts.Model.SaveLoad {
     /// Table holding various Ids
     /// </summary>
     public static class IdTable {
+
         /// <summary>
         /// Mapping of types to unique strings
         /// </summary>
         public static TypeMap Types = new TypeMap();
+
         /// <summary>
         /// Mapping of type safe enums
         /// </summary>
         public static EnumMap<StatType> Stats = new EnumMap<StatType>(StatType.AllTypes);
+
         /// <summary>
         /// Mapping of type safe enums
         /// </summary>
@@ -66,6 +69,7 @@ namespace Scripts.Model.SaveLoad {
     /// </summary>
     /// <seealso cref="Scripts.Model.SaveLoad.IdMap{System.Type}" />
     public class TypeMap : IdMap<Type> {
+
         protected override void InitHelper() {
             Stats();
             Spells();
@@ -98,6 +102,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Heal>("heal");
             Add<ReflectiveClone>("reflectiveClone");
             Add<Blackout>("blackout");
+            Add<RevealTrueForm>("revealTrueForm");
         }
 
         private void Items() {

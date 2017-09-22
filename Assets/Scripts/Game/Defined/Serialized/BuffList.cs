@@ -90,7 +90,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class Counter : Buff {
-        private int DAMAGE_RATIO_FROM_ATTACK = 4;
+        private int DAMAGE_RATIO_FROM_ATTACK = 2;
 
         public Counter() : base(2, Util.GetSprite("round-shield"), "Counter", "Basic <color=yellow>Attack</color>s on this unit are reflected.", false) {
         }
@@ -103,7 +103,8 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             spellToReactTo.Result.Effects.Clear();
             spellToReactTo.Result.AddEffect(
                 new AddToModStat(
-                    spellToReactTo.Caster.Stats, StatType.HEALTH, -spellToReactTo.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * 4)
+                    spellToReactTo.Caster.Stats, StatType.HEALTH,
+                    -spellToReactTo.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * DAMAGE_RATIO_FROM_ATTACK)
                 );
         }
     }
@@ -139,6 +140,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class ReflectAttack : Buff {
+        private const int REFLECT_DAMAGE_RATIO = 1;
 
         public ReflectAttack() : base(Util.GetSprite("round-shield"), "Reflect Attack", "Next <color=yellow>Attack</color> on this unit is reflected.", false) {
         }
@@ -161,7 +163,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             foreach (SpellEffect se in spellToReactTo.Result.Effects) {
                 AddToModStat damageHealth = se as AddToModStat;
                 if (damageHealth != null && damageHealth.AffectedStat == StatType.HEALTH) {
-                    damageToReflect = damageHealth.Value;
+                    damageToReflect = damageHealth.Value * REFLECT_DAMAGE_RATIO;
                 }
             }
             spellToReactTo.Result.AddEffect(
