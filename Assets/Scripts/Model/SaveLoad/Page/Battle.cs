@@ -461,12 +461,14 @@ namespace Scripts.Model.Pages {
             foreach (Character combatant in GetAll()) {
                 foreach (Buff b in combatant.Buffs) {
                     if (b.IsReact(spell, combatant.Stats)) {
-                        AddText(string.Format("<color=yellow>{0}</color>'s <color=cyan>{1}</color> activates <color=yellow>{2}</color>'s <color=cyan>{3}</color>!",
+                        AddText(new TextBox(
+                            string.Format("<color=yellow>{0}</color>'s <color=cyan>{1}</color> activates <color=yellow>{2}</color>'s <color=cyan>{3}</color>!",
                             spell.Caster.Look.DisplayName,
                             spell.Book.Name,
                             combatant.Look.DisplayName,
                             b.Name
-                            ));
+                            ),
+                            new TooltipBundle(b.Sprite, b.Name, b.Description)));
                         b.React(spell, combatant.Stats);
                     }
                 }
