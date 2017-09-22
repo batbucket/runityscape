@@ -28,32 +28,28 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private TextBoxView textBoxPrefab;
 
-        private Queue<PooledBehaviour> children;
-
         public InputBoxView AddInputBox() {
             InputBoxView ibv = ObjectPoolManager.Instance.Get(inputBoxPrefab);
-            children.Enqueue(ibv);
             Util.Parent(ibv.gameObject, gameObject);
 
             return ibv;
         }
 
         public void ReturnChildren() {
-            foreach (PooledBehaviour pb in children) {
+            foreach (PooledBehaviour pb in transform.GetComponentsInChildren<PooledBehaviour>()) {
                 ObjectPoolManager.Instance.Return(pb);
             }
-            children.Clear();
         }
 
         public PooledBehaviour AddTextBox(TextBox textBox) {
-            while (children.Count > MAX_NUMBER_OF_TEXTBOXES) {
-                ObjectPoolManager.Instance.Return(children.Dequeue());
+            while (transform.childCount > MAX_NUMBER_OF_TEXTBOXES) {
+                ObjectPoolManager.Instance.Return(transform.GetComponentsInChildren<PooledBehaviour>()[0]);
             }
             if (string.IsNullOrEmpty(textBox.RawText)) {
                 return null;
             }
             PooledBehaviour pb = ObjectPoolManager.Instance.Get(textBoxes[textBox.Type]);
-            children.Enqueue(pb);
+
             Util.Parent(pb.gameObject, gameObject);
             pb.transform.SetAsLastSibling();
             textBox.SetupPrefab(pb.gameObject);
@@ -81,7 +77,6 @@ namespace Scripts.View.TextBoxes {
         }
 
         private void Start() {
-            children = new Queue<PooledBehaviour>();
             textBoxes = new Dictionary<TextBoxType, PooledBehaviour>() {
             { TextBoxType.TEXT, textBoxPrefab },
             { TextBoxType.LEFT, leftBoxPrefab },
