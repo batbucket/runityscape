@@ -1,4 +1,5 @@
 ﻿using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
@@ -91,6 +92,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Health>("hp");
             Add<Skill>("sk");
             Add<Experience>("exp");
+            Add<Mana>("mana");
         }
 
         private void Spells() {
@@ -103,6 +105,7 @@ namespace Scripts.Model.SaveLoad {
             Add<ReflectiveClone>("reflectiveClone");
             Add<Blackout>("blackout");
             Add<RevealTrueForm>("revealTrueForm");
+            Add<Ignite>("ignite");
         }
 
         private void Items() {
@@ -123,6 +126,8 @@ namespace Scripts.Model.SaveLoad {
             Add<StrengthScalingPoison>("strengthScalingPoison");
             Add<BlackedOut>("blackoutDebuff");
             Add<DamageResist>("damageResist");
+            Add<Ignited>("ignitedDebuff");
+            Add<Insight>("insight");
         }
 
         private void Brains() {
