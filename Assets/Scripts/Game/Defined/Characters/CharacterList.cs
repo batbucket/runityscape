@@ -134,7 +134,8 @@ namespace Scripts.Game.Defined.Characters {
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.PARTNER)
                 .AddStats(new Experience())
-                .AddSpells(new Check());
+                .AddStats(new Skill())
+                .AddSpells(new CrushingBlow());
         }
 
         public static Character TestEnemy() {
