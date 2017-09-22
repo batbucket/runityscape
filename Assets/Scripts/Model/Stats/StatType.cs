@@ -66,7 +66,7 @@ namespace Scripts.Model.Stats {
 
         public static readonly StatType MANA = new StatType(BoundType.RESOURCE,
                                                                     "Mana",
-                                                                    "fox-head",
+                                                                    "water-drop",
                                                                     "Magical resources.",
                                                                     Color.blue);
 
