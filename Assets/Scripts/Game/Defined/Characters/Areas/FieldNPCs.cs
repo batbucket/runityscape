@@ -67,6 +67,21 @@ namespace Scripts.Game.Defined.Characters {
                 .AddSpells(new SetupCounter());
         }
 
+        public static Character BlackShuck()
+        {
+            return CharacterUtil.StandardEnemy(
+                new Stats(3, 10, 2, 2, 10),
+                new Look(
+                    "Black Shuck",
+                    "spectre",
+                    "Its growl sends a shiver down your spine",
+                    Breed.BEAST
+                    ),
+                new BlackShuck())
+                .AddStats(new Skill())
+                .AddSpells(new SetupCounter());
+        }
+
         public static Character Healer() {
             return CharacterUtil.StandardEnemy(
                 new Stats(3, 1, 5, 5, 1),

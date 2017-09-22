@@ -50,7 +50,7 @@ namespace Scripts.Game.Areas {
                             "Restoration",
                             () => new Encounter[] {
                                 new Encounter(FieldNPCs.Healer(), FieldNPCs.Healer()),
-                                new Encounter(FieldNPCs.Healer(), FieldNPCs.Knight())
+                                new Encounter(FieldNPCs.Healer(), FieldNPCs.Knight(), FieldNPCs.BlackShuck())
                             }),
                         new BattleStage(
                             "VS " + FieldNPCs.BigKnight().Look.Name,
