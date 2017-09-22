@@ -13,8 +13,8 @@ namespace Scripts.Presenter {
     /// Updates the portraitview from the character.
     /// </summary>
     public class CharacterPresenter {
-        public Character Character { get; private set; }
-        public PortraitView PortraitView { get; private set; }
+        private Character character;
+        private PortraitView portrait;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CharacterPresenter"/> class.
@@ -22,8 +22,12 @@ namespace Scripts.Presenter {
         /// <param name="character">The character associated with the portrait.</param>
         /// <param name="portraitView">The portrait associated with the character.</param>
         public CharacterPresenter(Character character, PortraitView portraitView) {
-            this.Character = character;
-            this.PortraitView = portraitView;
+            this.character = character;
+            this.portrait = portraitView;
+
+            while (this.character.Effects.Count > 0) {
+                ParentToEffects(character.Effects.Dequeue());
+            }
         }
 
         /// <summary>
@@ -35,16 +39,16 @@ namespace Scripts.Presenter {
 
         private RectTransform IconRect {
             get {
-                if (PortraitView == null) {
+                if (portrait == null) {
                     return null;
                 }
-                return PortraitView.Image.rectTransform;
+                return portrait.Image.rectTransform;
             }
         }
 
         private void ParentToEffects(GameObject go) {
-            if (PortraitView != null) {
-                Util.Parent(go, PortraitView.EffectsHolder);
+            if (portrait != null) {
+                Util.Parent(go, portrait.EffectsHolder);
             }
         }
 
@@ -52,12 +56,12 @@ namespace Scripts.Presenter {
         /// Setups functions in character.
         /// </summary>
         private void SetupFuncs() {
-            Character.GetIconRectFunc = () => IconRect;
-            Character.ParentToEffectsFunc = (go) => ParentToEffects(go);
+            character.GetIconRectFunc = () => IconRect;
+            character.ParentToEffectsFunc = (go) => ParentToEffects(go);
 
-            Character.Stats.AddSplat = (sd => AddHitsplat(sd));
-            Character.Buffs.AddSplat = (sd => AddHitsplat(sd));
-            Character.Equipment.AddSplat = (sd => AddHitsplat(sd));
+            character.Stats.AddSplat = (sd => AddHitsplat(sd));
+            character.Buffs.AddSplat = (sd => AddHitsplat(sd));
+            character.Equipment.AddSplat = (sd => AddHitsplat(sd));
         }
 
         /// <summary>
@@ -65,8 +69,8 @@ namespace Scripts.Presenter {
         /// </summary>
         /// <param name="details">The details needed to customize the splat.</param>
         private void AddHitsplat(SplatDetails details) {
-            if (PortraitView != null && PortraitView.isActiveAndEnabled) {
-                PortraitView.StartCoroutine(SFX.DoHitSplat(Character, details));
+            if (portrait != null && portrait.isActiveAndEnabled) {
+                portrait.StartCoroutine(SFX.DoHitSplat(character, details));
             }
         }
     }
