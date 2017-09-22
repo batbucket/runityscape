@@ -32,6 +32,7 @@ namespace Scripts.View.Effects {
 
         public override void Reset() {
             ps.time = 0;
+            ps.startColor = Color.white;
         }
     }
 }
