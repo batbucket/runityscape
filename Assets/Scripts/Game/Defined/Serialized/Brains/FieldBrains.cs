@@ -48,6 +48,29 @@ namespace Scripts.Game.Serialized.Brains {
         }
     }
 
+    public class BlackShuck : PriorityBrain
+    {
+        public static readonly SetupCounter COUNTER = new SetupCounter();
+        public static readonly Attack ATTACK = new Attack();
+
+        protected override IList<Func<IPlayable>> SetupPriorityPlays()
+        {
+            return new Func<IPlayable>[] {
+                    CastOnRandom(COUNTER),
+                    CastOnRandom(ATTACK)
+                };
+        }
+
+        public override string StartOfRoundDialogue()
+        {
+            if (currentBattle.TurnCount == 0)
+            {
+                return "It barks menacingly at you";
+            }
+            return string.Empty;
+        }
+    }
+
     public class Illusionist : PriorityBrain {
         public static readonly Blackout BLACKOUT = new Blackout();
 
