@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Defined.Serialized.Spells;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Model.Buffs;
 using Scripts.Model.Items;
 using Scripts.Model.Stats;
