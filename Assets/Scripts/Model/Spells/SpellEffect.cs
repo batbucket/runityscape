@@ -10,7 +10,7 @@ namespace Scripts.Model.Spells {
         /// <summary>
         /// The value
         /// </summary>
-        public readonly int Value;
+        public int Value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpellEffect"/> class.

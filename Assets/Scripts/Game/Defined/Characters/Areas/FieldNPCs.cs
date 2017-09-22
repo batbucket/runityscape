@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Defined.Serialized.Items;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Serialized;
@@ -23,7 +24,8 @@ namespace Scripts.Game.Defined.Characters {
                 1f,
                 Villager())
                 .AddTalks(new Talk("Test", "<a>Buy some apples."))
-                .AddBuys(new Buy(new Apple()));
+                .AddTalks(new Talk("Shield", "<a>A fine wooden shield, complete with a steel band around the rim."))
+                .AddBuys(new Buy(new Apple()), new Buy(new Shield()));
         }
 
         public static Character Villager() {
@@ -31,7 +33,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Stats(2, 1, 1, 1, 2),
                 new Look(
                     "Ghost",
-                    "haunting",
+                    "villager",
                     "A villager who didn't make it.",
                     Breed.SPIRIT
                     ),
@@ -43,8 +45,8 @@ namespace Scripts.Game.Defined.Characters {
             return CharacterUtil.StandardEnemy(
                 new Stats(3, 1, 2, 2, 5),
                 new Look(
-                    "Spectre",
-                    "spectre",
+                    "Knight",
+                    "knight",
                     "A knight who didn't make it. May be armed.",
                     Breed.SPIRIT
                     ),
@@ -54,10 +56,10 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character BigKnight() {
             return CharacterUtil.StandardEnemy(
-                new Stats(3, 1, 2, 2, 15),
+                new Stats(3, 10, 2, 2, 15),
                 new Look(
                     "Big Knight",
-                    "spectre",
+                    "big-knight",
                     "It's a big guy.",
                     Breed.SPIRIT
                     ),
@@ -66,17 +68,46 @@ namespace Scripts.Game.Defined.Characters {
                 .AddSpells(new SetupCounter());
         }
 
+        public static Character BlackShuck() {
+            return CharacterUtil.StandardEnemy(
+                new Stats(3, 10, 2, 2, 10),
+                new Look(
+                    "Black Shuck",
+                    "spectre",
+                    "Its growl sends a shiver down your spine",
+                    Breed.BEAST
+                    ),
+                new BlackShuck())
+                .AddStats(new Skill())
+                .AddSpells(new SetupCounter());
+        }
+
+        public static Character Wizard() {
+            return CharacterUtil.StandardEnemy(
+                new Stats(3, 1, 1, 2, 3),
+                new Look(
+                    "Wizard",
+                    "wizard",
+                    "Can dish it out but cannot take it.",
+                    Breed.SPIRIT
+                    ),
+                new Wizard())
+                .AddStats(new Mana())
+                .AddSpells(new Ignite())
+                .AddBuff(new Insight());
+        }
+
         public static Character Healer() {
             return CharacterUtil.StandardEnemy(
-                new Stats(3, 1, 5, 5, 1),
+                new Stats(3, 1, 5, 5, 2),
                 new Look(
-                    "Spirit Healer",
-                    "health-normal",
+                    "Healer",
+                    "white-mage",
                     "Healer in life. Healer in death.",
                     Breed.SPIRIT
                     ),
                 new Healer())
-                .AddItem(new Apple())
+                .AddItem(new Money(), Util.RandomRange(5, 15))
                 .AddSpells(new Heal());
         }
 
@@ -93,24 +124,34 @@ namespace Scripts.Game.Defined.Characters {
                 .AddSpells(new Blackout());
         }
 
-        private static Look ReplicantLook() {
+        public static Look ReplicantLook() {
             return new Look(
-                    "Replika",
-                    "spectre",
-                    string.Empty,
-                    Breed.SPIRIT,
+                    "Xirdneth",
+                    "replicant",
+                    "Its form is incomprehensible.",
+                    Breed.UNKNOWN,
                     Color.magenta
                     );
+        }
+
+        private static Look ReplicantDisguisedLook() {
+            return new Look(
+                "Irdne",
+                "villager",
+                "An innocent villager.",
+                Breed.SPIRIT,
+                Color.magenta
+                );
         }
 
         public static Character Replicant() {
             return CharacterUtil.StandardEnemy(
                 new Stats(10, 2, 5, 10, 30),
-                ReplicantLook(),
+                ReplicantDisguisedLook(),
                 new Replicant()
                 )
             .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
-            .AddSpells(new ReflectiveClone(), new SetupCounter());
+            .AddSpells(new ReflectiveClone(), new RevealTrueForm());
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using Scripts.Game.Defined.Characters;
 using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;

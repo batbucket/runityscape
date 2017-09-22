@@ -1,4 +1,5 @@
 ﻿using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
@@ -19,14 +20,17 @@ namespace Scripts.Model.SaveLoad {
     /// Table holding various Ids
     /// </summary>
     public static class IdTable {
+
         /// <summary>
         /// Mapping of types to unique strings
         /// </summary>
         public static TypeMap Types = new TypeMap();
+
         /// <summary>
         /// Mapping of type safe enums
         /// </summary>
         public static EnumMap<StatType> Stats = new EnumMap<StatType>(StatType.AllTypes);
+
         /// <summary>
         /// Mapping of type safe enums
         /// </summary>
@@ -66,6 +70,7 @@ namespace Scripts.Model.SaveLoad {
     /// </summary>
     /// <seealso cref="Scripts.Model.SaveLoad.IdMap{System.Type}" />
     public class TypeMap : IdMap<Type> {
+
         protected override void InitHelper() {
             Stats();
             Spells();
@@ -87,6 +92,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Health>("hp");
             Add<Skill>("sk");
             Add<Experience>("exp");
+            Add<Mana>("mana");
         }
 
         private void Spells() {
@@ -98,6 +104,8 @@ namespace Scripts.Model.SaveLoad {
             Add<Heal>("heal");
             Add<ReflectiveClone>("reflectiveClone");
             Add<Blackout>("blackout");
+            Add<RevealTrueForm>("revealTrueForm");
+            Add<Ignite>("ignite");
         }
 
         private void Items() {
@@ -106,6 +114,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Money>("money");
             Add<GhostArmor>("ghostArmor");
             Add<BrokenSword>("ghostSword");
+            Add<Shield>("shield");
         }
 
         private void Buffs() {
@@ -116,6 +125,9 @@ namespace Scripts.Model.SaveLoad {
             Add<SpiritLink>("spiritLink");
             Add<StrengthScalingPoison>("strengthScalingPoison");
             Add<BlackedOut>("blackoutDebuff");
+            Add<DamageResist>("damageResist");
+            Add<Ignited>("ignitedDebuff");
+            Add<Insight>("insight");
         }
 
         private void Brains() {
@@ -127,6 +139,7 @@ namespace Scripts.Model.SaveLoad {
             Add<ReplicantClone>("replicantClone");
             Add<Illusionist>("illusionist");
             Add<BigKnight>("bigKnight");
+            Add<BlackShuck>("blackShuck");
         }
 
         private void Add<Type>(string id) {

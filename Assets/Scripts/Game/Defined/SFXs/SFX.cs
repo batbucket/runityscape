@@ -5,6 +5,7 @@ using Scripts.View.Effects;
 using Scripts.View.ObjectPool;
 using Scripts.View.Sounds;
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,6 +36,11 @@ namespace Scripts.Game.Defined.SFXs {
         /// <returns></returns>
         public static IEnumerator PlaySound(string soundLoc) {
             Main.Instance.Sound.PlaySound(soundLoc);
+            yield break;
+        }
+
+        public static IEnumerator LoopMusic(string soundLoc) {
+            Main.Instance.Sound.LoopMusic(soundLoc);
             yield break;
         }
 
@@ -98,9 +104,21 @@ namespace Scripts.Game.Defined.SFXs {
             ev.Dimensions = dimensions;
             portrait.ParentToEffects(ev.gameObject);
             ev.Play();
-            yield return DoHitSplat(portrait, "DEFEAT", Color.red, Util.GetSprite("skull-crossed-bones")); // this one is causing issues
+            yield return DoHitSplat(portrait, "DEFEAT", Color.red, Util.GetSprite("skull-crossed-bones"));
+            yield return new WaitUntil(() => ev);
+            ObjectPoolManager.Instance.Return(ev);
+        }
+
+        public static IEnumerator DoSteamEffect(IPortraitable portrait, Color color) {
+            ExplosionView ev = ObjectPoolManager.Instance.Get(EffectsManager.Instance.SteamBurst);
+            ev.Play();
+            portrait.ParentToEffects(ev.gameObject);
             yield return new WaitUntil(() => ev.IsDone);
             ObjectPoolManager.Instance.Return(ev);
+        }
+
+        public static IEnumerator DoSteamEffect(IPortraitable portrait) {
+            yield return DoSteamEffect(portrait, Color.white);
         }
 
         /// <summary>

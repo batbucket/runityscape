@@ -13,8 +13,8 @@ namespace Scripts.Model.Stats {
     /// Type-safe enum representing the various stat types in the game.
     /// </summary>
     public sealed class StatType : IComparable<StatType>, INameable, ISaveable<StatTypeSave> {
-
         private static readonly HashSet<StatType> allTypes = new HashSet<StatType>(new IdentityEqualityComparer<StatType>());
+
         private static readonly IDictionary<BoundType, Bounds> attributeBounds = new Dictionary<BoundType, Bounds>() {
             { BoundType.RESOURCE, new Bounds(0, int.MaxValue) },
             { BoundType.ASSIGNABLE, new Bounds(0, 100) },
@@ -66,7 +66,7 @@ namespace Scripts.Model.Stats {
 
         public static readonly StatType MANA = new StatType(BoundType.RESOURCE,
                                                                     "Mana",
-                                                                    "fox-head",
+                                                                    "water-drop",
                                                                     "Magical resources.",
                                                                     Color.blue);
 
@@ -85,12 +85,6 @@ namespace Scripts.Model.Stats {
         public static readonly StatType EXPERIENCE = new StatType(BoundType.RESOURCE,
                                                                     "Experience",
                                                                     "upgrade",
-                                                                    "Needed to level up.",
-                                                                    Color.white);
-
-        public static readonly StatType DEATH_EXP = new StatType(BoundType.RESOURCE,
-                                                                    "Death experience",
-                                                                    "fox-head",
                                                                     "Needed to level up.",
                                                                     Color.white);
 

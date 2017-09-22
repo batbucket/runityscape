@@ -12,6 +12,9 @@ using Scripts.Model.Pages;
 using Scripts.View.Effects;
 using Scripts.Game.Serialized.Brains;
 using UnityEngine;
+using Scripts.Presenter;
+using Scripts.Game.Defined.Characters;
+using Scripts.Game.Defined.Serialized.Buffs;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -21,7 +24,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public const float HIT_STRENGTH_RATIO = 0.5f;
         public const float CRITICAL_STRENGTH_RATIO = 1f;
         public const float CRITICAL_VARIANCE = .125f;
-        public const float BASE_ACCURACY = .80f;
+        public const float BASE_ACCURACY = .90f;
         public const float BASE_CRITICAL_RATE = 0f;
         public const int SKILL_ON_HIT = 1;
         public const int SKILL_ON_CRIT = 2;
@@ -84,6 +87,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         private static readonly Checked DUMMY = new Checked();
 
         public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) {
+            AddCost(StatType.MANA, 10);
         }
 
         protected override string CreateDescriptionHelper() {
@@ -142,14 +146,39 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
-    public class ReflectiveClone : BasicSpellbook {
-        private const int NUMBER_OF_CLONES = 4;
+    public class RevealTrueForm : BasicSpellbook {
 
-        public ReflectiveClone() : base("Harmless Illusions", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, PriorityType.LOW) {
+        public RevealTrueForm() : base("True Form", Util.GetSprite("paranoia"), TargetType.SELF, SpellType.BOOST) {
         }
 
         protected override string CreateDescriptionHelper() {
-            return "Creates clones of the caster that die when the caster is attacked. Clones reflect attacks and do no damage.";
+            return "Reveal your true form.";
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] {
+                    SFX.DoSteamEffect(caster),
+                    SFX.PlaySound("Creepy"),
+                    SFX.PlaySound("i_see_you_voice"),
+                    SFX.LoopMusic("enchanted tiki 86")
+                };
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new ChangeLookEffect(caster, FieldNPCs.ReplicantLook()),
+            };
+        }
+    }
+
+    public class ReflectiveClone : BasicSpellbook {
+        private const int NUMBER_OF_CLONES = 4;
+
+        public ReflectiveClone() : base("Hallucination", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, PriorityType.LOW) {
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return "Creates clones of the caster. Clones do no damage, and die when the caster is attacked. Clones reflect all damage taken.";
         }
 
         protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
@@ -183,6 +212,21 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         private static readonly BlackedOut DUMMY = new BlackedOut();
 
         public Blackout() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, DUMMY, "Blackout", PriorityType.HIGH) {
+        }
+    }
+
+    public class Ignite : BuffAdder {
+        private static readonly Ignited DUMMY = new Ignited();
+
+        public Ignite() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, DUMMY, "Ignite", PriorityType.NORMAL) {
+            AddCost(StatType.MANA, 10);
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] {
+                SFX.PlaySound("synthetic_explosion_1"),
+                SFX.DoSteamEffect(target, Color.red)
+            };
         }
     }
 }

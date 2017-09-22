@@ -10,7 +10,9 @@ namespace Scripts.View.Portraits {
     /// Holds the buffs for a particular portrait.
     /// </summary>
     public class BuffHolderView : MonoBehaviour, IHolderView<BuffHolderView.BuffContent> {
+
         public struct BuffContent {
+
             /// <summary>
             /// Unique identifier to tell buffviews apart
             /// </summary>
@@ -77,7 +79,7 @@ namespace Scripts.View.Portraits {
             }
         }
 
-        public void AddContents(IEnumerable<BuffContent> contents) {
+        public void AddContents(IList<BuffContent> contents) {
             PortraitUtil.GetDifferences(ref previous, contents, buffPrefab, gameObject, bc => bc.Id, (v, c) => SetupViewFromContent(v, c));
         }
 

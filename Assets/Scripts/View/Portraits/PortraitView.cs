@@ -2,6 +2,7 @@
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -91,11 +92,12 @@ namespace Scripts.View.Portraits {
         /// <param name="resources">The resources.</param>
         /// <param name="buffs">The buffs.</param>
         /// <param name="isRevealed">if set to <c>true</c> [is revealed].</param>
-        public void Setup(Sprite sprite, string title, string body, IEnumerable<ResourceHolderView.ResourceContent> resources, IEnumerable<BuffHolderView.BuffContent> buffs, bool isRevealed) {
+        public void Setup(Sprite sprite, string title, string body, List<ResourceHolderView.ResourceContent> resources, IList<BuffHolderView.BuffContent> buffs, bool isRevealed) {
             tip.Setup(new TooltipBundle(sprite, title, body));
             PortraitName = title;
             Sprite = sprite;
             if (isRevealed) {
+                resources.Sort((left, right) => left.Id.CompareTo(right.Id));
                 resourcesHolder.AddContents(resources);
                 buffsHolder.AddContents(buffs);
             } else {

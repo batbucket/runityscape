@@ -8,6 +8,7 @@ using Scripts.Model.TextBoxes;
 using System.Collections.Generic;
 
 namespace Scripts.Game.Pages {
+
     /// <summary>
     /// Pages for performing level ups and viewing stats on party members.
     /// </summary>

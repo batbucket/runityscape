@@ -3,6 +3,7 @@ using Scripts.Game.Defined.Serialized.Brains;
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
 using Scripts.Model.Spells;
@@ -96,6 +97,11 @@ namespace Scripts.Game.Defined.Characters {
             }
             return c;
         }
+
+        public static Character AddBuff(this Character c, Buff buff) {
+            c.Buffs.AddBuff(buff, c);
+            return c;
+        }
     }
 
     public static class CharacterList {
@@ -106,12 +112,14 @@ namespace Scripts.Game.Defined.Characters {
                 new Look(
                     name,
                     "player",
-                    "It's you!",
+                    "Is this thing even human?",
                     Breed.PROGRAMMER
                     ),
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.HERO)
-                .AddStats(new Experience());
+                .AddStats(new Experience())
+                .AddSpells(new Check())
+                .AddStats(new Mana());
         }
 
         public static Character Partner(string name) {
@@ -119,13 +127,14 @@ namespace Scripts.Game.Defined.Characters {
                 new Stats(0, 1, 2, 1, 5),
                 new Look(
                     name,
-                    "visored-helm",
-                    "Has a helmet icon despite not wearing one.",
+                    "partner",
+                    "Legendary knight, sworn to defeat to dark lord.",
                     Breed.HUMAN
                     ),
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.PARTNER)
-                .AddStats(new Experience());
+                .AddStats(new Experience())
+                .AddSpells(new Check());
         }
 
         public static Character TestEnemy() {

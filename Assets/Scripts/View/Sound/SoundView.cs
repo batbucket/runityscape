@@ -10,7 +10,6 @@ namespace Scripts.View.Sounds {
     /// This class manages the sounds that play during the game.
     /// </summary>
     public class SoundView : MonoBehaviour {
-
         private const string MUSIC_PREFIX = "Music/";
         private const string SOUND_PREFIX = "Sounds/";
         private const float SOUND_VOLUME = 0.50f;
@@ -20,8 +19,10 @@ namespace Scripts.View.Sounds {
 
         [SerializeField]
         private OneShotHolderView oneShotHolder;
+
         [SerializeField]
         private LoopHolderView loopHolder;
+
         [SerializeField]
         private ClipView clipPrefab;
 
@@ -43,6 +44,7 @@ namespace Scripts.View.Sounds {
                 Sound[resourceLocation] = Resources.Load<AudioClip>(loc);
             }
 
+            loopHolder.StopAllSounds();
             ClipView clip = ObjectPoolManager.Instance.Get<ClipView>(clipPrefab);
             clip.Clip = Sound[resourceLocation];
             clip.Volume = MUSIC_VOLUME;
