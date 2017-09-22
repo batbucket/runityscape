@@ -106,7 +106,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Look(
                     name,
                     "player",
-                    "It's you!",
+                    "Is this thing even human?",
                     Breed.PROGRAMMER
                     ),
                 new Player())
@@ -120,8 +120,8 @@ namespace Scripts.Game.Defined.Characters {
                 new Stats(0, 1, 2, 1, 5),
                 new Look(
                     name,
-                    "visored-helm",
-                    "Has a helmet icon despite not wearing one.",
+                    "partner",
+                    "Legendary knight, sworn to defeat to dark lord.",
                     Breed.HUMAN
                     ),
                 new Player())

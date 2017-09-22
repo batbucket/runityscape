@@ -32,7 +32,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Stats(2, 1, 1, 1, 2),
                 new Look(
                     "Ghost",
-                    "haunting",
+                    "villager",
                     "A villager who didn't make it.",
                     Breed.SPIRIT
                     ),
@@ -44,8 +44,8 @@ namespace Scripts.Game.Defined.Characters {
             return CharacterUtil.StandardEnemy(
                 new Stats(3, 1, 2, 2, 5),
                 new Look(
-                    "Spectre",
-                    "spectre",
+                    "Knight",
+                    "knight",
                     "A knight who didn't make it. May be armed.",
                     Breed.SPIRIT
                     ),
@@ -58,7 +58,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Stats(3, 10, 2, 2, 15),
                 new Look(
                     "Big Knight",
-                    "spectre",
+                    "big-knight",
                     "It's a big guy.",
                     Breed.SPIRIT
                     ),
@@ -67,8 +67,7 @@ namespace Scripts.Game.Defined.Characters {
                 .AddSpells(new SetupCounter());
         }
 
-        public static Character BlackShuck()
-        {
+        public static Character BlackShuck() {
             return CharacterUtil.StandardEnemy(
                 new Stats(3, 10, 2, 2, 10),
                 new Look(
@@ -86,8 +85,8 @@ namespace Scripts.Game.Defined.Characters {
             return CharacterUtil.StandardEnemy(
                 new Stats(3, 1, 5, 5, 1),
                 new Look(
-                    "Spirit Healer",
-                    "health-normal",
+                    "Healer",
+                    "white-mage",
                     "Healer in life. Healer in death.",
                     Breed.SPIRIT
                     ),
@@ -111,9 +110,9 @@ namespace Scripts.Game.Defined.Characters {
 
         private static Look ReplicantLook() {
             return new Look(
-                    "Replika",
-                    "spectre",
-                    string.Empty,
+                    "Xirdneth",
+                    "replicant",
+                    "Its form is incomprehensible.",
                     Breed.SPIRIT,
                     Color.magenta
                     );
