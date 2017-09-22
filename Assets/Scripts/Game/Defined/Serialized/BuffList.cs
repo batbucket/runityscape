@@ -14,7 +14,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public DamageResist()
             : base(Util.GetSprite("round-shield"),
                   "Damage Resist",
-                  String.Format("Reduces incident damage by {0} %.",
+                  String.Format("Reduces incident damage by {0}%.",
                       (1 - DAMAGE_MULTIPLIER)), false) { }
 
         protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
