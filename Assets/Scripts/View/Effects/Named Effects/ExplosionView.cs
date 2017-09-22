@@ -20,6 +20,13 @@ namespace Scripts.View.Effects {
             }
         }
 
+        public Color Color {
+            set {
+                ParticleSystem.MainModule settings = ps.main;
+                settings.startColor = new ParticleSystem.MinMaxGradient(value);
+            }
+        }
+
         public bool IsDone {
             get {
                 return !ps.IsAlive();
