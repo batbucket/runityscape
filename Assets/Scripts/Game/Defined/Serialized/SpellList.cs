@@ -14,6 +14,7 @@ using Scripts.Game.Serialized.Brains;
 using UnityEngine;
 using Scripts.Presenter;
 using Scripts.Game.Defined.Characters;
+using Scripts.Game.Defined.Serialized.Buffs;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -86,7 +87,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         private static readonly Checked DUMMY = new Checked();
 
         public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) {
-            AddCost(StatType.EXPERIENCE, 1);
+            AddCost(StatType.MANA, 10);
         }
 
         protected override string CreateDescriptionHelper() {
@@ -211,6 +212,21 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         private static readonly BlackedOut DUMMY = new BlackedOut();
 
         public Blackout() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, DUMMY, "Blackout", PriorityType.HIGH) {
+        }
+    }
+
+    public class Ignite : BuffAdder {
+        private static readonly Ignited DUMMY = new Ignited();
+
+        public Ignite() : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, DUMMY, "Ignite", PriorityType.NORMAL) {
+            AddCost(StatType.MANA, 10);
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] {
+                SFX.PlaySound("synthetic_explosion_1"),
+                SFX.DoSteamEffect(target, Color.red)
+            };
         }
     }
 }

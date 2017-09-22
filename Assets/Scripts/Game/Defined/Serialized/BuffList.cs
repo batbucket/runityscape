@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Defined.Spells;
+﻿using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Game.Defined.Spells;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
@@ -6,7 +7,39 @@ using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
 
-namespace Scripts.Game.Defined.Serialized.Spells {
+namespace Scripts.Game.Defined.Serialized.Buffs {
+
+    public class Ignited : Buff {
+        private const int DAMAGE_PER_TURN = 1;
+        private const int DURATION = 5;
+
+        public Ignited()
+            : base(DURATION,
+                  Util.GetSprite("fire"),
+                  "Ignited",
+                  string.Format("Take {0} damage at end of turn.",
+                      DAMAGE_PER_TURN), true) {
+        }
+
+        protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
+            return new SpellEffect[] {
+                new AddToModStat(owner, StatType.HEALTH, -DAMAGE_PER_TURN)
+            };
+        }
+    }
+
+    public class Insight : Buff {
+        private const int MANA_RECOVERED_PER_TURN = 5;
+
+        public Insight() : base(Util.GetSprite("water-drop"), "Insight", "Regenerating mana.", false) {
+        }
+
+        protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
+            return new SpellEffect[] {
+                new AddToModStat(owner, StatType.MANA, MANA_RECOVERED_PER_TURN)
+            };
+        }
+    }
 
     public class DamageResist : Buff {
         private const float DAMAGE_MULTIPLIER = 0.7f;
