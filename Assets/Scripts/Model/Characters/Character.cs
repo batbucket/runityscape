@@ -127,7 +127,7 @@ namespace Scripts.Model.Characters {
             Brain.Spells = this.Spells;
             Stats.Update(this);
             Equipment.AddBuff = b => Buffs.AddBuff(b);
-            Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.DISPEL, b);
+            Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
             Stats.InitializeResources();
             Stats.GetEquipmentBonus = f => Equipment.GetBonus(f);
             Buffs.Stats = Stats;

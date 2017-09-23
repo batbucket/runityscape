@@ -106,6 +106,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Blackout>("blackout");
             Add<RevealTrueForm>("revealTrueForm");
             Add<Ignite>("ignite");
+            Add<CrushingBlow>("crushingBlow");
         }
 
         private void Items() {
@@ -115,6 +116,7 @@ namespace Scripts.Model.SaveLoad {
             Add<GhostArmor>("ghostArmor");
             Add<BrokenSword>("ghostSword");
             Add<Shield>("shield");
+            Add<RegenerationArmor>("regenArmor");
         }
 
         private void Buffs() {
@@ -128,6 +130,7 @@ namespace Scripts.Model.SaveLoad {
             Add<DamageResist>("damageResist");
             Add<Ignited>("ignitedDebuff");
             Add<Insight>("insight");
+            Add<Restore>("restore");
         }
 
         private void Brains() {

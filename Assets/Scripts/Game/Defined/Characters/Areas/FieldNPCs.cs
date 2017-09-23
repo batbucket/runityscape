@@ -25,8 +25,8 @@ namespace Scripts.Game.Defined.Characters {
                 Villager())
                 .AddTalks(new Talk("Test", "<a>Buy some apples."))
                 .AddTalks(new Talk("Shield", "<a>A fine wooden shield, complete with a steel band around the rim."))
-                    .AddTalks(new Talk("Test", "<a>A sturdy fish hook, best for fighting fish."))
-                .AddBuys(new Buy(new Apple()), new Buy(new Shield(), new Buy(new FishHook())));
+                .AddTalks(new Talk("Test", "<a>A sturdy fish hook, best for fighting fish."))
+                .AddBuys(new Buy(new Apple()), new Buy(new Shield(), new Buy(new FishHook()), new Buy(new RegenerationArmor())));
         }
 
         public static Character Villager() {

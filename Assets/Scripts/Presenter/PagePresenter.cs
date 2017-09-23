@@ -258,7 +258,7 @@ namespace Scripts.Presenter {
         }
 
         private bool IsRevealedCalculation(Stats stats, int contributionFromFlags) {
-            return Util.IS_DEBUG || (stats.ResourceVisibility + contributionFromFlags) > 0;
+            return (stats.ResourceVisibility + contributionFromFlags) > 0;
         }
     }
 }
