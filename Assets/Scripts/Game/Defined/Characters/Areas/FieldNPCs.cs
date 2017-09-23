@@ -158,7 +158,7 @@ namespace Scripts.Game.Defined.Characters {
 
 	public static Character SharkPirate() {
 		return CharacterUtil.StandardEnemy(
-			new Stats(12, 1, 5, 8, 35),
+			new Stats(12, 1, 6, 8, 35),
 			new Look(
 				"Cap'n Shark",
 				"pirate-shark",
