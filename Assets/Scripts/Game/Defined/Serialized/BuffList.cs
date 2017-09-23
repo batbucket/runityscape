@@ -206,16 +206,13 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class Regeneration : Buff
-    {
+    public class Restore : Buff {
         private const int REGEN_PER_TURN = 1;
 
-        public Regeneration() : base(Util.GetSprite("health-normal"), "Regeneration", String.Format("Restores {0} health each turn.", REGEN_PER_TURN), false)
-        {
+        public Restore() : base(Util.GetSprite("health-normal"), "Restore", String.Format("Restores {0} health each turn.", REGEN_PER_TURN), false) {
         }
 
-        protected override IList<SpellEffect> OnEndOfTurnHelper(Model.Characters.Stats owner)
-        {
+        protected override IList<SpellEffect> OnEndOfTurnHelper(Model.Characters.Stats owner) {
             return new SpellEffect[] {
                 new AddToModStat(owner, StatType.HEALTH, REGEN_PER_TURN)
             };

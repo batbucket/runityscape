@@ -46,18 +46,15 @@ namespace Scripts.Game.Defined.Serialized.Items {
         }
     }
 
-    public class RegenerationArmor : EquippableItem
-    {
+    public class RegenerationArmor : EquippableItem {
 
-        public RegenerationArmor() : base(EquipType.ARMOR, 10, "Regeneration Armor", "Soothing armor that heals wounds.")
-        {
+        public RegenerationArmor() : base(EquipType.ARMOR, 10, "Regeneration Armor", "Soothing armor that heals wounds.") {
             Stats.Add(StatType.AGILITY, -2);
             Stats.Add(StatType.VITALITY, 5);
         }
 
-        public override Buff CreateBuff()
-        {
-            return new Regeneration();
+        public override Buff CreateBuff() {
+            return new Restore();
         }
     }
 }
