@@ -22,6 +22,9 @@ namespace Scripts.Game.Defined.Characters {
         [Description("Beast")]
         BEAST,
 
+		[Description("Fish")]
+		FISH,
+
         // These are here for the credits
         [Description("Tester")]
         TESTER,
