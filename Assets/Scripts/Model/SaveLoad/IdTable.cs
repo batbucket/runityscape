@@ -117,6 +117,7 @@ namespace Scripts.Model.SaveLoad {
             Add<BrokenSword>("ghostSword");
             Add<Shield>("shield");
             Add<RegenerationArmor>("regenArmor");
+            Add<FishHook>("fishHook");
         }
 
         private void Buffs() {

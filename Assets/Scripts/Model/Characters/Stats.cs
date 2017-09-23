@@ -17,18 +17,22 @@ namespace Scripts.Model.Characters {
     /// <seealso cref="Scripts.Model.SaveLoad.ISaveable{Scripts.Model.SaveLoad.SaveObjects.CharacterStatsSave}" />
     /// <seealso cref="System.IComparable{Scripts.Model.Characters.Stats}" />
     public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave>, IComparable<Stats> {
+
         /// <summary>
         ///
         /// </summary>
         public enum Set {
+
             /// <summary>
             /// The mod--Set, upper bound by the max value.
             /// </summary>
             MOD,
+
             /// <summary>
             /// The mod unbound--Set while ignoring the max value
             /// </summary>
             MOD_UNBOUND,
+
             /// <summary>
             /// The maximum
             /// </summary>
@@ -39,14 +43,17 @@ namespace Scripts.Model.Characters {
         /// Various parts of a stat that can be gotten.
         /// </summary>
         public enum Get {
+
             /// <summary>
             /// The mod
             /// </summary>
             MOD,
+
             /// <summary>
             /// The mod and equip
             /// </summary>
             MOD_AND_EQUIP,
+
             /// <summary>
             /// The maximum
             /// </summary>
@@ -57,6 +64,7 @@ namespace Scripts.Model.Characters {
         /// Gets the equipment bonus of a stat from the equipment.
         /// </summary>
         public Func<StatType, int> GetEquipmentBonus;
+
         /// <summary>
         /// Add a splat function
         /// </summary>
@@ -71,6 +79,7 @@ namespace Scripts.Model.Characters {
         /// The level
         /// </summary>
         public int Level;
+
         /// <summary>
         /// The stat points
         /// </summary>
@@ -87,6 +96,7 @@ namespace Scripts.Model.Characters {
         /// There is no character owning the stats.
         /// </summary>
         private bool isSpoofed;
+
         /// <summary>
         /// If true, then initialization has finished.
         /// </summary>
