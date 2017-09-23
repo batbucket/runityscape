@@ -516,8 +516,11 @@ namespace Scripts.Model.Pages {
                             GiveExperienceToVictors();
                         }
                     }
-                    Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
-                    postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, anyoneFromVictorParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    Character anyoneLivingFromVictoriousParty = VictoriousParty
+                        .Where(c => c.Stats.State == State.ALIVE)
+                        .FirstOrDefault(); // Must be living for drop function to work!
+
+                    postBattle.List.Add(PageUtil.GenerateItemsGrid(false, this, postBattle, anyoneLivingFromVictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(PageUtil.GenerateGroupEquipmentGrid(postBattle, this, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this), false));
                     postBattle.List.Add(new Process("Continue", () => GoToPage(victory)));
                 } else {
