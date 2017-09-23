@@ -42,6 +42,7 @@ namespace Scripts.Model.Characters {
 
         // Temporary fields used in serializable, will be null otherwise
         private List<Character> partyMembers;
+
         private bool isSetupTempFieldsBefore;
 
         public Buffs() {
@@ -80,9 +81,11 @@ namespace Scripts.Model.Characters {
                 case RemovalType.TIMED_OUT:
                     buff.OnTimeOut(Stats);
                     break;
+
                 case RemovalType.DISPEL:
                     buff.OnDispell(Stats);
                     break;
+
                 default:
                     Util.Assert(false, "Unknown removal type: " + type);
                     break;
