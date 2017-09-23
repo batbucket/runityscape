@@ -157,7 +157,7 @@ namespace Scripts.Game.Shopkeeper {
                 main.List.Add(SetupBuyMenu(main));
                 main.List.Add(null);
                 main.List.Add(PageUtil.GenerateItemsGrid(false, p, main, party.Default, PageUtil.GetOutOfBattlePlayableHandler(p)));
-                main.List.Add(PageUtil.GenerateEquipmentGrid(p, main, party.Default, PageUtil.GetOutOfBattlePlayableHandler(p), false));
+                main.List.Add(PageUtil.GenerateGroupEquipmentGrid(main, p, party.Collection, PageUtil.GetOutOfBattlePlayableHandler(p), false));
                 main.List.Add(null);
                 main.List.Add(PageUtil.GenerateBack(previous));
             };
@@ -195,7 +195,10 @@ namespace Scripts.Game.Shopkeeper {
                 string.Format("{0}\n\nBuy this item for {1} {2}(s).", buy.Description, GetFullBuyPrice(buy.GetItem()), MONEY.Name),
                 () => {
                     Item item = buy.GetItem();
-                    AddToMoney(-GetFullBuyPrice(item));
+
+                    if (!Util.IS_DEBUG) {
+                        AddToMoney(-GetFullBuyPrice(item));
+                    }
                     party.Shared.Add(item);
                     Root.AddText(string.Format("Purchased {0} for {1} {2}(s).\n\nInventory: ({3})\n{2}s now: {4}",
                         item.Name,
@@ -205,7 +208,7 @@ namespace Scripts.Game.Shopkeeper {
                         GetPartyMoneyCount()));
                     postBuy();
                 },
-                () => CanBuy(buy.GetItem())
+                () => CanBuy(buy.GetItem()) || Util.IS_DEBUG
                 );
         }
 
