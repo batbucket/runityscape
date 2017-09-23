@@ -25,7 +25,8 @@ namespace Scripts.Game.Defined.Characters {
                 Villager())
                 .AddTalks(new Talk("Test", "<a>Buy some apples."))
                 .AddTalks(new Talk("Shield", "<a>A fine wooden shield, complete with a steel band around the rim."))
-                .AddBuys(new Buy(new Apple()), new Buy(new Shield()), new Buy(new RegenerationArmor()));
+                .AddTalks(new Talk("Test", "<a>A sturdy fish hook, best for fighting fish."))
+                .AddBuys(new Buy(new Apple()), new Buy(new Shield(), new Buy(new FishHook()), new Buy(new RegenerationArmor())));
         }
 
         public static Character Villager() {
@@ -154,4 +155,18 @@ namespace Scripts.Game.Defined.Characters {
             .AddSpells(new ReflectiveClone(), new RevealTrueForm());
         }
     }
+
+	public static Character SharkPirate() {
+		return CharacterUtil.StandardEnemy(
+			new Stats(12, 1, 6, 8, 35),
+			new Look(
+				"Cap'n Shark",
+				"pirate-shark",
+				"Fierce captain of shark crew",
+				Breed.FISH
+				),
+			new SharkPirate())
+			.AddItem(new Money(), Util.RandomRange(5, 15));
+	} //how to add the effect where if fish hook is used against fish, will be more effective
+
 }

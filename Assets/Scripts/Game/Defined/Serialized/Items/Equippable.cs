@@ -46,6 +46,17 @@ namespace Scripts.Game.Defined.Serialized.Items {
         }
     }
 
+    public class FishHook : EquippableItem {
+
+        public FishHook() : base(EquipType.WEAPON, 50, "Fish Hook", "A used fish hook.")
+        {
+            Stats.Add(StatType.STRENGTH, 5);
+            Stats.Add(StatType.AGILITY, 1);
+            Stats.Add(StatType.VITALITY, -1);
+        }
+        //if used on fish creature, more effective??
+    }
+
     public class RegenerationArmor : EquippableItem {
 
         public RegenerationArmor() : base(EquipType.ARMOR, 10, "Regeneration Armor", "Soothing armor that heals wounds.") {
