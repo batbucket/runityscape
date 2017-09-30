@@ -12,6 +12,9 @@ namespace Scripts.Game.Areas {
         NONE,
 
         [Description("Tiny Woods")]
-        TINY_WOODS
+        TINY_WOODS,
+
+        [Description("Sea World")]
+        SEA_WORLD
     }
 }
