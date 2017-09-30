@@ -35,11 +35,6 @@ namespace Scripts.Model.Characters {
             MOD_UNBOUND,
 
             /// <summary>
-            /// Stat bonus from a buff
-            /// </summary>
-            BUFF_BONUS,
-
-            /// <summary>
             /// The maximum
             /// </summary>
             MAX
@@ -101,11 +96,6 @@ namespace Scripts.Model.Characters {
         /// </summary>
         private int resourceVisibility;
 
-        /// <summary>
-        /// Stat bonuses from buffs
-        /// </summary>
-        private readonly IDictionary<StatType, int> buffStatBonuses;
-
         // Temporary fields for initing
         /// <summary>
         /// if is true, then the stats don't belong to a party member and are faked.
@@ -123,7 +113,6 @@ namespace Scripts.Model.Characters {
         /// </summary>
         public Stats() {
             this.baseStats = new Dictionary<StatType, Stat>();
-            this.buffStatBonuses = new Dictionary<StatType, int>();
             this.AddSplat = (a => { });
             SetDefaultStats();
             SetDefaultResources();
@@ -319,8 +308,6 @@ namespace Scripts.Model.Characters {
                         stat.Max = amount;
                     } else if (type == Set.MOD_UNBOUND) {
                         stat.SetMod(amount, false);
-                    } else if (type == Set.BUFF_BONUS) {
-                        buffStatBonuses[statType] = amount;
                     }
                 }
                 AddSplat(new SplatDetails(statType.DetermineColor(amount), string.Format("={0}", amount), statType.Sprite));
@@ -343,8 +330,6 @@ namespace Scripts.Model.Characters {
                         stat.Max += amount;
                     } else if (type == Set.MOD_UNBOUND) {
                         stat.SetMod(stat.Mod + amount, false);
-                    } else if (type == Set.BUFF_BONUS) {
-                        buffStatBonuses[statType] += amount;
                     }
                 }
                 AddSplat(new SplatDetails(statType.DetermineColor(amount), StatUtil.ShowSigns(amount), statType.Sprite));
@@ -393,7 +378,7 @@ namespace Scripts.Model.Characters {
                     if (type == Get.MOD) {
                         sum += stat.Mod;
                     } else if (type == Get.TOTAL) {
-                        sum += (stat.Mod + GetEquipmentBonus(st) + GetBuffBonusCount(st));
+                        sum += (stat.Mod + GetEquipmentBonus(st));
                     } else if (type == Get.MAX) {
                         sum += stat.Max;
                     }
@@ -429,7 +414,6 @@ namespace Scripts.Model.Characters {
 
             return
                 Util.IsDictionariesEqual<StatType, Stat>(this.baseStats, item.baseStats)
-                && Util.IsDictionariesEqual<StatType, int>(this.buffStatBonuses, item.buffStatBonuses)
                 && this.resourceVisibility.Equals(item.resourceVisibility)
                 && this.Level.Equals(item.Level)
                 && this.UnassignedStatPoints.Equals(item.UnassignedStatPoints);
@@ -488,19 +472,6 @@ namespace Scripts.Model.Characters {
         }
 
         /// <summary>
-        /// Gets the buff bonus count, or zero if not applicable (attempting to a non-assignable, for example)
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns></returns>
-        private int GetBuffBonusCount(StatType type) {
-            int amount = 0;
-            if (buffStatBonuses.ContainsKey(type)) {
-                amount = buffStatBonuses[type];
-            }
-            return amount;
-        }
-
-        /// <summary>
         /// Sets to both stat.
         /// </summary>
         /// <param name="type">The type.</param>
@@ -518,10 +489,6 @@ namespace Scripts.Model.Characters {
             this.AddStat(new Agility(0, 0));
             this.AddStat(new Intellect(0, 0));
             this.AddStat(new Vitality(0, 0));
-
-            foreach (StatType type in StatType.ASSIGNABLES) {
-                buffStatBonuses[type] = 0;
-            }
         }
 
         /// <summary>
@@ -559,16 +526,11 @@ namespace Scripts.Model.Characters {
                 baseStatistics.Add(pair.Value.GetSaveObject());
             }
 
-            List<StatBonusSave> buffStatBonusesSave = new List<StatBonusSave>();
-            foreach (KeyValuePair<StatType, int> pair in buffStatBonuses) {
-                buffStatBonusesSave.Add(new StatBonusSave(pair.Key.GetSaveObject(), pair.Value));
-            }
-
             List<StatBonusSave> equipmentBonuses = new List<StatBonusSave>();
             foreach (StatType st in StatType.AllTypes) {
                 equipmentBonuses.Add(new StatBonusSave(st.GetSaveObject(), GetEquipmentBonus(st)));
             }
-            return new CharacterStatsSave(this.resourceVisibility, this.Level, this.UnassignedStatPoints, baseStatistics, buffStatBonusesSave, equipmentBonuses);
+            return new CharacterStatsSave(this.resourceVisibility, this.Level, this.UnassignedStatPoints, baseStatistics, equipmentBonuses);
         }
 
         /// <summary>
@@ -583,10 +545,6 @@ namespace Scripts.Model.Characters {
                 Stat stat = save.CreateObjectFromID();
                 stat.InitFromSaveObject(save);
                 baseStats.Add(stat.Type, stat);
-            }
-
-            foreach (StatBonusSave save in saveObject.BuffStatBonuses) {
-                buffStatBonuses[save.StatType.Restore()] = save.Bonus;
             }
 
             /**

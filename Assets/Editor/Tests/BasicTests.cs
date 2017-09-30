@@ -352,32 +352,6 @@ public class BasicTests {
         }
 
         [Test, Timeout(2000)]
-        public void GettingATotalNonAssignableStatTypeFromStatsWontThrowErrors() {
-            new Stats().GetStatCount(Stats.Get.TOTAL, StatType.HEALTH);
-            Assert.Pass();
-        }
-
-        [Test, Timeout(2000)]
-        public void SaveLoadMaintainsBuffBonuses() {
-            Party party = new Party();
-            Character person = CharacterList.TestEnemy();
-            int initialStrength = person.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH);
-            int strengthBonus = 20;
-
-            person.Stats.AddToStat(StatType.STRENGTH, Stats.Set.BUFF_BONUS, strengthBonus);
-
-            party.AddMember(person);
-
-            PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
-
-            Party party2 = new Party();
-            party2.InitFromSaveObject(retrieved);
-
-            Assert.AreEqual(party, party2);
-            Assert.AreEqual(strengthBonus + initialStrength, party2.Default.Stats.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH));
-        }
-
-        [Test, Timeout(2000)]
         public void SaveLoadMaintainsReferencesForPartyMemberCastedBuffs() {
             Party party = new Party();
             Character dummy = CharacterList.TestEnemy();
