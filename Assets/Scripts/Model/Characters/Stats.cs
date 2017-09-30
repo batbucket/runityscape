@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace Scripts.Model.Characters {
 
@@ -59,6 +60,11 @@ namespace Scripts.Model.Characters {
             /// </summary>
             MAX
         }
+
+        /// <summary>
+        /// Minimum amount a stat is restored by.
+        /// </summary>
+        private const int MINIMUM_RESTORE_AMOUNT = 1;
 
         /// <summary>
         /// Gets the equipment bonus of a stat from the equipment.
@@ -447,6 +453,20 @@ namespace Scripts.Model.Characters {
             foreach (Stat stat in stats) {
                 if (StatType.RESTORED.Contains(stat.Type)) {
                     stat.Mod = stat.Max;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Restores assignable resources by a missing percentage.
+        /// </summary>
+        /// <param name="missingPercentage">The missing percentage.</param>
+        public void RestoreResourcesByMissingPercentage(float missingPercentage) {
+            foreach (StatType type in StatType.RESTORED) {
+                int missing = (int)((GetStatCount(Stats.Get.MAX, type) - GetStatCount(Stats.Get.MOD, type)) * missingPercentage);
+                int restoreAmount = Mathf.Max(missing, MINIMUM_RESTORE_AMOUNT);
+                if (missing > 0) {
+                    AddToStat(type, Stats.Set.MOD, restoreAmount);
                 }
             }
         }
