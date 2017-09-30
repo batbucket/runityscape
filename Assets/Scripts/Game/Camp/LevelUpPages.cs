@@ -8,6 +8,7 @@ using Scripts.Model.TextBoxes;
 using System.Collections.Generic;
 
 namespace Scripts.Game.Pages {
+
     /// <summary>
     /// Pages for performing level ups and viewing stats on party members.
     /// </summary>
@@ -68,7 +69,7 @@ namespace Scripts.Game.Pages {
         private void DisplayStats(Page current, Character characterToDisplayStatsOf) {
             int level = characterToDisplayStatsOf.Stats.Level;
             int diffToLevelUp = characterToDisplayStatsOf.Stats.GetStatCount(Stats.Get.MAX, StatType.EXPERIENCE) - characterToDisplayStatsOf.Stats.GetStatCount(Stats.Get.MOD, StatType.EXPERIENCE);
-            int statPoints = characterToDisplayStatsOf.Stats.StatPoints;
+            int statPoints = characterToDisplayStatsOf.Stats.UnassignedStatPoints;
             current.AddText(characterToDisplayStatsOf.Stats.LongAttributeDistribution);
             current.AddText(string.Format("{0} Experience until level up.", diffToLevelUp));
             current.AddText(string.Format("{0} Stat Point(s) to allocate.", statPoints));
@@ -95,7 +96,7 @@ namespace Scripts.Game.Pages {
         private Process GetSendPlayerToPointAllocationPageProcess(Character characterToAllocatePointsTo, Page previous) {
             return new Process(
                     string.Format("Allocate ({0})",
-                        characterToAllocatePointsTo.Stats.StatPoints),
+                        characterToAllocatePointsTo.Stats.UnassignedStatPoints),
                     "Allocate stat points.",
                     () => LevelUpPage(characterToAllocatePointsTo, previous).Invoke()
                     );
@@ -134,8 +135,8 @@ namespace Scripts.Game.Pages {
                 }
             }
 
-            if (characterWhoIsBeingAllocated.Stats.StatPoints > 0) {
-                current.AddText(string.Format("Select a stat to increase.\nPoints remaining: {0}.", characterWhoIsBeingAllocated.Stats.StatPoints));
+            if (characterWhoIsBeingAllocated.Stats.UnassignedStatPoints > 0) {
+                current.AddText(string.Format("Select a stat to increase.\nPoints remaining: {0}.", characterWhoIsBeingAllocated.Stats.UnassignedStatPoints));
             } else {
                 current.AddText(string.Format("{0} has no stat points to spend.", characterWhoIsBeingAllocated.Look.DisplayName));
             }
@@ -158,11 +159,11 @@ namespace Scripts.Game.Pages {
                     statTypeToAddTo.ColoredName,
                     statTypeToAddTo.Description),
                 () => {
-                    statsToAddTo.StatPoints--;
+                    statsToAddTo.UnassignedStatPoints--;
                     statsToAddTo.AddToStat(statTypeToAddTo, Stats.Set.MAX, statTypeToAddTo.StatPointIncreaseAmount);
-                    current.AddText(string.Format("Maximum {0} was increased to {1}.\nPoints remaining: {2}.", statTypeToAddTo.Name, statsToAddTo.GetStatCount(Stats.Get.MAX, statTypeToAddTo), statsToAddTo.StatPoints));
+                    current.AddText(string.Format("Maximum {0} was increased to {1}.\nPoints remaining: {2}.", statTypeToAddTo.Name, statsToAddTo.GetStatCount(Stats.Get.MAX, statTypeToAddTo), statsToAddTo.UnassignedStatPoints));
                 },
-                () => statsToAddTo.StatPoints > 0
+                () => statsToAddTo.UnassignedStatPoints > 0
                 );
         }
     }

@@ -1,5 +1,4 @@
-﻿
-using Scripts.Game.Defined.Characters;
+﻿using Scripts.Game.Defined.Characters;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Dungeons;
 using Scripts.Game.Serialized;
@@ -18,12 +17,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+
 namespace Scripts.Game.Pages {
 
     /// <summary>
     /// The hub of the game, from which all other parts can be visited.
     /// </summary>
     public class Camp : Model.Pages.PageGroup {
+
+        /// <summary>
+        /// Missing percentage to restore when resting
+        /// </summary>
+        private const float MISSING_REST_RESTORE_PERCENTAGE = .2f;
+
         private Flags flags;
         private Party party;
 
@@ -53,7 +59,7 @@ namespace Scripts.Game.Pages {
                 }
 
                 foreach (Character partyMember in party.Collection) {
-                    if (partyMember.Stats.HasStatPoints) {
+                    if (partyMember.Stats.HasUnassignedStatPoints) {
                         root.AddText(
                             string.Format(
                                 "<color=cyan>{0}</color> has unallocated stat points. Points can be allocated in the <color=yellow>Party</color> page.",
@@ -108,10 +114,10 @@ namespace Scripts.Game.Pages {
                 () => {
                     foreach (Character c in party) {
                         foreach (StatType type in StatType.RESTORED) {
-                            CampUtil.RestoreStats(type, c.Stats, isLastTime);
+                            c.Stats.RestoreResourcesByMissingPercentage(isLastTime ? 1 : MISSING_REST_RESTORE_PERCENTAGE);
                         }
                         if (isLastTime) {
-                            CampUtil.CureMostBuffs(c.Buffs);
+                            c.Buffs.DispelAllBuffs();
                         }
                     }
                     if (isLastTime) {
@@ -137,5 +143,4 @@ namespace Scripts.Game.Pages {
             current.AddText("Some time has passed.");
         }
     }
-
 }

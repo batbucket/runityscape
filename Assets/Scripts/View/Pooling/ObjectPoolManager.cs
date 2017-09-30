@@ -64,7 +64,7 @@ namespace Scripts.View.ObjectPool {
                 ids.Remove(pb.gameObject.GetInstanceID());
             }
             pb.gameObject.SetActive(true);
-            //Util.Log("Retrieved " + pb.GetInstanceID());
+            //Util.Log(string.Format("Get {0} with ID: {1}", pb.gameObject.name, pb.gameObject.GetInstanceID()));
             return pb.GetComponent<T>();
         }
 
@@ -105,6 +105,7 @@ namespace Scripts.View.ObjectPool {
                 ids.Add(pb.gameObject.GetInstanceID());
                 pools[pb.gameObject.name].Push(pb);
                 Util.Parent(pb.gameObject, this.gameObject);
+                //Util.Log(string.Format("Returned {0} with ID: {1}", pb.gameObject.name, pb.gameObject.GetInstanceID()));
             } else {
                 //Util.Log(string.Format("Duplicate ID detected: {0}. Did you already return this behavior?", pb.GetInstanceID()));
             }

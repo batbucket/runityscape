@@ -1,9 +1,6 @@
 ﻿using Scripts.Model.Buffs;
-using Scripts.Model.Spells;
-using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using UnityEngine;
 using System.Collections;
@@ -42,6 +39,7 @@ namespace Scripts.Model.Characters {
 
         // Temporary fields used in serializable, will be null otherwise
         private List<Character> partyMembers;
+
         private bool isSetupTempFieldsBefore;
 
         public Buffs() {
@@ -80,9 +78,11 @@ namespace Scripts.Model.Characters {
                 case RemovalType.TIMED_OUT:
                     buff.OnTimeOut(Stats);
                     break;
+
                 case RemovalType.DISPEL:
                     buff.OnDispell(Stats);
                     break;
+
                 default:
                     Util.Assert(false, "Unknown removal type: " + type);
                     break;
@@ -92,6 +92,16 @@ namespace Scripts.Model.Characters {
             if (buff.IsDispellable || type == RemovalType.TIMED_OUT) {
                 set.Remove(buff);
                 AddSplat(new SplatDetails(Color.red, string.Format("-"), buff.Sprite));
+            }
+        }
+
+        /// <summary>
+        /// Dispels all buffs.
+        /// </summary>
+        public void DispelAllBuffs() {
+            Buff[] allBuffs = set.ToArray();
+            foreach (Buff buff in allBuffs) {
+                RemoveBuff(RemovalType.DISPEL, buff);
             }
         }
 

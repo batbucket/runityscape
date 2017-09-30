@@ -135,8 +135,8 @@ namespace Scripts.Presenter {
             } else {
                 actionGrid.SetButtonAttributes(overrideGrid.List);
             }
-            SetCharacterPresenters(Page.Left, left);
-            SetCharacterPresenters(Page.Right, right);
+            SetCharacterPresenters(Page.Left.ToArray(), left);
+            SetCharacterPresenters(Page.Right.ToArray(), right);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace Scripts.Presenter {
             return textBoxHolder.AddTextBox(t);
         }
 
-        private void SetCharacterPresenters(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
+        private void SetCharacterPresenters(IList<Character> characters, PortraitHolderView portraitHolder) {
             AddCharactersToPortraitHolder(characters, portraitHolder);
             foreach (Character c in characters) {
                 CharacterPresenter presenter = new CharacterPresenter(c, portraitHolder.GetPortrait(c.Id));
@@ -213,7 +213,7 @@ namespace Scripts.Presenter {
             }
         }
 
-        private void AddCharactersToPortraitHolder(IEnumerable<Character> characters, PortraitHolderView portraitHolder) {
+        private void AddCharactersToPortraitHolder(IList<Character> characters, PortraitHolderView portraitHolder) {
             int revealContributionFromFlags = Convert.ToInt32(characters.Any(c => c.Brain is Player)); // Being in same party as player gives +1 to revealing
             portraitHolder.AddContents(
                 characters
@@ -235,7 +235,7 @@ namespace Scripts.Presenter {
                                 duration: b.DurationText,
                                 name: b.Name,
                                 sprite: b.Sprite
-                            )),
+                            )).ToArray(),
                         resources: c
                             .Stats
                             .Resources
@@ -250,10 +250,10 @@ namespace Scripts.Presenter {
                                 sprite: r.Type.Sprite,
                                 typeDescription: r.Type.Description,
                                 title: r.Type.Name
-                            )),
+                            )).ToList(),
                         isRevealed: IsRevealedCalculation(c.Stats, revealContributionFromFlags)
                     )
-                )
+                ).ToArray()
             );
         }
 

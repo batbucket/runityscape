@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Scripts.View.Portraits {
+
     public static class PortraitUtil {
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace Scripts.View.Portraits {
         /// <param name="setupView">Function that sets up the view based on information from content</param>
         public static void GetDifferences<C, V>(
             ref IDictionary<int, V> previous,
-            IEnumerable<C> contents,
+            IList<C> contents,
             V prefab,
             GameObject thisGameObject,
             Func<C, int> idSelector,

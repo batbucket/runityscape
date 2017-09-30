@@ -3,10 +3,7 @@ using Scripts.Game.Defined.SFXs;
 using Scripts.Model.Interfaces;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
-using Scripts.Model.Spells;
-using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
-using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +33,7 @@ namespace Scripts.Model.Characters {
         /// <summary>
         /// Character's appearance
         /// </summary>
-        public readonly Look Look;
+        public Look Look;
 
         /// <summary>
         /// Character's spells
@@ -80,6 +77,14 @@ namespace Scripts.Model.Characters {
 
         private Action<GameObject> parentToEffectsFunc;
 
+        public Func<bool> IsPortraitAvailableFunc {
+            set {
+                this.isPortraitAvailableFunc = value;
+            }
+        }
+
+        private Func<bool> isPortraitAvailableFunc;
+
         /// <summary>
         /// Character specific flags
         /// </summary>
@@ -94,6 +99,11 @@ namespace Scripts.Model.Characters {
         /// Unique id for this character.
         /// </summary>
         private int id;
+
+        /// <summary>
+        /// The effects queue. Save SFX until the portrait shows up.
+        /// </summary>
+        private Queue<GameObject> effectsQueue;
 
         /// <summary>
         /// Main constructor
@@ -117,11 +127,15 @@ namespace Scripts.Model.Characters {
             Brain.Spells = this.Spells;
             Stats.Update(this);
             Equipment.AddBuff = b => Buffs.AddBuff(b);
-            Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.DISPEL, b);
+            Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
             Stats.InitializeResources();
             Stats.GetEquipmentBonus = f => Equipment.GetBonus(f);
             Buffs.Stats = Stats;
             this.id = idCounter++;
+
+            this.effectsQueue = new Queue<GameObject>();
+            this.parentToEffectsFunc = (go) => effectsQueue.Enqueue(go);
+            this.isPortraitAvailableFunc = () => false;
         }
 
         /// <summary>
@@ -156,6 +170,12 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public Queue<GameObject> Effects {
+            get {
+                return effectsQueue;
+            }
+        }
+
         public Sprite Sprite {
             get {
                 return Look.Sprite;
@@ -171,6 +191,12 @@ namespace Scripts.Model.Characters {
         public RectTransform RectTransform {
             get {
                 return getIconRectFunc();
+            }
+        }
+
+        public bool IsPortraitAvailable {
+            get {
+                return isPortraitAvailableFunc();
             }
         }
 

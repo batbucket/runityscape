@@ -72,6 +72,17 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         }
     }
 
+    public class Mana : Stat {
+        private const int INT_TO_MANA = 5;
+
+        public Mana() : base(0, 0, StatType.MANA) {
+        }
+
+        public override void Update(Character holderOfThisAttribute) {
+            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.MOD, StatType.INTELLECT) * INT_TO_MANA;
+        }
+    }
+
     public class Experience : Stat {
         private const int MAX_LEVEL_FOR_CALCULATION = 30; // Stop int overflow
 
@@ -111,7 +122,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         private void RemoveExperienceForLevelUp(Stats stats) {
             SetMod(Mod - Max, false);
             stats.Level++;
-            stats.StatPoints++;
+            stats.UnassignedStatPoints++;
             Max = GetExpForLevel(stats.Level);
         }
 

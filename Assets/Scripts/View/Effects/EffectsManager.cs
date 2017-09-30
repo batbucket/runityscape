@@ -54,6 +54,12 @@ namespace Scripts.View.Effects {
         private ShroudView shroudPrefab;
 
         /// <summary>
+        /// The steam burst prefab
+        /// </summary>
+        [SerializeField]
+        private ExplosionView steamBurstPrefab;
+
+        /// <summary>
         /// Gets the instance.
         /// </summary>
         /// <value>
@@ -75,6 +81,7 @@ namespace Scripts.View.Effects {
         /// The bloodsplat.
         /// </value>
         public OneShotAnimation Bloodsplat { get { return bloodsplatPrefab; } }
+
         /// <summary>
         /// Gets the explosion.
         /// </summary>
@@ -82,6 +89,7 @@ namespace Scripts.View.Effects {
         /// The explosion.
         /// </value>
         public ExplosionView Explosion { get { return explosionPrefab; } }
+
         /// <summary>
         /// Gets the hitsplat.
         /// </summary>
@@ -89,6 +97,7 @@ namespace Scripts.View.Effects {
         /// The hitsplat.
         /// </value>
         public HitsplatView Hitsplat { get { return hitsplatPrefab; } }
+
         /// <summary>
         /// Gets the lightning.
         /// </summary>
@@ -96,6 +105,7 @@ namespace Scripts.View.Effects {
         /// The lightning.
         /// </value>
         public FadeAnimation Lightning { get { return lightningPrefab; } }
+
         /// <summary>
         /// Gets the minisplat.
         /// </summary>
@@ -103,6 +113,7 @@ namespace Scripts.View.Effects {
         /// The minisplat.
         /// </value>
         public HitsplatView Minisplat { get { return minisplatPrefab; } }
+
         /// <summary>
         /// Gets the foreground.
         /// </summary>
@@ -110,6 +121,7 @@ namespace Scripts.View.Effects {
         /// The foreground.
         /// </value>
         public GameObject Foreground { get { return foreground; } }
+
         /// <summary>
         /// Gets the shroud.
         /// </summary>
@@ -118,6 +130,14 @@ namespace Scripts.View.Effects {
         /// </value>
         public ShroudView Shroud { get { return shroudPrefab; } }
 
+        /// <summary>
+        /// Gets the steam burst.
+        /// </summary>
+        /// <value>
+        /// The steam burst.
+        /// </value>
+        public ExplosionView SteamBurst { get { return steamBurstPrefab; } }
+
         private void Start() {
             ObjectPoolManager.Instance.Register(hitsplatPrefab);
             ObjectPoolManager.Instance.Register(minisplatPrefab);
@@ -125,6 +145,7 @@ namespace Scripts.View.Effects {
             ObjectPoolManager.Instance.Register(bloodsplatPrefab);
             ObjectPoolManager.Instance.Register(explosionPrefab);
             ObjectPoolManager.Instance.Register(shroudPrefab);
+            ObjectPoolManager.Instance.Register(steamBurstPrefab);
         }
     }
 }

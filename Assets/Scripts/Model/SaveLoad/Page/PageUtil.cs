@@ -279,7 +279,11 @@ namespace Scripts.Model.Pages {
         /// <param name="isInCombat">If in combat, text is "Equipment", otherwise it's the owner's name</param>
         /// <returns></returns>
         public static Grid GenerateEquipmentGrid(Page current, IButtonable previous, Character owner, Action<IPlayable> handlePlayable, bool isInCombat) {
-            Grid grid = GenerateBackableGrid(previous, EQUIPMENT, isInCombat ? "Equipment" : owner.Look.DisplayName, string.Format("Manage {0}'s equipment.", owner.Look.DisplayName));
+            Grid grid = GenerateBackableGrid(
+                previous,
+                isInCombat ? EQUIPMENT : owner.Look.Sprite,
+                isInCombat ? "Equipment" : owner.Look.DisplayName,
+                string.Format("Manage {0}'s equipment.", owner.Look.DisplayName));
 
             foreach (EquipType myET in EquipType.AllTypes) {
                 EquipType et = myET;
@@ -298,6 +302,7 @@ namespace Scripts.Model.Pages {
 
         public static Grid GenerateGroupEquipmentGrid(IButtonable previous, Page current, ICollection<Character> party, Action<IPlayable> handlePlayable, bool isInCombat) {
             Grid grid = new Grid("Equipment");
+            grid.Icon = EQUIPMENT;
             grid.List.Add(GenerateBack(previous));
 
             foreach (Character partyMember in party) {

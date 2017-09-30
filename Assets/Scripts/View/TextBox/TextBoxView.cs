@@ -62,7 +62,10 @@ namespace Scripts.View.TextBoxes {
             background.color = Color.black;
             outline.effectColor = Color.white;
             isSkip = false;
-            tip.Reset();
+
+            if (tip != null) {
+                tip.Reset();
+            }
         }
 
         /// <summary>
@@ -106,14 +109,12 @@ namespace Scripts.View.TextBoxes {
             }
         }
 
-
         /// <summary>
         /// Types out a textbox's contents. one by one.
         /// </summary>
         /// <param name="textBox">The text box.</param>
         /// <returns></returns>
         private IEnumerator TypeWriter(TextBox textBox) {
-
             string[] currentTextArray = new string[textBox.TextArray.Length];
             bool[] taggedText = new bool[currentTextArray.Length];
 
@@ -132,7 +133,6 @@ namespace Scripts.View.TextBoxes {
 
             bool hasSkipOccurred = false;
             while (index < textBox.TextArray.Length && !hasSkipOccurred) {
-
                 // Type out letters every time we reach the timePerLetter time.
                 if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                     if (!taggedText[index]) {
