@@ -27,7 +27,8 @@ namespace Scripts.Game.Areas {
         public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
-                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) }
+                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) },
+                    { AreaType.SEA_WORLD, (flags, party, camp, dungeonPages) => SeaWorld(flags, party, camp, dungeonPages) }
         });
 
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
@@ -72,6 +73,22 @@ namespace Scripts.Game.Areas {
                     new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
                 );
         }
+
+        private static Area SeaWorld(Flags flags, Party party, Page camp, Page quests) {
+            return new Area(AreaType.SEA_WORLD,
+                    new Stage[] {
+                        GetSampleScene(party),
+                        new BattleStage(
+                            "Start of adventure",
+                            () => new Encounter[] {
+                                new Encounter(FieldNPCs.SharkPirate())
+                            }),
+                    },
+                    new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
+                );
+        }
+
+
 
         private static SceneStage GetSampleScene(Party party) {
             Character hero = party.GetCharacter(c => c.HasFlag(Flag.HERO));

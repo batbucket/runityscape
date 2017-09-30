@@ -132,6 +132,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Ignited>("ignitedDebuff");
             Add<Insight>("insight");
             Add<Restore>("restore");
+            Add<FishShook>("fishShook");
         }
 
         private void Brains() {
