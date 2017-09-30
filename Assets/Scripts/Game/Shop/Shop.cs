@@ -95,7 +95,7 @@ namespace Scripts.Game.Shopkeeper {
         ///   <c>true</c> if this instance can buy the specified item; otherwise, <c>false</c>.
         /// </returns>
         private bool CanBuy(Item item) {
-            return party.Shared.HasItem(MONEY, GetFullBuyPrice(item)) && party.Shared.IsAddable(item);
+            return (party.Shared.HasItem(MONEY, GetFullBuyPrice(item)) || Util.IS_DEBUG) && party.Shared.IsAddable(item);
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace Scripts.Game.Shopkeeper {
                         GetPartyMoneyCount()));
                     postBuy();
                 },
-                () => CanBuy(buy.GetItem()) || Util.IS_DEBUG
+                () => CanBuy(buy.GetItem())
                 );
         }
 
