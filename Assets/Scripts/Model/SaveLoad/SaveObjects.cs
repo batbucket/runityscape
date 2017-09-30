@@ -193,11 +193,6 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public List<StatSave> BaseStats;
 
         /// <summary>
-        /// The flat bonuses
-        /// </summary>
-        public List<StatBonusSave> BuffStatBonuses;
-
-        /// <summary>
         /// The equipment bonuses, used for spoofing.
         ///
         /// Save equipment bonuses needs to handle this rare situation:
@@ -231,10 +226,9 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// <param name="baseStats">The stats.</param>
         /// <param name="buffBonus">The stat bonus.</param>
         /// <param name="equipmentBonuses">The equipment bonuses.</param>
-        public CharacterStatsSave(int resourceVisibility, int level, int unassignedStatPoints, List<StatSave> baseStats, List<StatBonusSave> buffBonus, List<StatBonusSave> equipmentBonuses) {
+        public CharacterStatsSave(int resourceVisibility, int level, int unassignedStatPoints, List<StatSave> baseStats, List<StatBonusSave> equipmentBonuses) {
             this.ResourceVisibility = resourceVisibility;
             this.BaseStats = baseStats;
-            this.BuffStatBonuses = buffBonus;
             this.EquipmentBonuses = equipmentBonuses;
             this.Level = level;
             this.UnassignedStatPoints = unassignedStatPoints;
