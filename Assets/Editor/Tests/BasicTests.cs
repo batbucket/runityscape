@@ -352,6 +352,12 @@ public class BasicTests {
         }
 
         [Test, Timeout(2000)]
+        public void GettingATotalNonAssignableStatTypeFromStatsWontThrowErrors() {
+            new Stats().GetStatCount(Stats.Get.TOTAL, StatType.HEALTH);
+            Assert.Pass();
+        }
+
+        [Test, Timeout(2000)]
         public void SaveLoadMaintainsBuffBonuses() {
             Party party = new Party();
             Character person = CharacterList.TestEnemy();
