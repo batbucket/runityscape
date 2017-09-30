@@ -49,7 +49,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
-            int totalCasterStrength = caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH);
+            int totalCasterStrength = caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH);
             int damage = -Util.Random(Mathf.CeilToInt(totalCasterStrength * HIT_STRENGTH_RATIO), HIT_VARIANCE);
 
             return new SpellEffect[] {
@@ -59,7 +59,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<SpellEffect> GetCriticalEffects(Page page, Character caster, Character target) {
-            int totalCasterStrength = caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH);
+            int totalCasterStrength = caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH);
             int damage = -Util.Random(totalCasterStrength, CRITICAL_VARIANCE);
             return new SpellEffect[] {
                     new AddToModStat(target.Stats, StatType.HEALTH, damage),
@@ -192,7 +192,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             Func<Character> cloneFunc =
                 () => {
                     Character c = new Character(
-                        new Stats(caster.Stats.Level, 0, caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY), 1, 1),
+                        new Stats(caster.Stats.Level, 0, caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.AGILITY), 1, 1),
                         new Look(caster.Look.Name, caster.Look.Sprite, caster.Look.Tooltip, caster.Look.Breed, caster.Look.TextColor),
                         new ReplicantClone());
                     c.AddFlag(Model.Characters.Flag.IS_CLONE);
@@ -247,7 +247,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
                         target.Stats,
                         StatType.HEALTH,
                         caster.Stats.GetStatCount(
-                            Stats.Get.MOD_AND_EQUIP,
+                            Stats.Get.TOTAL,
                             StatType.STRENGTH) * -STRENGTH_TO_DAMAGE_RATIO)
                 };
         }

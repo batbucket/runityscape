@@ -59,7 +59,7 @@ namespace Scripts.Game.Pages {
                 }
 
                 foreach (Character partyMember in party.Collection) {
-                    if (partyMember.Stats.HasStatPoints) {
+                    if (partyMember.Stats.HasUnassignedStatPoints) {
                         root.AddText(
                             string.Format(
                                 "<color=cyan>{0}</color> has unallocated stat points. Points can be allocated in the <color=yellow>Party</color> page.",

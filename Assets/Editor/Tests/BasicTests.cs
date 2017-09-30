@@ -352,6 +352,26 @@ public class BasicTests {
         }
 
         [Test, Timeout(2000)]
+        public void SaveLoadMaintainsBuffBonuses() {
+            Party party = new Party();
+            Character person = CharacterList.TestEnemy();
+            int initialStrength = person.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH);
+            int strengthBonus = 20;
+
+            person.Stats.AddToStat(StatType.STRENGTH, Stats.Set.BUFF_BONUS, strengthBonus);
+
+            party.AddMember(person);
+
+            PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
+
+            Party party2 = new Party();
+            party2.InitFromSaveObject(retrieved);
+
+            Assert.AreEqual(party, party2);
+            Assert.AreEqual(strengthBonus + initialStrength, party2.Default.Stats.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH));
+        }
+
+        [Test, Timeout(2000)]
         public void SaveLoadMaintainsReferencesForPartyMemberCastedBuffs() {
             Party party = new Party();
             Character dummy = CharacterList.TestEnemy();
@@ -417,7 +437,7 @@ public class BasicTests {
         }
 
         [Test]
-        public void SaveLoadMaintainsEquipmentBonusesForNonPartyMemberCastedBuffs() {
+        public void SaveLoadMaintainsBonusesFromEquipmentAndBuffsForNonPartyMemberCastedBuffs() {
             Party party = new Party();
             Character dummy = CharacterList.TestEnemy();
             Character buffCaster = CharacterList.TestEnemy();
@@ -443,7 +463,7 @@ public class BasicTests {
             party2.InitFromSaveObject(retrieved);
 
             int spoofedStrength = party2.Collection.ToArray()[2].Buffs.ToArray()[0].BuffCaster.GetEquipmentBonus(StatType.STRENGTH);
-            Assert.AreEqual(spoofedStrength, (new BrokenSword()).Stats[StatType.STRENGTH]);
+            Assert.AreEqual(spoofedStrength, (new BrokenSword()).StatBonuses[StatType.STRENGTH]);
             Debug.Log("" + spoofedStrength);
         }
     }
@@ -508,7 +528,7 @@ public class BasicTests {
         private string GetSpellDetails(Spell spell) {
             return string.Format(
                 "Caster agility: {0}/Spell priority: {1}",
-                spell.MySpell.Caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY),
+                spell.MySpell.Caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.AGILITY),
                 spell.MySpell.Book.Priority
                 );
         }

@@ -89,7 +89,7 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
 
         protected override IList<SpellEffect> OnEndOfTurnHelper(Model.Characters.Stats owner) {
             return new SpellEffect[] {
-                new AddToModStat(owner, StatType.HEALTH, BuffCaster.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH))
+                new AddToModStat(owner, StatType.HEALTH, BuffCaster.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH))
             };
         }
     }

@@ -22,6 +22,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <typeparam name="T"></typeparam>
     [Serializable]
     public class IdSaveObject<T> {
+
         /// <summary>
         /// The class identifier
         /// </summary>
@@ -51,6 +52,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <typeparam name="T"></typeparam>
     [Serializable]
     public abstract class TypeSafeEnumSave<T> {
+
         /// <summary>
         /// The identifier
         /// </summary>
@@ -77,6 +79,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.TypeSafeEnumSave{Scripts.Model.Stats.StatType}" />
     [Serializable]
     public class StatTypeSave : TypeSafeEnumSave<StatType> {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="StatTypeSave"/> class.
         /// </summary>
@@ -98,6 +101,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.TypeSafeEnumSave{Scripts.Model.Items.EquipType}" />
     [Serializable]
     public class EquipTypeSave : TypeSafeEnumSave<EquipType> {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="EquipTypeSave"/> class.
         /// </summary>
@@ -119,14 +123,17 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.IdSaveObject{Scripts.Model.Stats.Stat}" />
     [Serializable]
     public sealed class StatSave : IdSaveObject<Stat> {
+
         /// <summary>
         /// The stat type
         /// </summary>
         public StatTypeSave StatType;
+
         /// <summary>
         /// The mod
         /// </summary>
         public int Mod;
+
         /// <summary>
         /// The maximum
         /// </summary>
@@ -147,28 +154,27 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     }
 
     /// <summary>
-    /// Save equipment bonuses to handle this rare situation:
-    /// 1. Enemy with +Stat gear equipped casts Buff that depends on Stat on Party member
-    /// 2. Save and Load
-    /// 3. Buff still needs to depend on +Stat gear of enemy that no longer exists
+    /// Saves StatType and its count. Used for equipment bonuses and bonuses in general.
     /// </summary>
     [Serializable]
-    public sealed class EquipmentStatSave {
+    public sealed class StatBonusSave {
+
         /// <summary>
         /// The stat type
         /// </summary>
         public StatTypeSave StatType;
+
         /// <summary>
         /// The bonus
         /// </summary>
         public int Bonus;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="EquipmentStatSave"/> class.
+        /// Initializes a new instance of the <see cref="StatBonusSave"/> class.
         /// </summary>
         /// <param name="statType">Type of the stat.</param>
         /// <param name="value">The value.</param>
-        public EquipmentStatSave(StatTypeSave statType, int value) {
+        public StatBonusSave(StatTypeSave statType, int value) {
             this.StatType = statType;
             this.Bonus = value;
         }
@@ -180,22 +186,37 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="System.Collections.Generic.IEnumerable{Scripts.Model.SaveLoad.SaveObjects.StatSave}" />
     [Serializable]
     public sealed class CharacterStatsSave : IEnumerable<StatSave> {
+
         /// <summary>
         /// The stats
         /// </summary>
-        public List<StatSave> Stats;
+        public List<StatSave> BaseStats;
+
         /// <summary>
-        /// The equipment bonuses
+        /// The flat bonuses
         /// </summary>
-        public List<EquipmentStatSave> EquipmentBonuses;
+        public List<StatBonusSave> BuffStatBonuses;
+
+        /// <summary>
+        /// The equipment bonuses, used for spoofing.
+        ///
+        /// Save equipment bonuses needs to handle this rare situation:
+        /// 1. Enemy with +Stat gear equipped casts Buff that depends on Stat on Party member
+        /// 2. Save and Load
+        /// 3. Buff still needs to depend on +Stat gear of enemy that no longer exists
+        /// </summary>
+        public List<StatBonusSave> EquipmentBonuses;
+
         /// <summary>
         /// The level
         /// </summary>
         public int Level;
+
         /// <summary>
-        /// The stat bonus count
+        /// The unassigned stat point count
         /// </summary>
-        public int StatBonusCount;
+        public int UnassignedStatPoints;
+
         /// <summary>
         /// The resource visibility
         /// </summary>
@@ -206,15 +227,17 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// </summary>
         /// <param name="resourceVisibility">The resource visibility.</param>
         /// <param name="level">The level.</param>
-        /// <param name="statBonusCount">The stat bonus count.</param>
-        /// <param name="stats">The stats.</param>
+        /// <param name="unassignedStatPoints">The stat points.</param>
+        /// <param name="baseStats">The stats.</param>
+        /// <param name="buffBonus">The stat bonus.</param>
         /// <param name="equipmentBonuses">The equipment bonuses.</param>
-        public CharacterStatsSave(int resourceVisibility, int level, int statBonusCount, List<StatSave> stats, List<EquipmentStatSave> equipmentBonuses) {
+        public CharacterStatsSave(int resourceVisibility, int level, int unassignedStatPoints, List<StatSave> baseStats, List<StatBonusSave> buffBonus, List<StatBonusSave> equipmentBonuses) {
             this.ResourceVisibility = resourceVisibility;
-            this.Stats = stats;
+            this.BaseStats = baseStats;
+            this.BuffStatBonuses = buffBonus;
             this.EquipmentBonuses = equipmentBonuses;
             this.Level = level;
-            this.StatBonusCount = statBonusCount;
+            this.UnassignedStatPoints = unassignedStatPoints;
         }
 
         /// <summary>
@@ -222,7 +245,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// </summary>
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator() {
-            return Stats.GetEnumerator();
+            return BaseStats.GetEnumerator();
         }
 
         /// <summary>
@@ -230,7 +253,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// </summary>
         /// <returns></returns>
         IEnumerator<StatSave> IEnumerable<StatSave>.GetEnumerator() {
-            return Stats.GetEnumerator();
+            return BaseStats.GetEnumerator();
         }
     }
 
@@ -240,6 +263,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.IdSaveObject{Scripts.Model.Spells.SpellBook}" />
     [Serializable]
     public sealed class SpellBookSave : IdSaveObject<SpellBook> {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SpellBookSave"/> class.
         /// </summary>
@@ -253,6 +277,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="System.Collections.Generic.IEnumerable{Scripts.Model.SaveLoad.SaveObjects.SpellBookSave}" />
     [Serializable]
     public sealed class CharacterSpellBooksSave : IEnumerable<SpellBookSave> {
+
         /// <summary>
         /// The books
         /// </summary>
@@ -289,6 +314,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.IdSaveObject{Scripts.Model.Characters.Brain}" />
     [Serializable]
     public sealed class BrainSave : IdSaveObject<Brain> {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BrainSave"/> class.
         /// </summary>
@@ -302,6 +328,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.IdSaveObject{Scripts.Model.Items.Item}" />
     [Serializable]
     public sealed class ItemSave : IdSaveObject<Item> {
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ItemSave"/> class.
         /// </summary>
@@ -315,15 +342,18 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="System.Collections.Generic.IEnumerable{Scripts.Model.SaveLoad.SaveObjects.InventorySave.ItemCount}" />
     [Serializable]
     public sealed class InventorySave : IEnumerable<InventorySave.ItemCount> {
+
         /// <summary>
         ///
         /// </summary>
         [Serializable]
         public struct ItemCount {
+
             /// <summary>
             /// The item
             /// </summary>
             public ItemSave Item;
+
             /// <summary>
             /// The count
             /// </summary>
@@ -334,6 +364,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// The inventory capacity
         /// </summary>
         public int InventoryCapacity;
+
         /// <summary>
         /// The items
         /// </summary>
@@ -347,7 +378,6 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         public InventorySave(
             int inventoryCapacity,
             List<ItemCount> items) {
-
             this.InventoryCapacity = inventoryCapacity;
             this.Items = items;
         }
@@ -374,22 +404,27 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// </summary>
     [Serializable]
     public sealed class LookSave {
+
         /// <summary>
         /// The name
         /// </summary>
         public string Name;
+
         /// <summary>
         /// The sprite
         /// </summary>
         public Sprite Sprite;
+
         /// <summary>
         /// The text color
         /// </summary>
         public Color TextColor;
+
         /// <summary>
         /// The tooltip
         /// </summary>
         public string Tooltip;
+
         /// <summary>
         /// The breed
         /// </summary>
@@ -418,6 +453,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.IdSaveObject{Scripts.Model.Items.EquippableItem}" />
     [Serializable]
     public sealed class EquipItemSave : IdSaveObject<EquippableItem> {
+
         /// <summary>
         /// The equip type save
         /// </summary>
@@ -440,29 +476,35 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="System.Collections.Generic.IEnumerable{Scripts.Model.SaveLoad.SaveObjects.EquipmentSave.EquipBonus}" />
     [Serializable]
     public class EquipmentSave : IEnumerable<EquipItemSave>, IEnumerable<EquipmentSave.EquipBonus> {
+
         /// <summary>
         ///
         /// </summary>
         [Serializable]
         public struct EquipBonus {
+
             /// <summary>
             /// The stat
             /// </summary>
             public StatTypeSave Stat;
+
             /// <summary>
             /// The bonus
             /// </summary>
             public int Bonus;
         }
+
         /// <summary>
         ///
         /// </summary>
         [Serializable]
         public class EquipBuff {
+
             /// <summary>
             /// The equip type
             /// </summary>
             public EquipTypeSave EquipType;
+
             /// <summary>
             /// The buff
             /// </summary>
@@ -473,10 +515,12 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// The equipped
         /// </summary>
         public List<EquipItemSave> Equipped;
+
         /// <summary>
         /// The buffs
         /// </summary>
         public List<EquipBuff> Buffs;
+
         /// <summary>
         /// The bonuses
         /// </summary>
@@ -525,18 +569,22 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="Scripts.Model.SaveLoad.SaveObjects.IdSaveObject{Scripts.Model.Buffs.Buff}" />
     [Serializable]
     public class BuffSave : IdSaveObject<Buff> {
+
         /// <summary>
         ///
         /// </summary>
         public enum SaveType {
+
             /// <summary>
             /// The unknown
             /// </summary>
             UNKNOWN = 0,
+
             /// <summary>
             /// The caster in party
             /// </summary>
             CASTER_IN_PARTY,
+
             /// <summary>
             /// The caster not in party
             /// </summary>
@@ -547,14 +595,17 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// The type
         /// </summary>
         public SaveType Type;
+
         /// <summary>
         /// The turns remaining
         /// </summary>
         public int TurnsRemaining;
+
         /// <summary>
         /// The stat copy
         /// </summary>
         public CharacterStatsSave StatCopy;
+
         /// <summary>
         /// The caster character identifier
         /// </summary>
@@ -606,6 +657,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// <seealso cref="System.Collections.Generic.IEnumerable{Scripts.Model.SaveLoad.SaveObjects.BuffSave}" />
     [Serializable]
     public class CharacterBuffsSave : IEnumerable<BuffSave> {
+
         /// <summary>
         /// The buff saves
         /// </summary>
@@ -647,6 +699,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
                     caster.InitFromSaveObject(bs.StatCopy);
                     id = Character.UNKNOWN_ID;
                     break;
+
                 default:
                     Util.Assert(false, "Unknown SaveType");
                     break;
@@ -678,35 +731,43 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// </summary>
     [Serializable]
     public class CharacterSave {
+
         /// <summary>
         /// The identifier
         /// </summary>
         public int Id;
+
         /// <summary>
         /// The stats
         /// </summary>
         public CharacterStatsSave Stats;
+
         /// <summary>
         /// The buffs
         /// </summary>
         public CharacterBuffsSave Buffs;
+
         /// <summary>
         /// The look
         /// </summary>
         public LookSave Look;
+
         /// <summary>
         /// The spells
         /// </summary>
         public CharacterSpellBooksSave Spells;
+
         /// <summary>
         /// The brain
         /// </summary>
         public BrainSave Brain;
+
         // Party shares an inventory, so we associate it with the party
         /// <summary>
         /// The equipment
         /// </summary>
         public EquipmentSave Equipment;
+
         /// <summary>
         /// The flags
         /// </summary>
@@ -748,10 +809,12 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// </summary>
     [Serializable]
     public sealed class PartySave {
+
         /// <summary>
         /// The characters
         /// </summary>
         public List<CharacterSave> Characters;
+
         /// <summary>
         /// The inventory
         /// </summary>
@@ -773,6 +836,7 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// </summary>
     [Serializable]
     public sealed class FlagsSave {
+
         /// <summary>
         /// The flags
         /// </summary>
@@ -792,10 +856,12 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
     /// </summary>
     [Serializable]
     public sealed class WorldSave {
+
         /// <summary>
         /// The flags
         /// </summary>
         public FlagsSave Flags;
+
         /// <summary>
         /// The party
         /// </summary>

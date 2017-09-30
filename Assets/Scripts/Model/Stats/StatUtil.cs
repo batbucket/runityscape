@@ -21,7 +21,7 @@ namespace Scripts.Model.Stats {
 
     public static class StatUtil {
         public static int GetDifference(StatType type, Characters.Stats a, Characters.Stats b) {
-            return a.GetStatCount(Characters.Stats.Get.MOD_AND_EQUIP, type) - b.GetStatCount(Characters.Stats.Get.MOD_AND_EQUIP, type);
+            return a.GetStatCount(Characters.Stats.Get.TOTAL, type) - b.GetStatCount(Characters.Stats.Get.TOTAL, type);
         }
 
         public static string ShowSigns(int num) {
