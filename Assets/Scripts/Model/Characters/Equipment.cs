@@ -54,6 +54,7 @@ namespace Scripts.Model.Characters {
 
         // Temporary serialization fields
         private bool IsSetupDone;
+
         private List<Character> partyMembers;
 
         /// <summary>
@@ -91,7 +92,7 @@ namespace Scripts.Model.Characters {
             }
 
             equipped.Add(equippableItem.Type, equippableItem);
-            foreach (KeyValuePair<StatType, int> pair in equippableItem.Stats) {
+            foreach (KeyValuePair<StatType, int> pair in equippableItem.StatBonuses) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] += pair.Value;
             }
@@ -115,7 +116,7 @@ namespace Scripts.Model.Characters {
             inventory.Add(itemToRemove);
             equipped.Remove(itemToRemove.Type);
 
-            foreach (KeyValuePair<StatType, int> pair in itemToRemove.Stats) {
+            foreach (KeyValuePair<StatType, int> pair in itemToRemove.StatBonuses) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] -= pair.Value;
             }
