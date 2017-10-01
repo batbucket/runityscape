@@ -514,8 +514,8 @@ public class BasicTests {
             IPlayable lowPriorityWithFastCaster = new Spell(new ReflectiveClone(), new Result(), fast, slow);
             IPlayable normalPriorityWithSlowCaster = new Spell(new Attack(), new Result(), slow, fast);
             IPlayable normalPriorityWithFastCaster = new Spell(new Attack(), new Result(), fast, slow);
-            IPlayable highPriorityWithSlowCaster = new Spell(new Heal(), new Result(), slow, slow);
-            IPlayable highPriorityWithFastCaster = new Spell(new Heal(), new Result(), fast, slow);
+            IPlayable highPriorityWithSlowCaster = new Spell(new EnemyHeal(), new Result(), slow, slow);
+            IPlayable highPriorityWithFastCaster = new Spell(new EnemyHeal(), new Result(), fast, slow);
 
             IPlayable[] expectedOrder = new IPlayable[] {
                 highPriorityWithFastCaster,

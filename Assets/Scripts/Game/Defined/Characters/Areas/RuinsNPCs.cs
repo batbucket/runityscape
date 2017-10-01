@@ -14,19 +14,26 @@ namespace Scripts.Game.Defined.Characters {
 
     public static class RuinsNPCs {
 
-        public static Shop AppleDealer(Page previous, Flags flags, Party party) {
+        public static Shop RuinsShop(Page previous, Flags flags, Party party) {
             return new Shop(
                 previous,
-                "Apples",
+                "Desecrated Shop",
                 flags,
                 party,
                 0.5f,
                 1f,
                 Villager())
-                .AddTalks(new Talk("Test", "<a>Buy some apples."))
                 .AddTalks(new Talk("Shield", "<a>A fine wooden shield, complete with a steel band around the rim."))
                 .AddTalks(new Talk("Test", "<a>A sturdy fish hook, best for fighting fish."))
-                .AddBuys(new Buy(new Apple()), new Buy(new Shield()), new Buy(new FishHook()), new Buy(new RegenerationArmor()));
+                .AddBuys(
+                    new Apple(),
+                    new IdentifyScroll(),
+                    new RevivalSeed(),
+                    new CrushingBlowTome(),
+                    new HealTome(),
+                    new DefendTome(),
+                    new RegenArmor()
+                    );
         }
 
         public static Character Villager() {
@@ -95,7 +102,7 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Healer())
                 .AddItem(new Money(), Util.RandomRange(5, 15))
-                .AddSpells(new Heal());
+                .AddSpells(new EnemyHeal());
         }
 
         public static Character Illusionist() {

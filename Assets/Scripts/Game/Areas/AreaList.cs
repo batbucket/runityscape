@@ -87,7 +87,7 @@ namespace Scripts.Game.Areas {
                                 new Encounter(Music.CREEPY, RuinsNPCs.Healer(), RuinsNPCs.Replicant(), RuinsNPCs.Healer())
                             }),
                     },
-                    new PageGroup[] { RuinsNPCs.AppleDealer(camp, flags, party) }
+                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party) }
                 );
         }
 
@@ -101,7 +101,7 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.SharkPirate())
                             }),
                     },
-                    new PageGroup[] { RuinsNPCs.AppleDealer(camp, flags, party) }
+                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party) }
                 );
         }
 

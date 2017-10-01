@@ -71,7 +71,14 @@ namespace Scripts.Model.Items {
                 foreach (KeyValuePair<StatType, int> pair in flatStatBonuses) {
                     arr[index++] = string.Format("{0} {1}", StatUtil.ShowSigns(pair.Value), pair.Key.ColoredName);
                 }
-                return string.Format("{0}\n{1}\n{2}", Type.Name, string.Join("\n", arr), Util.ColorString(Flavor, Color.grey));
+
+                Buff possibleBuff = CreateBuff();
+
+                return string.Format("{0}\n{1}\n{2}{3}",
+                    Type.Name,
+                    string.Join("\n", arr),
+                    possibleBuff == null ? string.Empty : string.Format("<color=green>On equip:</color> {0}\n", possibleBuff.Description),
+                    Util.ColorString(Flavor, Color.grey));
             }
         }
 

@@ -127,6 +127,20 @@ namespace Scripts.Game.Defined.Spells {
         }
     }
 
+    public class LearnSpellEffect : SpellEffect {
+        private SpellBook spellToLearn;
+        private SpellBooks learner;
+
+        public LearnSpellEffect(SpellBooks learner, SpellBook spellToLearn) : base(1) {
+            this.spellToLearn = spellToLearn;
+            this.learner = learner;
+        }
+
+        public override void CauseEffect() {
+            learner.AddSpellBook(spellToLearn);
+        }
+    }
+
     /// <summary>
     /// Equips an item
     /// </summary>

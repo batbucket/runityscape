@@ -75,6 +75,13 @@ namespace Scripts.Game.Shopkeeper {
             return this;
         }
 
+        public Shop AddBuys(params Item[] items) {
+            foreach (Item item in items) {
+                this.buys.Add(new Buy(item));
+            }
+            return this;
+        }
+
         /// <summary>
         /// Adds a talk button.
         /// </summary>

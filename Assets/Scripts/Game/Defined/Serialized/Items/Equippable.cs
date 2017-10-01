@@ -42,16 +42,4 @@ namespace Scripts.Game.Defined.Serialized.Items {
             return new FishShook();
         }
     }
-
-    public class RegenerationArmor : EquippableItem {
-
-        public RegenerationArmor() : base(EquipType.ARMOR, 10, "Regeneration Armor", "Soothing armor that heals wounds.") {
-            AddFlatStatBonus(StatType.AGILITY, -2);
-            AddFlatStatBonus(StatType.VITALITY, 5);
-        }
-
-        public override Buff CreateBuff() {
-            return new Restore();
-        }
-    }
 }

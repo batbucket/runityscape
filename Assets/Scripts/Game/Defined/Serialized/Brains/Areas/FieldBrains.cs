@@ -23,7 +23,7 @@ namespace Scripts.Game.Serialized.Brains {
 
     public class Healer : PriorityBrain {
         public static readonly Attack ATTACK = new Attack();
-        public static readonly Heal HEAL = new Heal();
+        public static readonly EnemyHeal HEAL = new EnemyHeal();
 
         protected override IList<Func<IPlayable>> SetupPriorityPlays() {
             return new Func<IPlayable>[] {
