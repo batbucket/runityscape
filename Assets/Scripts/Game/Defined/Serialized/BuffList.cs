@@ -28,6 +28,18 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
+    public class StrengthBoost : Buff {
+        public const int STRENGTH_INCREASE_AMOUNT = 50;
+
+        public StrengthBoost()
+            : base(Util.GetSprite("fist"),
+                  "Strength boost",
+                  "Increases strength.",
+                  true) {
+            AddMultiplicativeStatBonus(StatType.STRENGTH, STRENGTH_INCREASE_AMOUNT);
+        }
+    }
+
     public class Insight : Buff {
         private const int MANA_RECOVERED_PER_TURN = 5;
 

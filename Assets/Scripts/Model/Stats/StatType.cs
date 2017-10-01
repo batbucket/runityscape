@@ -189,6 +189,10 @@ namespace Scripts.Model.Stats {
             return this.order.CompareTo(other.order);
         }
 
+        public int Clamp(int amountToBeClamped) {
+            return Mathf.Clamp(amountToBeClamped, Bounds.Low, Bounds.High);
+        }
+
         public StatTypeSave GetSaveObject() {
             return new StatTypeSave(this);
         }

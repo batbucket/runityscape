@@ -129,7 +129,8 @@ namespace Scripts.Model.Characters {
             Equipment.AddBuff = b => Buffs.AddBuff(b);
             Equipment.RemoveBuff = b => Buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
             Stats.InitializeResources();
-            Stats.GetEquipmentBonus = f => Equipment.GetBonus(f);
+            Stats.GetFlatEquipmentBonus = f => Equipment.GetFlatStatBonus(f);
+            stats.GetMultiplicativeBuffBonus = m => Buffs.GetMultiplicativeStatBonus(m);
             this.id = idCounter++;
 
             this.effectsQueue = new Queue<GameObject>();
