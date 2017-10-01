@@ -113,6 +113,7 @@ namespace Scripts.Game.Defined.SFXs {
             ExplosionView ev = ObjectPoolManager.Instance.Get(EffectsManager.Instance.SteamBurst);
             ev.Play();
             portrait.ParentToEffects(ev.gameObject);
+            Main.Instance.StartCoroutine(Shake(portrait.RectTransform, 100, 0.5f));
             yield return new WaitUntil(() => ev.IsDone);
             ObjectPoolManager.Instance.Return(ev);
         }
