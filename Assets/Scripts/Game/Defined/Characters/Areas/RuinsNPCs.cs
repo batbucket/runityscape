@@ -100,10 +100,10 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character Illusionist() {
             return CharacterUtil.StandardEnemy(
-                new Stats(3, 2, 3, 8, 15),
+                new Stats(3, 4, 10, 8, 20),
                 new Look(
                     "Illusionist",
-                    "spectre",
+                    "illusionist",
                     "A wicked master of illusions.",
                     Breed.SPIRIT
                     ),
@@ -113,7 +113,7 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Look ReplicantLook() {
             return new Look(
-                    "Xirdneth",
+                    "Xird'neth",
                     "replicant",
                     "Its form is incomprehensible.",
                     Breed.UNKNOWN,
@@ -133,7 +133,7 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character Replicant() {
             return CharacterUtil.StandardEnemy(
-                new Stats(10, 2, 5, 10, 30),
+                new Stats(5, 5, 5, 10, 30),
                 ReplicantDisguisedLook(),
                 new Replicant()
                 )

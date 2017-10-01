@@ -1,4 +1,5 @@
 ﻿using Scripts.Game.Defined.Characters;
+using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
@@ -56,18 +57,20 @@ namespace Scripts.Game.Serialized.Brains {
 
         public override string StartOfRoundDialogue() {
             if (currentBattle.TurnCount == 0) {
-                return "Stand and deliver!";
+                return Util.PickRandom("Stand and deliver!/You will go further!/Stop right there!");
             }
             return string.Empty;
         }
     }
 
     public class Illusionist : PriorityBrain {
+        public static readonly Attack ATTACK = new Attack();
         public static readonly Blackout BLACKOUT = new Blackout();
 
         protected override IList<Func<IPlayable>> SetupPriorityPlays() {
             return new Func<IPlayable>[] {
-                    CastOnRandom(BLACKOUT)
+                    CastOnTargetMeetingCondition(BLACKOUT, c => !c.Buffs.HasBuff<BlackedOut>()),
+                    CastOnRandom(ATTACK)
                 };
         }
     }

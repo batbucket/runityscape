@@ -54,7 +54,7 @@ namespace Scripts.Game.Areas {
                                 new Encounter(RuinsNPCs.Healer(), RuinsNPCs.Knight())
                             }),
                         new BattleStage(
-                            "VS " + RuinsNPCs.BigKnight().Look.Name,
+                            "Bigger monsters" + RuinsNPCs.BigKnight().Look.Name,
                             () => new Encounter[] {
                                 new Encounter(Music.BOSS, RuinsNPCs.Healer(), RuinsNPCs.BigKnight(), RuinsNPCs.Healer())
                             }),
@@ -63,6 +63,23 @@ namespace Scripts.Game.Areas {
                             () => new Encounter[] {
                                 new Encounter(RuinsNPCs.Wizard()),
                                 new Encounter(RuinsNPCs.Wizard(), RuinsNPCs.Wizard())
+                            }),
+                        new BattleStage(
+                            "Wizards' Tower",
+                            () => new Encounter[] {
+                                new Encounter(RuinsNPCs.Wizard(), RuinsNPCs.Wizard()),
+                                new Encounter(
+                                    RuinsNPCs.Wizard(),
+                                    RuinsNPCs.Wizard(),
+                                    RuinsNPCs.Healer(),
+                                    RuinsNPCs.Healer(),
+                                    RuinsNPCs.Illusionist())
+                            }),
+                        new BattleStage(
+                            "Premonition",
+                            () => new Encounter[] {
+                                new Encounter(RuinsNPCs.Villager()),
+                                new Encounter(RuinsNPCs.BigKnight(), RuinsNPCs.BigKnight(), RuinsNPCs.Wizard(), RuinsNPCs.Wizard())
                             }),
                         new BattleStage(
                             "The Replicant",
@@ -79,7 +96,7 @@ namespace Scripts.Game.Areas {
                     new Stage[] {
                         GetSampleScene(party),
                         new BattleStage(
-                            "Start of adventure",
+                            "Welcome to the ocean",
                             () => new Encounter[] {
                                 new Encounter(OceanNPCs.SharkPirate())
                             }),
