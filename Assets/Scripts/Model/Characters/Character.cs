@@ -190,6 +190,10 @@ namespace Scripts.Model.Characters {
 
         public RectTransform RectTransform {
             get {
+                // Can't return the Func because it has to be a rectTransform
+                if (getIconRectFunc == null) {
+                    return null;
+                }
                 return getIconRectFunc();
             }
         }
