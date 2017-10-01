@@ -296,7 +296,10 @@ namespace Scripts.Model.Buffs {
         /// </summary>
         /// <param name="owner"></param>
         public void OnEndOfTurn(Characters.Stats owner) {
-            PerformSpellEffects(OnEndOfTurnHelper(owner));
+            // TODO use an overridable condition instead
+            if (owner.State == Characters.State.ALIVE) {
+                PerformSpellEffects(OnEndOfTurnHelper(owner));
+            }
             if (isDefinite) {
                 turnsRemaining--;
             }
