@@ -11,9 +11,13 @@ using UnityEngine;
 namespace Scripts.Game.Defined.Serialized.Buffs {
 
     public class FishShook : Buff {
-        private const double ANTI_FISH_MULTIPLIER = 2;
+        private const float ANTI_FISH_MULTIPLIER = 2;
 
-        public FishShook() : base(Util.GetSprite("fish"), "Fish-Shook", string.Format("Basic <color=yellow>attacks</color> against fishy targets deal {0} times damage. However, damage against non-fishy targets is reduced by the same factor.", ANTI_FISH_MULTIPLIER), false) {
+        public FishShook()
+            : base(Util.GetSprite("fish"),
+                  "Fish-Shook",
+                  string.Format(
+                      "Basic <color=yellow>attacks</color> against fishy targets deal {0} times damage. However, damage against non-fishy targets is reduced by the same factor.", ANTI_FISH_MULTIPLIER), false) {
         }
 
         public override bool IsReact(Spell spellToReactTo, Stats owner) {
@@ -21,9 +25,8 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
 
         protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
-            bool isFish = spellToReactTo.Target.Look.Breed == Characters.Breed.FISH;
-            double localDmgMult = ANTI_FISH_MULTIPLIER;
-            if (!isFish) {
+            float localDmgMult = ANTI_FISH_MULTIPLIER;
+            if (spellToReactTo.Target.Look.Breed != Characters.Breed.FISH) {
                 localDmgMult = 1 / localDmgMult;
             }
 
