@@ -133,6 +133,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Insight>("insight");
             Add<Restore>("restore");
             Add<StrengthBoost>("strengthBoost");
+            Add<FishShook>("fishShook");
         }
 
         private void Brains() {

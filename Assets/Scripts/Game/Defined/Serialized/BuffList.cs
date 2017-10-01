@@ -6,8 +6,42 @@ using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Buffs {
+
+    public class FishShook : Buff {
+        private const double ANTI_FISH_MULTIPLIER = 2;
+
+        public FishShook() : base(Util.GetSprite("fish"), "Fish-Shook", string.Format("Basic <color=yellow>attacks</color> against fishy targets deal {0} times damage. However, damage against non-fishy targets is reduced by the same factor.", ANTI_FISH_MULTIPLIER), false) {
+        }
+
+        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+            return spellToReactTo.Book is Attack && spellToReactTo.Caster.Stats == owner;
+        }
+
+        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+            bool isFish = spellToReactTo.Target.Look.Breed == Characters.Breed.FISH;
+            double localDmgMult = ANTI_FISH_MULTIPLIER;
+            if (!isFish) {
+                localDmgMult = 1 / localDmgMult;
+            }
+
+            SpellEffect healthDamage = null;
+            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
+                SpellEffect se = spellToReactTo.Result.Effects[i];
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
+                    healthDamage = addToModStat;
+                }
+            }
+            if (healthDamage != null) {
+                Debug.Log("Damage reduced from " + healthDamage.Value);
+                healthDamage.Value = (int)Math.Floor(healthDamage.Value * localDmgMult);
+                Debug.Log("To " + healthDamage.Value);
+            }
+        }
+    }
 
     public class Ignited : Buff {
         private const int DAMAGE_PER_TURN = 1;
@@ -59,8 +93,8 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         public DamageResist()
             : base(Util.GetSprite("round-shield"),
                   "Damage Resist",
-                  String.Format("Reduces incident damage by {0}%.",
-                      (1 - DAMAGE_MULTIPLIER)), false) { }
+                  String.Format("Reduces incident damage from basic attacks by {0}%.",
+                      (1 - DAMAGE_MULTIPLIER) * 100), false) { }
 
         protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
             SpellEffect healthDamage = null;

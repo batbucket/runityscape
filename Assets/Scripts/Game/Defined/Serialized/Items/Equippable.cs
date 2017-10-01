@@ -54,7 +54,9 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, -1);
         }
 
-        //if used on fish creature, more effective??
+        public override Buff CreateBuff() {
+            return new FishShook();
+        }
     }
 
     public class RegenerationArmor : EquippableItem {

@@ -166,6 +166,6 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Attacker())
                 .AddItem(new Money(), Util.RandomRange(5, 15));
-        } //how to add the effect where if fish hook is used against fish, will be more effective
+        }
     }
 }
