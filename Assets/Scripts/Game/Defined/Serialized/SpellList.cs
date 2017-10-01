@@ -166,7 +166,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                new ChangeLookEffect(caster, FieldNPCs.ReplicantLook()),
+                new ChangeLookEffect(caster, RuinsNPCs.ReplicantLook()),
             };
         }
     }

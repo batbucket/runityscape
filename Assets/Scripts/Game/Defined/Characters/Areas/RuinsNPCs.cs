@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Scripts.Game.Defined.Characters {
 
-    public static class FieldNPCs {
+    public static class RuinsNPCs {
 
         public static Shop AppleDealer(Page previous, Flags flags, Party party) {
             return new Shop(
@@ -65,20 +65,6 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.SPIRIT
                     ),
                 new BigKnight())
-                .AddStats(new Skill())
-                .AddSpells(new SetupCounter());
-        }
-
-        public static Character BlackShuck() {
-            return CharacterUtil.StandardEnemy(
-                new Stats(3, 10, 2, 2, 10),
-                new Look(
-                    "Black Shuck",
-                    "spectre",
-                    "Its growl sends a shiver down your spine",
-                    Breed.BEAST
-                    ),
-                new BlackShuck())
                 .AddStats(new Skill())
                 .AddSpells(new SetupCounter());
         }
@@ -153,19 +139,6 @@ namespace Scripts.Game.Defined.Characters {
                 )
             .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
             .AddSpells(new ReflectiveClone(), new RevealTrueForm());
-        }
-
-        public static Character SharkPirate() {
-            return CharacterUtil.StandardEnemy(
-                new Stats(12, 1, 6, 8, 35),
-                new Look(
-                    "Cap'n Shark",
-                    "pirate-shark",
-                    "Fierce captain of shark crew",
-                    Breed.FISH
-                    ),
-                new Attacker())
-                .AddItem(new Money(), Util.RandomRange(5, 15));
         }
     }
 }

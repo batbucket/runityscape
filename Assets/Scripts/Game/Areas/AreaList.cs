@@ -38,39 +38,39 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Start of adventure",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Villager()),
-                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager())
+                                new Encounter(RuinsNPCs.Villager()),
+                                new Encounter(RuinsNPCs.Villager(), RuinsNPCs.Villager())
                             }),
                         new BattleStage(
                             "Stronger monsters",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager()),
-                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Knight())
+                                new Encounter(RuinsNPCs.Villager(), RuinsNPCs.Villager()),
+                                new Encounter(RuinsNPCs.Villager(), RuinsNPCs.Knight())
                             }),
                         new BattleStage(
                             "Restoration",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Healer(), FieldNPCs.Healer()),
-                                new Encounter(FieldNPCs.Healer(), FieldNPCs.Knight(), FieldNPCs.BlackShuck())
+                                new Encounter(RuinsNPCs.Healer(), RuinsNPCs.Healer()),
+                                new Encounter(RuinsNPCs.Healer(), RuinsNPCs.Knight())
                             }),
                         new BattleStage(
-                            "VS " + FieldNPCs.BigKnight().Look.Name,
+                            "VS " + RuinsNPCs.BigKnight().Look.Name,
                             () => new Encounter[] {
-                                new Encounter(Music.BOSS, FieldNPCs.Healer(), FieldNPCs.BigKnight(), FieldNPCs.Healer())
+                                new Encounter(Music.BOSS, RuinsNPCs.Healer(), RuinsNPCs.BigKnight(), RuinsNPCs.Healer())
                             }),
                         new BattleStage(
                             "Ancient Magicks",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Wizard()),
-                                new Encounter(FieldNPCs.Wizard(), FieldNPCs.Wizard())
+                                new Encounter(RuinsNPCs.Wizard()),
+                                new Encounter(RuinsNPCs.Wizard(), RuinsNPCs.Wizard())
                             }),
                         new BattleStage(
                             "The Replicant",
                             () => new Encounter[] {
-                                new Encounter(Music.CREEPY, FieldNPCs.Healer(), FieldNPCs.Replicant(), FieldNPCs.Healer())
+                                new Encounter(Music.CREEPY, RuinsNPCs.Healer(), RuinsNPCs.Replicant(), RuinsNPCs.Healer())
                             }),
                     },
-                    new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
+                    new PageGroup[] { RuinsNPCs.AppleDealer(camp, flags, party) }
                 );
         }
 
@@ -81,14 +81,12 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Start of adventure",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.SharkPirate())
+                                new Encounter(OceanNPCs.SharkPirate())
                             }),
                     },
-                    new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
+                    new PageGroup[] { RuinsNPCs.AppleDealer(camp, flags, party) }
                 );
         }
-
-
 
         private static SceneStage GetSampleScene(Party party) {
             Character hero = party.GetCharacter(c => c.HasFlag(Flag.HERO));
