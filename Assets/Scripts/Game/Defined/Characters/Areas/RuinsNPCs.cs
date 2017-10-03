@@ -33,7 +33,9 @@ namespace Scripts.Game.Defined.Characters {
                     new HealTome(),
                     new DefendTome(),
                     new RegenArmor()
-                    );
+                    )
+                .AddBuys(new Buy(new Inventory1x6())
+                .AddPitch("The 6Pack series of backpack expanders can increase your inventory size up to 6! A perfect option for the packrat in your life."));
         }
 
         public static Character Villager() {

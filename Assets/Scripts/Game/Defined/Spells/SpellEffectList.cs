@@ -400,6 +400,28 @@ namespace Scripts.Game.Defined.Spells {
     }
 
     /// <summary>
+    /// Increases inventory capacity.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.SpellEffect" />
+    public class IncreaseInventoryCapacityEffect : SpellEffect {
+        private Inventory target;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IncreaseInventoryCapacityEffect"/> class.
+        /// </summary>
+        /// <param name="target">The target inventory to increases.</param>
+        /// <param name="amountToIncreaseInventoryBy">The amount to increase inventory by.</param>
+        public IncreaseInventoryCapacityEffect(Inventory target, int amountToIncreaseInventoryBy)
+            : base(amountToIncreaseInventoryBy) {
+            this.target = target;
+        }
+
+        public override void CauseEffect() {
+            target.Capacity += Value;
+        }
+    }
+
+    /// <summary>
     /// Shuffles a side.
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.SpellEffect" />

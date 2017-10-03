@@ -16,7 +16,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
 
         public BrokenSword() : base(EquipType.WEAPON, 10, "Broken Sword", "Holding it feels uncomfortable.") {
             AddFlatStatBonus(StatType.STRENGTH, 1);
-            AddFlatStatBonus(StatType.VITALITY, -4);
+            AddFlatStatBonus(StatType.VITALITY, -2);
             AddFlatStatBonus(StatType.INTELLECT, -2);
         }
     }
@@ -137,6 +137,12 @@ namespace Scripts.Game.Defined.Serialized.Items {
 
         public DefendTome()
             : base(4, 50, new SetupDefend()) { }
+    }
+
+    public class Inventory1x6 : InventoryExpander {
+
+        public Inventory1x6() : base(1, 6, 200, "6Pack") {
+        }
     }
 
     public class RegenArmor : EquippableItem {

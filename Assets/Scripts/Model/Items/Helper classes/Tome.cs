@@ -7,6 +7,10 @@ using Scripts.Game.Defined.Spells;
 
 namespace Scripts.Model.Items {
 
+    /// <summary>
+    /// Consumable item that teaches a spellbook.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Items.ConsumableItem" />
     public abstract class Tome : ConsumableItem {
         private int levelRequirement;
         private SpellBook spellToTeach;
@@ -29,7 +33,8 @@ namespace Scripts.Model.Items {
         }
 
         protected override bool IsMeetOtherRequirements(Character caster, Character target) {
-            return target.Stats.Level >= levelRequirement && LearnerHasResourcesNeededToCastSpell(target.Stats, spellToTeach);
+            return base.IsMeetOtherRequirements(caster, target)
+                && target.Stats.Level >= levelRequirement && LearnerHasResourcesNeededToCastSpell(target.Stats, spellToTeach);
         }
 
         private static bool LearnerHasResourcesNeededToCastSpell(Characters.Stats learner, SpellBook book) {

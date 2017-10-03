@@ -77,7 +77,7 @@ namespace Scripts.Model.Items {
                 return string.Format("{0}\n{1}\n{2}{3}",
                     Type.Name,
                     string.Join("\n", arr),
-                    possibleBuff == null ? string.Empty : string.Format("<color=green>On equip:</color> {0}\n", possibleBuff.Description),
+                    possibleBuff == null ? string.Empty : string.Format("<color=lime>On equip:</color> {0}\n", possibleBuff.Description),
                     Util.ColorString(Flavor, Color.grey));
             }
         }

@@ -277,7 +277,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL) * INTELLECT_TO_HEALTH)
+                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * INTELLECT_TO_HEALTH)
             };
         }
 
@@ -286,15 +286,15 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override bool IsCritical(Character caster, Character target) {
-            float missingHealth = target.Stats.GetMissingStatCount(StatType.HEALTH);
+            float currentHealth = target.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH);
             float maxHealth = target.Stats.GetStatCount(Stats.Get.MAX, StatType.HEALTH);
 
-            return (missingHealth / maxHealth) <= (CRITICAL_HEALTH_PERCENT / 100f);
+            return (currentHealth / maxHealth) <= (CRITICAL_HEALTH_PERCENT / 100f);
         }
 
         protected override IList<SpellEffect> GetCriticalEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL) * CRITICAL_INTELLECT_TO_HEALTH)
+                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * CRITICAL_INTELLECT_TO_HEALTH)
             };
         }
     }
