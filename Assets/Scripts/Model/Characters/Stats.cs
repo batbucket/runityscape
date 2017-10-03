@@ -462,8 +462,8 @@ namespace Scripts.Model.Characters {
         /// <param name="missingPercentage">The missing percentage.</param>
         public void RestoreResourcesByMissingPercentage(float missingPercentage) {
             foreach (StatType type in StatType.RESTORED) {
-                int missing = (int)((GetStatCount(Stats.Get.MAX, type) - GetStatCount(Stats.Get.MOD, type)) * missingPercentage);
-                int restoreAmount = Mathf.Max(missing, MINIMUM_RESTORE_AMOUNT);
+                int missing = (GetStatCount(Stats.Get.MAX, type) - GetStatCount(Stats.Get.MOD, type));
+                int restoreAmount = Mathf.Max((int)(missing * missingPercentage), MINIMUM_RESTORE_AMOUNT);
                 if (missing > 0) {
                     AddToStat(type, Stats.Set.MOD, restoreAmount);
                 }
