@@ -122,7 +122,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         private void RemoveExperienceForLevelUp(Stats stats) {
             SetMod(Mod - Max, false);
             stats.Level++;
-            stats.StatPoints++;
+            stats.UnassignedStatPoints++;
             Max = GetExpForLevel(stats.Level);
         }
 

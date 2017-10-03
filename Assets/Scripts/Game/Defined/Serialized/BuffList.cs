@@ -1,13 +1,80 @@
 ﻿using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Spells;
+using Scripts.Game.Defined.Unserialized.Buffs;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Buffs {
+
+    public class FishShook : Buff {
+        private const float ANTI_FISH_MULTIPLIER = 2;
+
+        public FishShook()
+            : base(Util.GetSprite("fish"),
+                  "Fish-Shook",
+                  string.Format(
+                      "Basic <color=yellow>attacks</color> against fishy targets deal {0} times damage. However, damage against non-fishy targets is reduced by the same factor.", ANTI_FISH_MULTIPLIER), false) {
+        }
+
+        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+            return spellToReactTo.Book is Attack && spellToReactTo.Caster.Stats == owner;
+        }
+
+        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+            float localDmgMult = ANTI_FISH_MULTIPLIER;
+            if (spellToReactTo.Target.Look.Breed != Characters.Breed.FISH) {
+                localDmgMult = 1 / localDmgMult;
+            }
+
+            SpellEffect healthDamage = null;
+            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
+                SpellEffect se = spellToReactTo.Result.Effects[i];
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
+                    healthDamage = addToModStat;
+                }
+            }
+            if (healthDamage != null) {
+                Debug.Log("Damage reduced from " + healthDamage.Value);
+                healthDamage.Value = (int)Math.Floor(healthDamage.Value * localDmgMult);
+                Debug.Log("To " + healthDamage.Value);
+            }
+        }
+    }
+
+    public class DamageResist : Buff {
+        private const float DAMAGE_MULTIPLIER = 0.7f;
+
+        public DamageResist()
+            : base(Util.GetSprite("round-shield"),
+                  "Damage Resist",
+                  String.Format("Reduces incident damage from basic attacks by {0}%.",
+                      (1 - DAMAGE_MULTIPLIER) * 100), false) { }
+
+        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+            SpellEffect healthDamage = null;
+            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
+                SpellEffect se = spellToReactTo.Result.Effects[i];
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
+                    healthDamage = addToModStat;
+                }
+            }
+            if (healthDamage != null) {
+                int tempValue = healthDamage.Value;
+                healthDamage.Value = (int)Math.Floor(healthDamage.Value * DAMAGE_MULTIPLIER);
+            }
+        }
+
+        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+            return spellToReactTo.Book is Attack && spellToReactTo.Target.Stats == owner;
+        }
+    }
 
     public class Ignited : Buff {
         private const int DAMAGE_PER_TURN = 1;
@@ -28,45 +95,28 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
+    public class StrengthBoost : Buff {
+        public const int STRENGTH_INCREASE_AMOUNT = 50;
+
+        public StrengthBoost()
+            : base(Util.GetSprite("fist"),
+                  "Strength boost",
+                  "Increases strength.",
+                  true) {
+            AddMultiplicativeStatBonus(StatType.STRENGTH, STRENGTH_INCREASE_AMOUNT);
+        }
+    }
+
     public class Insight : Buff {
         private const int MANA_RECOVERED_PER_TURN = 5;
 
-        public Insight() : base(Util.GetSprite("water-drop"), "Insight", "Regenerating mana.", false) {
+        public Insight() : base(Util.GetSprite("water-drop"), "Insight", string.Format("Regenerating {0}.", StatType.MANA), false) {
         }
 
         protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
             return new SpellEffect[] {
                 new AddToModStat(owner, StatType.MANA, MANA_RECOVERED_PER_TURN)
             };
-        }
-    }
-
-    public class DamageResist : Buff {
-        private const float DAMAGE_MULTIPLIER = 0.7f;
-
-        public DamageResist()
-            : base(Util.GetSprite("round-shield"),
-                  "Damage Resist",
-                  String.Format("Reduces incident damage by {0}%.",
-                      (1 - DAMAGE_MULTIPLIER)), false) { }
-
-        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
-            SpellEffect healthDamage = null;
-            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
-                SpellEffect se = spellToReactTo.Result.Effects[i];
-                AddToModStat addToModStat = se as AddToModStat;
-                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
-                    healthDamage = addToModStat;
-                }
-            }
-            if (healthDamage != null) {
-                int tempValue = healthDamage.Value;
-                healthDamage.Value = (int)Math.Floor(healthDamage.Value * DAMAGE_MULTIPLIER);
-            }
-        }
-
-        public override bool IsReact(Spell spellToReactTo, Stats owner) {
-            return spellToReactTo.Book is Attack && spellToReactTo.Target.Stats == owner;
         }
     }
 
@@ -89,7 +139,7 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
 
         protected override IList<SpellEffect> OnEndOfTurnHelper(Model.Characters.Stats owner) {
             return new SpellEffect[] {
-                new AddToModStat(owner, StatType.HEALTH, BuffCaster.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.STRENGTH))
+                new AddToModStat(owner, StatType.HEALTH, BuffCaster.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH))
             };
         }
     }
@@ -139,6 +189,32 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
                     spellToReactTo.Caster.Stats, StatType.HEALTH,
                     -spellToReactTo.Caster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH) * DAMAGE_RATIO_FROM_ATTACK)
                 );
+        }
+    }
+
+    public class Defend : Buff {
+        private const int DAMAGE_REDUCTION_PERCENT = 50;
+        private const float DAMAGE_REDUCTION = DAMAGE_REDUCTION_PERCENT / 100f;
+
+        public Defend()
+            : base(1,
+                  Util.GetSprite("round-shield"),
+                  "Defend",
+                  string.Format("Reduces damage taken this turn by {0}%", DAMAGE_REDUCTION_PERCENT),
+                  false) {
+        }
+
+        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+            return spellToReactTo.Target.Stats == owner && spellToReactTo.Result.IsDealDamage;
+        }
+
+        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+            foreach (SpellEffect se in spellToReactTo.Result.Effects) {
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
+                    addToModStat.Value = (int)(addToModStat.Value * DAMAGE_REDUCTION);
+                }
+            }
         }
     }
 
@@ -206,16 +282,49 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class Restore : Buff {
-        private const int REGEN_PER_TURN = 1;
+    public class RegenerateHealth : StatRegen {
 
-        public Restore() : base(Util.GetSprite("health-normal"), "Restore", String.Format("Restores {0} health each turn.", REGEN_PER_TURN), false) {
+        public RegenerateHealth() : base(StatType.HEALTH, 1) {
+        }
+    }
+
+    public class RegenerateMana : StatRegen {
+
+        public RegenerateMana() : base(StatType.MANA, 2) {
+        }
+    }
+}
+
+namespace Scripts.Game.Defined.Unserialized.Buffs {
+
+    public abstract class StatRegen : Buff {
+        private int amountPerTurn;
+        private StatType type;
+
+        public StatRegen(StatType type, int amountPerTurn)
+            : base(type.Sprite, string.Format("Restore {0}", type.Name), String.Format("Regenerate {0} {1} each turn.", amountPerTurn, type.ColoredName), false) {
+            this.amountPerTurn = amountPerTurn;
+            this.type = type;
         }
 
-        protected override IList<SpellEffect> OnEndOfTurnHelper(Model.Characters.Stats owner) {
+        protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
             return new SpellEffect[] {
-                new AddToModStat(owner, StatType.HEALTH, REGEN_PER_TURN)
+                new AddToModStat(owner, type, amountPerTurn)
             };
+        }
+    }
+
+    public class StatChange : Buff {
+
+        public StatChange(int duration, StatType type, int amount)
+            : base(
+                  duration,
+                  type.Sprite,
+                  string.Format("{0}{1}", type.Name, amount < 0 ? '-' : '+'),
+                  string.Format("{0} {1} by {2}%.", type.ColoredName, amount < 0 ? "decreased" : "increased", amount),
+                  true) {
+            Util.Assert(amount != 0, "Amount must be nonnegative.");
+            AddMultiplicativeStatBonus(type, amount);
         }
     }
 }

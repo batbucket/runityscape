@@ -27,7 +27,8 @@ namespace Scripts.Game.Areas {
         public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
-                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) }
+                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) },
+                    { AreaType.SEA_WORLD, (flags, party, camp, dungeonPages) => SeaWorld(flags, party, camp, dungeonPages) }
         });
 
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
@@ -37,39 +38,70 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Start of adventure",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Villager()),
-                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager())
+                                new Encounter(RuinsNPCs.Villager()),
+                                new Encounter(RuinsNPCs.Villager(), RuinsNPCs.Villager())
                             }),
                         new BattleStage(
                             "Stronger monsters",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Villager()),
-                                new Encounter(FieldNPCs.Villager(), FieldNPCs.Knight())
+                                new Encounter(RuinsNPCs.Villager(), RuinsNPCs.Villager()),
+                                new Encounter(RuinsNPCs.Villager(), RuinsNPCs.Knight())
                             }),
                         new BattleStage(
                             "Restoration",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Healer(), FieldNPCs.Healer()),
-                                new Encounter(FieldNPCs.Healer(), FieldNPCs.Knight(), FieldNPCs.BlackShuck())
+                                new Encounter(RuinsNPCs.Healer(), RuinsNPCs.Healer()),
+                                new Encounter(RuinsNPCs.Healer(), RuinsNPCs.Knight())
                             }),
                         new BattleStage(
-                            "VS " + FieldNPCs.BigKnight().Look.Name,
+                            "Bigger monsters" + RuinsNPCs.BigKnight().Look.Name,
                             () => new Encounter[] {
-                                new Encounter(Music.BOSS, FieldNPCs.Healer(), FieldNPCs.BigKnight(), FieldNPCs.Healer())
+                                new Encounter(Music.BOSS, RuinsNPCs.Healer(), RuinsNPCs.BigKnight(), RuinsNPCs.Healer())
                             }),
                         new BattleStage(
                             "Ancient Magicks",
                             () => new Encounter[] {
-                                new Encounter(FieldNPCs.Wizard()),
-                                new Encounter(FieldNPCs.Wizard(), FieldNPCs.Wizard())
+                                new Encounter(RuinsNPCs.Wizard()),
+                                new Encounter(RuinsNPCs.Wizard(), RuinsNPCs.Wizard())
+                            }),
+                        new BattleStage(
+                            "Wizards' Tower",
+                            () => new Encounter[] {
+                                new Encounter(RuinsNPCs.Wizard(), RuinsNPCs.Wizard()),
+                                new Encounter(
+                                    RuinsNPCs.Wizard(),
+                                    RuinsNPCs.Wizard(),
+                                    RuinsNPCs.Healer(),
+                                    RuinsNPCs.Healer(),
+                                    RuinsNPCs.Illusionist())
+                            }),
+                        new BattleStage(
+                            "Premonition",
+                            () => new Encounter[] {
+                                new Encounter(RuinsNPCs.Villager()),
+                                new Encounter(RuinsNPCs.BigKnight(), RuinsNPCs.BigKnight(), RuinsNPCs.Wizard(), RuinsNPCs.Wizard())
                             }),
                         new BattleStage(
                             "The Replicant",
                             () => new Encounter[] {
-                                new Encounter(Music.CREEPY, FieldNPCs.Healer(), FieldNPCs.Replicant(), FieldNPCs.Healer())
+                                new Encounter(Music.CREEPY, RuinsNPCs.Healer(), RuinsNPCs.Replicant(), RuinsNPCs.Healer())
                             }),
                     },
-                    new PageGroup[] { FieldNPCs.AppleDealer(camp, flags, party) }
+                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party) }
+                );
+        }
+
+        private static Area SeaWorld(Flags flags, Party party, Page camp, Page quests) {
+            return new Area(AreaType.SEA_WORLD,
+                    new Stage[] {
+                        GetSampleScene(party),
+                        new BattleStage(
+                            "Welcome to the ocean",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.SharkPirate())
+                            }),
+                    },
+                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party) }
                 );
         }
 

@@ -54,6 +54,7 @@ namespace Scripts.Model.Characters {
 
         // Temporary serialization fields
         private bool IsSetupDone;
+
         private List<Character> partyMembers;
 
         /// <summary>
@@ -91,9 +92,10 @@ namespace Scripts.Model.Characters {
             }
 
             equipped.Add(equippableItem.Type, equippableItem);
-            foreach (KeyValuePair<StatType, int> pair in equippableItem.Stats) {
+            foreach (KeyValuePair<StatType, int> pair in equippableItem.StatBonuses) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] += pair.Value;
+                AddSplat(new SplatDetails(pair.Key, pair.Value));
             }
         }
 
@@ -115,9 +117,11 @@ namespace Scripts.Model.Characters {
             inventory.Add(itemToRemove);
             equipped.Remove(itemToRemove.Type);
 
-            foreach (KeyValuePair<StatType, int> pair in itemToRemove.Stats) {
+            foreach (KeyValuePair<StatType, int> pair in itemToRemove.StatBonuses) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
-                this.statBonuses[pair.Key] -= pair.Value;
+                int amountToRestore = -pair.Value;
+                this.statBonuses[pair.Key] += amountToRestore;
+                AddSplat(new SplatDetails(pair.Key, amountToRestore));
             }
         }
 
@@ -135,7 +139,7 @@ namespace Scripts.Model.Characters {
         /// </summary>
         /// <param name="type">The type of stat to get the bonus for.</param>
         /// <returns>The equipment bonus for type</returns>
-        public int GetBonus(StatType type) {
+        public int GetFlatStatBonus(StatType type) {
             return statBonuses.ContainsKey(type) ? statBonuses[type] : 0;
         }
 

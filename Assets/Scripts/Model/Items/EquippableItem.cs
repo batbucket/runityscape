@@ -28,7 +28,7 @@ namespace Scripts.Model.Items {
         /// <summary>
         /// The stat bonuses of this item.
         /// </summary>
-        public readonly IDictionary<StatType, int> Stats;
+        private readonly IDictionary<StatType, int> flatStatBonuses;
 
         private readonly SpellBook book;
 
@@ -43,7 +43,7 @@ namespace Scripts.Model.Items {
         public EquippableItem(Sprite sprite, EquipType type, int basePrice, string name, string description)
             : base(sprite, basePrice, TargetType.SINGLE_ALLY, name, description) {
             this.Type = type;
-            this.Stats = new SortedDictionary<StatType, int>();
+            this.flatStatBonuses = new SortedDictionary<StatType, int>();
             this.book = new CastEquipItem(this);
         }
 
@@ -57,15 +57,28 @@ namespace Scripts.Model.Items {
         public EquippableItem(EquipType type, int basePrice, string name, string description)
             : this(GetDefaultSprite(type), type, basePrice, name, description) { }
 
+        public ReadOnlyDictionary<StatType, int> StatBonuses {
+            get {
+                return new ReadOnlyDictionary<StatType, int>(flatStatBonuses);
+            }
+        }
+
         protected sealed override string DescriptionHelper {
             get {
-                string[] arr = new string[Stats.Count];
+                string[] arr = new string[flatStatBonuses.Count];
 
                 int index = 0;
-                foreach (KeyValuePair<StatType, int> pair in Stats) {
+                foreach (KeyValuePair<StatType, int> pair in flatStatBonuses) {
                     arr[index++] = string.Format("{0} {1}", StatUtil.ShowSigns(pair.Value), pair.Key.ColoredName);
                 }
-                return string.Format("{0}\n{1}\n{2}", Type.Name, string.Join("\n", arr), Util.ColorString(Flavor, Color.grey));
+
+                Buff possibleBuff = CreateBuff();
+
+                return string.Format("{0}\n{1}\n{2}{3}",
+                    Type.Name,
+                    string.Join("\n", arr),
+                    possibleBuff == null ? string.Empty : string.Format("<color=lime>On equip:</color> {0}\n", possibleBuff.Description),
+                    Util.ColorString(Flavor, Color.grey));
             }
         }
 
@@ -95,6 +108,18 @@ namespace Scripts.Model.Items {
         /// </returns>
         protected override bool IsMeetOtherRequirements(Character caster, Character target) {
             return caster.Stats.State == Characters.State.ALIVE && target.Stats.State == Characters.State.ALIVE;
+        }
+
+        /// <summary>
+        /// Adds a stat bonus to the equipment.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="amount">The amount.</param>
+        protected void AddFlatStatBonus(StatType type, int amount) {
+            Util.Assert(StatType.ASSIGNABLES.Contains(type), "StatType must be assignable.");
+            Util.Assert(!flatStatBonuses.ContainsKey(type), "Type already included.");
+            Util.Assert(amount != 0, "Amount must be nonzero.");
+            flatStatBonuses[type] = amount;
         }
 
         /// <summary>
