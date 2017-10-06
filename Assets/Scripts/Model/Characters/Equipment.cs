@@ -95,7 +95,7 @@ namespace Scripts.Model.Characters {
             foreach (KeyValuePair<StatType, int> pair in equippableItem.StatBonuses) {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 this.statBonuses[pair.Key] += pair.Value;
-                AddSplat(new SplatDetails(pair.Key, pair.Value));
+                AddSplat(new SplatDetails(pair.Key, pair.Value, string.Empty));
             }
         }
 
@@ -121,7 +121,7 @@ namespace Scripts.Model.Characters {
                 Util.Assert(StatType.ASSIGNABLES.Contains(pair.Key), "Invalid stat type on equipment.");
                 int amountToRestore = -pair.Value;
                 this.statBonuses[pair.Key] += amountToRestore;
-                AddSplat(new SplatDetails(pair.Key, amountToRestore));
+                AddSplat(new SplatDetails(pair.Key, amountToRestore, string.Empty));
             }
         }
 
