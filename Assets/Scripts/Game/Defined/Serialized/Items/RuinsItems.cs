@@ -75,7 +75,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
     public class IdentifyScroll : ConsumableItem {
 
         public IdentifyScroll()
-            : base(5, TargetType.SINGLE_ENEMY, "Scroll of Identify", string.Format("Scroll that reveals info about a target.")) {
+            : base(5, TargetType.ANY, "Scroll of Identify", string.Format("Scroll that reveals info about a target.")) {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {

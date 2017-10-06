@@ -86,7 +86,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class Check : BasicSpellbook {
         private static readonly Checked DUMMY = new Checked();
 
-        public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.SINGLE_ENEMY, SpellType.BOOST) {
+        public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) {
             AddCost(StatType.MANA, 10);
         }
 
