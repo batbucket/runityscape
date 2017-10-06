@@ -2,6 +2,7 @@
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
+using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
 
