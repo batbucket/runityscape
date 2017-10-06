@@ -22,6 +22,7 @@ namespace Scripts.Model.Stats {
         /// The modified value
         /// </summary>
         private int mod;
+
         /// <summary>
         /// The maximum value, serves as a reference point for stat recovery.
         /// </summary>
@@ -79,6 +80,7 @@ namespace Scripts.Model.Stats {
             }
             set {
                 max = Mathf.Clamp(value, Type.Bounds.Low, Type.Bounds.High);
+                mod = Mathf.Clamp(mod, Type.Bounds.Low, max);
             }
         }
 
