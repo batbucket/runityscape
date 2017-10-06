@@ -1,6 +1,7 @@
 ﻿using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Game.Serialized;
 using Scripts.Game.Serialized.Brains;
 using Scripts.Game.Shopkeeper;
@@ -86,8 +87,10 @@ namespace Scripts.Game.Defined.Characters {
                         "Giant squid thing.",
                         Breed.FISH
                         ),
-                    new Attacker()
-                );
+                    new Kraken()
+                )
+                .AddSpells(new SpawnTentacles())
+                .AddStats(new Skill());
         }
 
         public static Character BlackShuck() {

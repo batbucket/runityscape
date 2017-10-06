@@ -51,6 +51,18 @@ namespace Scripts.Game.Defined.Spells {
         }
 
         /// <summary>
+        /// Gets the target.
+        /// </summary>
+        /// <value>
+        /// The target.
+        /// </value>
+        public Stats Target {
+            get {
+                return target;
+            }
+        }
+
+        /// <summary>
         /// Causes the effect.
         /// </summary>
         public override void CauseEffect() {
@@ -395,6 +407,24 @@ namespace Scripts.Game.Defined.Spells {
                 Character clone = toBeCloned();
                 clone.AddFlag(Model.Characters.Flag.IS_CLONE);
                 currentPage.AddCharacters(side, clone);
+            }
+        }
+    }
+
+    public class SummonEffect : SpellEffect {
+        private readonly Page current;
+        private readonly Func<Character> characterToSpawn;
+        private readonly Side sideToSpawn;
+
+        public SummonEffect(Side sideToSpawn, Page current, Func<Character> characterToSpawn, int numberOfCharactersToSpawn) : base(numberOfCharactersToSpawn) {
+            this.current = current;
+            this.characterToSpawn = characterToSpawn;
+            this.sideToSpawn = sideToSpawn;
+        }
+
+        public override void CauseEffect() {
+            for (int i = 0; i < Value; i++) {
+                current.AddCharacters(sideToSpawn, characterToSpawn());
             }
         }
     }

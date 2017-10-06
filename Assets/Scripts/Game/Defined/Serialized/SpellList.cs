@@ -337,6 +337,42 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
 namespace Scripts.Game.Defined.Unserialized.Spells {
 
+    public class SpawnTentacles : BasicSpellbook {
+
+        public SpawnTentacles() : base("Tentacle Eruption", Util.GetSprite("shark"), TargetType.SELF, SpellType.BOOST) {
+            AddCost(StatType.SKILL, Kraken.TURNS_BETWEEN_TENTACLE_SUMMONS);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Spawns Tentacles to defend the caster. Tentacles intercept all attacks. Number increases with missing health.");
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            float targetHealthPercentage = ((float)target.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH)) / target.Stats.GetStatCount(Stats.Get.MAX, StatType.HEALTH);
+            int tentaclesToSummon = 0;
+
+            // TODO fix this terrible code, use a dictionary please
+            if (targetHealthPercentage > .66) {
+                tentaclesToSummon = 2;
+            } else if (targetHealthPercentage > .33) {
+                tentaclesToSummon = 3;
+            } else {
+                tentaclesToSummon = 4;
+            }
+
+            Func<Character> summonTentacleFunc = () => {
+                Character tentacle = OceanNPCs.Tentacle();
+                Interceptor interceptor = new Interceptor();
+                interceptor.Caster = new BuffParams(target.Stats, target.Id);
+                tentacle.Buffs.AddBuff(interceptor);
+                return tentacle;
+            };
+            return new SpellEffect[] {
+                new SummonEffect(page.GetSide(target), page, summonTentacleFunc, tentaclesToSummon)
+            };
+        }
+    }
+
     public abstract class SingSirenSong : BuffAdder {
 
         public SingSirenSong(Buff sirenSong) : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {

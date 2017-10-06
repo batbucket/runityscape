@@ -320,6 +320,38 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         public VitalitySirenSong() : base(StatType.VITALITY, "Melody of Mortality") {
         }
     }
+
+    public class Interceptor : Buff {
+        private const int INTERCEPTION_DAMAGE = 2;
+
+        // TODO add sprite
+        public Interceptor() : base(Util.GetSprite("shark"), "Interceptor", "Unit will intercept attacks on its summoner.", false) { }
+
+        public override bool IsReact(Spell incomingSpell, Stats statsOfTheCharacterTheBuffIsOn) {
+            bool isDealDamageToBuffCaster = false;
+
+            // Intercepting adds an add to mod stat, so the spell technically does damage even after we wipe it
+            // isDealDamage returns true regardless of whether the caster or target is taking damage
+            // But we want to stop adding damage after the first tentacle intercepts the attack
+            // which wipes the spell's effects and replaces it with a single addToModStat health damage
+            foreach (SpellEffect se in incomingSpell.Result.Effects) {
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null
+                    && addToModStat.AffectedStat == StatType.HEALTH
+                    && addToModStat.Value < 0
+                    && addToModStat.Target == BuffCaster) {
+                    isDealDamageToBuffCaster = true;
+                }
+            }
+
+            return incomingSpell.Target.Stats == BuffCaster && isDealDamageToBuffCaster;
+        }
+
+        protected override void ReactHelper(Spell s, Stats owner) {
+            s.Result.Effects.Clear();
+            s.Result.AddEffect(new AddToModStat(s.Caster.Stats, StatType.HEALTH, -INTERCEPTION_DAMAGE));
+        }
+    }
 }
 
 namespace Scripts.Game.Defined.Unserialized.Buffs {

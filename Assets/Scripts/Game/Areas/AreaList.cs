@@ -112,6 +112,11 @@ namespace Scripts.Game.Areas {
                             () => new Encounter[] {
                                 new Encounter(OceanNPCs.Siren()),
                                 new Encounter(OceanNPCs.Siren(), OceanNPCs.SharkPirate())
+                            }),
+                        new BattleStage(
+                            "GitKraken",
+                            () => new Encounter [] {
+                                new Encounter(Music.BOSS, OceanNPCs.Kraken())
                             })
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
