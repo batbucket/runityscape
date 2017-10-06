@@ -33,8 +33,8 @@ namespace Scripts.Game.Defined.Serialized.Brains {
                 null,
                 null,
                 null,
-                PageUtil.GenerateActions(currentBattle, main, brainOwner, ATTACK, temporarySpells, handlePlay),
-                PageUtil.GenerateSpellBooks(currentBattle, main, brainOwner, ATTACK, handlePlay),
+                PageUtil.GenerateActions(true, currentBattle, main, brainOwner, ATTACK, temporarySpells, handlePlay),
+                PageUtil.GenerateSpellBooks(true, currentBattle, main, brainOwner, ATTACK, handlePlay),
                 PageUtil.GenerateItemsGrid(true, currentBattle, main, brainOwner, handlePlay),
                 PageUtil.GenerateEquipmentGrid(currentBattle, main, brainOwner, handlePlay, true),
             };

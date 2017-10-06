@@ -159,6 +159,7 @@ namespace Scripts.Model.Pages {
         /// <param name="addPlay">Chosen action handler</param>
         /// <returns></returns>
         public static Grid GenerateSpellBooks(
+            bool isInCombat,
             Page current,
             IButtonable previous,
             Character owner,
@@ -166,7 +167,7 @@ namespace Scripts.Model.Pages {
             Action<IPlayable> addPlay
             ) {
             return GenerateSpellableGrid(
-                false,
+                isInCombat,
                 current,
                 previous,
                 owner,
@@ -189,6 +190,7 @@ namespace Scripts.Model.Pages {
         /// <param name="playHandler">The play handler.</param>
         /// <returns></returns>
         public static Grid GenerateActions(
+            bool isInCombat,
             Page current,
             IButtonable previous,
             Character owner,
@@ -199,7 +201,7 @@ namespace Scripts.Model.Pages {
             List<SpellBook> spellsThatHaveACost = new List<SpellBook>();
 
             return GenerateSpellableGrid(
-                false,
+                isInCombat,
                 current,
                 previous,
                 owner,
