@@ -29,7 +29,7 @@ namespace Scripts.Game.Defined.Serialized.Brains {
             Grid main = new Grid("Main");
 
             main.List = new IButtonable[] {
-                PageUtil.GenerateTargets(currentBattle, main, brainOwner, ATTACK, GetAttackSprite(brainOwner.Equipment), handlePlay, false),
+                PageUtil.GenerateTargets(currentBattle, main, brainOwner, ATTACK, GetAttackSprite(brainOwner.Equipment), handlePlay, true),
                 null,
                 null,
                 null,

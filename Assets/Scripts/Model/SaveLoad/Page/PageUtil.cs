@@ -134,7 +134,7 @@ namespace Scripts.Model.Pages {
                     Action<IPlayable> addPlay
                     ) {
             return GenerateSpellableGrid(
-                !isInCombat,
+                isInCombat,
                 current,
                 previous,
                 owner,
@@ -221,8 +221,8 @@ namespace Scripts.Model.Pages {
         /// <param name="spellable">Spellable to use on target</param>
         /// <param name="handlePlayable">Playable handler</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
-            return GenerateTargets(current, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable, isTargetingSelf);
+        public static Grid GenerateTargets(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isInCombat) {
+            return GenerateTargets(current, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable, isInCombat);
         }
 
         /// <summary>
@@ -234,9 +234,9 @@ namespace Scripts.Model.Pages {
         /// <param name="owner">User of the Spellable</param>
         /// <param name="spellable">Spellable to use on target</param>
         /// <param name="handlePlayable">Playable handler</param>
-        /// <param name="isTargetingSelf">If true, the target will attempt to cast the spell on themselves (used for out of combat inventories)</param>
+        /// <param name="isInCombat">If false, the target will attempt to cast the spell on themselves (used for out of combat inventories)</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page current, IButtonable previous, Character owner, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
+        public static Grid GenerateTargets(Page current, IButtonable previous, Character owner, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable, bool isInCombat) {
             SpellBook sb = spellable.GetSpellBook();
             ICollection<Character> targets = sb.TargetType.GetTargets(owner, current);
             Grid grid = GenerateBackableGrid(previous, sb.Icon, sb.Name, sb.CreateDescription(owner));
@@ -247,12 +247,17 @@ namespace Scripts.Model.Pages {
                 Character target = myTarget;
 
                 Character spellOwner = null;
-                if (isTargetingSelf) {
-                    spellOwner = target;
-                } else {
+                if (isInCombat) {
                     spellOwner = owner;
+                } else {
+                    spellOwner = target;
                 }
-                grid.List.Add(GenerateTargetProcess(current, previous, spellOwner, target, sb, handlePlayable));
+
+                // Don't add enemy targets if out of combat
+                // Otherwise you can hit the shopkeepers
+                if (isInCombat || current.GetSide(target) == current.GetSide(owner)) {
+                    grid.List.Add(GenerateTargetProcess(current, previous, spellOwner, target, sb, handlePlayable));
+                }
             }
             Item item = spellable as Item;
             if (item != null && item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {
@@ -317,7 +322,7 @@ namespace Scripts.Model.Pages {
         }
 
         private static Grid GenerateSpellableGrid(
-                    bool isTargetingSelf,
+                    bool isInCombat,
                     Page current,
                     IButtonable previous,
                     Character owner,
@@ -332,19 +337,19 @@ namespace Scripts.Model.Pages {
             foreach (ISpellable myS in spellCollection) {
                 ISpellable s = myS;
                 if (!s.Equals(excluded)) {
-                    grid.List.Add(GenerateSpellProcess(current, grid, owner, s, addPlay, isTargetingSelf));
+                    grid.List.Add(GenerateSpellProcess(current, grid, owner, s, addPlay, isInCombat));
                 }
             }
 
             return grid;
         }
 
-        private static Process GenerateSpellProcess(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isTargetingSelf) {
+        private static Process GenerateSpellProcess(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<IPlayable> handlePlayable, bool isInCombat) {
             SpellBook sb = spellable.GetSpellBook();
             return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
                 () => {
                     if (sb.IsMeetPreTargetRequirements(owner.Stats)) {
-                        GenerateTargets(current, previous, owner, spellable, handlePlayable, isTargetingSelf).Invoke();
+                        GenerateTargets(current, previous, owner, spellable, handlePlayable, isInCombat).Invoke();
                     }
                 });
         }
