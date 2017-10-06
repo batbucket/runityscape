@@ -1,6 +1,6 @@
 ﻿using Scripts.Game.Areas;
-using Scripts.Game.Dungeons;
 using Scripts.Game.Serialized;
+using Scripts.Model.Acts;
 using Scripts.Model.Characters;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
@@ -25,7 +25,7 @@ namespace Scripts.Game.Pages {
         /// <param name="party">The party.</param>
         public WorldPages(Page previous, Flags flags, Party party) : base(new Page("Areas")) {
             Root.Body = "Which area would you like to go to?";
-
+            Root.Icon = Util.GetSprite("journey");
             IList<IButtonable> buttons = new List<IButtonable>();
             buttons.Add(PageUtil.GenerateBack(previous));
 
@@ -51,10 +51,17 @@ namespace Scripts.Game.Pages {
         private Process GetAreaChangeProcess(AreaType type, Flags flags, Party party, Page previous) {
             return new Process(
                     type.GetDescription(),
+                    AreaList.AREA_SPRITES[type],
                     "Move to this area.",
                     () => {
+                        flags.ShouldAdvanceTimeInCamp = true;
                         flags.CurrentArea = type;
-                        previous.Invoke();
+
+                        // Manually update camp details
+                        previous.Icon = AreaList.AREA_SPRITES[type]; // Won't update soon enough
+                        previous.Location = type.GetDescription();
+
+                        Battle.DoPageTransition(previous);
                         previous.AddText(string.Format("Moved to {0}.", type.GetDescription()));
                     }
                 );

@@ -31,8 +31,16 @@ namespace Scripts.Game.Areas {
                     { AreaType.SEA_WORLD, (flags, party, camp, dungeonPages) => SeaWorld(flags, party, camp, dungeonPages) }
         });
 
+        public static readonly ReadOnlyDictionary<AreaType, Sprite> AREA_SPRITES
+            = new ReadOnlyDictionary<AreaType, Sprite>(
+                new Dictionary<AreaType, Sprite>() {
+                    { AreaType.RUINS, Util.GetSprite("skull-crack") },
+                    { AreaType.SEA_WORLD, Util.GetSprite("water-drop") }
+                });
+
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
-            return new Area(AreaType.RUINS,
+            return new Area(
+                AreaType.RUINS,
                     new Stage[] {
                         GetSampleScene(party),
                         new BattleStage(
@@ -92,7 +100,8 @@ namespace Scripts.Game.Areas {
         }
 
         private static Area SeaWorld(Flags flags, Party party, Page camp, Page quests) {
-            return new Area(AreaType.SEA_WORLD,
+            return new Area(
+                    AreaType.SEA_WORLD,
                     new Stage[] {
                         GetSampleScene(party),
                         new BattleStage(
@@ -101,7 +110,7 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.SharkPirate())
                             }),
                     },
-                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party) }
+                    new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
                 );
         }
 

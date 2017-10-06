@@ -51,6 +51,7 @@ namespace Scripts.Game.Pages {
             Page root = Get(ROOT_INDEX);
             root.OnEnter = () => {
                 root.Location = flags.CurrentArea.GetDescription();
+                root.Icon = Areas.AreaList.AREA_SPRITES[flags.CurrentArea];
 
                 // If this isn't first Resting will advance to wrong time
                 if (flags.ShouldAdvanceTimeInCamp) {

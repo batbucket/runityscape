@@ -57,7 +57,7 @@ namespace Scripts.Game.Serialized.Brains {
 
         public override string StartOfRoundDialogue() {
             if (currentBattle.TurnCount == 0) {
-                return Util.PickRandom("Stand and deliver!/You will go further!/Stop right there!");
+                return Util.PickRandom("Stand and deliver!/You will go no further!/Stop right there!/This ends here!");
             }
             return string.Empty;
         }
