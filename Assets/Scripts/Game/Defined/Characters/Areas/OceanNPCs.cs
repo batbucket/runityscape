@@ -56,12 +56,38 @@ namespace Scripts.Game.Defined.Characters {
                     new Stats(6, 4, 10, 10, 20),
                     new Look(
                         "Siren",
-                        "shark",
+                        "siren",
                         "Sings a mean tune.",
                         Breed.FISH
                     ),
                     new Siren()
                 ).AddSpells(Game.Serialized.Brains.Siren.DEBUFF_LIST);
+        }
+
+        public static Character Tentacle() {
+            return CharacterUtil.StandardEnemy(
+                    new Stats(7, 3, 5, 1, 5),
+                    new Look(
+                        "Tentacle",
+                        "shark",
+                        "Tentacle belonging to a Kraken.",
+                        Breed.FISH
+                        ),
+                    new Attacker()
+                );
+        }
+
+        public static Character Kraken() {
+            return CharacterUtil.StandardEnemy(
+                    new Stats(8, 5, 10, 10, 100),
+                    new Look(
+                        "Kraken",
+                        "shark",
+                        "Giant squid thing.",
+                        Breed.FISH
+                        ),
+                    new Attacker()
+                );
         }
 
         public static Character BlackShuck() {
