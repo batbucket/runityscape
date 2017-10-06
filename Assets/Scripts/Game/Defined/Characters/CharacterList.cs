@@ -13,6 +13,7 @@ using UnityEngine;
 namespace Scripts.Game.Defined.Characters {
 
     public static class CharacterUtil {
+        private const float MONEY_VARIANCE = .25f;
 
         public static Character RemoveFlag(this Character c, Model.Characters.Flag flag) {
             c.RemoveFlag(flag);
@@ -76,6 +77,15 @@ namespace Scripts.Game.Defined.Characters {
             return c;
         }
 
+        public static Character AddItem(this Character c, Item item, float chanceToHave) {
+            return c.AddItem(item, Util.IsChance(chanceToHave));
+        }
+
+        public static Character AddMoney(this Character c, int fuzzyAmount) {
+            c.Inventory.ForceAdd(new Money(), Util.Random(fuzzyAmount, MONEY_VARIANCE));
+            return c;
+        }
+
         public static Character AddItem(this Character c, Item item, bool isAdded = true) {
             return c.AddItem(item, 1, isAdded);
         }
@@ -96,6 +106,10 @@ namespace Scripts.Game.Defined.Characters {
                 c.Equipment.AddEquip(dummy, new Model.Buffs.BuffParams(c.Stats, c.Id), equip);
             }
             return c;
+        }
+
+        public static Character AddEquip(this Character c, EquippableItem equip, float chanceToHave) {
+            return c.AddEquip(equip, Util.IsChance(chanceToHave));
         }
 
         public static Character AddBuff(this Character c, Buff buff) {
