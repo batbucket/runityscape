@@ -15,6 +15,7 @@ using UnityEngine;
 using Scripts.Presenter;
 using Scripts.Game.Defined.Characters;
 using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Unserialized.Spells;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -308,9 +309,39 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             return new IEnumerator[] { SFX.PlaySound("ping") };
         }
     }
+
+    public class SingStrengthSong : SingSirenSong {
+
+        public SingStrengthSong() : base(new StrengthSirenSong()) {
+        }
+    }
+
+    public class SingAgilitySong : SingSirenSong {
+
+        public SingAgilitySong() : base(new AgilitySirenSong()) {
+        }
+    }
+
+    public class SingIntellectSong : SingSirenSong {
+
+        public SingIntellectSong() : base(new IntellectSirenSong()) {
+        }
+    }
+
+    public class SingVitalitySong : SingSirenSong {
+
+        public SingVitalitySong() : base(new VitalitySirenSong()) {
+        }
+    }
 }
 
 namespace Scripts.Game.Defined.Unserialized.Spells {
+
+    public abstract class SingSirenSong : BuffAdder {
+
+        public SingSirenSong(Buff sirenSong) : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {
+        }
+    }
 
     public class Flee : BasicSpellbook {
         private Page destination;

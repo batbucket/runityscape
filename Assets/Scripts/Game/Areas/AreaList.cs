@@ -42,7 +42,6 @@ namespace Scripts.Game.Areas {
             return new Area(
                 AreaType.RUINS,
                     new Stage[] {
-                        GetSampleScene(party),
                         new BattleStage(
                             "Start of adventure",
                             () => new Encounter[] {
@@ -103,37 +102,20 @@ namespace Scripts.Game.Areas {
             return new Area(
                     AreaType.SEA_WORLD,
                     new Stage[] {
-                        GetSampleScene(party),
                         new BattleStage(
                             "Welcome to the ocean",
                             () => new Encounter[] {
                                 new Encounter(OceanNPCs.SharkPirate())
                             }),
+                        new BattleStage(
+                            "Sinister singers",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.Siren()),
+                                new Encounter(OceanNPCs.Siren(), OceanNPCs.SharkPirate())
+                            })
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
                 );
-        }
-
-        private static SceneStage GetSampleScene(Party party) {
-            Character hero = party.GetCharacter(c => c.HasFlag(Flag.HERO));
-            Character partner = party.GetCharacter(c => c.HasFlag(Flag.PARTNER));
-            Page page = new Page("Test Location");
-
-            SceneStage scene = new SceneStage(
-                page,
-                "Scene example",
-                new TextAct(hero, Side.LEFT, "I will now appear on the LEFT side."),
-                new ActionAct(() => page.AddCharacters(Side.LEFT, hero)),
-                new TextAct(hero, Side.LEFT, "Wow! Amazing!!!"),
-                new TextAct(partner, Side.RIGHT, "I will now appear on the RIGHT side."),
-                new ActionAct(() => page.AddCharacters(Side.RIGHT, partner)),
-                new TextAct(partner, Side.RIGHT, "Neato!"),
-                new CoroutineAct(SFX.DoMeleeEffect(hero, partner, 1.0f, "Slash_0")),
-                new TextAct(partner, Side.RIGHT, "Ouch."),
-                new TextAct(hero, Side.LEFT, "<color=lime>Wow</color> <color=red>look</color> <color=magenta>at</color> <color=green>this</color> <color=cyan>colored</color> <color=yellow>text</color>!")
-                );
-
-            return scene;
         }
     }
 }

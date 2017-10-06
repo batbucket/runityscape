@@ -12,23 +12,28 @@ using UnityEngine;
 namespace Scripts.Game.Defined.Serialized.Buffs {
 
     public class FishShook : Buff {
-        private const float ANTI_FISH_MULTIPLIER = 2;
+        private const float FISHY_TARGET_MULTIPLIER = 2;
+        private const float OTHER_TARGET_MULTIPLIER = 0.25f;
 
         public FishShook()
             : base(Util.GetSprite("fish"),
                   "Fish-Shook",
                   string.Format(
-                      "Basic <color=yellow>attacks</color> against fishy targets deal {0} times damage. However, damage against non-fishy targets is reduced by the same factor.", ANTI_FISH_MULTIPLIER), false) {
+                      "Basic attacks do {0}x damage on fishy targets and {1} damage on non-fish.", FISHY_TARGET_MULTIPLIER, OTHER_TARGET_MULTIPLIER), false) {
         }
 
         public override bool IsReact(Spell spellToReactTo, Stats owner) {
-            return spellToReactTo.Book is Attack && spellToReactTo.Caster.Stats == owner;
+            return spellToReactTo.Book is Attack && spellToReactTo.Result.IsDealDamage && spellToReactTo.Caster.Stats == owner;
         }
 
         protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
-            float localDmgMult = ANTI_FISH_MULTIPLIER;
-            if (spellToReactTo.Target.Look.Breed != Characters.Breed.FISH) {
-                localDmgMult = 1 / localDmgMult;
+            float localDmgMult = 0;
+
+            // is a fish
+            if (spellToReactTo.Target.Look.Breed == Characters.Breed.FISH) {
+                localDmgMult = FISHY_TARGET_MULTIPLIER;
+            } else { // not a fish
+                localDmgMult = OTHER_TARGET_MULTIPLIER;
             }
 
             SpellEffect healthDamage = null;
@@ -40,9 +45,7 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
                 }
             }
             if (healthDamage != null) {
-                Debug.Log("Damage reduced from " + healthDamage.Value);
                 healthDamage.Value = (int)Math.Floor(healthDamage.Value * localDmgMult);
-                Debug.Log("To " + healthDamage.Value);
             }
         }
     }
@@ -293,6 +296,30 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         public RegenerateMana() : base(StatType.MANA, 2) {
         }
     }
+
+    public class StrengthSirenSong : SirenSong {
+
+        public StrengthSirenSong() : base(StatType.STRENGTH, "Lyric of Lethargy") {
+        }
+    }
+
+    public class AgilitySirenSong : SirenSong {
+
+        public AgilitySirenSong() : base(StatType.AGILITY, "Shanty of Snails") {
+        }
+    }
+
+    public class IntellectSirenSong : SirenSong {
+
+        public IntellectSirenSong() : base(StatType.INTELLECT, "Hymn of Horror") {
+        }
+    }
+
+    public class VitalitySirenSong : SirenSong {
+
+        public VitalitySirenSong() : base(StatType.VITALITY, "Melody of Mortality") {
+        }
+    }
 }
 
 namespace Scripts.Game.Defined.Unserialized.Buffs {
@@ -314,15 +341,34 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         }
     }
 
-    public class StatChange : Buff {
+    public abstract class SirenSong : StatChange {
+        private const int STAT_REDUCTION_PERCENT = 20;
+        private const int DURATION = 5;
 
-        public StatChange(int duration, StatType type, int amount)
+        public SirenSong(StatType type, string buffName)
+            : base(DURATION, type, -STAT_REDUCTION_PERCENT, buffName, Util.GetSprite("g-clef")) { }
+    }
+
+    public abstract class StatChange : Buff {
+
+        public StatChange(int duration, StatType type, int amount, string buffName, Sprite sprite)
             : base(
                   duration,
-                  type.Sprite,
-                  string.Format("{0}{1}", type.Name, amount < 0 ? '-' : '+'),
+                  sprite,
+                  buffName,
                   string.Format("{0} {1} by {2}%.", type.ColoredName, amount < 0 ? "decreased" : "increased", amount),
                   true) {
+            Util.Assert(amount != 0, "Amount must be nonnegative.");
+            AddMultiplicativeStatBonus(type, amount);
+        }
+
+        public StatChange(int duration, StatType type, int amount)
+            : this(
+                      duration,
+                      type,
+                      amount,
+                      string.Format("{0}{1}", type.Name, amount < 0 ? '-' : '+'),
+                      type.Sprite) {
             Util.Assert(amount != 0, "Amount must be nonnegative.");
             AddMultiplicativeStatBonus(type, amount);
         }

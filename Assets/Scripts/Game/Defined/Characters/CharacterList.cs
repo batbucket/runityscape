@@ -39,6 +39,7 @@ namespace Scripts.Game.Defined.Characters {
             Character enemy = new Character(stats, look, brain);
             enemy.AddFlag(Model.Characters.Flag.DROPS_ITEMS);
             enemy.AddFlag(Model.Characters.Flag.GIVES_EXPERIENCE);
+            stats.AddToStat(StatType.MANA, Stats.Set.MOD, stats.GetStatCount(Stats.Get.TOTAL, StatType.MANA));
             return enemy;
         }
 

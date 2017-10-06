@@ -1,5 +1,7 @@
-﻿using Scripts.Game.Defined.Serialized.Spells;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Model.Characters;
+using Scripts.Model.Spells;
 using System;
 using System.Collections.Generic;
 
@@ -21,6 +23,20 @@ namespace Scripts.Game.Serialized.Brains {
                 return "(It barks menacingly at you.)";
             }
             return string.Empty;
+        }
+    }
+
+    public class Siren : BasicBrain {
+
+        public static readonly SpellBook[] DEBUFF_LIST = new SpellBook[] {
+            new SingStrengthSong(),
+            new SingAgilitySong(),
+            new SingIntellectSong(),
+            new SingVitalitySong()
+        };
+
+        protected override IPlayable GetPlay() {
+            return CastOnRandom(DEBUFF_LIST.ChooseRandom());
         }
     }
 }

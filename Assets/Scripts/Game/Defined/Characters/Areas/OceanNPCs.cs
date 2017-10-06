@@ -27,20 +27,20 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character Shark() {
             return CharacterUtil.StandardEnemy(
-                new Stats(12, 1, 6, 8, 35),
+                new Stats(5, 5, 6, 8, 35),
                 new Look(
-                    "Cap'n Shark",
-                    "shark-pirate",
+                    "Shark",
+                    "shark",
                     "Hatless shark.",
                     Breed.FISH
                     ),
                 new Attacker())
-                .AddItem(new Money(), Util.RandomRange(5, 15));
+                .AddItem(new Money(), Util.RandomRange(50, 100));
         }
 
         public static Character SharkPirate() {
             return CharacterUtil.StandardEnemy(
-                new Stats(12, 1, 6, 8, 35),
+                new Stats(6, 8, 6, 8, 60),
                 new Look(
                     "Cap'n Shark",
                     "shark-pirate",
@@ -49,6 +49,19 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Attacker())
                 .AddItem(new Money(), Util.RandomRange(5, 15));
+        }
+
+        public static Character Siren() {
+            return CharacterUtil.StandardEnemy(
+                    new Stats(6, 4, 10, 10, 20),
+                    new Look(
+                        "Siren",
+                        "shark",
+                        "Sings a mean tune.",
+                        Breed.FISH
+                    ),
+                    new Siren()
+                ).AddSpells(Game.Serialized.Brains.Siren.DEBUFF_LIST);
         }
 
         public static Character BlackShuck() {
