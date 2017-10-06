@@ -108,6 +108,11 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.SharkPirate())
                             }),
                         new BattleStage(
+                            "Swarm",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.Fishy(), OceanNPCs.Fishy(), OceanNPCs.Fishy(), OceanNPCs.Fishy(), OceanNPCs.Fishy())
+                            }),
+                        new BattleStage(
                             "Sinister singers",
                             () => new Encounter[] {
                                 new Encounter(OceanNPCs.Siren()),
