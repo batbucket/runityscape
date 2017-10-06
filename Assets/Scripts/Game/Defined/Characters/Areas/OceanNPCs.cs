@@ -115,6 +115,7 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Swarm())
                 .AddItem(new Money(), Util.RandomRange(0, 1));
+        }
 
 
 
