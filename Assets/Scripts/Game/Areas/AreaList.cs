@@ -27,12 +27,12 @@ namespace Scripts.Game.Areas {
         public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
-                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) },
+                    { AreaType.RUINS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) },
                     { AreaType.SEA_WORLD, (flags, party, camp, dungeonPages) => SeaWorld(flags, party, camp, dungeonPages) }
         });
 
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
-            return new Area(AreaType.TINY_WOODS,
+            return new Area(AreaType.RUINS,
                     new Stage[] {
                         GetSampleScene(party),
                         new BattleStage(
