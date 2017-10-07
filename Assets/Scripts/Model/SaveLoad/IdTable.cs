@@ -123,6 +123,7 @@ namespace Scripts.Model.SaveLoad {
             Add<CrushingBlowTome>("crushTome");
             Add<HealTome>("healTome");
             Add<DefendTome>("defendTome");
+            Add<Inventory1x6>("6pack");
         }
 
         private void Buffs() {
@@ -139,6 +140,10 @@ namespace Scripts.Model.SaveLoad {
             Add<FishShook>("fishShook");
             Add<Defend>("defend");
             Add<RegenerateMana>("regenMana");
+            Add<StrengthSirenSong>("strengthSong");
+            Add<AgilitySirenSong>("agilitySong");
+            Add<VitalitySirenSong>("vitalitySong");
+            Add<IntellectSirenSong>("intellectSong");
         }
 
         private void Brains() {

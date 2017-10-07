@@ -3,7 +3,6 @@ using Scripts.Game.Defined.Serialized.Brains;
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
-using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
@@ -165,7 +164,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Player())
                 .AddItems(new CharacterUtil.ItemCount(new Apple(), 7), new CharacterUtil.ItemCount(new PoisonArmor()), new CharacterUtil.ItemCount(new Money(), 100))
                 .AddFlags(Model.Characters.Flag.DROPS_ITEMS)
-                .AddSpells(new InflictPoison(), new SetupCounter())
+                .AddSpells(new InflictPoison(), new SetupDefend())
                 .AddStats(new Skill());
             return c;
         }
