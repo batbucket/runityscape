@@ -35,7 +35,7 @@ namespace Scripts.Game.Areas {
             = new ReadOnlyDictionary<AreaType, Sprite>(
                 new Dictionary<AreaType, Sprite>() {
                     { AreaType.RUINS, Util.GetSprite("skull-crack") },
-                    { AreaType.SEA_WORLD, Util.GetSprite("water-drop") }
+                    { AreaType.SEA_WORLD, Util.GetSprite("at-sea") }
                 });
 
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
