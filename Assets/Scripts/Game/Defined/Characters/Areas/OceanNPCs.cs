@@ -113,7 +113,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Look(
                     "Swarm",
                     "angler-fish",
-                    "Questionable member of the sea that travels in schools. Enjoys focusing the weak.",
+                    "Questionable member of the sea that travels in schools.",
                     Breed.FISH
                     ),
                 new Swarm())
