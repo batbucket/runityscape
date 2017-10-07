@@ -107,21 +107,17 @@ namespace Scripts.Game.Defined.Characters {
                 .AddSpells(new SetupCounter());
         }
 
-        public static Character Fishy() {
+        public static Character Swarm() {
             return CharacterUtil.StandardEnemy(
                 new Stats(2, 1, 5, 2, 15),
                 new Look(
-                    "Fishy Friend",
+                    "Swarm",
                     "angler-fish",
-                    "Somewhat questionable member of the sea. Often travels in schools.",
+                    "Questionable member of the sea that travels in schools. Enjoys focusing the weak.",
                     Breed.FISH
                     ),
                 new Swarm())
                 .AddItem(new Money(), Util.RandomRange(0, 1));
         }
-
-
-
-
-        }
     }
+}

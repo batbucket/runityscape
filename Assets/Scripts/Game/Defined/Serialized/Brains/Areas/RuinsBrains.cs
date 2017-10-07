@@ -1,10 +1,9 @@
-﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Buffs;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
-using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;

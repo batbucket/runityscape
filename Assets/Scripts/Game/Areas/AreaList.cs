@@ -110,7 +110,7 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Swarm",
                             () => new Encounter[] {
-                                new Encounter(OceanNPCs.Fishy(), OceanNPCs.Fishy(), OceanNPCs.Fishy(), OceanNPCs.Fishy(), OceanNPCs.Fishy())
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm())
                             }),
                         new BattleStage(
                             "Sinister singers",

@@ -221,6 +221,45 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
+    public class RegenerateHealth : StatRegen {
+
+        public RegenerateHealth() : base(StatType.HEALTH, 1) {
+        }
+    }
+
+    public class RegenerateMana : StatRegen {
+
+        public RegenerateMana() : base(StatType.MANA, 2) {
+        }
+    }
+
+    public class StrengthSirenSong : SirenSong {
+
+        public StrengthSirenSong() : base(StatType.STRENGTH, "Lyric of Lethargy") {
+        }
+    }
+
+    public class AgilitySirenSong : SirenSong {
+
+        public AgilitySirenSong() : base(StatType.AGILITY, "Shanty of Snails") {
+        }
+    }
+
+    public class IntellectSirenSong : SirenSong {
+
+        public IntellectSirenSong() : base(StatType.INTELLECT, "Hymn of Horror") {
+        }
+    }
+
+    public class VitalitySirenSong : SirenSong {
+
+        public VitalitySirenSong() : base(StatType.VITALITY, "Melody of Mortality") {
+        }
+    }
+}
+
+namespace Scripts.Game.Defined.Unserialized.Buffs {
+
     public class SpiritLink : Buff {
 
         public SpiritLink() : base(Util.GetSprite("knot"), "Spirit Link", "Attacks on the non-clone unit will also cause this unit to take damage.", false) {
@@ -285,42 +324,6 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class RegenerateHealth : StatRegen {
-
-        public RegenerateHealth() : base(StatType.HEALTH, 1) {
-        }
-    }
-
-    public class RegenerateMana : StatRegen {
-
-        public RegenerateMana() : base(StatType.MANA, 2) {
-        }
-    }
-
-    public class StrengthSirenSong : SirenSong {
-
-        public StrengthSirenSong() : base(StatType.STRENGTH, "Lyric of Lethargy") {
-        }
-    }
-
-    public class AgilitySirenSong : SirenSong {
-
-        public AgilitySirenSong() : base(StatType.AGILITY, "Shanty of Snails") {
-        }
-    }
-
-    public class IntellectSirenSong : SirenSong {
-
-        public IntellectSirenSong() : base(StatType.INTELLECT, "Hymn of Horror") {
-        }
-    }
-
-    public class VitalitySirenSong : SirenSong {
-
-        public VitalitySirenSong() : base(StatType.VITALITY, "Melody of Mortality") {
-        }
-    }
-
     public class Interceptor : Buff {
         private const int INTERCEPTION_DAMAGE = 2;
 
@@ -352,9 +355,6 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
             s.Result.AddEffect(new AddToModStat(s.Caster.Stats, StatType.HEALTH, -INTERCEPTION_DAMAGE));
         }
     }
-}
-
-namespace Scripts.Game.Defined.Unserialized.Buffs {
 
     public abstract class StatRegen : Buff {
         private int amountPerTurn;
