@@ -42,6 +42,22 @@ namespace Scripts.Model.Characters {
             return CastOnTargetMeetingCondition(sb, c => true);
         }
 
+        protected Func<IPlayable> CastOnLeastTarget(SpellBook sb, Func<Character, int> sorter) {
+            return () => {
+                Character leastTarget =
+                    sb
+                    .TargetType
+                    .GetTargets(brainOwner, currentBattle)
+                    .OrderBy(sorter)
+                    .FirstOrDefault();
+
+                if (leastTarget != null) {
+                    return brainOwner.Spells.CreateSpell(currentBattle, sb, brainOwner, leastTarget);
+                }
+                return null;
+            };
+        }
+
         /// <summary>
         /// Doesn't cast wait if spellbook is uncastable (since we then go down the prioritylist)
         /// </summary>

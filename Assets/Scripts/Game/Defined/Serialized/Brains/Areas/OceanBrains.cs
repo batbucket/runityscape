@@ -6,33 +6,40 @@ using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Scripts.Game.Serialized.Brains {
 
     public class Swarm : PriorityBrain {
-        public static readonly Attack ATTACK = new Attack();
-        public static readonly EnemyHeal HEAL = new EnemyHeal();
-        public static bool spamPreventer, spamPreventer2 = false;
-        public int initialEnemiesPresent;
-        public bool hasSaidDamagedMessage = false;
+        private static readonly Attack ATTACK = new Attack();
+        private static readonly EnemyHeal HEAL = new EnemyHeal();
+
+        private static bool hasSaidIntroduction;
+        private static bool hasSaidSwarmDeath;
+
+        private int initialEnemiesPresent;
+        private bool hasSaidDamagedMessage = false;
+
+        public Swarm() {
+        }
 
         protected override IList<Func<IPlayable>> SetupPriorityPlays() {
             return new Func<IPlayable>[] {
                     CastOnTargetMeetingCondition(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH) > 0),
-                    CastOnRandom(ATTACK)
+                    CastOnLeastTarget(ATTACK, c => c.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH))
                 };
         }
 
         public override string StartOfRoundDialogue() {
-            if (currentBattle.TurnCount == 0 && !spamPreventer) {
+            if (currentBattle.TurnCount == 0 && !hasSaidIntroduction) {
                 initialEnemiesPresent = allies.Count;
-                spamPreventer = true;
-                return "We have strength in numbers!/We are many, you are few./You cannnot possibly defeat us together.";
+                hasSaidIntroduction = true;
+                return Util.PickRandom("We have strength in numbers!/We are many, you are few./You cannnot possibly defeat us together./For the swarm!/In unity we have strength!");
             }
-            if (foes.Count < initialEnemiesPresent && !hasSaidDamagedMessage && !spamPreventer2) {
-                spamPreventer2 = true;
+            if (allies.Where(c => c.Brain is Swarm).Count() < initialEnemiesPresent && !hasSaidDamagedMessage && !hasSaidSwarmDeath) {
+                hasSaidSwarmDeath = true;
                 hasSaidDamagedMessage = true;
-                return "Our defenses are cracking!/Our perfect unity is ruined./We will never be whole again.";
+                return Util.PickRandom("Our defenses are cracking!/Our perfect unity is ruined./We will never be whole again.");
             }
             return string.Empty;
         }
