@@ -133,7 +133,6 @@ namespace Scripts.Game.Defined.Characters {
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.HERO)
                 .AddStats(new Experience())
-                .AddSpells(new Check())
                 .AddStats(new Mana());
         }
 
@@ -149,8 +148,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.PARTNER)
                 .AddStats(new Experience())
-                .AddStats(new Skill())
-                .AddSpells(new CrushingBlow());
+                .AddStats(new Skill());
         }
 
         public static Character TestEnemy() {
