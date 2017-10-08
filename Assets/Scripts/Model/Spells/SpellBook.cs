@@ -50,21 +50,6 @@ namespace Scripts.Model.Spells {
         public readonly PriorityType Priority;
 
         /// <summary>
-        /// The cast time
-        /// </summary>
-        public readonly int CastTime;
-
-        /// <summary>
-        /// The cooldown
-        /// </summary>
-        public readonly int Cooldown;
-
-        /// <summary>
-        /// The is silenced
-        /// </summary>
-        public readonly bool IsSilenced;
-
-        /// <summary>
         /// The verb
         /// </summary>
         public readonly string Verb;
@@ -79,6 +64,8 @@ namespace Scripts.Model.Spells {
         /// </summary>
         private readonly IDictionary<StatType, int> costs;
 
+        private ReadOnlyDictionary<StatType, int> roCosts;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SpellBook"/> class.
         /// </summary>
@@ -89,7 +76,7 @@ namespace Scripts.Model.Spells {
         /// <param name="castTime">The cast time.</param>
         /// <param name="cooldown">The cooldown.</param>
         /// <param name="verb">The verb.</param>
-        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, string verb) : this(spellName, sprite, target, spell, castTime, cooldown, 0, verb) { }
+        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, string verb) : this(spellName, sprite, target, spell, 0, verb) { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpellBook"/> class.
@@ -102,14 +89,12 @@ namespace Scripts.Model.Spells {
         /// <param name="cooldown">The cooldown.</param>
         /// <param name="priority">The priority.</param>
         /// <param name="verb">The verb.</param>
-        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, int castTime, int cooldown, PriorityType priority, string verb) {
+        public SpellBook(string spellName, Sprite sprite, TargetType target, SpellType spell, PriorityType priority, string verb) {
             this.Name = spellName;
             this.Icon = sprite;
             this.costs = new Dictionary<StatType, int>();
             this.TargetType = target;
             this.SpellType = spell;
-            this.CastTime = castTime;
-            this.Cooldown = cooldown;
             this.flags = new HashSet<Flag>() { Flag.CASTER_REQUIRES_SPELL };
             this.Verb = verb;
             this.Priority = priority;
@@ -124,8 +109,8 @@ namespace Scripts.Model.Spells {
         /// <param name="spell">The spell.</param>
         /// <param name="castTime">The cast time.</param>
         /// <param name="cooldown">The cooldown.</param>
-        public SpellBook(string spellName, string spriteLoc, TargetType target, SpellType spell, int castTime, int cooldown)
-            : this(spellName, Util.GetSprite(spriteLoc), target, spell, castTime, cooldown, "use") { }
+        public SpellBook(string spellName, string spriteLoc, TargetType target, SpellType spell, string verb)
+            : this(spellName, Util.GetSprite(spriteLoc), target, spell, verb) { }
 
         /// <summary>
         /// Determines whether the specified <see cref="System.Object" />, is equal to this instance.
@@ -141,8 +126,7 @@ namespace Scripts.Model.Spells {
                 return false;
             }
 
-            return this.GetType().Equals(item.GetType())
-                && this.IsSilenced.Equals(item.IsSilenced);
+            return this.GetType().Equals(item.GetType());
         }
 
         /// <summary>
@@ -153,7 +137,7 @@ namespace Scripts.Model.Spells {
         /// </value>
         public IDictionary<StatType, int> Costs {
             get {
-                return new ReadOnlyDictionary<StatType, int>(costs);
+                return roCosts ?? (roCosts = new ReadOnlyDictionary<StatType, int>(costs));
             }
         }
 
@@ -307,7 +291,9 @@ namespace Scripts.Model.Spells {
         ///   <c>true</c> if [is castable ignore resources] [the specified caster]; otherwise, <c>false</c>.
         /// </returns>
         public bool IsCastableIgnoreResources(Character caster, Character target) {
-            return !IsSilenced && IsMeetOtherCastRequirements(caster, target) && (caster.Spells.HasSpellBook(this) || !flags.Contains(Flag.CASTER_REQUIRES_SPELL));
+            return caster.Stats.State == State.ALIVE
+                && IsMeetOtherCastRequirements(caster, target)
+                && (caster.Spells.HasSpellBook(this) || !flags.Contains(Flag.CASTER_REQUIRES_SPELL));
         }
 
         /// <summary>

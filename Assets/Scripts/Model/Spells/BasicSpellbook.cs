@@ -9,6 +9,7 @@ namespace Scripts.Model.Spells {
     /// So this implementation pre-overides these methods.
     /// </summary>
     public abstract class BasicSpellbook : SpellBook {
+        private readonly bool isCastableOnDead;
 
         /// <summary>
         /// Normal priority constructor
@@ -17,7 +18,7 @@ namespace Scripts.Model.Spells {
         /// <param name="sprite">Sprite of the spell</param>
         /// <param name="target">What kind of targets this spell can be used on</param>
         /// <param name="spell">What type of spell is this</param>
-        public BasicSpellbook(string spellName, Sprite sprite, TargetType target, SpellType spell) : base(spellName, sprite, target, spell, 0, 0, "Perform") { }
+        public BasicSpellbook(string spellName, Sprite sprite, TargetType target, SpellType spell) : this(spellName, sprite, target, spell, PriorityType.NORMAL) { }
 
         /// <summary>
         /// Priority constructor
@@ -27,14 +28,12 @@ namespace Scripts.Model.Spells {
         /// <param name="target">What kind of targets this spell can be used on</param>
         /// <param name="spell">What type of spell is this</param>
         /// <param name="priority">Spell's priority</param>
-        public BasicSpellbook(string spellName, Sprite sprite, TargetType target, SpellType spell, PriorityType priority) : base(spellName, sprite, target, spell, 0, 0, priority, "Perform") { }
-
-        protected sealed override bool IsMeetOtherCastRequirements(Character caster, Character target) {
-            return caster.Stats.State == Characters.State.ALIVE && target.Stats.State == Characters.State.ALIVE && IsMeetCastRequirements(caster, target);
+        public BasicSpellbook(string spellName, Sprite sprite, TargetType target, SpellType spell, PriorityType priority) : base(spellName, sprite, target, spell, priority, "Perform") {
+            this.isCastableOnDead = false;
         }
 
-        protected virtual bool IsMeetCastRequirements(Character caster, Character target) {
-            return true;
+        protected sealed override bool IsMeetOtherCastRequirements(Character caster, Character target) {
+            return (isCastableOnDead || target.Stats.State == Characters.State.ALIVE);
         }
     }
 }
