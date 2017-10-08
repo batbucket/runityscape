@@ -388,9 +388,9 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
                   duration,
                   sprite,
                   buffName,
-                  string.Format("{0} {1} by {2}%.", type.ColoredName, amount < 0 ? "decreased" : "increased", amount),
+                  string.Format("{0} {1} by {2}%.", type.ColoredName, amount < 0 ? "decreased" : "increased", amount < 0 ? -amount : amount),
                   true) {
-            Util.Assert(amount != 0, "Amount must be nonnegative.");
+            Util.Assert(amount != 0, "Amount must be nonzero.");
             AddMultiplicativeStatBonus(type, amount);
         }
 
