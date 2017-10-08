@@ -27,14 +27,21 @@ namespace Scripts.Game.Areas {
         public static readonly ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>> ALL_AREAS
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
-                    { AreaType.TINY_WOODS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) },
+                    { AreaType.RUINS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) },
                     { AreaType.SEA_WORLD, (flags, party, camp, dungeonPages) => SeaWorld(flags, party, camp, dungeonPages) }
         });
 
+        public static readonly ReadOnlyDictionary<AreaType, Sprite> AREA_SPRITES
+            = new ReadOnlyDictionary<AreaType, Sprite>(
+                new Dictionary<AreaType, Sprite>() {
+                    { AreaType.RUINS, Util.GetSprite("skull-crack") },
+                    { AreaType.SEA_WORLD, Util.GetSprite("at-sea") }
+                });
+
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
-            return new Area(AreaType.TINY_WOODS,
+            return new Area(
+                AreaType.RUINS,
                     new Stage[] {
-                        GetSampleScene(party),
                         new BattleStage(
                             "Start of adventure",
                             () => new Encounter[] {
@@ -92,39 +99,33 @@ namespace Scripts.Game.Areas {
         }
 
         private static Area SeaWorld(Flags flags, Party party, Page camp, Page quests) {
-            return new Area(AreaType.SEA_WORLD,
+            return new Area(
+                    AreaType.SEA_WORLD,
                     new Stage[] {
-                        GetSampleScene(party),
                         new BattleStage(
                             "Welcome to the ocean",
                             () => new Encounter[] {
                                 new Encounter(OceanNPCs.SharkPirate())
                             }),
+                        new BattleStage(
+                            "Swarm",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm())
+                            }),
+                        new BattleStage(
+                            "Sinister singers",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.Siren()),
+                                new Encounter(OceanNPCs.Siren(), OceanNPCs.SharkPirate())
+                            }),
+                        new BattleStage(
+                            "GitKraken",
+                            () => new Encounter [] {
+                                new Encounter(Music.BOSS, OceanNPCs.Kraken())
+                            })
                     },
-                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party) }
+                    new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
                 );
-        }
-
-        private static SceneStage GetSampleScene(Party party) {
-            Character hero = party.GetCharacter(c => c.HasFlag(Flag.HERO));
-            Character partner = party.GetCharacter(c => c.HasFlag(Flag.PARTNER));
-            Page page = new Page("Test Location");
-
-            SceneStage scene = new SceneStage(
-                page,
-                "Scene example",
-                new TextAct(hero, Side.LEFT, "I will now appear on the LEFT side."),
-                new ActionAct(() => page.AddCharacters(Side.LEFT, hero)),
-                new TextAct(hero, Side.LEFT, "Wow! Amazing!!!"),
-                new TextAct(partner, Side.RIGHT, "I will now appear on the RIGHT side."),
-                new ActionAct(() => page.AddCharacters(Side.RIGHT, partner)),
-                new TextAct(partner, Side.RIGHT, "Neato!"),
-                new CoroutineAct(SFX.DoMeleeEffect(hero, partner, 1.0f, "Slash_0")),
-                new TextAct(partner, Side.RIGHT, "Ouch."),
-                new TextAct(hero, Side.LEFT, "<color=lime>Wow</color> <color=red>look</color> <color=magenta>at</color> <color=green>this</color> <color=cyan>colored</color> <color=yellow>text</color>!")
-                );
-
-            return scene;
         }
     }
 }

@@ -2,6 +2,7 @@
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Game.Serialized;
 using Scripts.Game.Serialized.Brains;
 using Scripts.Game.Shopkeeper;
@@ -48,7 +49,7 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.SPIRIT
                     ),
                 new Attacker())
-                .AddItem(new Money(), Util.Range(0, 3));
+                .AddMoney(5);
         }
 
         public static Character Knight() {
@@ -61,7 +62,9 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.SPIRIT
                     ),
                 new Attacker())
-                .AddItem(new Item[] { new BrokenSword(), new GhostArmor() }.ChooseRandom(), Util.IsChance(.50f));
+                .AddEquip(new BrokenSword(), .25f)
+                .AddEquip(new GhostArmor(), .05f)
+                .AddMoney(10);
         }
 
         public static Character BigKnight() {
@@ -75,7 +78,10 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new BigKnight())
                 .AddStats(new Skill())
-                .AddSpells(new SetupCounter());
+                .AddSpells(new SetupCounter())
+                .AddEquip(new GhostArmor())
+                .AddEquip(new BrokenSword())
+                .AddMoney(20);
         }
 
         public static Character Wizard() {
@@ -90,7 +96,10 @@ namespace Scripts.Game.Defined.Characters {
                 new Wizard())
                 .AddStats(new Mana())
                 .AddSpells(new Ignite())
-                .AddBuff(new Insight());
+                .AddBuff(new Insight())
+                .AddEquip(new Wand(), .25f)
+                .AddItem(new IdentifyScroll(), .25f)
+                .AddMoney(15);
         }
 
         public static Character Healer() {
@@ -103,8 +112,10 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.SPIRIT
                     ),
                 new Healer())
-                .AddItem(new Money(), Util.RandomRange(5, 15))
-                .AddSpells(new EnemyHeal());
+                .AddSpells(new EnemyHeal())
+                .AddEquip(new Wand(), .25f)
+                .AddItem(new Apple(), .25f)
+                .AddMoney(15);
         }
 
         public static Character Illusionist() {
@@ -117,7 +128,9 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.SPIRIT
                     ),
                 new Illusionist())
-                .AddSpells(new Blackout());
+                .AddSpells(new Blackout())
+                .AddItem(new IdentifyScroll(), 1f)
+                .AddMoney(20);
         }
 
         public static Look ReplicantLook() {
@@ -147,7 +160,9 @@ namespace Scripts.Game.Defined.Characters {
                 new Replicant()
                 )
             .AddFlags(Model.Characters.Flag.PERSISTS_AFTER_DEFEAT)
-            .AddSpells(new ReflectiveClone(), new RevealTrueForm());
+            .AddSpells(new ReflectiveClone(), new RevealTrueForm())
+            .AddItem(new MadnessStaff())
+            .AddMoney(50);
         }
     }
 }

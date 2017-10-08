@@ -1,10 +1,9 @@
-﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Buffs;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
-using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +56,7 @@ namespace Scripts.Game.Serialized.Brains {
 
         public override string StartOfRoundDialogue() {
             if (currentBattle.TurnCount == 0) {
-                return Util.PickRandom("Stand and deliver!/You will go further!/Stop right there!");
+                return Util.PickRandom("Stand and deliver!/You will go no further!/Stop right there!/This ends here!");
             }
             return string.Empty;
         }

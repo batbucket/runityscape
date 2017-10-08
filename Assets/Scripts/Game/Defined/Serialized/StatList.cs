@@ -55,7 +55,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         }
 
         public override void Update(Character holderOfThisAttribute) {
-            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.MOD, StatType.VITALITY) * VIT_TO_HEALTH;
+            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.TOTAL, StatType.VITALITY) * VIT_TO_HEALTH;
         }
     }
 
@@ -79,7 +79,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         }
 
         public override void Update(Character holderOfThisAttribute) {
-            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.MOD, StatType.INTELLECT) * INT_TO_MANA;
+            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * INT_TO_MANA;
         }
     }
 

@@ -510,12 +510,12 @@ public class BasicTests {
             Character slow = CharacterList.TestEnemy();
             Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
 
-            IPlayable lowPriorityWithSlowCaster = new Spell(new ReflectiveClone(), new Result(), slow, fast);
-            IPlayable lowPriorityWithFastCaster = new Spell(new ReflectiveClone(), new Result(), fast, slow);
+            IPlayable lowPriorityWithSlowCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), slow, fast);
+            IPlayable lowPriorityWithFastCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), fast, slow);
             IPlayable normalPriorityWithSlowCaster = new Spell(new Attack(), new Result(), slow, fast);
             IPlayable normalPriorityWithFastCaster = new Spell(new Attack(), new Result(), fast, slow);
-            IPlayable highPriorityWithSlowCaster = new Spell(new EnemyHeal(), new Result(), slow, slow);
-            IPlayable highPriorityWithFastCaster = new Spell(new EnemyHeal(), new Result(), fast, slow);
+            IPlayable highPriorityWithSlowCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), slow, slow);
+            IPlayable highPriorityWithFastCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), fast, slow);
 
             IPlayable[] expectedOrder = new IPlayable[] {
                 highPriorityWithFastCaster,

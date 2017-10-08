@@ -100,12 +100,6 @@ namespace Scripts.Model.SaveLoad {
             Add<Wait>("wait");
             Add<InflictPoison>("inflictpoison");
             Add<Check>("checkSpell");
-            Add<SetupCounter>("setupCounter");
-            Add<EnemyHeal>("heal");
-            Add<ReflectiveClone>("reflectiveClone");
-            Add<Blackout>("blackout");
-            Add<RevealTrueForm>("revealTrueForm");
-            Add<Ignite>("ignite");
             Add<CrushingBlow>("crushingBlow");
             Add<PlayerHeal>("playerHeal");
             Add<SetupDefend>("setupDefend");
@@ -129,14 +123,13 @@ namespace Scripts.Model.SaveLoad {
             Add<CrushingBlowTome>("crushTome");
             Add<HealTome>("healTome");
             Add<DefendTome>("defendTome");
+            Add<Inventory1x6>("6pack");
         }
 
         private void Buffs() {
             Add<Poison>("poison");
             Add<Checked>("checkedDebuff");
             Add<Counter>("counterBuff");
-            Add<ReflectAttack>("reflectAttack");
-            Add<SpiritLink>("spiritLink");
             Add<StrengthScalingPoison>("strengthScalingPoison");
             Add<BlackedOut>("blackoutDebuff");
             Add<DamageResist>("damageResist");
@@ -147,6 +140,10 @@ namespace Scripts.Model.SaveLoad {
             Add<FishShook>("fishShook");
             Add<Defend>("defend");
             Add<RegenerateMana>("regenMana");
+            Add<StrengthSirenSong>("strengthSong");
+            Add<AgilitySirenSong>("agilitySong");
+            Add<VitalitySirenSong>("vitalitySong");
+            Add<IntellectSirenSong>("intellectSong");
         }
 
         private void Brains() {

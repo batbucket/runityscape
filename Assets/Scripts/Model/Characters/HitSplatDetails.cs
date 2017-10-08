@@ -23,7 +23,7 @@ namespace Scripts.Model.Characters {
             this.Sprite = sprite;
         }
 
-        public SplatDetails(StatType type, int amount) {
+        public SplatDetails(StatType type, int amount, string suffix) {
             Color color = Color.grey;
             if (amount < 0) {
                 color = Color.red;
@@ -34,7 +34,7 @@ namespace Scripts.Model.Characters {
             }
             this.Color = color;
             this.Sprite = type.Sprite;
-            this.Text = Util.Sign(amount);
+            this.Text = Util.Sign(amount) + suffix;
         }
     }
 }

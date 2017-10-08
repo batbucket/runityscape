@@ -15,6 +15,8 @@ using UnityEngine;
 using Scripts.Presenter;
 using Scripts.Game.Defined.Characters;
 using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Unserialized.Spells;
+using Scripts.Game.Defined.Unserialized.Buffs;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -117,6 +119,91 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
+    public class CrushingBlow : BasicSpellbook {
+        private const int INTELLECT_TO_DAMAGE_RATIO = 1;
+
+        public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE, PriorityType.LOW) {
+            AddCost(StatType.SKILL, 2);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return "A powerful blow that occurs slower than other spells.";
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                    new AddToModStat(
+                        target.Stats,
+                        StatType.HEALTH,
+                        caster.Stats.GetStatCount(
+                            Stats.Get.TOTAL,
+                            StatType.INTELLECT) * -INTELLECT_TO_DAMAGE_RATIO)
+                };
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] {
+                SFX.DoMeleeEffect(caster, target, 0.5f, "Boom_6")
+            };
+        }
+    }
+
+    public class PlayerHeal : BasicSpellbook {
+        private const int INTELLECT_TO_HEALTH = 1;
+        private const int CRITICAL_INTELLECT_TO_HEALTH = 2;
+        private const int CRITICAL_HEALTH_PERCENT = 10;
+
+        public PlayerHeal() : base("Heal", Util.GetSprite("health-normal"), TargetType.SINGLE_ALLY, SpellType.BOOST) {
+            AddCost(StatType.MANA, 20);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format(
+                "Restore {0} to a single ally. Has an increased effect on targets below {1}% {0}.",
+                StatType.HEALTH.ColoredName,
+                CRITICAL_HEALTH_PERCENT);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * INTELLECT_TO_HEALTH)
+            };
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] { SFX.PlaySound("healspell1") };
+        }
+
+        protected override bool IsCritical(Character caster, Character target) {
+            float currentHealth = target.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH);
+            float maxHealth = target.Stats.GetStatCount(Stats.Get.MAX, StatType.HEALTH);
+
+            return (currentHealth / maxHealth) <= (CRITICAL_HEALTH_PERCENT / 100f);
+        }
+
+        protected override IList<SpellEffect> GetCriticalEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * CRITICAL_INTELLECT_TO_HEALTH)
+            };
+        }
+    }
+
+    public class SetupDefend : BuffAdder {
+
+        public SetupDefend() : base(TargetType.SELF, SpellType.DEFENSE, new Defend(), "Defend", PriorityType.HIGHEST) {
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] { SFX.PlaySound("ping") };
+        }
+    }
+}
+
+/// <summary>
+/// Spells that only enemies can have don't need to be saved.
+/// </summary>
+namespace Scripts.Game.Defined.Unserialized.Spells {
+
     public class SetupCounter : BuffAdder {
 
         public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, new Counter(), "Counter", PriorityType.LOW) {
@@ -125,7 +212,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     }
 
     public class EnemyHeal : BasicSpellbook {
-        private const int HEALING_AMOUNT = 10;
+        private const int BASE_HEALING_AMOUNT = 10;
 
         public EnemyHeal() : base("Heal", Util.GetSprite("health-normal"), TargetType.SINGLE_ALLY, SpellType.BOOST, PriorityType.HIGH) {
         }
@@ -136,7 +223,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT)
+                new AddToModStat(target.Stats, StatType.HEALTH, BASE_HEALING_AMOUNT + caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT))
             };
         }
 
@@ -230,87 +317,71 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
-    public class CrushingBlow : BasicSpellbook {
-        private const int INTELLECT_TO_DAMAGE_RATIO = 1;
+    public class SingStrengthSong : SingSirenSong {
 
-        public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.SINGLE_ENEMY, SpellType.OFFENSE, PriorityType.LOW) {
-            AddCost(StatType.SKILL, 2);
+        public SingStrengthSong() : base(new StrengthSirenSong()) {
+        }
+    }
+
+    public class SingAgilitySong : SingSirenSong {
+
+        public SingAgilitySong() : base(new AgilitySirenSong()) {
+        }
+    }
+
+    public class SingIntellectSong : SingSirenSong {
+
+        public SingIntellectSong() : base(new IntellectSirenSong()) {
+        }
+    }
+
+    public class SingVitalitySong : SingSirenSong {
+
+        public SingVitalitySong() : base(new VitalitySirenSong()) {
+        }
+    }
+
+    public class SpawnTentacles : BasicSpellbook {
+
+        public SpawnTentacles() : base("Tentacle Eruption", Util.GetSprite("shark"), TargetType.SELF, SpellType.BOOST) {
+            AddCost(StatType.SKILL, Kraken.TURNS_BETWEEN_TENTACLE_SUMMONS);
         }
 
         protected override string CreateDescriptionHelper() {
-            return "A powerful blow that occurs slower than other spells.";
+            return string.Format("Spawns Tentacles to defend the caster. Tentacles intercept all attacks. Number increases with missing health.");
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
-            return new SpellEffect[] {
-                    new AddToModStat(
-                        target.Stats,
-                        StatType.HEALTH,
-                        caster.Stats.GetStatCount(
-                            Stats.Get.TOTAL,
-                            StatType.INTELLECT) * -INTELLECT_TO_DAMAGE_RATIO)
-                };
-        }
+            float targetHealthPercentage = ((float)target.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH)) / target.Stats.GetStatCount(Stats.Get.MAX, StatType.HEALTH);
+            int tentaclesToSummon = 0;
 
-        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
-            return new IEnumerator[] {
-                SFX.DoMeleeEffect(caster, target, 0.5f, "Boom_6")
+            // TODO fix this terrible code, use a dictionary please
+            if (targetHealthPercentage > .66) {
+                tentaclesToSummon = 2;
+            } else if (targetHealthPercentage > .33) {
+                tentaclesToSummon = 3;
+            } else {
+                tentaclesToSummon = 4;
+            }
+
+            Func<Character> summonTentacleFunc = () => {
+                Character tentacle = OceanNPCs.Tentacle();
+                Interceptor interceptor = new Interceptor();
+                interceptor.Caster = new BuffParams(target.Stats, target.Id);
+                tentacle.Buffs.AddBuff(interceptor);
+                return tentacle;
+            };
+            return new SpellEffect[] {
+                new SummonEffect(page.GetSide(target), page, summonTentacleFunc, tentaclesToSummon)
             };
         }
     }
 
-    public class PlayerHeal : BasicSpellbook {
-        private const int INTELLECT_TO_HEALTH = 1;
-        private const int CRITICAL_INTELLECT_TO_HEALTH = 2;
-        private const int CRITICAL_HEALTH_PERCENT = 10;
+    public abstract class SingSirenSong : BuffAdder {
 
-        public PlayerHeal() : base("Heal", Util.GetSprite("health-normal"), TargetType.SINGLE_ALLY, SpellType.BOOST) {
-            AddCost(StatType.MANA, 20);
-        }
-
-        protected override string CreateDescriptionHelper() {
-            return string.Format(
-                "Restore {0} to a single ally. Has an increased effect on targets below {1}% {0}.",
-                StatType.HEALTH.ColoredName,
-                CRITICAL_HEALTH_PERCENT);
-        }
-
-        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
-            return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * INTELLECT_TO_HEALTH)
-            };
-        }
-
-        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
-            return new IEnumerator[] { SFX.PlaySound("healspell1") };
-        }
-
-        protected override bool IsCritical(Character caster, Character target) {
-            float currentHealth = target.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH);
-            float maxHealth = target.Stats.GetStatCount(Stats.Get.MAX, StatType.HEALTH);
-
-            return (currentHealth / maxHealth) <= (CRITICAL_HEALTH_PERCENT / 100f);
-        }
-
-        protected override IList<SpellEffect> GetCriticalEffects(Page page, Character caster, Character target) {
-            return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * CRITICAL_INTELLECT_TO_HEALTH)
-            };
+        public SingSirenSong(Buff sirenSong) : base(TargetType.SINGLE_ENEMY, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {
         }
     }
-
-    public class SetupDefend : BuffAdder {
-
-        public SetupDefend() : base(TargetType.SELF, SpellType.DEFENSE, new Defend(), "Defend", PriorityType.HIGHEST) {
-        }
-
-        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
-            return new IEnumerator[] { SFX.PlaySound("ping") };
-        }
-    }
-}
-
-namespace Scripts.Game.Defined.Unserialized.Spells {
 
     public class Flee : BasicSpellbook {
         private Page destination;

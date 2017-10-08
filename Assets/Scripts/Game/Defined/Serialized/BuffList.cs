@@ -12,23 +12,28 @@ using UnityEngine;
 namespace Scripts.Game.Defined.Serialized.Buffs {
 
     public class FishShook : Buff {
-        private const float ANTI_FISH_MULTIPLIER = 2;
+        private const float FISHY_TARGET_MULTIPLIER = 2;
+        private const float OTHER_TARGET_MULTIPLIER = 0.25f;
 
         public FishShook()
             : base(Util.GetSprite("fish"),
                   "Fish-Shook",
                   string.Format(
-                      "Basic <color=yellow>attacks</color> against fishy targets deal {0} times damage. However, damage against non-fishy targets is reduced by the same factor.", ANTI_FISH_MULTIPLIER), false) {
+                      "Basic attacks do {0}x damage on fishy targets and {1} damage on non-fish.", FISHY_TARGET_MULTIPLIER, OTHER_TARGET_MULTIPLIER), false) {
         }
 
         public override bool IsReact(Spell spellToReactTo, Stats owner) {
-            return spellToReactTo.Book is Attack && spellToReactTo.Caster.Stats == owner;
+            return spellToReactTo.Book is Attack && spellToReactTo.Result.IsDealDamage && spellToReactTo.Caster.Stats == owner;
         }
 
         protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
-            float localDmgMult = ANTI_FISH_MULTIPLIER;
-            if (spellToReactTo.Target.Look.Breed != Characters.Breed.FISH) {
-                localDmgMult = 1 / localDmgMult;
+            float localDmgMult = 0;
+
+            // is a fish
+            if (spellToReactTo.Target.Look.Breed == Characters.Breed.FISH) {
+                localDmgMult = FISHY_TARGET_MULTIPLIER;
+            } else { // not a fish
+                localDmgMult = OTHER_TARGET_MULTIPLIER;
             }
 
             SpellEffect healthDamage = null;
@@ -40,9 +45,7 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
                 }
             }
             if (healthDamage != null) {
-                Debug.Log("Damage reduced from " + healthDamage.Value);
                 healthDamage.Value = (int)Math.Floor(healthDamage.Value * localDmgMult);
-                Debug.Log("To " + healthDamage.Value);
             }
         }
     }
@@ -218,6 +221,45 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
+    public class RegenerateHealth : StatRegen {
+
+        public RegenerateHealth() : base(StatType.HEALTH, 1) {
+        }
+    }
+
+    public class RegenerateMana : StatRegen {
+
+        public RegenerateMana() : base(StatType.MANA, 2) {
+        }
+    }
+
+    public class StrengthSirenSong : SirenSong {
+
+        public StrengthSirenSong() : base(StatType.STRENGTH, "Lyric of Lethargy") {
+        }
+    }
+
+    public class AgilitySirenSong : SirenSong {
+
+        public AgilitySirenSong() : base(StatType.AGILITY, "Shanty of Snails") {
+        }
+    }
+
+    public class IntellectSirenSong : SirenSong {
+
+        public IntellectSirenSong() : base(StatType.INTELLECT, "Hymn of Horror") {
+        }
+    }
+
+    public class VitalitySirenSong : SirenSong {
+
+        public VitalitySirenSong() : base(StatType.VITALITY, "Melody of Mortality") {
+        }
+    }
+}
+
+namespace Scripts.Game.Defined.Unserialized.Buffs {
+
     public class SpiritLink : Buff {
 
         public SpiritLink() : base(Util.GetSprite("knot"), "Spirit Link", "Attacks on the non-clone unit will also cause this unit to take damage.", false) {
@@ -282,20 +324,37 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class RegenerateHealth : StatRegen {
+    public class Interceptor : Buff {
+        private const int INTERCEPTION_DAMAGE = 2;
 
-        public RegenerateHealth() : base(StatType.HEALTH, 1) {
+        // TODO add sprite
+        public Interceptor() : base(Util.GetSprite("shark"), "Interceptor", "Unit will intercept attacks on its summoner.", false) { }
+
+        public override bool IsReact(Spell incomingSpell, Stats statsOfTheCharacterTheBuffIsOn) {
+            bool isDealDamageToBuffCaster = false;
+
+            // Intercepting adds an add to mod stat, so the spell technically does damage even after we wipe it
+            // isDealDamage returns true regardless of whether the caster or target is taking damage
+            // But we want to stop adding damage after the first tentacle intercepts the attack
+            // which wipes the spell's effects and replaces it with a single addToModStat health damage
+            foreach (SpellEffect se in incomingSpell.Result.Effects) {
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null
+                    && addToModStat.AffectedStat == StatType.HEALTH
+                    && addToModStat.Value < 0
+                    && addToModStat.Target == BuffCaster) {
+                    isDealDamageToBuffCaster = true;
+                }
+            }
+
+            return incomingSpell.Target.Stats == BuffCaster && isDealDamageToBuffCaster;
+        }
+
+        protected override void ReactHelper(Spell s, Stats owner) {
+            s.Result.Effects.Clear();
+            s.Result.AddEffect(new AddToModStat(s.Caster.Stats, StatType.HEALTH, -INTERCEPTION_DAMAGE));
         }
     }
-
-    public class RegenerateMana : StatRegen {
-
-        public RegenerateMana() : base(StatType.MANA, 2) {
-        }
-    }
-}
-
-namespace Scripts.Game.Defined.Unserialized.Buffs {
 
     public abstract class StatRegen : Buff {
         private int amountPerTurn;
@@ -314,15 +373,34 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         }
     }
 
-    public class StatChange : Buff {
+    public abstract class SirenSong : StatChange {
+        private const int STAT_REDUCTION_PERCENT = 20;
+        private const int DURATION = 5;
 
-        public StatChange(int duration, StatType type, int amount)
+        public SirenSong(StatType type, string buffName)
+            : base(DURATION, type, -STAT_REDUCTION_PERCENT, buffName, Util.GetSprite("g-clef")) { }
+    }
+
+    public abstract class StatChange : Buff {
+
+        public StatChange(int duration, StatType type, int amount, string buffName, Sprite sprite)
             : base(
                   duration,
-                  type.Sprite,
-                  string.Format("{0}{1}", type.Name, amount < 0 ? '-' : '+'),
+                  sprite,
+                  buffName,
                   string.Format("{0} {1} by {2}%.", type.ColoredName, amount < 0 ? "decreased" : "increased", amount),
                   true) {
+            Util.Assert(amount != 0, "Amount must be nonnegative.");
+            AddMultiplicativeStatBonus(type, amount);
+        }
+
+        public StatChange(int duration, StatType type, int amount)
+            : this(
+                      duration,
+                      type,
+                      amount,
+                      string.Format("{0}{1}", type.Name, amount < 0 ? '-' : '+'),
+                      type.Sprite) {
             Util.Assert(amount != 0, "Amount must be nonnegative.");
             AddMultiplicativeStatBonus(type, amount);
         }

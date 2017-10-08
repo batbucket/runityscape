@@ -126,6 +126,7 @@ namespace Scripts.Game.Dungeons {
         /// <returns></returns>
         private Page GetResults(Page destination, Battle[] battles) {
             Page results = new Page(string.Format("{0} - {1}", Root.Location, "Cleared"));
+            results.Icon = Util.GetSprite("dungeon-gate");
             results.Actions = new IButtonable[] { new Process("Return", () => Battle.DoPageTransition(destination)) };
             results.OnEnter = () => {
                 results.AddText(new TextBox(string.Format(

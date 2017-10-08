@@ -76,7 +76,7 @@ namespace Scripts.Model.Characters {
             set.Add(buff);
             foreach (KeyValuePair<StatType, int> statBonus in buff) {
                 AddStatBonus(statBonus.Key, statBonus.Value);
-                AddSplat(new SplatDetails(statBonus.Key, statBonus.Value));
+                AddSplat(new SplatDetails(statBonus.Key, statBonus.Value, "%"));
             }
             AddSplat(new SplatDetails(Color.green, string.Format("+"), buff.Sprite));
         }
@@ -106,7 +106,7 @@ namespace Scripts.Model.Characters {
                 foreach (KeyValuePair<StatType, int> statBonus in buff) {
                     int amountToRecover = -statBonus.Value;
                     AddStatBonus(statBonus.Key, amountToRecover);
-                    AddSplat(new SplatDetails(statBonus.Key, amountToRecover));
+                    AddSplat(new SplatDetails(statBonus.Key, amountToRecover, "%"));
                 }
                 set.Remove(buff);
                 AddSplat(new SplatDetails(Color.red, string.Format("-"), buff.Sprite));

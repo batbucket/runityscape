@@ -48,7 +48,7 @@ namespace Scripts.Game.Serialized {
         /// </summary>
         public Flags() {
             this.LastClearedArea = AreaType.NONE;
-            this.CurrentArea = AreaType.TINY_WOODS;
+            this.CurrentArea = AreaType.RUINS;
         }
 
         /// <summary>

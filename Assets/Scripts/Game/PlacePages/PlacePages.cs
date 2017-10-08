@@ -35,7 +35,7 @@ namespace Scripts.Game.Pages {
         private void SetupRoot() {
             Page p = Root;
             p.Condition = PageUtil.GetVisitProcessCondition(flags, party);
-            p.Icon = Util.GetSprite("walking-boot");
+            p.Icon = Util.GetSprite("castle-ruins");
             p.Body = "Where would you like to go?";
             p.AddCharacters(Side.LEFT, party);
             var buttons = new List<IButtonable>();

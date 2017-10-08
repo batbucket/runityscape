@@ -4,6 +4,7 @@ using Scripts.Model.Characters;
 using Scripts.Model.Pages;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Scripts.Model.Spells {
 
@@ -11,8 +12,19 @@ namespace Scripts.Model.Spells {
     /// Convenience spellbook extension for creating SpellBooks
     /// that only add a buff.
     /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.BasicSpellbook" />
     public abstract class BuffAdder : BasicSpellbook {
         private Buff dummy;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BuffAdder"/> class.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="spell">The spell.</param>
+        /// <param name="dummy">The dummy.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="priority">The priority.</param>
+        public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name, PriorityType priority) : this(target, spell, dummy, dummy.Sprite) { }
 
         /// <summary>
         /// Main
@@ -22,9 +34,18 @@ namespace Scripts.Model.Spells {
         /// <param name="dummy">Dummy buff to create text and copies</param>
         /// <param name="name">Spell name</param>
         /// <param name="priority">Priority of the spell</param>
-        public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name, PriorityType priority) : base(name, dummy.Sprite, target, spell, priority) {
+        public BuffAdder(TargetType target, SpellType spell, Buff dummy, string name, PriorityType priority, Sprite sprite) : base(name, sprite, target, spell, priority) {
             this.dummy = dummy;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BuffAdder"/> class.
+        /// This one makes the name of the Buff the Spell as well.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="spell">The spell.</param>
+        /// <param name="dummy">The dummy.</param>
+        public BuffAdder(TargetType target, SpellType spell, Buff dummy, Sprite sprite) : this(target, spell, dummy, dummy.Name, PriorityType.NORMAL, sprite) { }
 
         /// <summary>
         /// Does the buff adding
