@@ -48,6 +48,7 @@ namespace Scripts.Model.Characters {
                     sb
                     .TargetType
                     .GetTargets(brainOwner, currentBattle)
+                    .Where(t => sb.IsCastable(brainOwner, t))
                     .OrderBy(sorter)
                     .FirstOrDefault();
 
