@@ -10,6 +10,7 @@ using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 
 namespace Scripts.Model.Characters {
+
     /// <summary>
     /// An item pairing for easy initialization.
     /// </summary>
@@ -45,6 +46,7 @@ namespace Scripts.Model.Characters {
     /// <seealso cref="System.Collections.Generic.IEnumerable{Scripts.Model.Interfaces.ISpellable}" />
     /// <seealso cref="Scripts.Model.SaveLoad.ISaveable{Scripts.Model.SaveLoad.SaveObjects.InventorySave}" />
     public class Inventory : IEnumerable<Item>, IEnumerable<EquippableItem>, IEnumerable<ISpellable>, ISaveable<InventorySave> {
+
         /// <summary>
         /// The initial capacity of the inventory.
         /// </summary>
@@ -107,6 +109,18 @@ namespace Scripts.Model.Characters {
                     }
                 }
                 return sum;
+            }
+        }
+
+        public string DetailedName {
+            get {
+                return string.Format("Items ({0}/{1})", TotalOccupiedSpace, Capacity);
+            }
+        }
+
+        public string DetailedDescription {
+            get {
+                return string.Format("Use an item.\n{0} out of {1} inventory space is occupied.", TotalOccupiedSpace, Capacity);
             }
         }
 
@@ -212,7 +226,6 @@ namespace Scripts.Model.Characters {
                 if (dict[itemToRemove] <= 0) {
                     dict.Remove(itemToRemove);
                 }
-
             } else {
                 Util.Assert(false, "Unable to find item.");
             }

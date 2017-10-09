@@ -163,8 +163,8 @@ namespace Scripts.Game.Shopkeeper {
                 main.List.Add(SetupSellMenu(main));
                 main.List.Add(SetupBuyMenu(main));
                 main.List.Add(null);
-                main.List.Add(PageUtil.GenerateItemsGrid(false, p, main, party.Default, PageUtil.GetOutOfBattlePlayableHandler(p)));
-                main.List.Add(PageUtil.GenerateGroupEquipmentGrid(main, p, party.Collection, PageUtil.GetOutOfBattlePlayableHandler(p), false));
+                main.List.Add(PageUtil.GenerateGroupItemsGrid(p, main, party, PageUtil.GetOutOfBattlePlayableHandler(p)));
+                main.List.Add(PageUtil.GenerateGroupEquipmentGrid(main, p, party.Collection, PageUtil.GetOutOfBattlePlayableHandler(p)));
                 main.List.Add(null);
                 main.List.Add(PageUtil.GenerateBack(previous));
             };

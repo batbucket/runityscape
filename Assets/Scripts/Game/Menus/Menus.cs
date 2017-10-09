@@ -120,11 +120,11 @@ namespace Scripts.Game.Pages {
 
         private void HotkeyTutorialPage(string name) {
             Page hotkeys = Get(HOTKEY_TUTORIAL);
-            hotkeys.OnEnter = (() => Util.SetCursorActive(false));
+            hotkeys.OnEnter = (() => Main.Instance.IsCursorEnabled = false);
             hotkeys.Body = "Oh no! Your cursor has vanished!\n(Hint: Use your keyboard.)";
             hotkeys.Actions = new IButtonable[] {
                 new Process("Advance!", () => {
-                        Util.SetCursorActive(true);
+                        Main.Instance.IsCursorEnabled = true;
                         new IntroPages(name).Invoke();
                     })
             };

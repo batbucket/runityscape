@@ -306,8 +306,9 @@ namespace Scripts.Model.Spells {
             Util.Assert(
                 IsCastable(caster, target),
                 string.Format(
-                "Attempted to cast spell without requirements fulfilled. Resources={0}, OtherRequirements={1}."
-                , CasterHasResources(caster.Stats),
+                "Attempted to cast {0} without requirements fulfilled. Resources={1}, OtherRequirements={2}.",
+                this.Name,
+                CasterHasResources(caster.Stats),
                 IsMeetOtherCastRequirements(caster, target)
                 ));
 
