@@ -168,7 +168,6 @@ namespace Scripts.Presenter {
                 AddTextBox(new TextBox(page.Body));
             }
 
-            actionGrid.IsEnabled = true;
             actionGrid.IsHotKeysEnabled = !page.HasInputField;
             SetInputField(page.HasInputField);
 

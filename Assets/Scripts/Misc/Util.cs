@@ -19,10 +19,6 @@ public static class Util {
     public static readonly bool IS_DEBUG = true && Application.isEditor;
     private static char RANDOM_STRING_DELIMITER = '/';
 
-    public static void SetCursorActive(bool set) {
-        Cursor.visible = set;
-    }
-
     public static string PickRandom(string big) {
         string[] split = big.Split(RANDOM_STRING_DELIMITER);
         return split.ChooseRandom();

@@ -133,7 +133,6 @@ namespace Scripts.View.ActionGrid {
             icon.sprite = null;
         }
 
-
         /// <summary>
         /// Shows the active appearance.
         /// </summary>
