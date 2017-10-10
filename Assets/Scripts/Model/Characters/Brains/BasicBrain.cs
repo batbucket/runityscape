@@ -50,12 +50,20 @@ namespace Scripts.Model.Characters {
         }
 
         protected Spell CastOnTargetMeetingCondition(SpellBook spellToCast, Func<Character, bool> isCharacterMeetCondition) {
-            // It's sorted by ascending, so we want the trues to be -1;
-            return CastOnLeastTarget(spellToCast, c => -Convert.ToInt32(isCharacterMeetCondition(c)));
+            Util.Assert(spellToCast.TargetType.TargetCount == TargetCount.SINGLE_TARGET, "Spell is not single target.");
+            IList<Character> possibleTargets =
+                spellToCast
+                .TargetType
+                .GetTargets(brainOwner, currentBattle)
+                .Where(c => spellToCast.IsCastable(brainOwner, new Character[] { c }) && isCharacterMeetCondition(c)).ToArray();
+            possibleTargets.Shuffle();
+            return GetSpellOrDefault(possibleTargets.FirstOrDefault(), spellToCast, DEFAULT_SPELL);
         }
 
         /// <summary>
-        /// Cast on a random target that is the least according to a sorter function
+        /// Cast on a random target that is the least according to a sorter function.
+        /// Guarenteed to pick a target, so if this is used in PriorityBrain someone (even if they're full health)
+        /// will get healed.
         /// </summary>
         /// <param name="spellToCast">Spell to be used</param>
         /// <param name="isCharacterMeetRequirement">Sorter function to sort the list of targets</param>
@@ -67,8 +75,6 @@ namespace Scripts.Model.Characters {
         protected Spell CastOnTarget(SpellBook spellToCast, Func<IEnumerable<Character>, Character> singleCharacterChooser, SpellBook defaultSpell) {
             Util.Assert(spellToCast.TargetType.TargetCount == TargetCount.SINGLE_TARGET, "Spell is not single target.");
 
-            Character specificTarget = null;
-
             IList<Character> possibleTargets =
                 spellToCast
                 .TargetType
@@ -76,8 +82,10 @@ namespace Scripts.Model.Characters {
                 .Where(c => spellToCast.IsCastable(brainOwner, new Character[] { c })).ToArray();
             possibleTargets.Shuffle();
 
-            specificTarget = singleCharacterChooser(possibleTargets);
+            return GetSpellOrDefault(singleCharacterChooser(possibleTargets), spellToCast, defaultSpell);
+        }
 
+        private Spell GetSpellOrDefault(Character specificTarget, SpellBook spellToCast, SpellBook defaultSpell) {
             // If spell is not castable, default to waiting.
             if (specificTarget != null) {
                 SpellBook castableSpell = null;

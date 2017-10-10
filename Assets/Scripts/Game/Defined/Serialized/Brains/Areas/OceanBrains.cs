@@ -25,7 +25,7 @@ namespace Scripts.Game.Serialized.Brains {
 
         protected override IList<Spell> GetPriorityPlays() {
             return new Spell[] {
-                    CastOnLeastTarget(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH)),
+                    CastOnTargetMeetingCondition(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH) > 0),
                     CastOnLeastTarget(ATTACK, c => c.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH))
                 };
         }
