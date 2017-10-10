@@ -12,7 +12,7 @@ namespace Scripts.Model.Spells {
     /// Whomst a Spell can target.
     /// </summary>
     public sealed class TargetType {
-        private const string MULTI_TARGET_ICON = "person";
+        private const string MULTI_TARGET_ICON = "minions";
 
         public readonly string Name;
         public readonly bool IsTargetEnemies;
