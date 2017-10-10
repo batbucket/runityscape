@@ -99,14 +99,27 @@ namespace Scripts.Model.Characters {
         }
 
         /// <summary>
-        /// Creates the spell.
+        /// Creates the spell. Single target version.
         /// </summary>
         /// <param name="spell">The spell.</param>
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
         public Spell CreateSpell(Page page, SpellBook spell, Character caster, Character target) {
-            return spell.BuildSpell(page, caster, target);
+            Util.Assert(spell.TargetType.TargetCount == TargetCount.SINGLE_TARGET);
+            return spell.BuildSpell(page, caster, new Character[] { target });
+        }
+
+        /// <summary>
+        /// Creates the spell. Multi-target version.
+        /// </summary>
+        /// <param name="spell">The spell.</param>
+        /// <param name="caster">The caster.</param>
+        /// <param name="target">The target.</param>
+        /// <returns></returns>
+        public Spell CreateSpell(Page page, SpellBook spell, Character caster) {
+            Util.Assert(spell.TargetType.TargetCount == TargetCount.MULTIPLE_TARGETS);
+            return spell.BuildSpell(page, caster, spell.TargetType.GetTargets(caster, page));
         }
 
         /// <summary>

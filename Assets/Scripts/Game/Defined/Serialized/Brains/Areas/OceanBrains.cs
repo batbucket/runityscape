@@ -23,9 +23,9 @@ namespace Scripts.Game.Serialized.Brains {
         public Swarm() {
         }
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
-                    CastOnTargetMeetingCondition(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH) > 0),
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
+                    CastOnLeastTarget(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH)),
                     CastOnLeastTarget(ATTACK, c => c.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH))
                 };
         }
@@ -49,8 +49,8 @@ namespace Scripts.Game.Serialized.Brains {
         public static readonly SetupCounter COUNTER = new SetupCounter();
         public static readonly Attack ATTACK = new Attack();
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
                     CastOnRandom(COUNTER),
                     CastOnRandom(ATTACK)
                 };
@@ -73,7 +73,7 @@ namespace Scripts.Game.Serialized.Brains {
             new SingVitalitySong()
         };
 
-        protected override IPlayable GetPlay() {
+        protected override Spell GetSpell() {
             return CastOnRandom(DEBUFF_LIST.ChooseRandom());
         }
     }
@@ -81,8 +81,8 @@ namespace Scripts.Game.Serialized.Brains {
     public class Kraken : PriorityBrain {
         public const int TURNS_BETWEEN_TENTACLE_SUMMONS = 5;
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
                 CastOnRandom(new SpawnTentacles()),
                 CastOnRandom(new Attack())
             };

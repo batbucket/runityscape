@@ -336,7 +336,7 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
+        private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<Spell> plays, HashSet<Character> playerActionSet) {
             ICollection<PooledBehaviour> declarations = new List<PooledBehaviour>();
             for (int i = 0; i < chars.Count; i++) {
                 Character c = chars[i];
@@ -372,29 +372,27 @@ namespace Scripts.Model.Pages {
                     }
 
                     if (brainIsPlayer) {
-                        Spell spell = plays.Last().MySpell;
+                        Spell playerMadePlay = plays[plays.Count - 1];
                         declarations.Add(AddText(
-                            new TextBox(
-                                spell.SpellDeclareText,
-                                spell.Book.TextboxTooltip
-                            ))); // "X will do Y" helper textbox
+                            playerMadePlay.DeclareText
+                            )); // "X will do Y" helper textbox
+                    }
+
+                    // Remove all "X will do Y" texts
+                    foreach (PooledBehaviour pb in declarations) {
+                        ObjectPoolManager.Instance.Return(pb);
                     }
                 }
             }
-
-            // Remove all "X will do Y" texts
-            foreach (PooledBehaviour pb in declarations) {
-                ObjectPoolManager.Instance.Return(pb);
-            }
         }
 
-        private void InBattlePlayHandler(HashSet<Character> playerActionSet, IList<IPlayable> plays, Character c, ref bool isActionTaken, IPlayable playToAdd) {
+        private void InBattlePlayHandler(HashSet<Character> playerActionSet, IList<Spell> plays, Character c, ref bool isActionTaken, Spell playToAdd) {
             if (!playerActionSet.Contains(c)) {
                 plays.Add(playToAdd);
                 playerActionSet.Add(c);
                 isActionTaken = true;
             } else {
-                Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
+                Util.Assert(false, string.Format("{0}'s brain adds more than one Spell objects in its DetermineAction().", c.Look.DisplayName));
             }
         }
 
@@ -457,50 +455,14 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private void MakeEveryonesBuffsReactToSpell(Spell spell) {
-            foreach (Character combatant in GetAll()) {
-                foreach (Buff b in combatant.Buffs) {
-                    if (b.IsReact(spell, combatant.Stats)) {
-                        AddText(new TextBox(
-                            string.Format("<color=yellow>{0}</color>'s <color=cyan>{1}</color> activates <color=yellow>{2}</color>'s <color=cyan>{3}</color>!",
-                            spell.Caster.Look.DisplayName,
-                            spell.Book.Name,
-                            combatant.Look.DisplayName,
-                            b.Name
-                            ),
-                            new TooltipBundle(b.Sprite, b.Name, b.Description)));
-                        b.React(spell, combatant.Stats);
-                    }
-                }
-            }
-        }
-
-        private IEnumerator PerformActions(List<IPlayable> plays) {
+        private IEnumerator PerformActions(List<Spell> spells) {
             // Shuffle first, then do a stable sort to make speed ties random
-            plays.Shuffle();
-            plays = plays.OrderBy(p => p).ToList();
-            for (int i = 0; i < plays.Count; i++) {
+            spells.Shuffle();
+            spells = spells.OrderBy(p => p).ToList();
+            for (int i = 0; i < spells.Count; i++) {
                 yield return new WaitForSeconds(0.10f);
-                IPlayable play = plays[i];
-                Spell spell = play.MySpell;
-
-                // Dead characters cannot unleash spells
-                if (CharacterCanCast(play.MySpell.Caster)) { // Death check
-                    string spellMessage = string.Empty;
-
-                    // Do a different message if the spell cannot be cast on the target
-                    if (play.IsPlayable) {
-                        spellMessage = play.Text;
-                        MakeEveryonesBuffsReactToSpell(spell);
-                    } else {
-                        spellMessage = Spell.GetCastMessage(spell.Caster, spell.Target, spell.Book, ResultType.FAILED);
-                    }
-                    AddText(new TextBox(
-                        spellMessage,
-                        play.MySpell.Book.TextboxTooltip));
-                    yield return play.Play();
-                    yield return CharacterDialogue(spell.Target, spell.Target.Brain.ReactToSpell(spell));
-                }
+                Spell spell = spells[i];
+                yield return spell.Play(this);
             }
         }
 
@@ -591,7 +553,7 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator startRound() {
             AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
-            List<IPlayable> plays = new List<IPlayable>();
+            List<Spell> plays = new List<Spell>();
             List<Character> allBattlers = GetAll();
             HashSet<Character> playerActionSet = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
 
@@ -606,13 +568,13 @@ namespace Scripts.Model.Pages {
         private IEnumerator StartOfRound(IEnumerable<Character> battlers) {
             foreach (Character c in battlers) {
                 c.Brain.StartOfRoundSetup(this, c);
-                yield return CharacterDialogue(c, c.Brain.StartOfRoundDialogue());
+                yield return CharacterDialogue(this, c, c.Brain.StartOfRoundDialogue());
             }
         }
 
-        private IEnumerator CharacterDialogue(Character speaker, string content) {
+        public static IEnumerator CharacterDialogue(Page current, Character speaker, string content) {
             if (!string.IsNullOrEmpty(content)) {
-                yield return ActUtil.SetupSceneRoutine(new Act[] { new TextAct(new AvatarBox(GetSide(speaker), speaker.Look.Sprite, speaker.Look.TextColor, content)) });
+                yield return ActUtil.SetupSceneRoutine(new Act[] { new TextAct(new AvatarBox(current.GetSide(speaker), speaker.Look.Sprite, speaker.Look.TextColor, content)) });
             }
             yield break;
         }

@@ -26,7 +26,7 @@ namespace Scripts.Model.Characters {
         protected Character brainOwner;
         protected Battle currentBattle;
         protected IEnumerable<ISpellable> temporarySpells;
-        protected Action<IPlayable> handlePlay;
+        protected Action<Spell> spellHandler;
 
         public Brain() {
         }
@@ -43,9 +43,9 @@ namespace Scripts.Model.Characters {
         /// </summary>
         /// <param name="temporarySpells">Spells that are only usable in battle. Player needs a reference so they can see and use their buttons.</param>
         /// <param name="playHandler">Call this on a play to use that as the owner's play during a battle.</param>
-        public void PreActionSetup(IEnumerable<ISpellable> temporarySpells, Action<IPlayable> playHandler) {
+        public void PreActionSetup(IEnumerable<ISpellable> temporarySpells, Action<Spell> spellHandler) {
             this.temporarySpells = temporarySpells;
-            this.handlePlay = playHandler;
+            this.spellHandler = spellHandler;
         }
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace Scripts.Model.Characters {
         /// </summary>
         /// <param name="spellThatTargetsThisCharacter"></param>
         /// <returns>String that is converted into an avatarbox.</returns>
-        public virtual string ReactToSpell(Spell spellThatTargetsThisCharacter) {
+        public virtual string ReactToSpell(SingleSpell spellThatTargetsThisCharacter) {
             return string.Empty;
         }
 

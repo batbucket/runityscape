@@ -10,6 +10,8 @@ using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Characters;
+using Scripts.Model.Processes;
+using Scripts.Model.Pages;
 
 namespace Scripts.Model.Items {
 
@@ -96,6 +98,17 @@ namespace Scripts.Model.Items {
         /// <returns>A spellbook associated with equipping this item.</returns>
         public sealed override SpellBook GetSpellBook() {
             return book;
+        }
+
+        public Process GetSelfTargetProcess(Page current, Character caster, Action<Spell> spellHandler) {
+            SpellBook spellbook = this.GetSpellBook();
+            return new Process(
+                spellbook.Name,
+                spellbook.Icon,
+                spellbook.CreateTargetDescription(caster.Look.DisplayName),
+                () => spellHandler(caster.Spells.CreateSpell(current, spellbook, caster, caster)),
+                () => this.GetSpellBook().IsCastable(caster, new Character[] { caster })
+                );
         }
 
         /// <summary>

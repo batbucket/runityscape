@@ -1,5 +1,7 @@
 ﻿using Scripts.Model.Characters;
+using Scripts.Model.Interfaces;
 using Scripts.Model.Pages;
+using Scripts.Model.Processes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,8 @@ namespace Scripts.Model.Spells {
     /// Whomst a Spell can target.
     /// </summary>
     public sealed class TargetType {
+        private const string MULTI_TARGET_ICON = "person";
+
         public readonly string Name;
         public readonly bool IsTargetEnemies;
         public readonly TargetCount TargetCount;
@@ -35,14 +39,48 @@ namespace Scripts.Model.Spells {
 
         //public static HashSet<TargetType> SINGLE_TARGET_OPTIONS = new HashSet<TargetType>(new IdentityEqualityComparer<TargetType>()) { SELF, SINGLE_ALLY, SINGLE_ENEMY, ANY };
 
-        public ICollection<Character> GetTargets(Character caster, Page p) {
-            return getFunc.Invoke(caster, p);
+        public ICollection<Character> GetTargets(Character caster, Page current) {
+            return getFunc.Invoke(caster, current);
+        }
+
+        public Process[] GetTargetProcesses(Page current, ISpellable spellable, Character caster, Action<Spell> spellHandler) {
+            List<Process> processes = new List<Process>();
+            SpellBook spellbook = spellable.GetSpellBook();
+            if (this.TargetCount == TargetCount.SINGLE_TARGET) {
+                foreach (Character target in GetTargets(caster, current)) {
+                    processes.Add(GetTargetProcess(current, spellbook, caster, target, spellHandler));
+                }
+            } else if (this.TargetCount == TargetCount.MULTIPLE_TARGETS) {
+                processes.Add(GetMultiTargetProcess(current, spellable, caster, spellHandler));
+            }
+            return processes.ToArray();
+        }
+
+        private Process GetMultiTargetProcess(Page current, ISpellable spellable, Character caster, Action<Spell> spellHandler) {
+            SpellBook spellbook = spellable.GetSpellBook();
+            return new Process(
+                spellbook.TargetType.Name,
+                Util.GetSprite(MULTI_TARGET_ICON),
+                () => spellHandler(caster.Spells.CreateSpell(current, spellbook, caster)),
+                () => spellbook.IsCastable(caster, spellbook.TargetType.GetTargets(caster, current))
+                );
+        }
+
+        private Process GetTargetProcess(Page current, SpellBook spell, Character caster, Character target, Action<Spell> spellHandler) {
+            Character[] targets = new Character[] { target };
+            return new Process(
+                target.Look.DisplayName,
+                target.Look.Sprite,
+                spell.CreateTargetDescription(target.Look.DisplayName),
+                () => spellHandler(caster.Spells.CreateSpell(current, spell, caster, target)),
+                () => spell.IsCastable(caster, targets)
+                );
         }
     }
+}
 
-    public enum TargetCount {
-        MULTIPLE_TARGETS,
-        SINGLE_TARGET,
-        NONE
-    }
+public enum TargetCount {
+    MULTIPLE_TARGETS,
+    SINGLE_TARGET,
+    NONE
 }

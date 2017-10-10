@@ -22,11 +22,11 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
                       "Basic attacks do {0}x damage on fishy targets and {1} damage on non-fish.", FISHY_TARGET_MULTIPLIER, OTHER_TARGET_MULTIPLIER), false) {
         }
 
-        public override bool IsReact(Spell spellToReactTo, Stats owner) {
-            return spellToReactTo.Book is Attack && spellToReactTo.Result.IsDealDamage && spellToReactTo.Caster.Stats == owner;
+        public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
+            return spellToReactTo.SpellBook is Attack && spellToReactTo.Result.IsDealDamage && spellToReactTo.Caster.Stats == owner;
         }
 
-        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
             float localDmgMult = 0;
 
             // is a fish
@@ -59,7 +59,7 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
                   String.Format("Reduces incident damage from basic attacks by {0}%.",
                       (1 - DAMAGE_MULTIPLIER) * 100), false) { }
 
-        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
             SpellEffect healthDamage = null;
             for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
                 SpellEffect se = spellToReactTo.Result.Effects[i];
@@ -74,8 +74,8 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
             }
         }
 
-        public override bool IsReact(Spell spellToReactTo, Stats owner) {
-            return spellToReactTo.Book is Attack && spellToReactTo.Target.Stats == owner;
+        public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
+            return spellToReactTo.SpellBook is Attack && spellToReactTo.Target.Stats == owner;
         }
     }
 
@@ -181,11 +181,11 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         public Counter() : base(2, Util.GetSprite("round-shield"), "Counter", "Basic <color=yellow>Attack</color>s on this unit are reflected.", false) {
         }
 
-        public override bool IsReact(Spell spellToReactTo, Stats owner) {
-            return spellToReactTo.Book is Attack && spellToReactTo.Target.Stats == owner;
+        public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
+            return spellToReactTo.SpellBook is Attack && spellToReactTo.Target.Stats == owner;
         }
 
-        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
             spellToReactTo.Result.Effects.Clear();
             spellToReactTo.Result.AddEffect(
                 new AddToModStat(
@@ -207,11 +207,11 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
                   false) {
         }
 
-        public override bool IsReact(Spell spellToReactTo, Stats owner) {
+        public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
             return spellToReactTo.Target.Stats == owner && spellToReactTo.Result.IsDealDamage;
         }
 
-        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
             foreach (SpellEffect se in spellToReactTo.Result.Effects) {
                 AddToModStat addToModStat = se as AddToModStat;
                 if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
@@ -268,14 +268,14 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         /// <summary>
         /// The caster of the buff (the non-clone) is hit by an offensive spell that deals damage.
         /// </summary>
-        public override bool IsReact(Spell spellToReactTo, Stats buffHolder) {
-            return spellToReactTo.Book.SpellType == SpellType.OFFENSE
+        public override bool IsReact(SingleSpell spellToReactTo, Stats buffHolder) {
+            return spellToReactTo.SpellBook.SpellType == SpellType.OFFENSE
                 && spellToReactTo.Target.Stats == this.BuffCaster
                 && spellToReactTo.Result.Type.IsSuccessfulType
                 && spellToReactTo.Result.IsDealDamage;
         }
 
-        protected override void ReactHelper(Spell spellToReactTo, Stats buffHolder) {
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats buffHolder) {
             SpellEffect healthDamage = null;
             for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthDamage == null); i++) {
                 SpellEffect se = spellToReactTo.Result.Effects[i];
@@ -299,8 +299,8 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         /// <summary>
         /// The owner of the buff (the clone) is hit by an offensive spell that deals damage.
         /// </summary>
-        public override bool IsReact(Spell spellToReactTo, Stats owner) {
-            return spellToReactTo.Book.SpellType == SpellType.OFFENSE
+        public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
+            return spellToReactTo.SpellBook.SpellType == SpellType.OFFENSE
                 && spellToReactTo.Target.Stats == owner
                 && spellToReactTo.Result.Type.IsSuccessfulType
                 && spellToReactTo.Result.IsDealDamage;
@@ -309,7 +309,7 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         /// <summary>
         ///  Add a self damage effect, reflecting the same amount as the attack.
         /// </summary>
-        protected override void ReactHelper(Spell spellToReactTo, Stats owner) {
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
             int damageToReflect = 0;
             foreach (SpellEffect se in spellToReactTo.Result.Effects) {
                 AddToModStat damageHealth = se as AddToModStat;
@@ -330,7 +330,7 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         // TODO add sprite
         public Interceptor() : base(Util.GetSprite("shark"), "Interceptor", "Unit will intercept attacks on its summoner.", false) { }
 
-        public override bool IsReact(Spell incomingSpell, Stats statsOfTheCharacterTheBuffIsOn) {
+        public override bool IsReact(SingleSpell incomingSpell, Stats statsOfTheCharacterTheBuffIsOn) {
             bool isDealDamageToBuffCaster = false;
 
             // Intercepting adds an add to mod stat, so the spell technically does damage even after we wipe it
@@ -350,7 +350,7 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
             return incomingSpell.Target.Stats == BuffCaster && isDealDamageToBuffCaster;
         }
 
-        protected override void ReactHelper(Spell s, Stats owner) {
+        protected override void ReactHelper(SingleSpell s, Stats owner) {
             s.Result.Effects.Clear();
             s.Result.AddEffect(new AddToModStat(s.Caster.Stats, StatType.HEALTH, -INTERCEPTION_DAMAGE));
         }

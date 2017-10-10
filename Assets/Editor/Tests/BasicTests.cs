@@ -510,14 +510,14 @@ public class BasicTests {
             Character slow = CharacterList.TestEnemy();
             Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
 
-            IPlayable lowPriorityWithSlowCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), slow, fast);
-            IPlayable lowPriorityWithFastCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), fast, slow);
-            IPlayable normalPriorityWithSlowCaster = new Spell(new Attack(), new Result(), slow, fast);
-            IPlayable normalPriorityWithFastCaster = new Spell(new Attack(), new Result(), fast, slow);
-            IPlayable highPriorityWithSlowCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), slow, slow);
-            IPlayable highPriorityWithFastCaster = new Spell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), fast, slow);
+            Spell lowPriorityWithSlowCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), slow, fast);
+            Spell lowPriorityWithFastCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), fast, slow);
+            Spell normalPriorityWithSlowCaster = new SingleSpell(new Attack(), new Result(), slow, fast);
+            Spell normalPriorityWithFastCaster = new SingleSpell(new Attack(), new Result(), fast, slow);
+            Spell highPriorityWithSlowCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), slow, slow);
+            Spell highPriorityWithFastCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), fast, slow);
 
-            IPlayable[] expectedOrder = new IPlayable[] {
+            Spell[] expectedOrder = new Spell[] {
                 highPriorityWithFastCaster,
                 highPriorityWithSlowCaster,
                 normalPriorityWithFastCaster,
@@ -526,7 +526,7 @@ public class BasicTests {
                 lowPriorityWithSlowCaster
             };
 
-            List<IPlayable> actualOrder = new List<IPlayable>();
+            List<Spell> actualOrder = new List<Spell>();
             actualOrder.Add(normalPriorityWithSlowCaster);
             actualOrder.Add(normalPriorityWithFastCaster);
             actualOrder.Add(highPriorityWithSlowCaster);
@@ -536,19 +536,22 @@ public class BasicTests {
             actualOrder.Sort();
 
             for (int i = 0; i < expectedOrder.Length; i++) {
+                Spell expected = expectedOrder[i];
+                Spell actual = actualOrder[i];
+
                 Debug.Log(string.Format("Index {0}\nExpected: {1}\nActual: {2}\n",
                     i,
-                    GetSpellDetails(expectedOrder[i].MySpell),
-                    GetSpellDetails(actualOrder[i].MySpell)));
-                Assert.AreSame(expectedOrder[i], actualOrder[i]);
+                    expected,
+                    actual));
+                Assert.AreSame(expected, actual);
             }
         }
 
         private string GetSpellDetails(Spell spell) {
             return string.Format(
                 "Caster agility: {0}/Spell priority: {1}",
-                spell.MySpell.Caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.AGILITY),
-                spell.MySpell.Book.Priority
+                spell.Caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.AGILITY),
+                spell.SpellBook.Priority
                 );
         }
     }

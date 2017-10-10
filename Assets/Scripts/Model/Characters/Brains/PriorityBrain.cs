@@ -17,19 +17,15 @@ namespace Scripts.Model.Characters {
     public abstract class PriorityBrain : BasicBrain {
         private static readonly SpellBook DEFAULT_ACTION = new Wait();
 
-        private IList<Func<IPlayable>> priorityActionList;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PriorityBrain"/> class.
         /// </summary>
-        public PriorityBrain() : base() {
-            this.priorityActionList = SetupPriorityPlays();
-        }
+        public PriorityBrain() : base() { }
 
-        protected sealed override IPlayable GetPlay() {
-            IPlayable chosenPlay = null;
-            for (int i = 0; i < priorityActionList.Count; i++) {
-                chosenPlay = priorityActionList[i]();
+        protected sealed override Spell GetSpell() {
+            Spell chosenPlay = null;
+            foreach (Spell spell in GetPriorityPlays()) {
+                chosenPlay = spell;
                 if (chosenPlay != null) {
                     return chosenPlay;
                 }
@@ -38,54 +34,10 @@ namespace Scripts.Model.Characters {
             return brainOwner.Spells.CreateSpell(currentBattle, DEFAULT_ACTION, brainOwner, brainOwner);
         }
 
-        protected new Func<IPlayable> CastOnRandom(SpellBook sb) {
-            return CastOnTargetMeetingCondition(sb, c => true);
-        }
-
-        protected Func<IPlayable> CastOnLeastTarget(SpellBook sb, Func<Character, int> sorter) {
-            return () => {
-                Character leastTarget =
-                    sb
-                    .TargetType
-                    .GetTargets(brainOwner, currentBattle)
-                    .Where(t => sb.IsCastable(brainOwner, t))
-                    .OrderBy(sorter)
-                    .FirstOrDefault();
-
-                if (leastTarget != null) {
-                    return brainOwner.Spells.CreateSpell(currentBattle, sb, brainOwner, leastTarget);
-                }
-                return null;
-            };
-        }
-
-        /// <summary>
-        /// Doesn't cast wait if spellbook is uncastable (since we then go down the prioritylist)
-        /// </summary>
-        /// <param name="sb">The sb.</param>
-        /// <param name="requirement">The requirement.</param>
-        /// <returns></returns>
-        protected new Func<IPlayable> CastOnTargetMeetingCondition(SpellBook sb, Func<Character, bool> requirement) {
-            return () => {
-                Character specificTarget =
-                    sb
-                    .TargetType
-                    .GetTargets(brainOwner, currentBattle)
-                    .Where(
-                        c => sb.IsCastable(brainOwner, c) && requirement(c))
-                    .ChooseRandom();
-
-                if (specificTarget != null) {
-                    return brainOwner.Spells.CreateSpell(currentBattle, sb, brainOwner, specificTarget);
-                }
-                return null;
-            };
-        }
-
         /// <summary>
         /// Setups the priority plays.
         /// </summary>
         /// <returns></returns>
-        protected abstract IList<Func<IPlayable>> SetupPriorityPlays();
+        protected abstract IList<Spell> GetPriorityPlays();
     }
 }

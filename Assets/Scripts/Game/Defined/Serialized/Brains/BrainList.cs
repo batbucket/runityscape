@@ -29,14 +29,14 @@ namespace Scripts.Game.Defined.Serialized.Brains {
             Grid main = new Grid("Main");
 
             main.List = new IButtonable[] {
-                PageUtil.GenerateTargets(currentBattle, main, brainOwner, ATTACK, GetAttackSprite(brainOwner.Equipment), handlePlay),
+                PageUtil.GenerateTargets(currentBattle, main, brainOwner, ATTACK, GetAttackSprite(brainOwner.Equipment), spellHandler),
                 null,
                 null,
                 null,
-                PageUtil.GenerateActions(currentBattle, main, brainOwner, ATTACK, temporarySpells, handlePlay),
-                PageUtil.GenerateSpellBooks(currentBattle, main, brainOwner, ATTACK, handlePlay),
-                PageUtil.GenerateItemsGrid(currentBattle, main, brainOwner, handlePlay, brainOwner.Look.Sprite, brainOwner.Look.DisplayName, brainOwner.Inventory.DetailedDescription),
-                PageUtil.GenerateEquipmentGrid(currentBattle, main, brainOwner, handlePlay, PageUtil.EQUIPMENT, "Equipment"),
+                PageUtil.GenerateActions(currentBattle, main, brainOwner, ATTACK, temporarySpells, spellHandler),
+                PageUtil.GenerateSpellBooks(currentBattle, main, brainOwner, ATTACK, spellHandler),
+                PageUtil.GenerateItemsGrid(currentBattle, main, brainOwner, spellHandler, brainOwner.Look.Sprite, brainOwner.Look.DisplayName, brainOwner.Inventory.DetailedDescription),
+                PageUtil.GenerateEquipmentGrid(currentBattle, main, brainOwner, spellHandler, PageUtil.EQUIPMENT, "Equipment"),
             };
             currentBattle.Actions = main.List;
         }

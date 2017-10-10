@@ -92,7 +92,7 @@ namespace Scripts.Model.Pages {
         /// </summary>
         /// <param name="page">The page.</param>
         /// <returns></returns>
-        public static Action<IPlayable> GetOutOfBattlePlayableHandler(Page page) {
+        public static Action<Spell> GetOutOfBattlePlayableHandler(Page page) {
             return (ip) => {
                 Main.Instance.StartCoroutine(PerformInOrder(page, ip, page.OnEnter));
             };
@@ -120,7 +120,7 @@ namespace Scripts.Model.Pages {
             Page current,
             IButtonable previous,
             IEnumerable<Character> party,
-            Action<IPlayable> addPlay
+            Action<Spell> addPlay
             ) {
             Grid grid = GenerateBackableGrid(previous, INVENTORY, party.FirstOrDefault().Inventory.DetailedName, party.FirstOrDefault().Inventory.DetailedDescription);
 
@@ -156,7 +156,7 @@ namespace Scripts.Model.Pages {
                     Page current,
                     IButtonable previous,
                     Character owner,
-                    Action<IPlayable> addPlay,
+                    Action<Spell> addPlay,
                     Sprite sprite,
                     string name,
                     string description
@@ -190,7 +190,7 @@ namespace Scripts.Model.Pages {
             IButtonable previous,
             Character owner,
             SpellBook excluded,
-            Action<IPlayable> addPlay
+            Action<Spell> addPlay
             ) {
             return GenerateSpellableGrid(
                 current,
@@ -220,7 +220,7 @@ namespace Scripts.Model.Pages {
             Character owner,
             SpellBook excluded,
             IEnumerable<ISpellable> concat,
-            Action<IPlayable> playHandler
+            Action<Spell> playHandler
             ) {
             List<SpellBook> spellsThatHaveACost = new List<SpellBook>();
 
@@ -244,10 +244,10 @@ namespace Scripts.Model.Pages {
         /// <param name="previous">supergrid containing a list of possible ISpellables to use</param>
         /// <param name="owner">User of the Spellable</param>
         /// <param name="spellable">Spellable to use on target</param>
-        /// <param name="handlePlayable">Playable handler</param>
+        /// <param name="spellHandler">Spell handler</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
-            return GenerateTargets(current, previous, owner, spellable, spellable.GetSpellBook().Icon, handlePlayable);
+        public static Grid GenerateTargets(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<Spell> spellHandler) {
+            return GenerateTargets(current, previous, owner, spellable, spellable.GetSpellBook().Icon, spellHandler);
         }
 
         /// <summary>
@@ -258,20 +258,20 @@ namespace Scripts.Model.Pages {
         /// <param name="previous">supergrid containing a list of possible ISpellables to use</param>
         /// <param name="caster">User of the Spellable</param>
         /// <param name="spellable">Spellable to use on target</param>
-        /// <param name="handlePlayable">Playable handler</param>
+        /// <param name="spellHandler">Spell handler</param>
         /// <returns></returns>
-        public static Grid GenerateTargets(Page current, IButtonable previous, Character caster, ISpellable spellable, Sprite sprite, Action<IPlayable> handlePlayable) {
+        public static Grid GenerateTargets(Page current, IButtonable previous, Character caster, ISpellable spellable, Sprite sprite, Action<Spell> spellHandler) {
             SpellBook sb = spellable.GetSpellBook();
             ICollection<Character> targets = sb.TargetType.GetTargets(caster, current);
             Grid grid = GenerateBackableGrid(previous, sb.Icon, sb.Name, sb.CreateDescription(caster));
 
             grid.Icon = sprite;
 
-            foreach (Character myTarget in targets) {
-                Character target = myTarget;
-
-                grid.List.Add(GenerateTargetProcess(current, previous, caster, target, sb, handlePlayable));
+            ICollection<Process> targetProcesses = spellable.GetSpellBook().TargetType.GetTargetProcesses(current, spellable, caster, spellHandler);
+            foreach (Process targetProcess in targetProcesses) {
+                grid.List.Add(targetProcess);
             }
+
             Item item = spellable as Item;
             if (item != null && item.HasFlag(Items.Flag.OCCUPIES_SPACE)) {
                 grid.List.Add(
@@ -279,7 +279,7 @@ namespace Scripts.Model.Pages {
                         string.Format("Drop"),
                         string.Format("Throw away {0}.", item.Name),
                         () => {
-                            handlePlayable(
+                            spellHandler(
                                 caster.Spells.CreateSpell(current, new TossItem(item, caster.Inventory), caster, caster)
                                 );
                         }
@@ -293,9 +293,9 @@ namespace Scripts.Model.Pages {
         /// </summary>
         /// <param name="previous">supergrid</param>
         /// <param name="owner">Owner of the equipment</param>
-        /// <param name="handlePlayable">Playable handler</param>
+        /// <param name="spellHandler">Playable handler</param>
         /// <returns></returns>
-        public static Grid GenerateEquipmentGrid(Page current, IButtonable previous, Character owner, Action<IPlayable> handlePlayable, Sprite sprite, string name) {
+        public static Grid GenerateEquipmentGrid(Page current, IButtonable previous, Character owner, Action<Spell> spellHandler, Sprite sprite, string name) {
             Grid grid = GenerateBackableGrid(
                 previous,
                 sprite,
@@ -308,23 +308,23 @@ namespace Scripts.Model.Pages {
                 Equipment eq = owner.Equipment;
                 if (owner.Equipment.Contains(et)) {
                     CastUnequipItem unequip = new CastUnequipItem(owner.Inventory, owner.Equipment, eq.PeekItem(et));
-                    ib = GetUnequipProcess(current, unequip, owner, grid, handlePlayable);
+                    ib = GetUnequipProcess(current, unequip, owner, grid, spellHandler);
                 } else {
-                    ib = GetEquipGrid(current, owner, et, owner.Inventory, grid, handlePlayable);
+                    ib = GetEquipGrid(current, owner, et, owner.Inventory, grid, spellHandler);
                 }
                 grid.List.Add(ib);
             }
             return grid;
         }
 
-        public static Grid GenerateGroupEquipmentGrid(IButtonable previous, Page current, ICollection<Character> party, Action<IPlayable> handlePlayable) {
+        public static Grid GenerateGroupEquipmentGrid(IButtonable previous, Page current, ICollection<Character> party, Action<Spell> spellHandler) {
             Grid grid = new Grid("Equipment");
             grid.Icon = EQUIPMENT;
             grid.List.Add(GenerateBack(previous));
 
             foreach (Character partyMember in party) {
                 if (partyMember.Stats.State == State.ALIVE) {
-                    grid.List.Add(GenerateEquipmentGrid(current, grid, partyMember, handlePlayable, partyMember.Look.Sprite, partyMember.Look.DisplayName));
+                    grid.List.Add(GenerateEquipmentGrid(current, grid, partyMember, spellHandler, partyMember.Look.Sprite, partyMember.Look.DisplayName));
                 } else {
                     grid.List.Add(new Process(partyMember.Look.DisplayName, partyMember.Look.Sprite, "This unit is dead and is unable to manage its equipment."));
                 }
@@ -333,17 +333,13 @@ namespace Scripts.Model.Pages {
             return grid;
         }
 
-        private static string CreateDetailedTargetName(Character owner, Character target, SpellBook sb) {
-            return Util.ColorString(target.Look.DisplayName, sb.IsCastable(owner, target));
-        }
-
         private static Grid GenerateSpellableGrid(
                     Page current,
                     IButtonable previous,
                     Character owner,
                     SpellBook excluded,
                     IEnumerable<ISpellable> spellCollection,
-                    Action<IPlayable> addPlay,
+                    Action<Spell> addPlay,
                     Sprite sprite,
                     string name,
                     string description) {
@@ -359,41 +355,17 @@ namespace Scripts.Model.Pages {
             return grid;
         }
 
-        private static Process GenerateSpellProcess(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<IPlayable> handlePlayable) {
+        private static Process GenerateSpellProcess(Page current, IButtonable previous, Character owner, ISpellable spellable, Action<Spell> spellHandler) {
             SpellBook sb = spellable.GetSpellBook();
             return new Process(sb.GetDetailedName(owner), sb.Icon, sb.CreateDescription(owner),
                 () => {
                     if (sb.IsMeetPreTargetRequirements(owner.Stats)) {
-                        GenerateTargets(current, previous, owner, spellable, handlePlayable).Invoke();
+                        GenerateTargets(current, previous, owner, spellable, spellHandler).Invoke();
                     }
                 });
         }
 
-        private static Process GenerateTargetProcess(Page current, IButtonable previous, Character owner, Character target, SpellBook sb, Action<IPlayable> handlePlayable) {
-            return GenerateTargetProcessHelper(current, previous, owner, target, sb, handlePlayable, CreateDetailedTargetName(owner, target, sb), target.Look.Sprite);
-        }
-
-        private static Process GenerateTargetProcessHelper(
-            Page current,
-            IButtonable previous,
-            Character owner,
-            Character target,
-            SpellBook sb,
-            Action<IPlayable> handlePlayable,
-            string name,
-            Sprite icon) {
-            return new Process(name,
-                               icon,
-                                sb.CreateTargetDescription(owner, target),
-                                () => {
-                                    if (sb.IsCastable(owner, target)) {
-                                        handlePlayable(owner.Spells.CreateSpell(current, sb, owner, target));
-                                        previous.Invoke();
-                                    }
-                                });
-        }
-
-        private static Grid GetEquipGrid(Page current, Character owner, EquipType et, Inventory inv, IButtonable previous, Action<IPlayable> handlePlayable) {
+        private static Grid GetEquipGrid(Page current, Character owner, EquipType et, Inventory inv, IButtonable previous, Action<Spell> spellHandler) {
             Grid grid = GenerateBackableGrid(
                 previous,
                 et.Sprite,
@@ -402,19 +374,19 @@ namespace Scripts.Model.Pages {
                 );
             foreach (EquippableItem ei in inv as IEnumerable<EquippableItem>) {
                 if (ei.Type.Equals(et)) {
-                    grid.List.Add(GenerateTargetProcessHelper(current, previous, owner, owner, new CastEquipItem(ei), handlePlayable, ei.Name, ei.Icon));
+                    grid.List.Add(ei.GetSelfTargetProcess(current, owner, spellHandler));
                 }
             }
             return grid;
         }
 
-        private static Process GetUnequipProcess(Page current, CastUnequipItem unequipSpell, Character owner, IButtonable previous, Action<IPlayable> handlePlayable) {
+        private static Process GetUnequipProcess(Page current, CastUnequipItem unequipSpell, Character owner, IButtonable previous, Action<Spell> spellHandler) {
             return new Process(unequipSpell.Name, unequipSpell.Icon, unequipSpell.CreateDescription(owner),
                         () => {
-                            handlePlayable(owner.Spells.CreateSpell(current, unequipSpell, owner, owner));
+                            spellHandler(owner.Spells.CreateSpell(current, unequipSpell, owner, owner));
                             previous.Invoke();
                         },
-                        () => unequipSpell.IsCastable(owner, owner)
+                        () => unequipSpell.IsCastable(owner, new Character[] { owner })
                         );
         }
 
@@ -430,9 +402,9 @@ namespace Scripts.Model.Pages {
         /// <param name="playgroup">PlayGroup</param>
         /// <param name="postAction">Action to perform after PlayGroup is finished.</param>
         /// <returns></returns>
-        private static IEnumerator PerformInOrder(Page page, IPlayable play, Action postAction) {
-            yield return play.Play();
-            page.AddText(play.Text);
+        private static IEnumerator PerformInOrder(Page page, Spell spell, Action postAction) {
+            yield return spell.Play(page);
+            page.AddText(spell.CastText);
             postAction.Invoke();
         }
     }
