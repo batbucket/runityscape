@@ -35,14 +35,14 @@ namespace Scripts.Model.Stats {
                                                                            "Increases spell effects.",
                                                                            Color.blue);
 
-        public static readonly StatType AGILITY = new StatType(STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT,
+        public static readonly StatType AGILITY = new StatType(BOOSTED_INCREASE_FROM_STAT_POINT_AMOUNT,
                                                                 BoundType.ASSIGNABLE,
                                                                          "Agility",
                                                                          "power-lightning",
                                                                          "Increases critical hit rate and accuracy.",
                                                                          Color.green);
 
-        public static readonly StatType VITALITY = new StatType(VITALITY_INCREASE_FROM_STAT_POINT_AMOUNT,
+        public static readonly StatType VITALITY = new StatType(BOOSTED_INCREASE_FROM_STAT_POINT_AMOUNT,
                                                                 BoundType.ASSIGNABLE,
                                                                           "Vitality",
                                                                           "health-normal",
@@ -102,7 +102,7 @@ namespace Scripts.Model.Stats {
         private readonly int order;
 
         private const int STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT = 1;
-        private const int VITALITY_INCREASE_FROM_STAT_POINT_AMOUNT = 2;
+        private const int BOOSTED_INCREASE_FROM_STAT_POINT_AMOUNT = 2;
         private static int orderCounter;
 
         private StatType(
