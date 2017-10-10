@@ -377,12 +377,11 @@ namespace Scripts.Model.Pages {
                             playerMadePlay.DeclareText
                             )); // "X will do Y" helper textbox
                     }
-
-                    // Remove all "X will do Y" texts
-                    foreach (PooledBehaviour pb in declarations) {
-                        ObjectPoolManager.Instance.Return(pb);
-                    }
                 }
+            }
+            // Remove all "X will do Y" texts
+            foreach (PooledBehaviour pb in declarations) {
+                ObjectPoolManager.Instance.Return(pb);
             }
         }
 
