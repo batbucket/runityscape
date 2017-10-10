@@ -26,7 +26,7 @@ namespace Scripts.Model.Characters {
             Spell chosenPlay = null;
             foreach (Spell spell in GetPriorityPlays()) {
                 chosenPlay = spell;
-                if (!DEFAULT_ACTION.Equals(chosenPlay)) {
+                if (!(chosenPlay.SpellBook).Equals(DEFAULT_ACTION)) {
                     return chosenPlay;
                 }
             }
