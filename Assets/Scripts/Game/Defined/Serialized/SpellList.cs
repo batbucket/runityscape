@@ -201,7 +201,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class Arraystrike : BasicSpellbook {
 
         public Arraystrike() : base("Arraystrike", Util.GetSprite("sword-array"), TargetType.ALL_FOES, SpellType.OFFENSE, PriorityType.LOW) {
-            AddCost(StatType.SKILL, 2);
+            AddCost(StatType.SKILL, 5);
         }
 
         protected override string CreateDescriptionHelper() {
