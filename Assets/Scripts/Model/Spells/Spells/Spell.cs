@@ -22,7 +22,7 @@ namespace Scripts.Model.Spells {
         /// </summary>
         public const string CAST_TEXT = "<color=yellow>{0}</color> {1}s <color=cyan>{2}</color>{3}.{4}";
 
-        public const string DECLARE_TEXT = "<color=yellow >{0}</color> will {1} <color=cyan>{2}</color>{3} on <color=yellow>{0}</color>.";
+        public const string DECLARE_TEXT = "<color=yellow >{0}</color> will {1} <color=cyan>{2}</color>{3}.";
 
         /// <summary>
         /// The book
