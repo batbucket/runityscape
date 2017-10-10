@@ -481,9 +481,6 @@ namespace Scripts.Game.Defined.Spells {
         /// Causes the effect.
         /// </summary>
         public override void CauseEffect() {
-            foreach (Character toBeShuffled in page.GetCharacters(side)) {
-                Main.Instance.StartCoroutine(SFX.DoSteamEffect(toBeShuffled));
-            }
             page.Shuffle(side);
         }
     }

@@ -261,7 +261,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
     public class ReflectiveClone : BasicSpellbook {
         private const int NUMBER_OF_CLONES = 4;
 
-        public ReflectiveClone() : base("Hallucination", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, PriorityType.LOW) {
+        public ReflectiveClone() : base("Hallucination", Util.GetSprite("fox-head"), TargetType.SELF, SpellType.BOOST, PriorityType.LOWEST) {
         }
 
         protected override string CreateDescriptionHelper() {
