@@ -462,7 +462,7 @@ namespace Scripts.Model.Pages {
             for (int i = 0; i < spells.Count; i++) {
                 yield return new WaitForSeconds(0.10f);
                 Spell spell = spells[i];
-                yield return spell.Play(this);
+                yield return spell.Play(this, true);
             }
         }
 

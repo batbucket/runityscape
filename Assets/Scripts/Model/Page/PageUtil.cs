@@ -403,7 +403,7 @@ namespace Scripts.Model.Pages {
         /// <param name="postAction">Action to perform after PlayGroup is finished.</param>
         /// <returns></returns>
         private static IEnumerator PerformInOrder(Page page, Spell spell, Action postAction) {
-            yield return spell.Play(page);
+            yield return spell.Play(page, true);
             postAction.Invoke();
         }
     }

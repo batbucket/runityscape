@@ -17,7 +17,7 @@ namespace Scripts.Model.Items {
 
         public Tome(int levelRequirement, int basePrice, SpellBook spellToTeach)
             : base(basePrice,
-                  TargetType.SINGLE_ALLY,
+                  TargetType.ONE_ALLY,
                   string.Format("Tome: {0}", spellToTeach.Name),
                   string.Format("<color=grey>Requires level {0}.</color>\nTeaches <color=cyan>{1}</color>\n{2}",
                       levelRequirement,

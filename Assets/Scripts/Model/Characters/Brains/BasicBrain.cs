@@ -81,7 +81,7 @@ namespace Scripts.Model.Characters {
             // If spell is not castable, default to waiting.
             if (specificTarget != null) {
                 SpellBook castableSpell = null;
-                if (spellToCast.IsCastable(brainOwner, specificTarget)) {
+                if (spellToCast.IsCastable(brainOwner, new Character[] { specificTarget })) {
                     castableSpell = spellToCast;
                 } else {
                     castableSpell = defaultSpell;
@@ -90,7 +90,7 @@ namespace Scripts.Model.Characters {
                     return brainOwner.Spells.CreateSpell(currentBattle, spellToCast, brainOwner, specificTarget);
                 }
             }
-            return null;
+            return brainOwner.Spells.CreateSpell(currentBattle, DEFAULT_SPELL, brainOwner, brainOwner);
         }
     }
 }

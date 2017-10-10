@@ -317,24 +317,14 @@ namespace Scripts.Model.Spells {
         /// </returns>
         public bool IsCastable(Character caster, ICollection<Character> targets) {
             return
-                IsNumberOfTargetsValid(targets.Count)
-                && CasterHasResources(caster.Stats)
-                && targets.Any(t => IsCastableIgnoreResources(caster, t));
+                CasterHasResources(caster.Stats)
+                && IsCastableIgnoreResources(caster, targets);
         }
 
-        /// <summary>
-        /// Determines whether the specified caster is castable.
-        /// </summary>
-        /// <param name="caster">The caster.</param>
-        /// <param name="target">The target.</param>
-        /// <returns>
-        ///   <c>true</c> if the specified caster is castable; otherwise, <c>false</c>.
-        /// </returns>
-        public bool IsCastable(Character caster, Character target) {
+        public bool IsCastableIgnoreResources(Character caster, ICollection<Character> targets) {
             return
-                IsNumberOfTargetsValid(1)
-                && CasterHasResources(caster.Stats)
-                && IsCastableIgnoreResources(caster, target);
+                IsNumberOfTargetsValid(targets.Count)
+                && targets.Any(t => IsCastableIgnoreResources(caster, t));
         }
 
         /// <summary>

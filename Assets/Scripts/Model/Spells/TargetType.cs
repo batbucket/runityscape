@@ -26,18 +26,16 @@ namespace Scripts.Model.Spells {
         }
 
         public static TargetType SELF = new TargetType("Self", TargetCount.SINGLE_TARGET, (c, p) => new Character[] { c });
-        public static TargetType SINGLE_ALLY = new TargetType("One ally", TargetCount.SINGLE_TARGET, (c, p) => p.GetAllies(c));
+        public static TargetType ONE_ALLY = new TargetType("One ally", TargetCount.SINGLE_TARGET, (c, p) => p.GetAllies(c));
 
-        //public static TargetType ALL_ALLIES = new TargetType("All allies", (c, p) => p.GetAllies(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
-        public static TargetType SINGLE_ENEMY = new TargetType("One enemy", TargetCount.SINGLE_TARGET, (c, p) => p.GetFoes(c));
+        public static TargetType ALL_ALLY = new TargetType("All allies", TargetCount.MULTIPLE_TARGETS, (c, p) => p.GetAllies(c).ToArray());
+        public static TargetType ONE_ENEMY = new TargetType("One foe", TargetCount.SINGLE_TARGET, (c, p) => p.GetFoes(c));
 
-        //public static TargetType ALL_ENEMIES = new TargetType("All enemies", (c, p) => p.GetFoes(c).Where(a => a.Stats.State == State.ALIVE).ToArray());
+        public static TargetType ALL_FOES = new TargetType("All foes", TargetCount.MULTIPLE_TARGETS, (c, p) => p.GetFoes(c).ToArray());
         public static TargetType ANY = new TargetType("Any", TargetCount.SINGLE_TARGET, (c, p) => p.GetAll());
 
-        //public static TargetType ALL = new TargetType("All", (c, p) => p.GetAll().Where(a => a.Stats.State == State.ALIVE).ToArray());
+        public static TargetType ALL = new TargetType("All", TargetCount.MULTIPLE_TARGETS, (c, p) => p.GetAll().ToArray());
         public static TargetType NONE = new TargetType("None", TargetCount.NONE, (c, p) => new Character[0]);
-
-        //public static HashSet<TargetType> SINGLE_TARGET_OPTIONS = new HashSet<TargetType>(new IdentityEqualityComparer<TargetType>()) { SELF, SINGLE_ALLY, SINGLE_ENEMY, ANY };
 
         public ICollection<Character> GetTargets(Character caster, Page current) {
             return getFunc.Invoke(caster, current);

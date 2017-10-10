@@ -43,7 +43,7 @@ namespace Scripts.Model.Items {
         /// <param name="name">The name.</param>
         /// <param name="description">The description.</param>
         public EquippableItem(Sprite sprite, EquipType type, int basePrice, string name, string description)
-            : base(sprite, basePrice, TargetType.SINGLE_ALLY, name, description) {
+            : base(sprite, basePrice, TargetType.ONE_ALLY, name, description) {
             this.Type = type;
             this.flatStatBonuses = new SortedDictionary<StatType, int>();
             this.book = new CastEquipItem(this);

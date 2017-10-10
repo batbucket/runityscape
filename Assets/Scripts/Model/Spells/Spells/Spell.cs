@@ -20,7 +20,7 @@ namespace Scripts.Model.Spells {
         /// <summary>
         /// The spell text
         /// </summary>
-        public const string CAST_TEXT = "<color=yellow>{0}</color> {1} <color=cyan>{2}</color> on <color=yellow>{3}</color>.{4}";
+        public const string CAST_TEXT = "<color=yellow>{0}</color> {1}s <color=cyan>{2}</color>{3}.{4}";
 
         public const string DECLARE_TEXT = "<color=yellow >{0}</color> will {1} <color=cyan>{2}</color>{3} on <color=yellow>{0}</color>.";
 
@@ -65,7 +65,13 @@ namespace Scripts.Model.Spells {
         public TextBox CastText {
             get {
                 return new TextBox(
-                    string.Format(CAST_TEXT, caster.Look.DisplayName, book.Verb.ToLower(), book.Name, TargetName, ResultType.Text),
+                    string.Format(
+                        CAST_TEXT,
+                        caster.Look.DisplayName,
+                        book.Verb.ToLower(),
+                        book.Name,
+                        TargetName,
+                        ResultType.Text),
                     book.TextboxTooltip
                     );
             }
@@ -121,10 +127,10 @@ namespace Scripts.Model.Spells {
         /// <returns>
         /// Coroutine
         /// </returns>
-        public IEnumerator Play(Page current) {
-            return Cast(current);
+        public IEnumerator Play(Page current, bool isAddCastText) {
+            yield return Cast(current, isAddCastText);
         }
 
-        protected abstract IEnumerator Cast(Page current);
+        protected abstract IEnumerator Cast(Page current, bool isAddCastText);
     }
 }

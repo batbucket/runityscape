@@ -64,7 +64,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
     public class Apple : ConsumableItem {
         private const int HEALING_AMOUNT = 10;
 
-        public Apple() : base(5, TargetType.SINGLE_ALLY, "Apple", string.Format("A juicy apple. Restores {0} {1}.", HEALING_AMOUNT, StatType.HEALTH.ColoredName)) {
+        public Apple() : base(5, TargetType.ONE_ALLY, "Apple", string.Format("A juicy apple. Restores {0} {1}.", HEALING_AMOUNT, StatType.HEALTH.ColoredName)) {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
@@ -88,7 +88,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
 
         public RevivalSeed()
             : base(500,
-                  TargetType.SINGLE_ALLY,
+                  TargetType.ONE_ALLY,
                   "Revival Seed",
                   string.Format("Use on a fallen ally to revive them to {0}% {1}.",
                       HEALTH_RECOVERY_PERCENTAGE,

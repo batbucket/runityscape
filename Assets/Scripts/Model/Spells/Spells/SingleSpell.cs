@@ -54,22 +54,25 @@ namespace Scripts.Model.Spells {
 
         public override bool IsCastable {
             get {
-                return book.IsCastable(caster, new Character[] { target });
+                return book.IsCastableIgnoreResources(caster, new Character[] { target });
             }
         }
 
         protected override string TargetName {
             get {
-                return target.Look.DisplayName;
+                return IsSelfCast ? string.Empty : string.Format(" on <color=yellow>{0}</color>", target.Look.DisplayName);
             }
         }
 
-        /// <summary>
-        /// Casts this instance.
-        /// </summary>
-        /// <returns></returns>
-        protected override IEnumerator Cast(Page current) {
+        private bool IsSelfCast {
+            get {
+                return caster == target;
+            }
+        }
+
+        protected override IEnumerator Cast(Page current, bool isAddCastText) {
             TextBox spellMessage = this.CastText;
+            IEnumerator possibleCharacterDialogue = null;
             if (IsCastable) {
                 MakeEveryonesBuffsReactToSpell(current);
                 IList<IEnumerator> sfx = result.SFX;
@@ -80,14 +83,17 @@ namespace Scripts.Model.Spells {
                     SpellEffect se = mySE;
                     se.CauseEffect();
                 }
+                possibleCharacterDialogue = Battle.CharacterDialogue(current, this.target, this.target.Brain.ReactToSpell(this));
             } else {
                 // Unplayable due to cast requirements becoming failed AFTER target selection due to a spellcast before this one
                 // e.g the target died
                 result.Type = ResultType.FAILED;
             }
-            current.AddText(spellMessage);
-            if (IsCastable) {
-                Battle.CharacterDialogue(current, this.target, this.target.Brain.ReactToSpell(this));
+            if (isAddCastText) {
+                current.AddText(spellMessage);
+            }
+            if (possibleCharacterDialogue != null) {
+                yield return possibleCharacterDialogue;
             }
         }
 

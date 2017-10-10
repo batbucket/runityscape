@@ -23,19 +23,25 @@ namespace Scripts.Model.Spells {
 
         public override bool IsCastable {
             get {
-                return spells.Any(s => s.IsCastable);
+                return spells.Any(s1 => book.IsCastableIgnoreResources(caster, spells.Select(s2 => s2.Target).ToArray()));
             }
         }
 
         protected override string TargetName {
             get {
-                return book.TargetType.Name.ToLower();
+                return string.Format(" on <color=yellow>{0}</color>", book.TargetType.Name.ToLower());
             }
         }
 
-        protected override IEnumerator Cast(Page current) {
-            foreach (SingleSpell spell in spells) {
-                yield return spell.Play(current);
+        protected override IEnumerator Cast(Page current, bool isAddCastText) {
+            TextBox spellMessage = this.CastText;
+            if (IsCastable) {
+                foreach (SingleSpell spell in spells) {
+                    yield return spell.Play(current, false);
+                }
+            }
+            if (isAddCastText) {
+                current.AddText(spellMessage);
             }
         }
     }
