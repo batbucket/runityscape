@@ -17,6 +17,7 @@ namespace Scripts.Model.Characters {
     /// <seealso cref="Scripts.Model.SaveLoad.ISaveable{Scripts.Model.SaveLoad.SaveObjects.CharacterStatsSave}" />
     /// <seealso cref="System.IComparable{Scripts.Model.Characters.Stats}" />
     public class Stats : IEnumerable<KeyValuePair<StatType, Stat>>, ISaveable<CharacterStatsSave>, IComparable<Stats> {
+        public const int NUMBER_OF_CHARS_IN_SHORT_STAT_NAME = 3;
 
         /// <summary>
         ///
@@ -173,7 +174,7 @@ namespace Scripts.Model.Characters {
                     if (StatType.ASSIGNABLES.Contains(pair.Key)) {
                         assignables.Add(string.Format("{0} {1}",
                             GetStatCount(Get.TOTAL, pair.Key),
-                            Util.ColorString(pair.Key.Name.Substring(0, 3), pair.Key.Color)));
+                            Util.ColorString(pair.Key.Name.Substring(0, NUMBER_OF_CHARS_IN_SHORT_STAT_NAME), pair.Key.Color)));
                     }
                 }
                 return string.Format(

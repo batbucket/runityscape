@@ -114,9 +114,7 @@ namespace Scripts.Game.Pages {
                     : string.Format("Take a short break, advancing the time of day to {0}.\nSomewhat restores most stats.", times[newIndex].GetDescription()),
                 () => {
                     foreach (Character c in party) {
-                        foreach (StatType type in StatType.RESTORED) {
-                            c.Stats.RestoreResourcesByMissingPercentage(isLastTime ? 1 : MISSING_REST_RESTORE_PERCENTAGE);
-                        }
+                        c.Stats.RestoreResourcesByMissingPercentage(isLastTime ? 1 : MISSING_REST_RESTORE_PERCENTAGE);
                         if (isLastTime) {
                             c.Buffs.DispelAllBuffs();
                         }
