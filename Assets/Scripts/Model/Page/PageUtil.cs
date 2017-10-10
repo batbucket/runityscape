@@ -404,7 +404,6 @@ namespace Scripts.Model.Pages {
         /// <returns></returns>
         private static IEnumerator PerformInOrder(Page page, Spell spell, Action postAction) {
             yield return spell.Play(page);
-            page.AddText(spell.CastText);
             postAction.Invoke();
         }
     }
