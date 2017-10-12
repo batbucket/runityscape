@@ -128,7 +128,7 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Is this an Undertale reference?",
                             () => new Encounter [] {
-                                new Encounter(OceanNPCs.Elemental())
+                                new Encounter(OceanNPCs.DreadSinger())
                             })
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
