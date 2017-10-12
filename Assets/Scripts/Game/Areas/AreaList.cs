@@ -114,6 +114,12 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.Siren(), OceanNPCs.SharkPirate())
                             }),
                         new BattleStage(
+                            "Insaniquarium",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.Shark(), OceanNPCs.Siren()),
+                                new Encounter(OceanNPCs.Shark(), OceanNPCs.Siren(), OceanNPCs.Shark(), OceanNPCs.Siren())
+                            }),
+                        new BattleStage(
                             "GitKraken",
                             () => new Encounter [] {
                                 new Encounter(Music.BOSS, OceanNPCs.Kraken())
@@ -126,9 +132,22 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
                             }),
                         new BattleStage(
-                            "Is this an Undertale reference?",
-                            () => new Encounter [] {
-                                new Encounter(OceanNPCs.DreadSinger())
+                            "Nearing the end",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.DreadSinger()),
+                                new Encounter(OceanNPCs.Elemental()),
+                            }),
+                        new BattleStage(
+                            "Final Trench",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.DreadSinger(), OceanNPCs.DreadSinger()),
+                                new Encounter(OceanNPCs.Elemental(), OceanNPCs.Elemental(), OceanNPCs.DreadSinger()),
+                                new Encounter(OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.SharkPirate(), OceanNPCs.DreadSinger()),
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.SharkPirate(), OceanNPCs.DreadSinger())
+                            }),
+                        new BattleStage(
+                            "Finale",
+                            () => new Encounter[] {
                             })
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
