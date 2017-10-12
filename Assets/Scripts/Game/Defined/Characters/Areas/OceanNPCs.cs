@@ -23,7 +23,8 @@ namespace Scripts.Game.Defined.Characters {
                 1f,
                 SharkPirate())
                 .AddBuys(
-                    new FishHook()
+                    new FishHook(),
+                    new Cleanse()
                 );
         }
 
