@@ -200,14 +200,14 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
     }
 
     public class Defend : Buff {
-        private const int DAMAGE_REDUCTION_PERCENT = 50;
+        private const int DAMAGE_REDUCTION_PERCENT = 75;
         private const float DAMAGE_REDUCTION = DAMAGE_REDUCTION_PERCENT / 100f;
 
         public Defend()
             : base(1,
-                  Util.GetSprite("round-shield"),
-                  "Defend",
-                  string.Format("Reduces damage taken this turn by {0}%", DAMAGE_REDUCTION_PERCENT),
+                  Util.GetSprite("shield"),
+                  "Guard",
+                  string.Format("Reduces damage taken from spells this turn by {0}%.", DAMAGE_REDUCTION_PERCENT),
                   false) {
         }
 
@@ -260,9 +260,46 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         public VitalitySirenSong() : base(StatType.VITALITY, "Melody of Mortality") {
         }
     }
+
+    public class DelayedDeath : DelayedEffectSong {
+        private static readonly StatType AFFECTED_STAT = StatType.HEALTH;
+
+        public DelayedDeath() : base(4, "skull-crack", AFFECTED_STAT, "Curse: Death") {
+        }
+    }
+
+    public class DelayedEternalDeath : DelayedEffectSong {
+        private static readonly StatType AFFECTED_STAT = StatType.VITALITY;
+
+        public DelayedEternalDeath() : base(4, "skull-crossed-bones", AFFECTED_STAT, "Curse: Eternal Death") {
+        }
+    }
 }
 
 namespace Scripts.Game.Defined.Unserialized.Buffs {
+
+    public abstract class DelayedEffectSong : Buff {
+        private readonly StatType affectedStat;
+
+        public DelayedEffectSong(int duration, string spriteLoc, StatType affectedStat, string name)
+            : base(duration,
+                  Util.GetSprite(spriteLoc),
+                  name,
+                  string.Format("On buff time-out, unit loses all {0}.", affectedStat.ColoredName),
+                  true) {
+            this.affectedStat = affectedStat;
+        }
+
+        protected override IList<SpellEffect> OnDispellHelper(Stats ownerOfThisBuff) {
+            return new SpellEffect[0];
+        }
+
+        protected override IList<SpellEffect> OnTimeOutHelper(Stats ownerOfThisBuff) {
+            return new SpellEffect[] {
+                new AddToModStat(ownerOfThisBuff, StatType.VITALITY, -ownerOfThisBuff.GetStatCount(Stats.Get.TOTAL, affectedStat))
+            };
+        }
+    }
 
     public class SpiritLink : Buff {
 
