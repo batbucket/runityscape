@@ -85,6 +85,10 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
+    /// <summary>
+    /// Can't use BuffAdder because this also adds check text to the textboxes
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Spells.BasicSpellbook" />
     public class Check : BasicSpellbook {
         private static readonly Checked DUMMY = new Checked();
 
@@ -93,7 +97,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override string CreateDescriptionHelper() {
-            return BuffAdder.CreateBuffDescription(this.TargetType, DUMMY);
+            return BuffAdder<Checked>.CreateBuffDescription(this.TargetType, DUMMY);
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
@@ -112,22 +116,25 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
-    public class InflictPoison : BuffAdder {
+    public class InflictPoison : BuffAdder<Poison> {
 
-        public InflictPoison() : base(TargetType.ONE_FOE, SpellType.OFFENSE, new Poison(), "Infect", PriorityType.NORMAL) {
+        public InflictPoison() : base(TargetType.ONE_FOE, SpellType.OFFENSE, "Infect", PriorityType.NORMAL) {
             AddCost(StatType.MANA, 1);
         }
     }
 
     public class CrushingBlow : BasicSpellbook {
-        private const int INTELLECT_TO_DAMAGE_RATIO = 1;
+        private const float INTELLECT_TO_DAMAGE_RATIO = 3f;
+        private const int SKILL_COST = 2;
+        private const int HEALTH_COST = 5;
 
         public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.LOW) {
-            AddCost(StatType.SKILL, 2);
+            AddCost(StatType.SKILL, SKILL_COST);
+            AddCost(StatType.HEALTH, HEALTH_COST);
         }
 
         protected override string CreateDescriptionHelper() {
-            return "A powerful blow that occurs slower than other spells.";
+            return "A powerful blow that deals damage to the caster as well.";
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
@@ -135,9 +142,10 @@ namespace Scripts.Game.Defined.Serialized.Spells {
                     new AddToModStat(
                         target.Stats,
                         StatType.HEALTH,
+                        (int)(
                         caster.Stats.GetStatCount(
                             Stats.Get.TOTAL,
-                            StatType.INTELLECT) * -INTELLECT_TO_DAMAGE_RATIO)
+                            StatType.INTELLECT) * -INTELLECT_TO_DAMAGE_RATIO))
                 };
         }
 
@@ -162,7 +170,25 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                new HealMissingHealthPercent(target.Stats, REVIVAL_HEALTH_PERCENT.ConvertToPercent())
+                new RestoreMissingStatPercent(target.Stats, StatType.HEALTH, REVIVAL_HEALTH_PERCENT)
+            };
+        }
+    }
+
+    public class Inspire : BasicSpellbook {
+        private const int MISSING_MANA_RESTORATION_PERCENT = 50;
+        private const int SKILL_COST = 1;
+
+        public Inspire() : base("Inspire", Util.GetSprite("beams-aura"), TargetType.ONE_ALLY, SpellType.BOOST) {
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Inspire an ally, restoring {0}% of their missing {1}.", MISSING_MANA_RESTORATION_PERCENT, StatType.MANA);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new RestoreMissingStatPercent(target.Stats, StatType.MANA, MISSING_MANA_RESTORATION_PERCENT)
             };
         }
     }
@@ -207,9 +233,9 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
-    public class SetupDefend : BuffAdder {
+    public class SetupDefend : BuffAdder<Defend> {
 
-        public SetupDefend() : base(TargetType.SELF, SpellType.DEFENSE, new Defend(), "Defend", PriorityType.HIGHEST) {
+        public SetupDefend() : base(TargetType.SELF, SpellType.DEFENSE, "Defend", PriorityType.HIGHEST) {
         }
 
         protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
@@ -247,9 +273,9 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 /// </summary>
 namespace Scripts.Game.Defined.Unserialized.Spells {
 
-    public class SetupCounter : BuffAdder {
+    public class SetupCounter : BuffAdder<Counter> {
 
-        public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, new Counter(), "Counter", PriorityType.LOW) {
+        public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, "Counter", PriorityType.LOW) {
             AddCost(StatType.SKILL, 3);
         }
     }
@@ -338,17 +364,15 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         }
     }
 
-    public class Blackout : BuffAdder {
-        private static readonly BlackedOut DUMMY = new BlackedOut();
+    public class Blackout : BuffAdder<BlackedOut> {
 
-        public Blackout() : base(TargetType.ONE_FOE, SpellType.OFFENSE, DUMMY, "Blackout", PriorityType.HIGH) {
+        public Blackout() : base(TargetType.ONE_FOE, SpellType.OFFENSE, "Blackout", PriorityType.HIGH) {
         }
     }
 
-    public class Ignite : BuffAdder {
-        private static readonly Ignited DUMMY = new Ignited();
+    public class Ignite : BuffAdder<Ignited> {
 
-        public Ignite() : base(TargetType.ONE_FOE, SpellType.OFFENSE, DUMMY, "Ignite", PriorityType.NORMAL) {
+        public Ignite() : base(TargetType.ONE_FOE, SpellType.OFFENSE, "Ignite", PriorityType.NORMAL) {
             AddCost(StatType.MANA, 10);
         }
 
@@ -360,27 +384,27 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         }
     }
 
-    public class SingStrengthSong : SingSirenSong {
+    public class SingStrengthSong : SingSirenSong<StrengthSirenSong> {
 
-        public SingStrengthSong() : base(new StrengthSirenSong()) {
+        public SingStrengthSong() : base() {
         }
     }
 
-    public class SingAgilitySong : SingSirenSong {
+    public class SingAgilitySong : SingSirenSong<AgilitySirenSong> {
 
-        public SingAgilitySong() : base(new AgilitySirenSong()) {
+        public SingAgilitySong() : base() {
         }
     }
 
-    public class SingIntellectSong : SingSirenSong {
+    public class SingIntellectSong : SingSirenSong<IntellectSirenSong> {
 
-        public SingIntellectSong() : base(new IntellectSirenSong()) {
+        public SingIntellectSong() : base() {
         }
     }
 
-    public class SingVitalitySong : SingSirenSong {
+    public class SingVitalitySong : SingSirenSong<VitalitySirenSong> {
 
-        public SingVitalitySong() : base(new VitalitySirenSong()) {
+        public SingVitalitySong() : base() {
         }
     }
 
@@ -420,9 +444,9 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         }
     }
 
-    public abstract class SingSirenSong : BuffAdder {
+    public abstract class SingSirenSong<T> : BuffAdder<T> where T : Buff {
 
-        public SingSirenSong(Buff sirenSong) : base(TargetType.ALL_FOE, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {
+        public SingSirenSong() : base(TargetType.ALL_FOE, SpellType.OFFENSE, Util.GetSprite("sonic-shout")) {
         }
     }
 
