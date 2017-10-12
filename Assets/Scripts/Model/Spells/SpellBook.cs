@@ -67,6 +67,11 @@ namespace Scripts.Model.Spells {
         private ReadOnlyDictionary<StatType, int> roCosts;
 
         /// <summary>
+        /// Number of turns it takes to charge this spell.
+        /// </summary>
+        private int turnsToCharge;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="SpellBook"/> class.
         /// </summary>
         /// <param name="spellName">Name of the spell.</param>
@@ -124,6 +129,16 @@ namespace Scripts.Model.Spells {
             }
         }
 
+        public int TurnsToCharge {
+            get {
+                return turnsToCharge;
+            }
+            protected set {
+                Util.Assert(turnsToCharge >= 0, "Turns to charge must be nonnegative.");
+                this.turnsToCharge = value;
+            }
+        }
+
         /// <summary>
         /// Gets the textbox tooltip.
         /// </summary>
@@ -166,10 +181,10 @@ namespace Scripts.Model.Spells {
             }
 
             Spell spellToReturn = null;
-            if (targets.Count == 1) {
+            if (TargetType.TargetCount == TargetCount.SINGLE_TARGET) {
                 spellToReturn = ForceSpell(page, caster, targets.First()); // Single target version
-            } else {
-                spellToReturn = ForceSpell(page, caster, targets); // Multi target version
+            } else if (TargetType.TargetCount == TargetCount.MULTIPLE_TARGETS) {
+                spellToReturn = ForceSpell(page, caster); // Multi target version
             }
             return spellToReturn;
         }
@@ -480,11 +495,12 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <param name="targets">The targets.</param>
         /// <returns></returns>
-        private MultiSpell ForceSpell(Page current, Character caster, IEnumerable<Character> targets) {
+        private MultiSpell ForceSpell(Page current, Character caster) {
             return new MultiSpell(
                     this,
                     caster,
-                    targets.Select(t => ForceSpell(current, caster, t))
+                    current,
+                    (currentPage, casterUnit, target) => ForceSpell(currentPage, casterUnit, target)
                 );
         }
 

@@ -12,10 +12,12 @@ namespace Scripts.Model.Spells {
     /// Represents a spell that hits multiple targets
     /// </summary>
     public class MultiSpell : Spell {
-        private readonly IEnumerable<SingleSpell> spells;
+        private readonly Func<Page, Character, Character, Spell> spellBuilder;
+        private readonly Page current;
 
-        public MultiSpell(SpellBook book, Character caster, IEnumerable<SingleSpell> spells) : base(book, caster) {
-            this.spells = spells;
+        public MultiSpell(SpellBook book, Character caster, Page current, Func<Page, Character, Character, Spell> spellBuilder) : base(book, caster) {
+            this.spellBuilder = spellBuilder;
+            this.current = current;
         }
 
         public override ResultType ResultType {
@@ -26,7 +28,7 @@ namespace Scripts.Model.Spells {
 
         public override bool IsCastable {
             get {
-                return spells.Any(s1 => book.IsCastableIgnoreResources(caster, spells.Select(s2 => s2.Target).ToArray()));
+                return book.TargetType.GetTargets(caster, current).Any(target => book.IsCastableIgnoreResources(caster, new Character[] { target }));
             }
         }
 
@@ -36,11 +38,17 @@ namespace Scripts.Model.Spells {
             }
         }
 
+        private IEnumerable<Character> Targets {
+            get {
+                return book.TargetType.GetTargets(caster, current);
+            }
+        }
+
         protected override IEnumerator Cast(Page current, bool isAddCastText) {
             TextBox spellMessage = this.CastText;
             if (IsCastable) {
-                foreach (SingleSpell spell in spells) {
-                    yield return spell.Play(current, false);
+                foreach (Character target in Targets) {
+                    yield return spellBuilder(current, caster, target).Play(current, false);
                 }
             }
             if (isAddCastText) {
