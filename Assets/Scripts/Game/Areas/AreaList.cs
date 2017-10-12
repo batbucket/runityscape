@@ -108,11 +108,6 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.SharkPirate())
                             }),
                         new BattleStage(
-                            "Swarm",
-                            () => new Encounter[] {
-                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm())
-                            }),
-                        new BattleStage(
                             "Sinister singers",
                             () => new Encounter[] {
                                 new Encounter(OceanNPCs.Siren()),
@@ -122,7 +117,14 @@ namespace Scripts.Game.Areas {
                             "GitKraken",
                             () => new Encounter [] {
                                 new Encounter(Music.BOSS, OceanNPCs.Kraken())
-                            })
+                            }),
+                        new BattleStage(
+                            "Heart of the Swarm",
+                            () => new Encounter[] {
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
+                            }),
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
                 );
