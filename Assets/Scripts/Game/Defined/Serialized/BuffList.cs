@@ -268,10 +268,10 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class DelayedEternalDeath : DelayedEffectSong {
+    public class DelayedHyperDeath : DelayedEffectSong {
         private static readonly StatType AFFECTED_STAT = StatType.VITALITY;
 
-        public DelayedEternalDeath() : base(4, "skull-crossed-bones", AFFECTED_STAT, "Curse: Eternal Death") {
+        public DelayedHyperDeath() : base(4, "skull-crossed-bones", AFFECTED_STAT, "Curse: Hyperdeath") {
         }
     }
 }

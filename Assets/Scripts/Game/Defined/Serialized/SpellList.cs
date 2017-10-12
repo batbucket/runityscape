@@ -542,7 +542,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         }
     }
 
-    public class CastDelayedEternalDeath : BuffAdder<DelayedEternalDeath> {
+    public class CastDelayedEternalDeath : BuffAdder<DelayedHyperDeath> {
 
         public CastDelayedEternalDeath() : base(TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.NORMAL) {
             this.isBuffUnique = true;
