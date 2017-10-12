@@ -122,7 +122,8 @@ namespace Scripts.Game.Defined.Characters {
                 )
                 .AddStats(new Mana())
                 .AddSpells(new WaterboltSingle(), new WaterboltMulti())
-                .AddBuff(new Insight());
+                .AddBuff(new Insight())
+                .AddItem(new Cleanse(), Util.IsChance(.25f));
         }
 
         public static Character DreadSinger() {
@@ -134,7 +135,9 @@ namespace Scripts.Game.Defined.Characters {
                         "Singer of the voices of dread.",
                         Breed.FISH
                         ),
-                    new DreadSinger());
+                    new DreadSinger())
+                    .AddSpells(new CastDelayedDeath())
+                    .AddItem(new Cleanse(), 1);
         }
 
         public static Character Swarm() {
