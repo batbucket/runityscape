@@ -37,7 +37,7 @@ namespace Scripts.Model.Characters {
             if (sb.TargetType.TargetCount == TargetCount.SINGLE_TARGET) {
                 spell = CastOnLeastTarget(sb, c => 0);
             } else if (sb.TargetType.TargetCount == TargetCount.MULTIPLE_TARGETS) {
-                spell = brainOwner.Spells.CreateSpell(currentBattle, sb, brainOwner);
+                spell = GetSpellOrDefault(sb, DEFAULT_SPELL);
             } else {
                 Util.Assert(false, "Invalid target count: " + sb.TargetType.TargetCount);
             }
@@ -85,6 +85,17 @@ namespace Scripts.Model.Characters {
             return GetSpellOrDefault(singleCharacterChooser(possibleTargets), spellToCast, defaultSpell);
         }
 
+        // multitarget version
+        private Spell GetSpellOrDefault(SpellBook spellBookToCastFrom, SpellBook defaultSpell) {
+            Spell spellToCast = null;
+            if (spellBookToCastFrom.IsCastable(brainOwner, spellBookToCastFrom.TargetType.GetTargets(brainOwner, currentBattle))) {
+                spellToCast = brainOwner.Spells.CreateSpell(currentBattle, spellBookToCastFrom, brainOwner);
+            } else {
+                spellToCast = brainOwner.Spells.CreateSpell(currentBattle, defaultSpell, brainOwner, brainOwner);
+            }
+            return spellToCast;
+        }
+
         private Spell GetSpellOrDefault(Character specificTarget, SpellBook spellToCast, SpellBook defaultSpell) {
             // If spell is not castable, default to waiting.
             if (specificTarget != null) {
@@ -98,7 +109,7 @@ namespace Scripts.Model.Characters {
                     return brainOwner.Spells.CreateSpell(currentBattle, spellToCast, brainOwner, specificTarget);
                 }
             }
-            return brainOwner.Spells.CreateSpell(currentBattle, DEFAULT_SPELL, brainOwner, brainOwner);
+            return brainOwner.Spells.CreateSpell(currentBattle, defaultSpell, brainOwner, brainOwner);
         }
     }
 }
