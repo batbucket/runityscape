@@ -414,6 +414,10 @@ public static class Util {
     public static Color SetAlpha(this Color color, float alpha) {
         return new UnityEngine.Color(color.r, color.g, color.b, alpha);
     }
+
+    public static float ConvertToPercent(this int integer) {
+        return (integer + 0.0f) / 100f;
+    }
 }
 
 public static class IListExtensions {
