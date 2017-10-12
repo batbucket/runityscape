@@ -285,7 +285,7 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
             : base(duration,
                   Util.GetSprite(spriteLoc),
                   name,
-                  string.Format("On time-out, unit loses ALL {0}.", affectedStat.ColoredName),
+                  string.Format("On time-out, affected unit loses ALL {0}.", affectedStat.ColoredName),
                   true) {
             this.affectedStat = affectedStat;
         }
