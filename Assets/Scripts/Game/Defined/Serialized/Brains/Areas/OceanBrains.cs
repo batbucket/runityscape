@@ -89,11 +89,13 @@ namespace Scripts.Game.Serialized.Brains {
     }
 
     public class Kraken : PriorityBrain {
-        public const int TURNS_BETWEEN_TENTACLE_SUMMONS = 5;
+        private const int TURNS_BETWEEN_TENTACLE_SUMMONS = 8;
+        private const float LOW_HEALTH_PERCENTAGE = 0.50f;
 
         protected override IList<Spell> GetPriorityPlays() {
             return new Spell[] {
-                CastOnRandom(new SpawnTentacles()),
+                CastOnRandom(new SpawnTentacles(), () => (currentBattle.TurnCount % TURNS_BETWEEN_TENTACLE_SUMMONS) == 0),
+                CastOnRandom(new CrushingBlow(), () => (brainOwner.Stats.GetStatPercent(StatType.HEALTH) < LOW_HEALTH_PERCENTAGE)),
                 CastOnRandom(new Attack())
             };
         }
