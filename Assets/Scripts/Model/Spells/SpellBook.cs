@@ -150,7 +150,8 @@ namespace Scripts.Model.Spells {
                 return new TooltipBundle(
                     this.Icon,
                     this.Name,
-                    string.Format("{0}{1}{2}",
+                    string.Format("{0}{1}{2}{3}",
+                        TurnsToCharge == 0 ? string.Empty : string.Format("Cast time: {0} turn(s)\n", TurnsToCharge),
                         Priority == 0 ? string.Empty : string.Format("{0} priority\n", Priority.GetDescription()),
                         Costs.Count == 0 ? string.Empty : string.Format("Costs {0}\n", GetCommaSeparatedCosts()),
                         CreateDescriptionHelper()

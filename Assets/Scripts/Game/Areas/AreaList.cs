@@ -148,6 +148,7 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Finale",
                             () => new Encounter[] {
+                                new Encounter(OceanNPCs.Elemental())
                             })
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }

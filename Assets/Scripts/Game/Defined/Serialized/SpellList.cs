@@ -133,6 +133,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.LOW) {
             AddCost(StatType.SKILL, SKILL_COST);
             AddCost(StatType.HEALTH, HEALTH_COST);
+            this.TurnsToCharge = 1;
         }
 
         protected override string CreateDescriptionHelper() {

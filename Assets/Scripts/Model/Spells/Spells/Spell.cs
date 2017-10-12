@@ -20,9 +20,11 @@ namespace Scripts.Model.Spells {
         /// <summary>
         /// The spell text
         /// </summary>
-        public const string CAST_TEXT = "<color=yellow>{0}</color> {1}s <color=cyan>{2}</color>{3}.{4}";
+        private const string CAST_TEXT = "<color=yellow>{0}</color> {1}s <color=cyan>{2}</color>{3}.{4}";
 
-        public const string DECLARE_TEXT = "<color=yellow >{0}</color> will {1} <color=cyan>{2}</color>{3}.";
+        private const string DECLARE_TEXT = "<color=yellow >{0}</color> will {1} <color=cyan>{2}</color>{3}.";
+
+        private const string SPELL_CHARGE_MESSAGE = "<color=yellow>{0}</color> readies <color=cyan>{1}</color>{2}!";
 
         /// <summary>
         /// The book
@@ -34,6 +36,8 @@ namespace Scripts.Model.Spells {
         /// </summary>
         protected readonly Character caster;
 
+        private int turnsUntilCast;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Spell"/> class.
         /// </summary>
@@ -42,6 +46,7 @@ namespace Scripts.Model.Spells {
         public Spell(SpellBook book, Character caster) {
             this.book = book;
             this.caster = caster;
+            this.turnsUntilCast = book.TurnsToCharge;
         }
 
         public Character Caster {
@@ -53,6 +58,19 @@ namespace Scripts.Model.Spells {
         public string CasterName {
             get {
                 return caster.Look.DisplayName;
+            }
+        }
+
+        public TextBox ChargingText {
+            get {
+                string returnString = string.Empty;
+                if (turnsUntilCast == 1) {
+                    returnString = string.Format(SPELL_CHARGE_MESSAGE, Caster.Look.DisplayName, book.Name, TargetName, turnsUntilCast, turnsUntilCast > 1 ? "s" : string.Empty);
+                }
+                return new TextBox(
+                    returnString,
+                    book.TextboxTooltip
+                    );
             }
         }
 
@@ -99,6 +117,12 @@ namespace Scripts.Model.Spells {
             }
         }
 
+        public bool IsSpellCharged {
+            get {
+                return turnsUntilCast == 0;
+            }
+        }
+
         public abstract bool IsCastable {
             get;
         }
@@ -119,6 +143,11 @@ namespace Scripts.Model.Spells {
             } else {
                 return diff;
             }
+        }
+
+        public void DecrementTurnsToCharge() {
+            Util.Assert(turnsUntilCast >= 0, "Turns to charge must be nonnegative.");
+            turnsUntilCast--;
         }
 
         /// <summary>

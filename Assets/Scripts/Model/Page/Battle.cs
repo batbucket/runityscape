@@ -69,6 +69,8 @@ namespace Scripts.Model.Pages {
 
         private IList<ISpellable> temporarySpells;
 
+        private IDictionary<Character, Spell> charactersChargingSpells;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -96,6 +98,7 @@ namespace Scripts.Model.Pages {
                 Right.Add(c);
             }
             SetupTempSpells();
+            this.charactersChargingSpells = new Dictionary<Character, Spell>(new IdNumberEqualityComparer<Character>());
             OnEnter += () => {
                 if (!IsResolved) {
                     Presenter.Main.Instance.StartCoroutine(startBattle());
@@ -341,7 +344,7 @@ namespace Scripts.Model.Pages {
             for (int i = 0; i < chars.Count; i++) {
                 Character c = chars[i];
 
-                if (c.Stats.State == State.ALIVE) {
+                if (c.Stats.State == State.ALIVE && !charactersChargingSpells.ContainsKey(c)) {
                     PooledBehaviour textbox = null;
 
                     // Only show when player controlled is asked to make a move
@@ -385,13 +388,17 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private void InBattlePlayHandler(HashSet<Character> playerActionSet, IList<Spell> plays, Character c, ref bool isActionTaken, Spell playToAdd) {
-            if (!playerActionSet.Contains(c)) {
-                plays.Add(playToAdd);
-                playerActionSet.Add(c);
+        private void InBattlePlayHandler(HashSet<Character> playerActionSet, IList<Spell> plays, Character characterAddingPlay, ref bool isActionTaken, Spell playToAdd) {
+            if (!playerActionSet.Contains(characterAddingPlay)) {
+                if (playToAdd.IsSpellCharged) {
+                    plays.Add(playToAdd);
+                } else {
+                    charactersChargingSpells.Add(characterAddingPlay, playToAdd);
+                }
+                playerActionSet.Add(characterAddingPlay);
                 isActionTaken = true;
             } else {
-                Util.Assert(false, string.Format("{0}'s brain adds more than one Spell objects in its DetermineAction().", c.Look.DisplayName));
+                Util.Assert(false, string.Format("{0}'s brain adds more than one Spell objects in its DetermineAction().", characterAddingPlay.Look.DisplayName));
             }
         }
 
@@ -454,14 +461,42 @@ namespace Scripts.Model.Pages {
             }
         }
 
-        private IEnumerator PerformActions(List<Spell> spells) {
+        private IEnumerator UpdateChargingSpells(List<Spell> spellsToBeCast) {
+            // Remove dead characters from charging dict
+            foreach (Character battler in GetAll()) {
+                if (battler.Stats.State == State.DEAD) {
+                    charactersChargingSpells.Remove(battler);
+                }
+            }
+
+            // Get all spells that are finished charging
+            List<Spell> spellsThatFinishedCharging = new List<Spell>();
+            foreach (KeyValuePair<Character, Spell> pair in charactersChargingSpells) {
+                if (pair.Value.IsSpellCharged) {
+                    spellsThatFinishedCharging.Add(pair.Value);
+                } else {
+                    yield return AddText(pair.Value.ChargingText);
+                    pair.Value.DecrementTurnsToCharge();
+                }
+            }
+
+            // Remove finished spells from the dict and Add finished spells to spells to be cast
+            foreach (Spell spellThatFinishedCharging in spellsThatFinishedCharging) {
+                charactersChargingSpells.Remove(spellThatFinishedCharging.Caster);
+                spellsToBeCast.Add(spellThatFinishedCharging);
+            }
+        }
+
+        private IEnumerator PerformActions(List<Spell> spellsToBeCast) {
             // Shuffle first, then do a stable sort to make speed ties random
-            spells.Shuffle();
-            spells = spells.OrderBy(p => p).ToList();
-            for (int i = 0; i < spells.Count; i++) {
-                yield return new WaitForSeconds(0.10f);
-                Spell spell = spells[i];
-                yield return spell.Play(this, true);
+            spellsToBeCast.Shuffle();
+            spellsToBeCast = spellsToBeCast.OrderBy(p => p).ToList();
+            for (int i = 0; i < spellsToBeCast.Count; i++) {
+                Spell spell = spellsToBeCast[i];
+                if (spell.Caster.Stats.State == State.ALIVE) {
+                    yield return new WaitForSeconds(0.10f);
+                    yield return spell.Play(this, true);
+                }
             }
         }
 
@@ -558,6 +593,7 @@ namespace Scripts.Model.Pages {
 
             yield return StartOfRound(allBattlers);
             yield return DetermineCharacterActions(allBattlers, plays, playerActionSet);
+            yield return UpdateChargingSpells(plays);
             yield return PerformActions(plays);
             yield return GoThroughBuffs(allBattlers);
             yield return CheckForDeath();
