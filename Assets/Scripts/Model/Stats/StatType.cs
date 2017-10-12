@@ -33,7 +33,7 @@ namespace Scripts.Model.Stats {
                                                                            "Intellect",
                                                                            "light-bulb",
                                                                            "Increases spell effects.",
-                                                                           Color.blue);
+                                                                           Color.cyan);
 
         public static readonly StatType AGILITY = new StatType(BOOSTED_INCREASE_FROM_STAT_POINT_AMOUNT,
                                                                 BoundType.ASSIGNABLE,
