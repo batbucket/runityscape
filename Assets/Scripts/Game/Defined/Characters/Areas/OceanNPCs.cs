@@ -82,7 +82,7 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character Kraken() {
             return CharacterUtil.StandardEnemy(
-                    new Stats(8, 5, 10, 10, 100),
+                    new Stats(8, 5, 10, 20, 100),
                     new Look(
                         "Kraken",
                         "shark",
@@ -92,6 +92,7 @@ namespace Scripts.Game.Defined.Characters {
                     new Kraken()
                 )
                 .AddSpells(new SpawnTentacles())
+                .AddSpells(new CrushingBlow())
                 .AddStats(new Skill());
         }
 
@@ -132,7 +133,7 @@ namespace Scripts.Game.Defined.Characters {
                     new Look(
                         "Sea Witch",
                         "siren",
-                        "Singer of the voices of dread.",
+                        "Singer of the voices of death.",
                         Breed.FISH
                         ),
                     new DreadSinger())
@@ -150,7 +151,7 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.FISH
                     ),
                 new Swarm())
-                .AddItem(new Money(), Util.RandomRange(0, 1));
+                .AddItem(new Money(), Util.RandomRange(5, 10));
         }
     }
 }
