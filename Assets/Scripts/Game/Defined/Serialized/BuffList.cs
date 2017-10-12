@@ -296,7 +296,7 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
 
         protected override IList<SpellEffect> OnTimeOutHelper(Stats ownerOfThisBuff) {
             return new SpellEffect[] {
-                new AddToModStat(ownerOfThisBuff, StatType.VITALITY, -ownerOfThisBuff.GetStatCount(Stats.Get.TOTAL, affectedStat))
+                new AddToModStat(ownerOfThisBuff, affectedStat, -ownerOfThisBuff.GetStatCount(Stats.Get.TOTAL, affectedStat))
             };
         }
     }
