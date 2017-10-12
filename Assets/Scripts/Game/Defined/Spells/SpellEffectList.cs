@@ -22,9 +22,21 @@ namespace Scripts.Game.Defined.Spells {
         }
     }
 
-    public class HealMissingHealthPercent : AddToModStat {
+    public class DispelBuff<T> : SpellEffect where T : Buff {
+        private readonly Buffs buffsToDispelFrom;
 
-        public HealMissingHealthPercent(Stats target, float missingHealthRestoration) : base(target, StatType.HEALTH, (int)(target.GetMissingStatCount(StatType.HEALTH) * missingHealthRestoration)) {
+        public DispelBuff(Buffs buffsToDispelFrom) : base(1) {
+            this.buffsToDispelFrom = buffsToDispelFrom;
+        }
+
+        public override void CauseEffect() {
+            buffsToDispelFrom.DispelBuffsOfType<T>();
+        }
+    }
+
+    public class RestoreMissingStatPercent : AddToModStat {
+
+        public RestoreMissingStatPercent(Stats target, StatType type, int missingHealthRestorationPercent) : base(target, type, (int)(target.GetMissingStatCount(StatType.HEALTH) * missingHealthRestorationPercent.ConvertToPercent())) {
         }
     }
 

@@ -64,16 +64,16 @@ namespace Scripts.Model.Spells {
                 effects.Add(new DispelBuff<T>(target.Buffs));
             }
 
-            return new SpellEffect[] {
-                new AddBuff(
+            effects.Add(new AddBuff(
                     new BuffParams(caster.Stats, caster.Id),
                     target.Buffs,
-                    Util.TypeToObject<Buff>(dummy.GetType()))
-            };
+                    Util.TypeToObject<Buff>(Buff.GetType())));
+
+            return effects.ToArray();
         }
 
         protected sealed override string CreateDescriptionHelper() {
-            return CreateBuffDescription(this.TargetType, dummy);
+            return CreateBuffDescription(this.TargetType, Buff);
         }
 
         /// <summary>
