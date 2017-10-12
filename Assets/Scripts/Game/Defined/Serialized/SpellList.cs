@@ -403,7 +403,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
 
     public abstract class SingSirenSong : BuffAdder {
 
-        public SingSirenSong(Buff sirenSong) : base(TargetType.ONE_FOE, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {
+        public SingSirenSong(Buff sirenSong) : base(TargetType.ALL_FOE, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {
         }
     }
 

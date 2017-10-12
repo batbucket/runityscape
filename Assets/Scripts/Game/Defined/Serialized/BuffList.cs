@@ -378,8 +378,8 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
     }
 
     public abstract class SirenSong : StatChange {
-        private const int STAT_REDUCTION_PERCENT = 20;
-        private const int DURATION = 5;
+        private const int STAT_REDUCTION_PERCENT = 10;
+        private const int DURATION = 3;
 
         public SirenSong(StatType type, string buffName)
             : base(DURATION, type, -STAT_REDUCTION_PERCENT, buffName, Util.GetSprite("g-clef")) { }
