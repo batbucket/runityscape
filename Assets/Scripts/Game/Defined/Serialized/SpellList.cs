@@ -154,7 +154,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
             return new IEnumerator[] {
-                SFX.DoMeleeEffect(caster, target, 0.5f, "Boom_6")
+                SFX.DoMeleeEffect(caster, target, 0.5f, "Boom_6", true)
             };
         }
     }
@@ -416,8 +416,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
 
     public class SpawnTentacles : BasicSpellbook {
 
-        public SpawnTentacles() : base("Tentacle Eruption", Util.GetSprite("shark"), TargetType.SELF, SpellType.BOOST) {
-            AddCost(StatType.SKILL, Kraken.TURNS_BETWEEN_TENTACLE_SUMMONS);
+        public SpawnTentacles() : base("Tentacle Eruption", Util.GetSprite("shark"), TargetType.SELF, SpellType.BOOST, PriorityType.LOWEST) {
         }
 
         protected override string CreateDescriptionHelper() {

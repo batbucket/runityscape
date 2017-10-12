@@ -4,6 +4,7 @@ using Scripts.Presenter;
 using Scripts.View.Effects;
 using Scripts.View.ObjectPool;
 using Scripts.View.Sounds;
+using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -71,7 +72,7 @@ namespace Scripts.Game.Defined.SFXs {
         /// <param name="duration">The duration.</param>
         /// <param name="soundLoc">The sound loc.</param>
         /// <returns></returns>
-        public static IEnumerator DoMeleeEffect(IPortraitable mover, IPortraitable destination, float duration, string soundLoc) {
+        public static IEnumerator DoMeleeEffect(IPortraitable mover, IPortraitable destination, float duration, string soundLoc, bool isHaveStars = false) {
             // Move mover to upper layer so it is on top of all elements
             int index = mover.RectTransform.GetSiblingIndex();
             GameObject parent = mover.RectTransform.parent.gameObject;
@@ -83,7 +84,9 @@ namespace Scripts.Game.Defined.SFXs {
             Presenter.Main.Instance.Sound.PlaySound(soundLoc);
             yield return Shake(destination.RectTransform, 100, duration / 3);
             yield return MoveBack(mover.RectTransform, moverOriginalPos, duration / 3);
-
+            if (isHaveStars) {
+                yield return DoStarEffect(destination);
+            }
             Util.Parent(mover.RectTransform.gameObject, parent);
 
             mover.RectTransform.SetSiblingIndex(index);
@@ -105,8 +108,16 @@ namespace Scripts.Game.Defined.SFXs {
             portrait.ParentToEffects(ev.gameObject);
             ev.Play();
             yield return DoHitSplat(portrait, "DEFEAT", Color.red, Util.GetSprite("skull-crossed-bones"));
-            yield return new WaitUntil(() => ev);
             ObjectPoolManager.Instance.Return(ev);
+        }
+
+        public static IEnumerator DoStarEffect(IPortraitable portrait) {
+            ExplosionView ev = ObjectPoolManager.Instance.Get(EffectsManager.Instance.Explosion);
+            Rect rect = portrait.RectTransform.rect;
+            ev.Dimensions = new Vector2(rect.width, rect.height);
+            portrait.ParentToEffects(ev.gameObject);
+            ev.Play();
+            yield return new WaitUntil(() => ev.IsDone);
         }
 
         public static IEnumerator DoSteamEffect(IPortraitable portrait, Color color) {
@@ -163,7 +174,7 @@ namespace Scripts.Game.Defined.SFXs {
             float timer = 0;
             while ((timer += Time.deltaTime) < duration) {
                 float intensity = Mathf.SmoothStep(maxIntensity, 0, timer / duration);
-                item.transform.position = new Vector2(Mathf.Sin(Random.value) * intensity + original.x, Mathf.Sin(Random.value) * intensity + original.y);
+                item.transform.position = new Vector2(Mathf.Sin(UnityEngine.Random.value) * intensity + original.x, Mathf.Sin(UnityEngine.Random.value) * intensity + original.y);
                 yield return null;
             }
             item.position = original;
