@@ -237,7 +237,7 @@ namespace Scripts.Model.Characters {
         /// </value>
         public State State {
             get {
-                if (GetStatCount(Get.MOD, StatType.HEALTH) <= 0) {
+                if (GetStatCount(Get.MOD, StatType.HEALTH) <= 0 || GetStatCount(Get.TOTAL, StatType.VITALITY) <= 0) {
                     return State.DEAD;
                 } else {
                     return State.ALIVE;
