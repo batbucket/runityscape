@@ -1,4 +1,5 @@
-﻿using Scripts.Game.Defined.Serialized.Items;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Defined.Unserialized.Spells;
@@ -105,6 +106,21 @@ namespace Scripts.Game.Defined.Characters {
                 new BlackShuck())
                 .AddStats(new Skill())
                 .AddSpells(new SetupCounter());
+        }
+
+        public static Character Elemental() {
+            return CharacterUtil.StandardEnemy(
+                new Stats(9, 5, 20, 15, 20),
+                new Look(
+                    "Undine",
+                    "villager",
+                    "Sea elemental.",
+                    Breed.FISH
+                    ),
+                new Elemental()
+                )
+                .AddSpells(new WaterboltSingle(), new WaterboltMulti())
+                .AddBuff(new Insight());
         }
 
         public static Character Swarm() {

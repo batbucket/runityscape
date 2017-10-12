@@ -125,6 +125,11 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
                                 new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
                             }),
+                        new BattleStage(
+                            "Is this an Undertale reference?",
+                            () => new Encounter [] {
+                                new Encounter(OceanNPCs.Elemental())
+                            })
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
                 );

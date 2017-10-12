@@ -425,4 +425,65 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
             return new SpellEffect[] { new GoToPage(destination, stopBattle) };
         }
     }
+
+    public class WaterboltSingle : WaterboltAbstract {
+        private const string SINGLE_TARGET_DESCRIPTION = "A burst of boiling water that has a chance to inflict\n<color=cyan>{0}</color>\n{1}";
+
+        public WaterboltSingle() : base(TargetType.ONE_FOE, "Scald", SINGLE_TARGET_DESCRIPTION) {
+        }
+    }
+
+    public class WaterboltMulti : WaterboltAbstract {
+        private const int MANA_COST = 10;
+        private const string MULTI_TARGET_DESCRIPTION = "Bursts of boiling water that have a chance to inflict\n<color=cyan>{0}</color>\n{1}";
+
+        public WaterboltMulti() : base(TargetType.ALL_FOE, "Multi Scald", MULTI_TARGET_DESCRIPTION) {
+            AddCost(StatType.MANA, MANA_COST);
+        }
+    }
+
+    public abstract class WaterboltAbstract : BasicSpellbook {
+        private const float CHANCE_OF_CRITICAL = 0.30f;
+        private static readonly Buff IGNITE_BUFF = new Ignited();
+
+        private readonly string description;
+
+        public WaterboltAbstract(TargetType targetType, string name, string description) : base(name, Util.GetSprite("water-bolt"), targetType, SpellType.OFFENSE) {
+            this.description = description;
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format(
+                description,
+                IGNITE_BUFF.Name,
+                IGNITE_BUFF.Description);
+        }
+
+        protected override bool IsCritical(Character caster, Character target) {
+            return Util.IsChance(CHANCE_OF_CRITICAL);
+        }
+
+        protected override IList<SpellEffect> GetCriticalEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                DamageEffect(caster, target),
+                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new Ignited())
+            };
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                DamageEffect(caster, target)
+            };
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] {
+                SFX.DoSteamEffect(target, Color.cyan)
+            };
+        }
+
+        private SpellEffect DamageEffect(Character caster, Character target) {
+            return new AddToModStat(target.Stats, StatType.HEALTH, -caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT));
+        }
+    }
 }

@@ -88,4 +88,14 @@ namespace Scripts.Game.Serialized.Brains {
             };
         }
     }
+
+    public class Elemental : PriorityBrain {
+
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
+                CastOnRandom(new WaterboltMulti()),
+                CastOnLeastTarget(new WaterboltSingle(), target => target.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH))
+            };
+        }
+    }
 }
