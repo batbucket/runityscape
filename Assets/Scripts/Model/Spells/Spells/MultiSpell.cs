@@ -8,6 +8,9 @@ using Scripts.Model.Pages;
 
 namespace Scripts.Model.Spells {
 
+    /// <summary>
+    /// Represents a spell that hits multiple targets
+    /// </summary>
     public class MultiSpell : Spell {
         private readonly IEnumerable<SingleSpell> spells;
 
