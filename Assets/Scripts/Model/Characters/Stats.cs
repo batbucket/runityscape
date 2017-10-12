@@ -299,6 +299,14 @@ namespace Scripts.Model.Characters {
             return GetStatCount(Get.MAX, type) - GetStatCount(Get.MOD, type);
         }
 
+        public float GetStatPercent(StatType type) {
+            float returnValue = 0;
+            if (HasStat(type)) {
+                returnValue = (GetStatCount(Get.TOTAL, type) + 0.0f) / GetStatCount(Get.MAX, type);
+            }
+            return returnValue;
+        }
+
         /// <summary>
         /// Sets to stat.
         /// </summary>
