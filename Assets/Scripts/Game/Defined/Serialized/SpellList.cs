@@ -103,6 +103,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
                 new PostText(CheckText(target)),
+                new DispelBuff<Checked>(target.Buffs),
                 new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new Checked())
             };
         }
@@ -120,6 +121,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         public InflictPoison() : base(TargetType.ONE_FOE, SpellType.OFFENSE, "Infect", PriorityType.NORMAL) {
             AddCost(StatType.MANA, 1);
+            this.isBuffUnique = true;
         }
     }
 
@@ -236,6 +238,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class SetupDefend : BuffAdder<Defend> {
 
         public SetupDefend() : base(TargetType.SELF, SpellType.DEFENSE, "Defend", PriorityType.HIGHEST) {
+            this.isBuffUnique = true;
         }
 
         protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
@@ -277,6 +280,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
 
         public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, "Counter", PriorityType.LOW) {
             AddCost(StatType.SKILL, 3);
+            this.isBuffUnique = true;
         }
     }
 
@@ -367,6 +371,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
     public class Blackout : BuffAdder<BlackedOut> {
 
         public Blackout() : base(TargetType.ONE_FOE, SpellType.OFFENSE, "Blackout", PriorityType.HIGH) {
+            this.isBuffUnique = true;
         }
     }
 
@@ -527,6 +532,20 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
 
         private SpellEffect DamageEffect(Character caster, Character target) {
             return new AddToModStat(target.Stats, StatType.HEALTH, -caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT));
+        }
+    }
+
+    public class CastDelayedDeath : BuffAdder<DelayedDeath> {
+
+        public CastDelayedDeath() : base(TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.NORMAL) {
+            this.isBuffUnique = true;
+        }
+    }
+
+    public class CastDelayedEternalDeath : BuffAdder<DelayedEternalDeath> {
+
+        public CastDelayedEternalDeath() : base(TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.NORMAL) {
+            this.isBuffUnique = true;
         }
     }
 }
