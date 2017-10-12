@@ -119,6 +119,7 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Elemental()
                 )
+                .AddStats(new Mana())
                 .AddSpells(new WaterboltSingle(), new WaterboltMulti())
                 .AddBuff(new Insight());
         }
