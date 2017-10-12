@@ -31,18 +31,24 @@ namespace Scripts.Model.Characters {
         /// </summary>
         /// <param name="sb"></param>
         /// <returns></returns>
-        protected Spell CastOnRandom(SpellBook sb) {
+        protected Spell CastOnRandom(SpellBook sb, Func<bool> castRequirement) {
             Spell spell = null;
 
-            if (sb.TargetType.TargetCount == TargetCount.SINGLE_TARGET) {
-                spell = CastOnLeastTarget(sb, c => 0);
-            } else if (sb.TargetType.TargetCount == TargetCount.MULTIPLE_TARGETS) {
-                spell = GetSpellOrDefault(sb, DEFAULT_SPELL);
-            } else {
-                Util.Assert(false, "Invalid target count: " + sb.TargetType.TargetCount);
+            if (castRequirement()) {
+                if (sb.TargetType.TargetCount == TargetCount.SINGLE_TARGET) {
+                    spell = CastOnLeastTarget(sb, c => 0);
+                } else if (sb.TargetType.TargetCount == TargetCount.MULTIPLE_TARGETS) {
+                    spell = GetSpellOrDefault(sb, DEFAULT_SPELL);
+                } else {
+                    Util.Assert(false, "Invalid target count: " + sb.TargetType.TargetCount);
+                }
             }
 
             return spell ?? brainOwner.Spells.CreateSpell(currentBattle, DEFAULT_SPELL, brainOwner, brainOwner);
+        }
+
+        protected Spell CastOnRandom(SpellBook sb) {
+            return CastOnRandom(sb, () => true);
         }
 
         protected Spell CastOnLeastTarget(SpellBook spellToCast, Func<Character, int> sorter) {
