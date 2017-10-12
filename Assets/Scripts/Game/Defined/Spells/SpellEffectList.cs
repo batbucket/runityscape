@@ -11,6 +11,23 @@ using Scripts.Presenter;
 
 namespace Scripts.Game.Defined.Spells {
 
+    public class DispelAllBuffs : SpellEffect {
+        private readonly Buffs buffsToDispelFrom;
+
+        public DispelAllBuffs(Buffs buffsToDispelFrom) : base(1) {
+        }
+
+        public override void CauseEffect() {
+            buffsToDispelFrom.DispelAllBuffs();
+        }
+    }
+
+    public class HealMissingHealthPercent : AddToModStat {
+
+        public HealMissingHealthPercent(Stats target, float missingHealthRestoration) : base(target, StatType.HEALTH, (int)(target.GetMissingStatCount(StatType.HEALTH) * missingHealthRestoration)) {
+        }
+    }
+
     /// <summary>
     /// Adds to a stat's mod value.
     /// </summary>

@@ -90,28 +90,15 @@ namespace Scripts.Game.Defined.Serialized.Items {
             : base(500,
                   TargetType.ONE_ALLY,
                   "Revival Seed",
-                  string.Format("Use on a fallen ally to revive them to {0}% {1}.",
+                  string.Format("Use on an ally to restore them to {0}% {1}. Can be used on fallen allies.",
                       HEALTH_RECOVERY_PERCENTAGE,
                       StatType.HEALTH.ColoredName)) {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
-            int revivedHealth = (int)(target.Stats.GetMissingStatCount(StatType.HEALTH) * (HEALTH_RECOVERY_PERCENTAGE / 100f));
             return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, revivedHealth)
+                new HealMissingHealthPercent(target.Stats, HEALTH_RECOVERY_PERCENTAGE.ConvertToPercent())
             };
-        }
-
-        /// <summary>
-        /// Can be used on the dead, and only the dead!
-        /// </summary>
-        /// <param name="caster">The caster.</param>
-        /// <param name="target">The target.</param>
-        /// <returns>
-        ///   <c>true</c> if caster can use the item on target; otherwise, <c>false</c>.
-        /// </returns>
-        protected override bool IsMeetOtherRequirements(Character caster, Character target) {
-            return target.Stats.State == State.DEAD;
         }
     }
 

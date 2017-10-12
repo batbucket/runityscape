@@ -148,6 +148,25 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
+    public class Revive : BasicSpellbook {
+        private const int MANA_COST = 50;
+        private const int REVIVAL_HEALTH_PERCENT = 20;
+
+        public Revive() : base("Revive", Util.GetSprite("beams-aura"), TargetType.ONE_ALLY, SpellType.BOOST, PriorityType.LOW, true) {
+            AddCost(StatType.MANA, MANA_COST);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Restores {0}% of a target's missing health. Can be used on fallen allies.", REVIVAL_HEALTH_PERCENT);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new HealMissingHealthPercent(target.Stats, REVIVAL_HEALTH_PERCENT.ConvertToPercent())
+            };
+        }
+    }
+
     public class PlayerHeal : BasicSpellbook {
         private const int INTELLECT_TO_HEALTH = 1;
         private const int CRITICAL_INTELLECT_TO_HEALTH = 2;
