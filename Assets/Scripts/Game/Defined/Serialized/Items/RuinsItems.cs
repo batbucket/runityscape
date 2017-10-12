@@ -97,7 +97,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
             return new SpellEffect[] {
-                new HealMissingHealthPercent(target.Stats, HEALTH_RECOVERY_PERCENTAGE.ConvertToPercent())
+                new RestoreMissingStatPercent(target.Stats, StatType.HEALTH, HEALTH_RECOVERY_PERCENTAGE)
             };
         }
     }
