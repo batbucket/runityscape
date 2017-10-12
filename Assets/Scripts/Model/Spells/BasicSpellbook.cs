@@ -43,7 +43,11 @@ namespace Scripts.Model.Spells {
         }
 
         protected sealed override bool IsMeetOtherCastRequirements(Character caster, Character target) {
-            return (canTargetDead || target.Stats.State == Characters.State.ALIVE);
+            return (canTargetDead || target.Stats.State == Characters.State.ALIVE) && IsMeetCastRequirements(caster, target);
+        }
+
+        protected virtual bool IsMeetCastRequirements(Character caster, Character target) {
+            return true;
         }
     }
 }

@@ -23,7 +23,16 @@ namespace Scripts.Model.Spells {
         /// <param name="spell">The spell.</param>
         /// <param name="name">The name.</param>
         /// <param name="priority">The priority.</param>
-        public BuffAdder(TargetType target, SpellType spell, string name, PriorityType priority) : this(target, spell, Buff.Name, priority, Buff.Sprite) { }
+        public BuffAdder(TargetType target, SpellType spell, string name, PriorityType priority) : this(target, spell, name, priority, Buff.Sprite) { }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BuffAdder"/> class.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <param name="spell">The spell.</param>
+        /// <param name="name">The name.</param>
+        /// <param name="priority">The priority.</param>
+        public BuffAdder(TargetType target, SpellType spell, PriorityType priority) : this(target, spell, Buff.Name, priority, Buff.Sprite) { }
 
         /// <summary>
         /// Main
@@ -60,10 +69,6 @@ namespace Scripts.Model.Spells {
         protected sealed override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             List<SpellEffect> effects = new List<SpellEffect>();
 
-            if (isBuffUnique) {
-                effects.Add(new DispelBuff<T>(target.Buffs));
-            }
-
             effects.Add(new AddBuff(
                     new BuffParams(caster.Stats, caster.Id),
                     target.Buffs,
@@ -74,6 +79,10 @@ namespace Scripts.Model.Spells {
 
         protected sealed override string CreateDescriptionHelper() {
             return CreateBuffDescription(this.TargetType, Buff);
+        }
+
+        protected override bool IsMeetCastRequirements(Character caster, Character target) {
+            return !isBuffUnique || !target.Buffs.HasBuff<T>();
         }
 
         /// <summary>
