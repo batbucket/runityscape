@@ -66,6 +66,13 @@ namespace Scripts.Model.Characters {
             AddBuff(buff);
         }
 
+        public void DispelBuffs() {
+            IEnumerable<Buff> dispellableBuffs = set.Where(buff => buff.IsDispellable);
+            foreach (Buff dispellableBuff in dispellableBuffs) {
+                RemoveBuff(RemovalType.DISPEL, dispellableBuff);
+            }
+        }
+
         /// <summary>
         /// No caster variant. Buff already has caster set.
         /// </summary>
