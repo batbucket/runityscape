@@ -80,6 +80,8 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
     }
 
     public class Ignited : Buff {
+        private static readonly StatType REDUCED_STAT = StatType.STRENGTH;
+        private const int STAT_REDUCTION_PERCENT = 20;
         private const int DAMAGE_PER_TURN = 1;
         private const int DURATION = 5;
 
@@ -87,8 +89,10 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
             : base(DURATION,
                   Util.GetSprite("fire"),
                   "Ignited",
-                  string.Format("Take {0} damage at end of turn.",
+                  string.Format("{0} reduced. Take {1} damage at end of turn.",
+                      REDUCED_STAT.ColoredName,
                       DAMAGE_PER_TURN), true) {
+            AddMultiplicativeStatBonus(REDUCED_STAT, -STAT_REDUCTION_PERCENT);
         }
 
         protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
@@ -111,9 +115,9 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
     }
 
     public class Insight : Buff {
-        private const int MANA_RECOVERED_PER_TURN = 5;
+        public const int MANA_RECOVERED_PER_TURN = 5;
 
-        public Insight() : base(Util.GetSprite("water-drop"), "Insight", string.Format("Regenerating {0}.", StatType.MANA), false) {
+        public Insight() : base(Util.GetSprite("water-drop"), "Insight", string.Format("Regenerating {0}.", StatType.MANA.ColoredName), false) {
         }
 
         protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
