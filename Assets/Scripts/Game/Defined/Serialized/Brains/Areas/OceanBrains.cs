@@ -78,10 +78,12 @@ namespace Scripts.Game.Serialized.Brains {
         }
     }
 
-    public class DreadOrDeath : PriorityBrain {
+    public class DreadSinger : PriorityBrain {
 
         protected override IList<Spell> GetPriorityPlays() {
             return new Spell[] {
+                CastOnRandom(new CastDelayedDeath()),
+                CastOnRandom(new Attack())
             };
         }
     }

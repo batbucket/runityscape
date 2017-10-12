@@ -134,7 +134,7 @@ namespace Scripts.Game.Defined.Characters {
                         "Singer of the voices of dread.",
                         Breed.FISH
                         ),
-                    new Attacker());
+                    new DreadSinger());
         }
 
         public static Character Swarm() {
