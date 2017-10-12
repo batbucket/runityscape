@@ -78,6 +78,14 @@ namespace Scripts.Game.Serialized.Brains {
         }
     }
 
+    public class DreadOrDeath : PriorityBrain {
+
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
+            };
+        }
+    }
+
     public class Kraken : PriorityBrain {
         public const int TURNS_BETWEEN_TENTACLE_SUMMONS = 5;
 

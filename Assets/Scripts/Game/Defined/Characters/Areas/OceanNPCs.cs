@@ -125,6 +125,18 @@ namespace Scripts.Game.Defined.Characters {
                 .AddBuff(new Insight());
         }
 
+        public static Character DreadSinger() {
+            return CharacterUtil.StandardEnemy(
+                    new Stats(10, 5, 20, 20, 25),
+                    new Look(
+                        "Sea Witch",
+                        "siren",
+                        "Singer of the voices of dread.",
+                        Breed.FISH
+                        ),
+                    new Attacker());
+        }
+
         public static Character Swarm() {
             return CharacterUtil.StandardEnemy(
                 new Stats(2, 1, 5, 2, 15),
