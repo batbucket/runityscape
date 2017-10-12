@@ -31,7 +31,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         public const int SKILL_ON_HIT = 1;
         public const int SKILL_ON_CRIT = 2;
 
-        public Attack() : base("Attack", Util.GetSprite("fist"), TargetType.ONE_ENEMY, SpellType.OFFENSE) {
+        public Attack() : base("Attack", Util.GetSprite("fist"), TargetType.ONE_FOE, SpellType.OFFENSE) {
         }
 
         protected override string CreateDescriptionHelper() {
@@ -114,7 +114,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class InflictPoison : BuffAdder {
 
-        public InflictPoison() : base(TargetType.ONE_ENEMY, SpellType.OFFENSE, new Poison(), "Infect", PriorityType.NORMAL) {
+        public InflictPoison() : base(TargetType.ONE_FOE, SpellType.OFFENSE, new Poison(), "Infect", PriorityType.NORMAL) {
             AddCost(StatType.MANA, 1);
         }
     }
@@ -122,7 +122,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class CrushingBlow : BasicSpellbook {
         private const int INTELLECT_TO_DAMAGE_RATIO = 1;
 
-        public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.ONE_ENEMY, SpellType.OFFENSE, PriorityType.LOW) {
+        public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.LOW) {
             AddCost(StatType.SKILL, 2);
         }
 
@@ -200,7 +200,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class Arraystrike : BasicSpellbook {
 
-        public Arraystrike() : base("Arraystrike", Util.GetSprite("sword-array"), TargetType.ALL_FOES, SpellType.OFFENSE, PriorityType.LOW) {
+        public Arraystrike() : base("Arraystrike", Util.GetSprite("sword-array"), TargetType.ALL_FOE, SpellType.OFFENSE, PriorityType.LOW) {
             AddCost(StatType.SKILL, 5);
         }
 
@@ -322,14 +322,14 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
     public class Blackout : BuffAdder {
         private static readonly BlackedOut DUMMY = new BlackedOut();
 
-        public Blackout() : base(TargetType.ONE_ENEMY, SpellType.OFFENSE, DUMMY, "Blackout", PriorityType.HIGH) {
+        public Blackout() : base(TargetType.ONE_FOE, SpellType.OFFENSE, DUMMY, "Blackout", PriorityType.HIGH) {
         }
     }
 
     public class Ignite : BuffAdder {
         private static readonly Ignited DUMMY = new Ignited();
 
-        public Ignite() : base(TargetType.ONE_ENEMY, SpellType.OFFENSE, DUMMY, "Ignite", PriorityType.NORMAL) {
+        public Ignite() : base(TargetType.ONE_FOE, SpellType.OFFENSE, DUMMY, "Ignite", PriorityType.NORMAL) {
             AddCost(StatType.MANA, 10);
         }
 
@@ -403,7 +403,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
 
     public abstract class SingSirenSong : BuffAdder {
 
-        public SingSirenSong(Buff sirenSong) : base(TargetType.ONE_ENEMY, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {
+        public SingSirenSong(Buff sirenSong) : base(TargetType.ONE_FOE, SpellType.OFFENSE, sirenSong, Util.GetSprite("sonic-shout")) {
         }
     }
 

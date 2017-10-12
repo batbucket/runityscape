@@ -29,9 +29,9 @@ namespace Scripts.Model.Spells {
         public static TargetType ONE_ALLY = new TargetType("One ally", TargetCount.SINGLE_TARGET, (c, p) => p.GetAllies(c));
 
         public static TargetType ALL_ALLY = new TargetType("All allies", TargetCount.MULTIPLE_TARGETS, (c, p) => p.GetAllies(c).ToArray());
-        public static TargetType ONE_ENEMY = new TargetType("One foe", TargetCount.SINGLE_TARGET, (c, p) => p.GetFoes(c));
+        public static TargetType ONE_FOE = new TargetType("One foe", TargetCount.SINGLE_TARGET, (c, p) => p.GetFoes(c));
 
-        public static TargetType ALL_FOES = new TargetType("All foes", TargetCount.MULTIPLE_TARGETS, (c, p) => p.GetFoes(c).ToArray());
+        public static TargetType ALL_FOE = new TargetType("All foes", TargetCount.MULTIPLE_TARGETS, (c, p) => p.GetFoes(c).ToArray());
         public static TargetType ANY = new TargetType("Any", TargetCount.SINGLE_TARGET, (c, p) => p.GetAll());
 
         public static TargetType ALL = new TargetType("All", TargetCount.MULTIPLE_TARGETS, (c, p) => p.GetAll().ToArray());
