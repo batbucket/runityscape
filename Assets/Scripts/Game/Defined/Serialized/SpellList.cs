@@ -17,6 +17,7 @@ using Scripts.Game.Defined.Characters;
 using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Game.Defined.Unserialized.Buffs;
+using System.Linq;
 
 namespace Scripts.Game.Defined.Serialized.Spells {
 
@@ -117,6 +118,23 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
+    public class Purge : BasicSpellbook {
+
+        public Purge() : base("Purge", Util.GetSprite("beams-aura"), TargetType.ANY, SpellType.DEFENSE) {
+            AddCost(StatType.MANA, 10);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return "Target is dispelled of most buffs.";
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new DispelAllBuffs(target.Buffs)
+            };
+        }
+    }
+
     public class InflictPoison : BuffAdder<Poison> {
 
         public InflictPoison() : base(TargetType.ONE_FOE, SpellType.OFFENSE, "Infect", PriorityType.NORMAL) {
@@ -128,16 +146,14 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class CrushingBlow : BasicSpellbook {
         private const float INTELLECT_TO_DAMAGE_RATIO = 3f;
         private const int SKILL_COST = 2;
-        private const int HEALTH_COST = 5;
 
         public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.LOW) {
             AddCost(StatType.SKILL, SKILL_COST);
-            AddCost(StatType.HEALTH, HEALTH_COST);
             this.TurnsToCharge = 1;
         }
 
         protected override string CreateDescriptionHelper() {
-            return "A powerful blow that deals damage to the caster as well.";
+            return "A powerful blow that takes time to charge.";
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
@@ -497,6 +513,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         private readonly string description;
 
         public WaterboltAbstract(TargetType targetType, string name, string description) : base(name, Util.GetSprite("water-bolt"), targetType, SpellType.OFFENSE) {
+            this.TurnsToCharge = 1;
             this.description = description;
         }
 
@@ -546,6 +563,67 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
 
         public CastDelayedEternalDeath() : base(TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.NORMAL) {
             this.isBuffUnique = true;
+        }
+    }
+
+    public class SummonSeaCreatures : BasicSpellbook {
+        private int NUMBER_OF_SUMMON_PICKS = 2;
+
+        private static readonly IDictionary<Func<Character>, int> POSSIBLE_SUMMONS = new Dictionary<Func<Character>, int> {
+            { () => OceanNPCs.DreadSinger(), 1 },
+            { () => OceanNPCs.Elemental(), 1 },
+            { () => OceanNPCs.Shark(), 2 },
+            { () => OceanNPCs.Siren(), 1 },
+            { () => OceanNPCs.Swarm(), 3 }
+        };
+
+        public SummonSeaCreatures() : base("Ocean's Assembly", Util.GetSprite("angler-fish"), TargetType.SELF, SpellType.BOOST) {
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return "Random creatures of the sea come to the caster's aid.";
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return POSSIBLE_SUMMONS
+                .RandomValues()
+                .Take(NUMBER_OF_SUMMON_PICKS)
+                .Select(pick => new SummonEffect(page.GetSide(target), page, pick, POSSIBLE_SUMMONS[pick]))
+                .ToArray();
+        }
+    }
+
+    public class GrantImmunity : BuffAdder<Immunity> {
+
+        public GrantImmunity() : base(TargetType.ONE_ALLY, SpellType.DEFENSE, PriorityType.NORMAL) {
+        }
+    }
+
+    public class OneShotKill : BasicSpellbook {
+        private const int HIGH_DAMAGE = 1337;
+
+        public OneShotKill() : base("Death Strike", Util.GetSprite("skull-crack"), TargetType.ONE_ALLY, SpellType.OFFENSE) {
+            this.TurnsToCharge = 1;
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("A killing blow that misses if the target has {0} up.", Defend.DEFEND_NAME);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, -HIGH_DAMAGE)
+            };
+        }
+
+        protected override bool IsHit(Character caster, Character target) {
+            return target.Buffs.HasBuff<Defend>();
+        }
+    }
+
+    public class GiveOverwhelmingPower : BuffAdder<OverwhelmingPower> {
+
+        public GiveOverwhelmingPower() : base(TargetType.SELF, SpellType.BOOST, PriorityType.LOW) {
         }
     }
 }

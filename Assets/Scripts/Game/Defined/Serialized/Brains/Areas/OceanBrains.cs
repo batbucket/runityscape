@@ -112,9 +112,60 @@ namespace Scripts.Game.Serialized.Brains {
     }
 
     public class SharkPirate : BasicBrain {
+        private const float PHASE_TWO_HEALTH_PERCENTAGE = 0.50f;
+        private const int TURNS_BETWEEN_SUMMONS = 5;
+        private const int TURNS_BETWEEN_PHASE_TWO_SPECIAL_SPELLS = 5;
+        private static readonly SpellBook SUMMONING = new SummonSeaCreatures();
+        private static readonly SpellBook GRANT_IMMUNITY = new GrantImmunity();
+        private static readonly SpellBook ONE_SHOT_KILL = new OneShotKill();
+        private static readonly SpellBook DEATH_CURSE = new CastDelayedDeath();
+        private static readonly SpellBook SELF_STRENGTH_BUFF = new GiveOverwhelmingPower();
+        private static readonly SpellBook ATTACK = new Attack();
+
+        private static readonly SpellBook[] PHASE_TWO_SPELLS = new SpellBook[] {
+            ONE_SHOT_KILL,
+            DEATH_CURSE,
+            SELF_STRENGTH_BUFF
+        };
+
+        private bool isAnnounceSecondPhase;
+        private bool hasSummonedWithoutGivingImmunity;
+        private int lastTurnCastSpecialSpellInPhaseTwo;
+
+        private bool IsFirstPhase {
+            get {
+                return brainOwner.Stats.GetStatPercent(StatType.HEALTH) > PHASE_TWO_HEALTH_PERCENTAGE;
+            }
+        }
+
+        public override string StartOfRoundDialogue() {
+            if (currentBattle.TurnCount == 0) {
+                return Util.PickRandom("Creatures of the deep, assemble!/Warriors of the sea, assemble!/Ocean creatures, I call for your aid!/Water brethren, I summon you!");
+            }
+            if (!IsFirstPhase && !isAnnounceSecondPhase) {
+                isAnnounceSecondPhase = true;
+                return Util.PickRandom("Enough of this! I'll take you down by myself!/You landlubbers are tougher than I thought. I'll have to improvise!");
+            }
+            return string.Empty;
+        }
 
         protected override Spell GetSpell() {
-            return null;
+            Spell chosenSpell = null;
+            if (IsFirstPhase) { // phase 1
+                if (currentBattle.TurnCount % TURNS_BETWEEN_SUMMONS == 0) {
+                    hasSummonedWithoutGivingImmunity = true;
+                    chosenSpell = CastOnRandom(SUMMONING);
+                }
+                if (hasSummonedWithoutGivingImmunity && chosenSpell == null) {
+                    chosenSpell = CastOnTargetMeetingCondition(GRANT_IMMUNITY, c => c != brainOwner);
+                }
+            } else { // phase 2
+                if (currentBattle.TurnCount - lastTurnCastSpecialSpellInPhaseTwo >= TURNS_BETWEEN_PHASE_TWO_SPECIAL_SPELLS) {
+                    lastTurnCastSpecialSpellInPhaseTwo = currentBattle.TurnCount;
+                    chosenSpell = CastOnRandom(PHASE_TWO_SPELLS.ChooseRandom());
+                }
+            }
+            return chosenSpell ?? CastOnRandom(ATTACK);
         }
     }
 }
