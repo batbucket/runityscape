@@ -162,7 +162,9 @@ namespace Scripts.Game.Serialized.Brains {
             } else { // phase 2
                 if (currentBattle.TurnCount - lastTurnCastSpecialSpellInPhaseTwo >= TURNS_BETWEEN_PHASE_TWO_SPECIAL_SPELLS) {
                     lastTurnCastSpecialSpellInPhaseTwo = currentBattle.TurnCount;
-                    chosenSpell = CastOnRandom(PHASE_TWO_SPELLS.ChooseRandom());
+                    while (chosenSpell == null) { // Guarentee a spell picked,
+                        chosenSpell = CastOnRandom(PHASE_TWO_SPELLS.ChooseRandom());
+                    }
                 }
             }
             return chosenSpell ?? CastOnRandom(ATTACK);
