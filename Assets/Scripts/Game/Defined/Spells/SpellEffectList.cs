@@ -15,6 +15,7 @@ namespace Scripts.Game.Defined.Spells {
         private readonly Buffs buffsToDispelFrom;
 
         public DispelAllBuffs(Buffs buffsToDispelFrom) : base(1) {
+            this.buffsToDispelFrom = buffsToDispelFrom;
         }
 
         public override void CauseEffect() {
