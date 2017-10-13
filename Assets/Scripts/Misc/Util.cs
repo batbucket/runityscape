@@ -418,6 +418,16 @@ public static class Util {
     public static float ConvertToPercent(this int integer) {
         return (integer + 0.0f) / 100f;
     }
+
+    // Modified to get keys from https://stackoverflow.com/questions/1028136/random-entry-from-dictionary
+    public static IEnumerable<TKey> RandomValues<TKey, TValue>(this IDictionary<TKey, TValue> dict) {
+        System.Random rand = new System.Random();
+        List<TKey> keys = Enumerable.ToList(dict.Keys);
+        int size = dict.Count;
+        while (true) {
+            yield return keys[rand.Next(size)];
+        }
+    }
 }
 
 public static class IListExtensions {
