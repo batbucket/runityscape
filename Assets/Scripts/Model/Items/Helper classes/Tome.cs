@@ -34,7 +34,7 @@ namespace Scripts.Model.Items {
 
         protected override bool IsMeetOtherRequirements(Character caster, Character target) {
             return base.IsMeetOtherRequirements(caster, target)
-                && target.Stats.Level >= levelRequirement && LearnerHasResourcesNeededToCastSpell(target.Stats, spellToTeach);
+                && target.Stats.Level >= levelRequirement && target.Spells.CanLearnSpellBook(target.Stats, this.spellToTeach);
         }
 
         private static bool LearnerHasResourcesNeededToCastSpell(Characters.Stats learner, SpellBook book) {
