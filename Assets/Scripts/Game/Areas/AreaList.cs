@@ -94,7 +94,7 @@ namespace Scripts.Game.Areas {
                                 new Encounter(Music.CREEPY, RuinsNPCs.Healer(), RuinsNPCs.Replicant(), RuinsNPCs.Healer())
                             }),
                     },
-                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party) }
+                    new PageGroup[] { RuinsNPCs.RuinsShop(camp, flags, party), RuinsNPCs.RuinsTrainer(camp, party), RuinsNPCs.RuinsMaster(camp, party) }
                 );
         }
 
@@ -146,12 +146,12 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.Shark(), OceanNPCs.DreadSinger())
                             }),
                         new BattleStage(
-                            "Finale",
+                            "The Captain",
                             () => new Encounter[] {
-                                new Encounter(OceanNPCs.Elemental())
+                                new Encounter(Music.BOSS, OceanNPCs.SharkPirate())
                             })
                     },
-                    new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party) }
+                    new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party), OceanNPCs.OceanTrainer(camp, party), OceanNPCs.OceanMaster(camp, party) }
                 );
         }
     }

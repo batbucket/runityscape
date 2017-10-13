@@ -34,9 +34,29 @@ namespace Scripts.Game.Defined.Characters {
                     new HealTome(),
                     new DefendTome(),
                     new RegenArmor()
-                    )
-                .AddBuys(new Buy(new Inventory1x6())
-                .AddPitch("The 6Pack series of backpack expanders can increase your inventory size up to 6! A perfect option for the packrat in your life."));
+                    );
+        }
+
+        public static Trainer RuinsTrainer(Page previous, Party party) {
+            return new Trainer(
+                previous,
+                party,
+                Villager(),
+                new PurchasedSpell(50, new PlayerHeal()),
+                new PurchasedSpell(20, new SetupDefend()),
+                new PurchasedSpell(50, new CrushingBlow())
+                );
+        }
+
+        public static InventoryMaster RuinsMaster(Page previous, Party party) {
+            return new InventoryMaster(
+                    previous,
+                    party,
+                    Villager(),
+                    Inventory.INITIAL_CAPACITY,
+                    6,
+                    100
+                );
         }
 
         public static Character Villager() {

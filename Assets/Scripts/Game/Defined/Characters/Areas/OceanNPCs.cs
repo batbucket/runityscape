@@ -2,6 +2,7 @@
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Game.Defined.Unserialized.Buffs;
 using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Game.Serialized;
 using Scripts.Game.Serialized.Brains;
@@ -28,6 +29,29 @@ namespace Scripts.Game.Defined.Characters {
                 );
         }
 
+        public static Trainer OceanTrainer(Page previous, Party party) {
+            return new Trainer(
+                previous,
+                party,
+                Siren(),
+                    new PurchasedSpell(100, new Purge()),
+                    new PurchasedSpell(100, new Arraystrike()),
+                    new PurchasedSpell(200, new Revive()),
+                    new PurchasedSpell(200, new Inspire())
+                );
+        }
+
+        public static InventoryMaster OceanMaster(Page previous, Party party) {
+            return new InventoryMaster(
+                previous,
+                party,
+                Siren(),
+                6,
+                10,
+                200
+                );
+        }
+
         public static Character Shark() {
             return CharacterUtil.StandardEnemy(
                 new Stats(5, 5, 6, 8, 35),
@@ -38,19 +62,22 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.FISH
                     ),
                 new Attacker())
+                .AddBuff(new RoughSkin())
                 .AddItem(new Money(), Util.RandomRange(50, 100));
         }
 
         public static Character SharkPirate() {
             return CharacterUtil.StandardEnemy(
-                new Stats(6, 8, 6, 8, 60),
+                new Stats(10, 8, 6, 8, 40),
                 new Look(
-                    "Cap'n Shark",
+                    "Cap'n Selach",
                     "shark-pirate",
                     "Fierce captain of shark crew.",
                     Breed.FISH
                     ),
-                new SharkPirate());
+                new SharkPirate())
+                .AddBuff(new RougherSkin())
+                .AddSpells(new SummonSeaCreatures(), new GrantImmunity(), new OneShotKill(), new CastDelayedDeath(), new GiveOverwhelmingPower());
         }
 
         public static Character Siren() {

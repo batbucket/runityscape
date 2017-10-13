@@ -50,7 +50,7 @@ namespace Scripts.Model.Characters {
         /// <summary>
         /// The initial capacity of the inventory.
         /// </summary>
-        private const int INITIAL_CAPACITY = 4;
+        public const int INITIAL_CAPACITY = 4;
 
         /// <summary>
         /// Internal dictionary for keeping track of item counts.
@@ -79,6 +79,12 @@ namespace Scripts.Model.Characters {
         public Inventory(params ItemPair[] initialItems) : this() {
             foreach (ItemPair item in initialItems) {
                 dict.Add(item.Item, item.Count);
+            }
+        }
+
+        public string WealthText {
+            get {
+                return string.Format("Wealth: {0}.", this.GetCount(new Game.Defined.Serialized.Items.Money()));
             }
         }
 
