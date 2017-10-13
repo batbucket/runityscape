@@ -276,7 +276,6 @@ public class BasicTests {
             equips.AddEquip(inv, new BuffParams(new Stats(1, 2, 3, 4, 5), 2), new PoisonArmor());
 
             EquipmentSave initialSaveObject = equips.GetSaveObject();
-            initialSaveObject.Buffs.ForEach(b => b.Buff.SetupAsCasterNotInParty());
             string json = ToJson(initialSaveObject);
             EquipmentSave newSaveObject = FromJson<EquipmentSave>(json);
             Equipment newObject = Util.TypeToObject<Equipment>(equips.GetType());

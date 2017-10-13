@@ -54,7 +54,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, -2);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new RegenerateMana();
         }
     }
@@ -139,7 +139,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, 5);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new RegenerateHealth();
         }
     }

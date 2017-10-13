@@ -18,7 +18,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, -1);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new FishShook();
         }
     }

@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Buffs {
 
-    public class FishShook : Buff {
+    public class FishShook : PermanentBuff {
         private const float FISHY_TARGET_MULTIPLIER = 2;
         private const float OTHER_TARGET_MULTIPLIER = 0.25f;
 
@@ -19,7 +19,7 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
             : base(Util.GetSprite("fish"),
                   "Fish-Shook",
                   string.Format(
-                      "Basic attacks do {0}x damage on fishy targets and {1} damage on non-fish.", FISHY_TARGET_MULTIPLIER, OTHER_TARGET_MULTIPLIER), false) {
+                      "Basic attacks do {0}x damage on fishy targets and {1} damage on non-fish.", FISHY_TARGET_MULTIPLIER, OTHER_TARGET_MULTIPLIER)) {
         }
 
         public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
@@ -50,14 +50,14 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class DamageResist : Buff {
+    public class DamageResist : PermanentBuff {
         private const float DAMAGE_MULTIPLIER = 0.7f;
 
         public DamageResist()
             : base(Util.GetSprite("round-shield"),
                   "Damage Resist",
                   String.Format("Reduces incident damage from basic attacks by {0}%.",
-                      (1 - DAMAGE_MULTIPLIER) * 100), false) { }
+                      (1 - DAMAGE_MULTIPLIER) * 100)) { }
 
         protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
             SpellEffect healthDamage = null;
@@ -127,9 +127,9 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class Poison : Buff {
+    public class Poison : PermanentBuff {
 
-        public Poison() : base(2, Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.", true) {
+        public Poison() : base(Util.GetSprite("fox-head"), "Poisoned", "Loses health at the end of each turn.") {
         }
 
         protected override IList<SpellEffect> OnEndOfTurnHelper(Model.Characters.Stats owner) {
@@ -445,12 +445,12 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         }
     }
 
-    public abstract class StatRegen : Buff {
+    public abstract class StatRegen : PermanentBuff {
         private int amountPerTurn;
         private StatType type;
 
         public StatRegen(StatType type, int amountPerTurn)
-            : base(type.Sprite, string.Format("Restore {0}", type.Name), String.Format("Regenerate {0} {1} each turn.", amountPerTurn, type.ColoredName), false) {
+            : base(type.Sprite, string.Format("Restore {0}", type.Name), String.Format("Regenerate {0} {1} each turn.", amountPerTurn, type.ColoredName)) {
             this.amountPerTurn = amountPerTurn;
             this.type = type;
         }

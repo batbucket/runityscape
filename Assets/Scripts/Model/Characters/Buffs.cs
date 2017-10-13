@@ -96,6 +96,22 @@ namespace Scripts.Model.Characters {
         }
 
         /// <summary>
+        /// Removes the equipment buff. By checking equality instead of identity.
+        /// </summary>
+        /// <param name="buff">The buff.</param>
+        public void RemoveEquipmentBuff(PermanentBuff buff) {
+            PermanentBuff[] permanantBuffs = set.Where(b => b is PermanentBuff).Cast<PermanentBuff>().ToArray();
+            bool isFoundBuff = false;
+            for (int i = 0; i < permanantBuffs.Length && !isFoundBuff; i++) {
+                PermanentBuff pb = permanantBuffs[i];
+                if (buff.Equals(pb)) {
+                    isFoundBuff = true;
+                    RemoveBuff(RemovalType.TIMED_OUT, pb);
+                }
+            }
+        }
+
+        /// <summary>
         /// Removes a buff by various means.
         /// </summary>
         /// <param name="type">Type of removal.</param>

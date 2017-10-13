@@ -13,7 +13,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.AGILITY, -1);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new Poison();
         }
     }
@@ -25,7 +25,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, 10);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new DamageResist();
         }
     }

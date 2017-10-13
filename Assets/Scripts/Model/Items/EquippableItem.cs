@@ -65,6 +65,12 @@ namespace Scripts.Model.Items {
             }
         }
 
+        public bool IsHaveBuff {
+            get {
+                return CreateBuff() != null;
+            }
+        }
+
         protected sealed override string DescriptionHelper {
             get {
                 string[] arr = new string[flatStatBonuses.Count];
@@ -88,7 +94,7 @@ namespace Scripts.Model.Items {
         /// Creates the buff associated with this equippable item.
         /// </summary>
         /// <returns>A buff, possibly.</returns>
-        public virtual Buff CreateBuff() {
+        public virtual PermanentBuff CreateBuff() {
             return null;
         }
 
