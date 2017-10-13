@@ -200,13 +200,15 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
     }
 
     public class Defend : Buff {
+        public const string DEFEND_NAME = "Guard";
         private const int DAMAGE_REDUCTION_PERCENT = 75;
+
         private const float DAMAGE_REDUCTION = DAMAGE_REDUCTION_PERCENT / 100f;
 
         public Defend()
             : base(1,
                   Util.GetSprite("shield"),
-                  "Guard",
+                  DEFEND_NAME,
                   string.Format("Reduces damage taken from spells this turn by {0}%.", DAMAGE_REDUCTION_PERCENT),
                   false) {
         }
@@ -277,6 +279,52 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
 }
 
 namespace Scripts.Game.Defined.Unserialized.Buffs {
+
+    public abstract class Thorns : Buff {
+        private readonly int damageToReturn;
+
+        public Thorns(int damageToReturn, string name)
+            : base(
+                  Util.GetSprite("crown-of-thorns"),
+                  name,
+                  string.Format("Successful basic attacks on this unit cause the attacker to take {0} damage.",
+                      damageToReturn
+                      ),
+                  false
+                  ) {
+            this.damageToReturn = damageToReturn;
+        }
+
+        public override bool IsReact(SingleSpell incomingSpell, Stats ownerOfThisBuff) {
+            return incomingSpell.Target.Stats == ownerOfThisBuff
+                && incomingSpell.SpellBook is Attack
+                && incomingSpell.Result.IsDealDamage;
+        }
+
+        protected override void ReactHelper(SingleSpell spellCast, Stats ownerOfThisBuff) {
+            spellCast.Result.AddEffect(
+                new AddToModStat(spellCast.Caster.Stats, StatType.HEALTH, -damageToReturn));
+        }
+    }
+
+    public class Immunity : Buff {
+
+        public Immunity() : base(5, Util.GetSprite("beams-aura"), "Immunity", "Immune to basic attack and spell damage.", true) {
+        }
+
+        public override bool IsReact(SingleSpell incomingSpell, Stats ownerOfThisBuff) {
+            return incomingSpell.Target.Stats == ownerOfThisBuff && incomingSpell.Result.IsDealDamage;
+        }
+
+        protected override void ReactHelper(SingleSpell spellCast, Stats ownerOfThisBuff) {
+            foreach (SpellEffect se in spellCast.Result.Effects) {
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value < 0) {
+                    addToModStat.Value = 0;
+                }
+            }
+        }
+    }
 
     public abstract class DelayedEffectSong : Buff {
         private readonly StatType affectedStat;
@@ -444,6 +492,37 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
                       type.Sprite) {
             Util.Assert(amount != 0, "Amount must be nonnegative.");
             AddMultiplicativeStatBonus(type, amount);
+        }
+    }
+
+    public class OverwhelmingPower : Buff {
+        private const int STRENGTH_INCREASE = 1337;
+        private const int AGILITY_REDUCTION = 100;
+
+        public OverwhelmingPower()
+            : base(
+                  Util.GetSprite("fist"),
+                  "Overwhelming Power",
+                  string.Format("{0} boosted by {1}%. {2} reduced by {3}%.",
+                      StatType.STRENGTH.ColoredName,
+                      STRENGTH_INCREASE,
+                      StatType.AGILITY.ColoredName,
+                      AGILITY_REDUCTION),
+                  true) {
+            AddMultiplicativeStatBonus(StatType.STRENGTH, STRENGTH_INCREASE);
+            AddMultiplicativeStatBonus(StatType.AGILITY, AGILITY_REDUCTION);
+        }
+    }
+
+    public class RoughSkin : Thorns {
+
+        public RoughSkin() : base(1, "Rough Skin") {
+        }
+    }
+
+    public class RougherSkin : Thorns {
+
+        public RougherSkin() : base(3, "Rougher Skin") {
         }
     }
 }
