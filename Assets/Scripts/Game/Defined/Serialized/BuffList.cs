@@ -266,14 +266,14 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
     public class DelayedDeath : DelayedEffectSong {
         private static readonly StatType AFFECTED_STAT = StatType.HEALTH;
 
-        public DelayedDeath() : base(4, "skull-crack", AFFECTED_STAT, "Curse: Death") {
+        public DelayedDeath() : base(8, "skull-crack", AFFECTED_STAT, "Curse: Death") {
         }
     }
 
     public class DelayedHyperDeath : DelayedEffectSong {
         private static readonly StatType AFFECTED_STAT = StatType.VITALITY;
 
-        public DelayedHyperDeath() : base(4, "skull-crossed-bones", AFFECTED_STAT, "Curse: Hyperdeath") {
+        public DelayedHyperDeath() : base(8, "skull-crossed-bones", AFFECTED_STAT, "Curse: Hyperdeath") {
         }
     }
 }
