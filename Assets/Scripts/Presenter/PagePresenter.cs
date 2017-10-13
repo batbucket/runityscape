@@ -230,7 +230,7 @@ namespace Scripts.Presenter {
                             b => new BuffHolderView.BuffContent(
                                 id: b.Id,
                                 color: Color.white,
-                                description: b.Description,
+                                description: b.DetailedDescription,
                                 duration: b.DurationText,
                                 name: b.Name,
                                 sprite: b.Sprite

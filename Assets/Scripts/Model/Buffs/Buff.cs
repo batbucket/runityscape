@@ -143,7 +143,28 @@ namespace Scripts.Model.Buffs {
                 return new TooltipBundle(
                     this.Sprite,
                     this.Name,
-                    this.Description);
+                    this.DetailedDescription);
+            }
+        }
+
+        public string DetailedDescription {
+            get {
+                return string.Format(
+                    "<color=yellow>{0}</color>{1}",
+                    IsDispellable ? "Dispellable\n" : string.Empty,
+                    Description
+                    );
+            }
+        }
+
+        public string StringTooltip {
+            get {
+                return string.Format(
+                    "<color=cyan>{0}</color>\n<color=yellow>{1}</color>{2}",
+                    this.Name,
+                    IsDispellable ? "Dispellable\n" : string.Empty,
+                    Description
+                    );
             }
         }
 

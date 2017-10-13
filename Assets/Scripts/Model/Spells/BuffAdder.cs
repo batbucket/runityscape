@@ -92,10 +92,9 @@ namespace Scripts.Model.Spells {
         /// <returns>Descriptive buff tooltip</returns>
         public static string CreateBuffDescription(TargetType target, Buff buff) {
             return string.Format(
-                "{0} is affected by <color=cyan>{1}</color>.\n{2}\nLasts {3} turns.",
+                "{0} affected by\n{1}\nLasts {2} turns.",
                 target.Name,
-                buff.Name,
-                buff.Description,
+                buff.StringTooltip,
                 buff.DurationText
                 );
         }
