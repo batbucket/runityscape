@@ -105,13 +105,13 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Welcome to the ocean",
                             () => new Encounter[] {
-                                new Encounter(OceanNPCs.SharkPirate())
+                                new Encounter(OceanNPCs.Shark())
                             }),
                         new BattleStage(
                             "Sinister singers",
                             () => new Encounter[] {
                                 new Encounter(OceanNPCs.Siren()),
-                                new Encounter(OceanNPCs.Siren(), OceanNPCs.SharkPirate())
+                                new Encounter(OceanNPCs.Siren(), OceanNPCs.Shark())
                             }),
                         new BattleStage(
                             "Insaniquarium",
@@ -143,7 +143,7 @@ namespace Scripts.Game.Areas {
                                 new Encounter(OceanNPCs.DreadSinger(), OceanNPCs.DreadSinger()),
                                 new Encounter(OceanNPCs.Elemental(), OceanNPCs.Elemental(), OceanNPCs.DreadSinger()),
                                 new Encounter(OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.SharkPirate(), OceanNPCs.DreadSinger()),
-                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.SharkPirate(), OceanNPCs.DreadSinger())
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.Shark(), OceanNPCs.DreadSinger())
                             }),
                         new BattleStage(
                             "Finale",

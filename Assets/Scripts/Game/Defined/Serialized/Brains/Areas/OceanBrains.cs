@@ -110,4 +110,11 @@ namespace Scripts.Game.Serialized.Brains {
             };
         }
     }
+
+    public class SharkPirate : BasicBrain {
+
+        protected override Spell GetSpell() {
+            return null;
+        }
+    }
 }

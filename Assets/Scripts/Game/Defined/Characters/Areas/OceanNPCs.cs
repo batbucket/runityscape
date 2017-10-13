@@ -21,7 +21,7 @@ namespace Scripts.Game.Defined.Characters {
                 party,
                 0.6f,
                 1f,
-                SharkPirate())
+                Shark())
                 .AddBuys(
                     new FishHook(),
                     new Cleanse()
@@ -50,8 +50,7 @@ namespace Scripts.Game.Defined.Characters {
                     "Fierce captain of shark crew.",
                     Breed.FISH
                     ),
-                new Attacker())
-                .AddItem(new Money(), Util.RandomRange(5, 15));
+                new SharkPirate());
         }
 
         public static Character Siren() {
