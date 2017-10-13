@@ -113,7 +113,7 @@ namespace Scripts.Game.Serialized.Brains {
 
     public class SharkPirate : BasicBrain {
         private const float PHASE_TWO_HEALTH_PERCENTAGE = 0.50f;
-        private const int TURNS_BETWEEN_SUMMONS = 5;
+        private const int TURNS_BETWEEN_SUMMONS = 10;
         private const int TURNS_BETWEEN_PHASE_TWO_SPECIAL_SPELLS = 5;
         private static readonly SpellBook SUMMONING = new SummonSeaCreatures();
         private static readonly SpellBook GRANT_IMMUNITY = new GrantImmunity();
@@ -138,6 +138,12 @@ namespace Scripts.Game.Serialized.Brains {
             }
         }
 
+        private bool IsHaveAlliesUp {
+            get {
+                return allies.Count > 1;
+            }
+        }
+
         public override string StartOfRoundDialogue() {
             if (currentBattle.TurnCount == 0) {
                 return Util.PickRandom("Creatures of the deep, assemble!/Warriors of the sea, assemble!/Ocean creatures, I call for your aid!/Water brethren, I summon you!");
@@ -152,11 +158,12 @@ namespace Scripts.Game.Serialized.Brains {
         protected override Spell GetSpell() {
             Spell chosenSpell = null;
             if (IsFirstPhase) { // phase 1
-                if (currentBattle.TurnCount % TURNS_BETWEEN_SUMMONS == 0) {
+                if (currentBattle.TurnCount % TURNS_BETWEEN_SUMMONS == 0 && !IsHaveAlliesUp) {
                     hasSummonedWithoutGivingImmunity = true;
                     chosenSpell = CastOnRandom(SUMMONING);
                 }
                 if (hasSummonedWithoutGivingImmunity && chosenSpell == null) {
+                    this.hasSummonedWithoutGivingImmunity = false;
                     chosenSpell = CastOnTargetMeetingCondition(GRANT_IMMUNITY, c => c != brainOwner);
                 }
             } else { // phase 2
