@@ -103,6 +103,10 @@ namespace Scripts.Model.SaveLoad {
             Add<CrushingBlow>("crushingBlow");
             Add<PlayerHeal>("playerHeal");
             Add<SetupDefend>("setupDefend");
+            Add<Purge>("purge");
+            Add<Revive>("revive");
+            Add<Inspire>("inspire");
+            Add<Arraystrike>("arraystrike");
         }
 
         private void Items() {
@@ -124,6 +128,7 @@ namespace Scripts.Model.SaveLoad {
             Add<HealTome>("healTome");
             Add<DefendTome>("defendTome");
             Add<Inventory1x6>("6pack");
+            Add<Cleansing>("cleansing");
         }
 
         private void Buffs() {
@@ -144,6 +149,8 @@ namespace Scripts.Model.SaveLoad {
             Add<AgilitySirenSong>("agilitySong");
             Add<VitalitySirenSong>("vitalitySong");
             Add<IntellectSirenSong>("intellectSong");
+            Add<DelayedDeath>("delayedDeath");
+            Add<DelayedHyperDeath>("delayedHyperdeath");
         }
 
         private void Brains() {

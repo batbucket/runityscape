@@ -25,7 +25,7 @@ namespace Scripts.Game.Defined.Characters {
                 Shark())
                 .AddBuys(
                     new FishHook(),
-                    new Cleanse()
+                    new Cleansing()
                 );
         }
 
@@ -150,7 +150,7 @@ namespace Scripts.Game.Defined.Characters {
                 .AddStats(new Mana())
                 .AddSpells(new WaterboltSingle(), new WaterboltMulti())
                 .AddBuff(new Insight())
-                .AddItem(new Cleanse(), Util.IsChance(.25f));
+                .AddItem(new Cleansing(), Util.IsChance(.25f));
         }
 
         public static Character DreadSinger() {
@@ -164,7 +164,7 @@ namespace Scripts.Game.Defined.Characters {
                         ),
                     new DreadSinger())
                     .AddSpells(new CastDelayedDeath())
-                    .AddItem(new Cleanse(), 1);
+                    .AddItem(new Cleansing(), 1);
         }
 
         public static Character Swarm() {

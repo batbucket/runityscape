@@ -23,10 +23,10 @@ namespace Scripts.Game.Defined.Serialized.Items {
         }
     }
 
-    public class Cleanse : ConsumableItem {
+    public class Cleansing : ConsumableItem {
         private const int DAMAGE = 5;
 
-        public Cleanse() : base(20, TargetType.ONE_ALLY, "Cleanse", string.Format("Caster takes {0} damage. Removes all dispellable buffs from a target.", DAMAGE)) {
+        public Cleansing() : base(20, TargetType.ONE_ALLY, "Cleanse", string.Format("Caster takes {0} damage. Removes all dispellable buffs from a target.", DAMAGE)) {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
