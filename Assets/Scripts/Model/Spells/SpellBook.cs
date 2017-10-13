@@ -151,7 +151,7 @@ namespace Scripts.Model.Spells {
                     this.Icon,
                     this.Name,
                     string.Format("{0}{1}{2}{3}",
-                        TurnsToCharge == 0 ? string.Empty : string.Format("Cast time: {0} turn(s)\n", TurnsToCharge),
+                        TurnsToCharge == 0 ? string.Empty : string.Format("<color=yellow>{0}</color> turn windup\n", TurnsToCharge),
                         Priority == 0 ? string.Empty : string.Format("{0} priority\n", Priority.GetDescription()),
                         Costs.Count == 0 ? string.Empty : string.Format("Costs {0}\n", GetCommaSeparatedCosts()),
                         CreateDescriptionHelper()
@@ -220,8 +220,9 @@ namespace Scripts.Model.Spells {
         /// <param name="caster">The caster.</param>
         /// <returns></returns>
         public string CreateDescription(Character caster) {
-            return string.Format("{0}{1}{2}{3}",
+            return string.Format("{0}{1}{2}{3}{4}",
                 CasterHasResources(caster.Stats) ? string.Empty : Util.ColorString("Insufficient resource.\n", Color.red),
+                TurnsToCharge == 0 ? string.Empty : string.Format("<color=yellow>{0}</color> turn charge\n", TurnsToCharge),
                 Priority == 0 ? string.Empty : string.Format("{0} priority\n", Priority.GetDescription()),
                 Costs.Count == 0 ? string.Empty : string.Format("Costs {0}\n", GetCommaSeparatedCosts(caster.Stats)),
                 CreateDescriptionHelper()
@@ -544,7 +545,7 @@ namespace Scripts.Model.Spells {
             int index = 0;
             foreach (KeyValuePair<StatType, int> pair in Costs) {
                 arr[index++] = string.Format("{0} {1}",
-                    Util.ColorString(pair.Value.ToString(), caster != null && CasterHasResource(pair.Key, caster)),
+                    Util.ColorString(pair.Value.ToString(), caster == null || CasterHasResource(pair.Key, caster)),
                     Util.ColorString(pair.Key.Name, pair.Key.Color));
             }
             return string.Join(", ", arr);
