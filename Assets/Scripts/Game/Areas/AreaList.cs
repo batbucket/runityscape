@@ -140,7 +140,7 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Final Trench",
                             () => new Encounter[] {
-                                new Encounter(OceanNPCs.DreadSinger(), OceanNPCs.DreadSinger()),
+                                new Encounter(OceanNPCs.Elemental(), OceanNPCs.DreadSinger()),
                                 new Encounter(OceanNPCs.Elemental(), OceanNPCs.Elemental(), OceanNPCs.DreadSinger()),
                                 new Encounter(OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.SharkPirate(), OceanNPCs.DreadSinger()),
                                 new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Elemental(), OceanNPCs.Siren(), OceanNPCs.Shark(), OceanNPCs.DreadSinger())
