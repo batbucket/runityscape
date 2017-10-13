@@ -199,10 +199,11 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         private const int SKILL_COST = 1;
 
         public Inspire() : base("Inspire", Util.GetSprite("beams-aura"), TargetType.ONE_ALLY, SpellType.BOOST) {
+            AddCost(StatType.SKILL, SKILL_COST);
         }
 
         protected override string CreateDescriptionHelper() {
-            return string.Format("Inspire an ally, restoring {0}% of their missing {1}.", MISSING_MANA_RESTORATION_PERCENT, StatType.MANA);
+            return string.Format("Inspire an ally, restoring {0}% of their missing {1}.", MISSING_MANA_RESTORATION_PERCENT, StatType.MANA.ColoredName);
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
@@ -259,7 +260,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
-            return new IEnumerator[] { SFX.PlaySound("ping") };
+            return new IEnumerator[] { SFX.PlaySound("Ping_0") };
         }
     }
 
