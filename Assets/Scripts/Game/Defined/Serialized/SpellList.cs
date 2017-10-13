@@ -184,7 +184,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override string CreateDescriptionHelper() {
-            return string.Format("Restores {0}% of a target's missing health. Can be used on fallen allies.", REVIVAL_HEALTH_PERCENT);
+            return string.Format("Restores {0}% of a target's missing {1}. Can be used on fallen allies.", REVIVAL_HEALTH_PERCENT, StatType.HEALTH.ColoredName);
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
