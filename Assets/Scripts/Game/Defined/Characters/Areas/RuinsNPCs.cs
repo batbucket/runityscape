@@ -30,9 +30,6 @@ namespace Scripts.Game.Defined.Characters {
                     new Apple(),
                     new IdentifyScroll(),
                     new RevivalSeed(),
-                    new CrushingBlowTome(),
-                    new HealTome(),
-                    new DefendTome(),
                     new RegenArmor()
                     );
         }
