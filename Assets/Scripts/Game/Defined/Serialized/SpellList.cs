@@ -287,6 +287,40 @@ namespace Scripts.Game.Defined.Serialized.Spells {
             };
         }
     }
+
+    // DEBUG SPELL
+    public class HalfLife : BasicSpellbook {
+
+        public HalfLife() : base("HalfLife", Util.GetSprite("gladius"), TargetType.ONE_FOE, SpellType.OFFENSE) {
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("DEBUG: Enemy takes half of current health in damage + 1.");
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, -target.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH) - 1)
+            };
+        }
+    }
+
+    // DEBUG SPELL
+    public class InstaKill : BasicSpellbook {
+
+        public InstaKill() : base("InstaKill", Util.GetSprite("fist"), TargetType.ONE_FOE, SpellType.OFFENSE) {
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Kill.");
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, -1337)
+            };
+        }
+    }
 }
 
 /// <summary>

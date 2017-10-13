@@ -129,6 +129,8 @@ namespace Scripts.Model.SaveLoad {
             Add<DefendTome>("defendTome");
             Add<Inventory1x6>("6pack");
             Add<Cleansing>("cleansing");
+            Add<HalfLife>("hl3");
+            Add<InstaKill>("kill");
         }
 
         private void Buffs() {
