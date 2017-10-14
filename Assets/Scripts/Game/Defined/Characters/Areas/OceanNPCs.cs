@@ -77,7 +77,7 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new SharkPirate())
                 .AddBuff(new RougherSkin())
-                .AddSpells(new SummonSeaCreatures(), new GrantImmunity(), new OneShotKill(), new CastDelayedDeath(), new GiveOverwhelmingPower());
+                .AddSpells(new SummonSeaCreatures(), new OneShotKill(), new CastDelayedDeath(), new GiveOverwhelmingPower());
         }
 
         public static Character Siren() {

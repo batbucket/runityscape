@@ -116,7 +116,6 @@ namespace Scripts.Game.Serialized.Brains {
         private const int TURNS_BETWEEN_SUMMONS = 10;
         private const int TURNS_BETWEEN_PHASE_TWO_SPECIAL_SPELLS = 5;
         private static readonly SpellBook SUMMONING = new SummonSeaCreatures();
-        private static readonly SpellBook GRANT_IMMUNITY = new GrantImmunity();
         private static readonly SpellBook ONE_SHOT_KILL = new OneShotKill();
         private static readonly SpellBook DEATH_CURSE = new CastDelayedDeath();
         private static readonly SpellBook SELF_STRENGTH_BUFF = new GiveOverwhelmingPower();
@@ -138,12 +137,6 @@ namespace Scripts.Game.Serialized.Brains {
             }
         }
 
-        private bool IsHaveAlliesUp {
-            get {
-                return allies.Count > 1;
-            }
-        }
-
         public override string StartOfRoundDialogue() {
             if (currentBattle.TurnCount == 0) {
                 return Util.PickRandom("Creatures of the deep, assemble!/Warriors of the sea, assemble!/Ocean creatures, I call for your aid!/Water brethren, I summon you!");
@@ -158,13 +151,8 @@ namespace Scripts.Game.Serialized.Brains {
         protected override Spell GetSpell() {
             Spell chosenSpell = null;
             if (IsFirstPhase) { // phase 1
-                if (currentBattle.TurnCount % TURNS_BETWEEN_SUMMONS == 0 && !IsHaveAlliesUp) {
-                    hasSummonedWithoutGivingImmunity = true;
+                if (currentBattle.TurnCount % TURNS_BETWEEN_SUMMONS == 0) {
                     chosenSpell = CastOnRandom(SUMMONING);
-                }
-                if (hasSummonedWithoutGivingImmunity && chosenSpell == null) {
-                    this.hasSummonedWithoutGivingImmunity = false;
-                    chosenSpell = CastOnTargetMeetingCondition(GRANT_IMMUNITY, c => c != brainOwner);
                 }
             } else { // phase 2
                 if (currentBattle.TurnCount - lastTurnCastSpecialSpellInPhaseTwo >= TURNS_BETWEEN_PHASE_TWO_SPECIAL_SPELLS) {
