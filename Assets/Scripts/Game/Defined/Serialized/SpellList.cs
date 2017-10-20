@@ -86,27 +86,117 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
+    public class MagicMissile : BasicSpellbook {
+        private const float INTELLECT_RATIO = 1.5f;
+
+        public MagicMissile() : base("Magic Missile", Util.GetSprite("water-bolt"), TargetType.ONE_FOE, SpellType.OFFENSE) {
+            AddCost(StatType.MANA, 5);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return "Flings a magical projectile at a single foe.";
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, -(int)(caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * INTELLECT_RATIO))
+            };
+        }
+    }
+
+    public class MassCheck : BuffAdder<SuperCheck> {
+
+        public MassCheck() : base(TargetType.ALL_FOE, SpellType.OFFENSE, PriorityType.LOW) {
+            this.isBuffUnique = true;
+        }
+    }
+
+    public class SelfHeal : BasicSpellbook {
+        private const int MISSING_HEALTH_HEAL_AMOUNT = 50;
+        private const int SKILL_COST = 3;
+
+        public SelfHeal() : base("Meditate", Util.GetSprite("beams-aura"), TargetType.SELF, SpellType.DEFENSE) {
+            AddCost(StatType.SKILL, SKILL_COST);
+            isUsableOutOfCombat = true;
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Restore {0} of your missing {1}", MISSING_HEALTH_HEAL_AMOUNT, StatType.HEALTH);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, (int)(target.Stats.GetMissingStatCount(StatType.HEALTH) * MISSING_HEALTH_HEAL_AMOUNT.ConvertToPercent()))
+            };
+        }
+    }
+
+    public class CalmMind : BasicSpellbook {
+        private const int SKILL_INCREASE = 1;
+        private static readonly Buff DUMMY = new CalmedMind();
+
+        public CalmMind() : base("Calm Mind", Util.GetSprite("beams-aura"), TargetType.SELF, SpellType.BOOST) {
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Restore {0} {1}. {2}", SKILL_INCREASE, StatType.SKILL.ColoredName, BuffAdder<CalmedMind>.CreateBuffDescription(TargetType.SELF, DUMMY));
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new DispelBuff<CalmedMind>(target.Buffs),
+                new AddToModStat(target.Stats, StatType.SKILL, SKILL_INCREASE),
+                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new CalmedMind())
+            };
+        }
+
+        protected override bool IsMeetCastRequirements(Character caster, Character target) {
+            return !target.Buffs.HasBuff<CalmedMind>();
+        }
+    }
+
+    public class QuickAttack : BasicSpellbook {
+
+        public QuickAttack() : base("Lightning Strike", Util.GetSprite("power-lightning"), TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.HIGH) {
+            AddCost(StatType.SKILL, 2);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return "A faster-than-usual attack that can never miss.";
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, -caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT))
+            };
+        }
+    }
+
     /// <summary>
     /// Can't use BuffAdder because this also adds check text to the textboxes
     /// </summary>
     /// <seealso cref="Scripts.Model.Spells.BasicSpellbook" />
     public class Check : BasicSpellbook {
-        private static readonly Checked DUMMY = new Checked();
+        private static readonly BasicChecked DUMMY = new BasicChecked();
 
         public Check() : base("Check", Util.GetSprite("magnifying-glass"), TargetType.ANY, SpellType.BOOST) {
             AddCost(StatType.MANA, 10);
         }
 
         protected override string CreateDescriptionHelper() {
-            return BuffAdder<Checked>.CreateBuffDescription(this.TargetType, DUMMY);
+            return BuffAdder<BasicChecked>.CreateBuffDescription(this.TargetType, DUMMY);
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
                 new PostText(CheckText(target)),
-                new DispelBuff<Checked>(target.Buffs),
-                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new Checked())
+                new DispelBuff<BasicChecked>(target.Buffs),
+                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new BasicChecked())
             };
+        }
+
+        protected override bool IsMeetCastRequirements(Character caster, Character target) {
+            return target.Buffs.HasBuff<BasicChecked>();
         }
 
         private static string CheckText(Character target) {
@@ -122,6 +212,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         public Purge() : base("Purge", Util.GetSprite("beams-aura"), TargetType.ANY, SpellType.DEFENSE) {
             AddCost(StatType.MANA, 10);
+            isUsableOutOfCombat = true;
         }
 
         protected override string CreateDescriptionHelper() {
@@ -145,7 +236,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
     public class CrushingBlow : BasicSpellbook {
         private const float INTELLECT_TO_DAMAGE_RATIO = 3f;
-        private const int SKILL_COST = 2;
+        private const int SKILL_COST = 3;
 
         public CrushingBlow() : base("Crushing Blow", Util.GetSprite("fist"), TargetType.ONE_FOE, SpellType.OFFENSE, PriorityType.LOW) {
             AddCost(StatType.SKILL, SKILL_COST);
@@ -181,6 +272,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         public Revive() : base("Revive", Util.GetSprite("beams-aura"), TargetType.ONE_ALLY, SpellType.BOOST, PriorityType.LOW, true) {
             AddCost(StatType.MANA, MANA_COST);
+            isUsableOutOfCombat = true;
         }
 
         protected override string CreateDescriptionHelper() {
@@ -200,6 +292,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         public Inspire() : base("Inspire", Util.GetSprite("beams-aura"), TargetType.ONE_ALLY, SpellType.BOOST) {
             AddCost(StatType.SKILL, SKILL_COST);
+            isUsableOutOfCombat = true;
         }
 
         protected override string CreateDescriptionHelper() {
@@ -220,6 +313,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
 
         public PlayerHeal() : base("Heal", Util.GetSprite("health-normal"), TargetType.ONE_ALLY, SpellType.BOOST) {
             AddCost(StatType.MANA, 20);
+            isUsableOutOfCombat = true;
         }
 
         protected override string CreateDescriptionHelper() {
@@ -331,8 +425,30 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
     public class SetupCounter : BuffAdder<Counter> {
 
         public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, "Counter", PriorityType.LOW) {
-            AddCost(StatType.SKILL, 3);
+            AddCost(StatType.SKILL, 2);
             this.isBuffUnique = true;
+            this.TurnsToCharge = 2;
+        }
+    }
+
+    public class UnholyRevival : BasicSpellbook {
+        private const int REVIVED_HEALTH_AMOUNT = 50;
+
+        public UnholyRevival() : base("Determination", Util.GetSprite("skull-cracked"), TargetType.ONE_ALLY, SpellType.BOOST, PriorityType.LOWEST, true) {
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Revive a fallen ally to {0}% {1}.", REVIVED_HEALTH_AMOUNT, StatType.HEALTH);
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, (int) (target.Stats.GetStatCount(Stats.Get.MAX, StatType.HEALTH) * REVIVED_HEALTH_AMOUNT.ConvertToPercent()))
+            };
+        }
+
+        protected override bool IsMeetCastRequirements(Character caster, Character target) {
+            return target.Stats.State == State.DEAD; // Prevent targeting if alive
         }
     }
 

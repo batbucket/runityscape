@@ -151,9 +151,30 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class Checked : Buff {
+    public class SuperCheck : Buff {
+        private const int AGILITY_REDUCTION = 10;
 
-        public Checked() : base(5, Util.GetSprite("magnifying-glass"), "Checked", "Resource visibility increased.", true) {
+        public SuperCheck()
+            : base(10,
+                  Util.GetSprite("magnifying-glass"),
+                  "Checked",
+                  string.Format("Resource visibility increased. {0} reduced by {1}%.", StatType.AGILITY, AGILITY_REDUCTION),
+                  true) {
+            AddMultiplicativeStatBonus(StatType.AGILITY, -AGILITY_REDUCTION);
+        }
+
+        protected override IList<SpellEffect> OnApplyHelper(Stats owner) { // TODO UNSTACKABLE
+            return new SpellEffect[] { new AddToResourceVisibility(owner, 1) };
+        }
+
+        protected override IList<SpellEffect> OnTimeOutHelper(Stats owner) {
+            return new SpellEffect[] { new AddToResourceVisibility(owner, -1) };
+        }
+    }
+
+    public class BasicChecked : Buff {
+
+        public BasicChecked() : base(5, Util.GetSprite("magnifying-glass"), "Checked", "Resource visibility increased.", true) {
         }
 
         protected override IList<SpellEffect> OnApplyHelper(Stats owner) { // TODO UNSTACKABLE
@@ -167,7 +188,7 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
 
     public class BlackedOut : Buff {
 
-        public BlackedOut() : base(3, Util.GetSprite("sight-disabled"), "Blackout", "Resource visibility decreased.", true) {
+        public BlackedOut() : base(10, Util.GetSprite("sight-disabled"), "Blackout", "Resource visibility decreased.", true) {
         }
 
         protected override IList<SpellEffect> OnApplyHelper(Stats owner) {
@@ -274,6 +295,13 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         private static readonly StatType AFFECTED_STAT = StatType.VITALITY;
 
         public DelayedHyperDeath() : base(8, "skull-crossed-bones", AFFECTED_STAT, "Curse: Hyperdeath") {
+        }
+    }
+
+    public class CalmedMind : StatChange {
+        private const int INTELLECT_BOOST = 30;
+
+        public CalmedMind() : base(3, StatType.INTELLECT, INTELLECT_BOOST) {
         }
     }
 }
@@ -490,8 +518,6 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
                       amount,
                       string.Format("{0}{1}", type.Name, amount < 0 ? '-' : '+'),
                       type.Sprite) {
-            Util.Assert(amount != 0, "Amount must be nonnegative.");
-            AddMultiplicativeStatBonus(type, amount);
         }
     }
 

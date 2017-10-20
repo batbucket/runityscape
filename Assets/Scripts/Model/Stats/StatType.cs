@@ -173,6 +173,10 @@ namespace Scripts.Model.Stats {
             return order;
         }
 
+        public override string ToString() {
+            return this.ColoredName;
+        }
+
         public Color DetermineColor(float value) {
             Color c = Color.grey;
             if (value < 0) {

@@ -79,7 +79,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
-            return new SpellEffect[] { new AddBuff(new Model.Buffs.BuffParams(caster.Stats, caster.Id), target.Buffs, new Checked()) };
+            return new SpellEffect[] { new AddBuff(new Model.Buffs.BuffParams(caster.Stats, caster.Id), target.Buffs, new BasicChecked()) };
         }
     }
 

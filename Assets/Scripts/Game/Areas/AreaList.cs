@@ -61,7 +61,7 @@ namespace Scripts.Game.Areas {
                                 new Encounter(RuinsNPCs.Healer(), RuinsNPCs.Knight())
                             }),
                         new BattleStage(
-                            "Bigger monsters" + RuinsNPCs.BigKnight().Look.Name,
+                            "Bigger monsters",
                             () => new Encounter[] {
                                 new Encounter(Music.BOSS, RuinsNPCs.Healer(), RuinsNPCs.BigKnight(), RuinsNPCs.Healer())
                             }),
@@ -79,8 +79,8 @@ namespace Scripts.Game.Areas {
                                     RuinsNPCs.Wizard(),
                                     RuinsNPCs.Wizard(),
                                     RuinsNPCs.Healer(),
-                                    RuinsNPCs.Healer(),
-                                    RuinsNPCs.Illusionist())
+                                    RuinsNPCs.Healer()),
+                                new Encounter(RuinsNPCs.Illusionist())
                             }),
                         new BattleStage(
                             "Premonition",
@@ -152,6 +152,30 @@ namespace Scripts.Game.Areas {
                             })
                     },
                     new PageGroup[] { OceanNPCs.OceanShop(camp, flags, party), OceanNPCs.OceanTrainer(camp, party), OceanNPCs.OceanMaster(camp, party) }
+                );
+        }
+
+        private static Area EvilLabs(Flags flags, Party party, Page camp, Page quests) {
+            return new Area(AreaType.LAB,
+                new Stage[] {
+                    new BattleStage(
+                        "Java Mausoleum",
+                        () => new Encounter[] {
+                        }),
+                    new BattleStage(
+                        "Objective Ocean",
+                        () => new Encounter[] {
+                        }),
+                    new BattleStage(
+                        "Singularities",
+                        () => new Encounter[] {
+                        }),
+                    new BattleStage(
+                        "Adventure's End",
+                        () => new Encounter[] {
+                        })
+                },
+                new PageGroup[] { LabNPCs.Trainer(camp, party) }
                 );
         }
     }

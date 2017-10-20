@@ -135,7 +135,7 @@ namespace Scripts.Model.SaveLoad {
 
         private void Buffs() {
             Add<Poison>("poison");
-            Add<Checked>("checkedDebuff");
+            Add<BasicChecked>("checkedDebuff");
             Add<Counter>("counterBuff");
             Add<StrengthScalingPoison>("strengthScalingPoison");
             Add<BlackedOut>("blackoutDebuff");

@@ -39,9 +39,10 @@ namespace Scripts.Game.Defined.Characters {
                 previous,
                 party,
                 Villager(),
+                new PurchasedSpell(30, new SetupDefend()),
+                new PurchasedSpell(30, new QuickAttack()),
                 new PurchasedSpell(50, new PlayerHeal()),
-                new PurchasedSpell(20, new SetupDefend()),
-                new PurchasedSpell(50, new CrushingBlow())
+                new PurchasedSpell(50, new CalmMind())
                 );
         }
 

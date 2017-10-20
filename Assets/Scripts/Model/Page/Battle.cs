@@ -516,6 +516,7 @@ namespace Scripts.Model.Pages {
                         .Where(c => c.Stats.State == State.ALIVE)
                         .FirstOrDefault(); // Must be living for drop function to work!
 
+                    postBattle.List.Add(PageUtil.GenerateGroupSpellBooks(this, postBattle, VictoriousParty));
                     postBattle.List.Add(PageUtil.GenerateGroupItemsGrid(this, postBattle, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(PageUtil.GenerateGroupEquipmentGrid(postBattle, this, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
                     postBattle.List.Add(new Process("Continue", () => GoToPage(victory)));

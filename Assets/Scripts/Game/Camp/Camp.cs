@@ -76,6 +76,7 @@ namespace Scripts.Game.Pages {
                 new PlacePages(root, flags, party),
                 new WorldPages(root, flags, party),
                 new LevelUpPages(Root, party),
+                PageUtil.GenerateGroupSpellBooks(root, root, party.Collection),
                 new InventoryPages(root, party),
                 new EquipmentPages(root, party),
                 RestProcess(root),

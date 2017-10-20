@@ -35,9 +35,9 @@ namespace Scripts.Game.Defined.Characters {
                 party,
                 Siren(),
                     new PurchasedSpell(100, new Purge()),
-                    new PurchasedSpell(100, new Arraystrike()),
-                    new PurchasedSpell(200, new Revive()),
-                    new PurchasedSpell(200, new Inspire())
+                    new PurchasedSpell(100, new CrushingBlow()),
+                    new PurchasedSpell(200, new MassCheck()),
+                    new PurchasedSpell(200, new Arraystrike())
                 );
         }
 
@@ -110,9 +110,9 @@ namespace Scripts.Game.Defined.Characters {
             return CharacterUtil.StandardEnemy(
                     new Stats(8, 5, 10, 20, 100),
                     new Look(
-                        "Kraken",
+                        "Kracko",
                         "shark",
-                        "Giant squid thing.",
+                        "Giant squid thing. Commonly mistaken for a cloud.",
                         Breed.FISH
                         ),
                     new Kraken()

@@ -74,7 +74,7 @@ namespace Scripts.Model.Characters {
         }
 
         public void DispelBuffsOfType<T>() where T : Buff {
-            IEnumerable<Buff> buffsOfType = set.Where(buff => buff.IsDispellable && buff is T);
+            IEnumerable<Buff> buffsOfType = set.Where(buff => buff.IsDispellable && buff is T).ToArray();
             foreach (Buff buffOfType in buffsOfType) {
                 RemoveBuff(RemovalType.DISPEL, buffOfType);
             }

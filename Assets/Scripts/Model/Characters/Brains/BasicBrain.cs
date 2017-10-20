@@ -1,5 +1,6 @@
 ﻿using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Model.Spells;
+using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,10 @@ namespace Scripts.Model.Characters {
 
         protected Spell CastOnRandom(SpellBook sb) {
             return CastOnRandom(sb, () => true);
+        }
+
+        protected Func<Character, int> SortByLowestHealth() {
+            return c => c.Stats.GetStatCount(Stats.Get.MOD, StatType.HEALTH);
         }
 
         protected Spell CastOnLeastTarget(SpellBook spellToCast, Func<Character, int> sorter) {

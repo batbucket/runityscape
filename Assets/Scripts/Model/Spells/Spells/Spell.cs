@@ -24,7 +24,7 @@ namespace Scripts.Model.Spells {
 
         private const string DECLARE_TEXT = "<color=yellow >{0}</color> will {1} <color=cyan>{2}</color>{3}.";
 
-        private const string SPELL_CHARGE_MESSAGE = "<color=yellow>{0}</color> readies <color=cyan>{1}</color>{2}!";
+        private const string SPELL_CHARGE_MESSAGE = "<color=yellow>{0}</color> readies <color=cyan>{1}</color>{2}!<color=grey>{3}</color>";
 
         /// <summary>
         /// The book
@@ -64,9 +64,12 @@ namespace Scripts.Model.Spells {
         public TextBox ChargingText {
             get {
                 string returnString = string.Empty;
-                if (turnsUntilCast == 1) {
-                    returnString = string.Format(SPELL_CHARGE_MESSAGE, Caster.Look.DisplayName, book.Name, TargetName, turnsUntilCast, turnsUntilCast > 1 ? "s" : string.Empty);
-                }
+                returnString = string.Format(
+                    SPELL_CHARGE_MESSAGE,
+                    Caster.Look.DisplayName,
+                    book.Name,
+                    TargetName,
+                    turnsUntilCast > 1 ? string.Format("{0} turns until cast.", turnsUntilCast) : string.Empty);
                 return new TextBox(
                     returnString,
                     book.TextboxTooltip

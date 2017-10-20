@@ -7,6 +7,9 @@ namespace Scripts.Model.Pages {
     /// </summary>
     public enum Music {
 
+        [Description("Hero Immortal")]
+        OTHER,
+
         [Description("Pixel River")]
         NORMAL,
 
@@ -18,5 +21,8 @@ namespace Scripts.Model.Pages {
 
         [Description("The Maw")]
         LITERALLY_AMALGAMATE,
+
+        [Description("chiptune-police loop")]
+        LABS,
     }
 }

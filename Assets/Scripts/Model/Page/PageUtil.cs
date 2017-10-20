@@ -137,7 +137,7 @@ namespace Scripts.Model.Pages {
                             string.Format("{0} will be the item's caster.",
                             partyMember.Look.DisplayName)));
                 } else {
-                    grid.List.Add(new Process(partyMember.Look.DisplayName, partyMember.Look.Sprite, "This unit is dead and is unable to be a caster for any item."));
+                    grid.List.Add(new Process(Util.ColorString(partyMember.Look.DisplayName, false), partyMember.Look.Sprite, "This unit is dead and is unable to be a caster for any item."));
                 }
             }
             return grid;
@@ -202,6 +202,39 @@ namespace Scripts.Model.Pages {
                 SPELLBOOK,
                 "Spells",
                 "Cast a spell.");
+        }
+
+        public static Grid GenerateGroupSpellBooks(
+            Page current,
+            IButtonable previous,
+            ICollection<Character> party
+            ) {
+            Grid grid = new Grid("Spells");
+            grid.Tooltip = "Cast spells out of combat.";
+            grid.Icon = SPELLBOOK;
+            grid.List.Add(PageUtil.GenerateBack(previous));
+            foreach (Character member in party) {
+                IButtonable itemToAdd = null;
+                if (member.Stats.State == State.ALIVE) {
+                    itemToAdd = GenerateSpellableGrid(
+                        current,
+                        previous,
+                        member,
+                        null,
+                        ((IEnumerable<ISpellable>)member.Spells)
+                            .Where(b => b.GetSpellBook().IsUsableOutOfCombat
+                                    && !b.GetSpellBook().TargetType.IsTargetEnemies),
+                        GetOutOfBattlePlayableHandler(current),
+                        member.Look.Sprite,
+                        member.Look.DisplayName,
+                        "This unit will be casting spells."
+                        );
+                } else {
+                    itemToAdd = new Process(Util.ColorString(member.Look.DisplayName, false), "This unit is dead and cannot cast any spells.");
+                }
+                grid.List.Add(itemToAdd);
+            }
+            return grid;
         }
 
         /// <summary>
