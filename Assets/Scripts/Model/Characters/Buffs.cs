@@ -73,6 +73,16 @@ namespace Scripts.Model.Characters {
             }
         }
 
+        public int GetBuffCount<T>() where T : Buff {
+            int count = 0;
+            foreach (Buff buff in set) {
+                if (buff is T) {
+                    count++;
+                }
+            }
+            return count;
+        }
+
         public void DispelBuffsOfType<T>() where T : Buff {
             IEnumerable<Buff> buffsOfType = set.Where(buff => buff.IsDispellable && buff is T).ToArray();
             foreach (Buff buffOfType in buffsOfType) {

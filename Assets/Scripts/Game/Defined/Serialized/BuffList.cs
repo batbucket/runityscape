@@ -79,51 +79,16 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         }
     }
 
-    public class Ignited : Buff {
-        private static readonly StatType REDUCED_STAT = StatType.STRENGTH;
-        private const int STAT_REDUCTION_PERCENT = 20;
-        private const int DAMAGE_PER_TURN = 1;
-        private const int DURATION = 5;
+    public class TempIgnited : AbstractIgnited {
+        private const int DURATION = 2;
 
-        public Ignited()
-            : base(DURATION,
-                  Util.GetSprite("fire"),
-                  "Ignited",
-                  string.Format("{0} reduced. Take {1} damage at end of turn.",
-                      REDUCED_STAT.ColoredName,
-                      DAMAGE_PER_TURN), true) {
-            AddMultiplicativeStatBonus(REDUCED_STAT, -STAT_REDUCTION_PERCENT);
-        }
-
-        protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
-            return new SpellEffect[] {
-                new AddToModStat(owner, StatType.HEALTH, -DAMAGE_PER_TURN)
-            };
+        public TempIgnited() : base(DURATION) {
         }
     }
 
-    public class StrengthBoost : Buff {
-        public const int STRENGTH_INCREASE_AMOUNT = 50;
+    public class PermanantIgnited : AbstractIgnited {
 
-        public StrengthBoost()
-            : base(Util.GetSprite("fist"),
-                  "Strength boost",
-                  "Increases strength.",
-                  true) {
-            AddMultiplicativeStatBonus(StatType.STRENGTH, STRENGTH_INCREASE_AMOUNT);
-        }
-    }
-
-    public class Insight : Buff {
-        public const int MANA_RECOVERED_PER_TURN = 5;
-
-        public Insight() : base(Util.GetSprite("water-drop"), "Insight", string.Format("Regenerating {0}.", StatType.MANA.ColoredName), false) {
-        }
-
-        protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
-            return new SpellEffect[] {
-                new AddToModStat(owner, StatType.MANA, MANA_RECOVERED_PER_TURN)
-            };
+        public PermanantIgnited() : base() {
         }
     }
 
@@ -304,9 +269,35 @@ namespace Scripts.Game.Defined.Serialized.Buffs {
         public CalmedMind() : base(3, StatType.INTELLECT, INTELLECT_BOOST) {
         }
     }
+
+    public class StrengthBoost : Buff {
+        public const int STRENGTH_INCREASE_AMOUNT = 50;
+
+        public StrengthBoost()
+            : base(Util.GetSprite("fist"),
+                  "Strength boost",
+                  "Increases strength.",
+                  true) {
+            AddMultiplicativeStatBonus(StatType.STRENGTH, STRENGTH_INCREASE_AMOUNT);
+        }
+    }
 }
 
 namespace Scripts.Game.Defined.Unserialized.Buffs {
+
+    public class Insight : ManaRegen {
+        public const int MANA_RECOVERED_PER_TURN = 5;
+
+        public Insight() : base(MANA_RECOVERED_PER_TURN) {
+        }
+    }
+
+    public class UnholyInsight : ManaRegen {
+        public const int MANA_RECOVERED_PER_TURN = 10;
+
+        public UnholyInsight() : base(MANA_RECOVERED_PER_TURN) {
+        }
+    }
 
     public abstract class Thorns : Buff {
         private readonly int damageToReturn;
@@ -540,6 +531,39 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         }
     }
 
+    public abstract class AbstractIgnited : Buff {
+        public const string NAME = "Ignited";
+        private static readonly StatType REDUCED_STAT = StatType.STRENGTH;
+        private const int STAT_REDUCTION_PERCENT = 20;
+        private const int DAMAGE_PER_TURN = 1;
+
+        public AbstractIgnited(int duration)
+            : base(duration,
+                  Util.GetSprite("fire"),
+                  NAME,
+                  string.Format("{0} reduced. Take {1} damage at end of turn.",
+                      REDUCED_STAT.ColoredName,
+                      DAMAGE_PER_TURN),
+                  true) {
+            AddMultiplicativeStatBonus(REDUCED_STAT, -STAT_REDUCTION_PERCENT);
+        }
+
+        public AbstractIgnited()
+            : base(Util.GetSprite("fire"),
+                  "Ignited",
+                  string.Format("{0} reduced. Take {1} damage at end of turn.",
+                      REDUCED_STAT.ColoredName,
+                      DAMAGE_PER_TURN),
+                  true) {
+        }
+
+        protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
+            return new SpellEffect[] {
+                new AddToModStat(owner, StatType.HEALTH, -DAMAGE_PER_TURN)
+            };
+        }
+    }
+
     public class RoughSkin : Thorns {
 
         public RoughSkin() : base(1, "Rough Skin") {
@@ -549,6 +573,20 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
     public class RougherSkin : Thorns {
 
         public RougherSkin() : base(3, "Rougher Skin") {
+        }
+    }
+
+    public abstract class ManaRegen : Buff {
+        private readonly int manaRecoveryPerTurn;
+
+        public ManaRegen(int manaRecoveryPerTurn) : base(Util.GetSprite("water-drop"), "Insight", string.Format("Regenerating {0} {1} per turn.", manaRecoveryPerTurn, StatType.MANA.ColoredName), false) {
+            this.manaRecoveryPerTurn = manaRecoveryPerTurn;
+        }
+
+        protected override IList<SpellEffect> OnEndOfTurnHelper(Stats owner) {
+            return new SpellEffect[] {
+                new AddToModStat(owner, StatType.MANA, manaRecoveryPerTurn)
+            };
         }
     }
 }

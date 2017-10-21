@@ -427,14 +427,14 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         public SetupCounter() : base(TargetType.SELF, SpellType.DEFENSE, "Counter", PriorityType.LOW) {
             AddCost(StatType.SKILL, 2);
             this.isBuffUnique = true;
-            this.TurnsToCharge = 2;
         }
     }
 
     public class UnholyRevival : BasicSpellbook {
         private const int REVIVED_HEALTH_AMOUNT = 50;
 
-        public UnholyRevival() : base("Determination", Util.GetSprite("skull-cracked"), TargetType.ONE_ALLY, SpellType.BOOST, PriorityType.LOWEST, true) {
+        public UnholyRevival() : base("Determination", Util.GetSprite("skull-crack"), TargetType.ONE_ALLY, SpellType.BOOST, PriorityType.LOWEST, true) {
+            this.TurnsToCharge = 2;
         }
 
         protected override string CreateDescriptionHelper() {
@@ -543,7 +543,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         }
     }
 
-    public class Ignite : BuffAdder<Ignited> {
+    public class Ignite : BuffAdder<TempIgnited> {
 
         public Ignite() : base(TargetType.ONE_FOE, SpellType.OFFENSE, "Ignite", PriorityType.NORMAL) {
             AddCost(StatType.MANA, 10);
@@ -553,6 +553,34 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
             return new IEnumerator[] {
                 SFX.PlaySound("synthetic_explosion_1"),
                 SFX.DoSteamEffect(target, Color.red)
+            };
+        }
+    }
+
+    public class Inferno : BasicSpellbook {
+        private static readonly Buff DUMMY = new PermanantIgnited();
+
+        public Inferno() : base("Inferno", Util.GetSprite("fire"), TargetType.ONE_FOE, SpellType.OFFENSE) {
+            AddCost(StatType.MANA, 10);
+        }
+
+        protected override string CreateDescriptionHelper() {
+            return string.Format("Blaze a foe, dealing additional damage for each stack of {0} on them.\n{1}",
+                AbstractIgnited.NAME,
+                BuffAdder<PermanantIgnited>.CreateBuffDescription(TargetType.ONE_FOE, DUMMY));
+        }
+
+        protected override IList<IEnumerator> GetHitSFX(Character caster, Character target) {
+            return new IEnumerator[] {
+                SFX.PlaySound("synthetic_explosion_1"),
+                SFX.DoSteamEffect(target, Color.magenta)
+            };
+        }
+
+        protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
+            return new SpellEffect[] {
+                new AddToModStat(target.Stats, StatType.HEALTH, -target.Buffs.GetBuffCount<AbstractIgnited>()),
+                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new PermanantIgnited())
             };
         }
     }
@@ -659,7 +687,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
 
     public abstract class WaterboltAbstract : BasicSpellbook {
         private const float CHANCE_OF_CRITICAL = 0.30f;
-        private static readonly Buff IGNITE_BUFF = new Ignited();
+        private static readonly Buff IGNITE_BUFF = new TempIgnited();
 
         private readonly string description;
 
@@ -682,7 +710,7 @@ namespace Scripts.Game.Defined.Unserialized.Spells {
         protected override IList<SpellEffect> GetCriticalEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
                 DamageEffect(caster, target),
-                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new Ignited())
+                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new TempIgnited())
             };
         }
 
