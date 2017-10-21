@@ -140,7 +140,7 @@ namespace Scripts.Game.Defined.Characters {
             return CharacterUtil.StandardEnemy(
                 new Stats(9, 5, 20, 15, 20),
                 new Look(
-                    "Undine",
+                    "Elemental",
                     "villager",
                     "Sea elemental.",
                     Breed.FISH
