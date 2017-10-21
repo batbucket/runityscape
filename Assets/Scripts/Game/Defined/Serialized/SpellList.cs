@@ -121,7 +121,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
 
         protected override string CreateDescriptionHelper() {
-            return string.Format("Restore {0} of your missing {1}", MISSING_HEALTH_HEAL_AMOUNT, StatType.HEALTH);
+            return string.Format("Restore {0} of your missing {1}.", MISSING_HEALTH_HEAL_AMOUNT, StatType.HEALTH);
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
@@ -131,27 +131,20 @@ namespace Scripts.Game.Defined.Serialized.Spells {
         }
     }
 
-    public class CalmMind : BasicSpellbook {
+    public class Charge : BasicSpellbook {
         private const int SKILL_INCREASE = 1;
-        private static readonly Buff DUMMY = new CalmedMind();
 
-        public CalmMind() : base("Calm Mind", Util.GetSprite("beams-aura"), TargetType.SELF, SpellType.BOOST) {
+        public Charge() : base("Charge", Util.GetSprite("beams-aura"), TargetType.SELF, SpellType.BOOST) {
         }
 
         protected override string CreateDescriptionHelper() {
-            return string.Format("Restore {0} {1}. {2}", SKILL_INCREASE, StatType.SKILL.ColoredName, BuffAdder<CalmedMind>.CreateBuffDescription(TargetType.SELF, DUMMY));
+            return string.Format("Restore {0} {1}.", SKILL_INCREASE, StatType.SKILL.ColoredName);
         }
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                new DispelBuff<CalmedMind>(target.Buffs),
                 new AddToModStat(target.Stats, StatType.SKILL, SKILL_INCREASE),
-                new AddBuff(new BuffParams(caster.Stats, caster.Id), target.Buffs, new CalmedMind())
             };
-        }
-
-        protected override bool IsMeetCastRequirements(Character caster, Character target) {
-            return !target.Buffs.HasBuff<CalmedMind>();
         }
     }
 
@@ -361,7 +354,7 @@ namespace Scripts.Game.Defined.Serialized.Spells {
     public class Arraystrike : BasicSpellbook {
 
         public Arraystrike() : base("Arraystrike", Util.GetSprite("sword-array"), TargetType.ALL_FOE, SpellType.OFFENSE, PriorityType.LOW) {
-            AddCost(StatType.SKILL, 5);
+            AddCost(StatType.SKILL, 3);
         }
 
         protected override string CreateDescriptionHelper() {

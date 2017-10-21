@@ -43,7 +43,7 @@ namespace Scripts.Game.Defined.Characters {
                 new PurchasedSpell(30, new SetupDefend()),
                 new PurchasedSpell(30, new QuickAttack()),
                 new PurchasedSpell(50, new PlayerHeal()),
-                new PurchasedSpell(50, new CalmMind())
+                new PurchasedSpell(50, new Charge())
                 );
         }
 
