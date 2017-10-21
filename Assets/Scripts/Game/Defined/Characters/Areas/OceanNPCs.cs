@@ -98,7 +98,7 @@ namespace Scripts.Game.Defined.Characters {
                     new Stats(7, 3, 5, 1, 5),
                     new Look(
                         "Tentacle",
-                        "shark",
+                        "tentacle",
                         "Tentacle belonging to a Kraken.",
                         Breed.FISH
                         ),
@@ -111,7 +111,7 @@ namespace Scripts.Game.Defined.Characters {
                     new Stats(8, 5, 10, 20, 100),
                     new Look(
                         "Kracko",
-                        "shark",
+                        "kraken",
                         "Giant squid thing. Commonly mistaken for a cloud.",
                         Breed.FISH
                         ),
