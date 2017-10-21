@@ -82,6 +82,7 @@ namespace Scripts.Game.Serialized.Brains {
 
         protected override IList<Spell> GetPriorityPlays() {
             return new Spell[] {
+                CastOnRandom(new CastDelayedEternalDeath()),
                 CastOnRandom(new CastDelayedDeath()),
                 CastOnRandom(new Attack())
             };
