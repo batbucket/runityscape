@@ -246,7 +246,7 @@ namespace Scripts.Model.Characters {
         ///   <c>true</c> if the specified item is addable; otherwise, <c>false</c>.
         /// </returns>
         public bool IsAddable(Item item, int count = 0) {
-            return !item.HasFlag(Items.Flag.OCCUPIES_SPACE) || TotalOccupiedSpace < INITIAL_CAPACITY;
+            return !item.HasFlag(Items.Flag.OCCUPIES_SPACE) || TotalOccupiedSpace < capacity;
         }
 
         /// <summary>
