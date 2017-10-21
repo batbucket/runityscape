@@ -83,7 +83,7 @@ namespace Scripts.Game.Pages {
         private Process ExpHack(Character characterToAddExperiencePointsTo) {
             return new Process(
                 "Exp HACK!",
-                () => characterToAddExperiencePointsTo.Stats.AddToStat(StatType.EXPERIENCE, Stats.Set.MOD_UNBOUND, 10)
+                () => characterToAddExperiencePointsTo.Stats.AddToStat(StatType.EXPERIENCE, Stats.Set.MOD_UNBOUND, 1000)
                 );
         }
 
