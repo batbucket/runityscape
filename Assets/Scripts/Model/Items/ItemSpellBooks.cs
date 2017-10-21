@@ -38,7 +38,7 @@ namespace Scripts.Model.Items {
 
         protected override IList<SpellEffect> GetHitEffects(Page page, Character caster, Character target) {
             return new SpellEffect[] {
-                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip), new Buffs.BuffParams(caster.Stats, caster.Id))
+                    new EquipItemEffect(new EquipParams(caster.Inventory, target.Equipment, equip), new Buffs.BuffParams(target.Stats, target.Id))
                 };
         }
     }

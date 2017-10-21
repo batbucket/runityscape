@@ -501,31 +501,9 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         }
 
         /// <summary>
-        ///
-        /// </summary>
-        [Serializable]
-        public class EquipBuff {
-
-            /// <summary>
-            /// The equip type
-            /// </summary>
-            public EquipTypeSave EquipType;
-
-            /// <summary>
-            /// The buff
-            /// </summary>
-            public BuffSave Buff;
-        }
-
-        /// <summary>
         /// The equipped
         /// </summary>
         public List<EquipItemSave> Equipped;
-
-        /// <summary>
-        /// The buffs
-        /// </summary>
-        public List<EquipBuff> Buffs;
 
         /// <summary>
         /// The bonuses
@@ -538,9 +516,8 @@ namespace Scripts.Model.SaveLoad.SaveObjects {
         /// <param name="equipped">The equipped.</param>
         /// <param name="buffs">The buffs.</param>
         /// <param name="bonuses">The bonuses.</param>
-        public EquipmentSave(List<EquipItemSave> equipped, List<EquipBuff> buffs, List<EquipBonus> bonuses) {
+        public EquipmentSave(List<EquipItemSave> equipped, List<EquipBonus> bonuses) {
             this.Equipped = equipped;
-            this.Buffs = buffs;
             this.Bonuses = bonuses;
         }
 

@@ -35,19 +35,6 @@ namespace Scripts.View.ActionGrid {
         private bool isHotkeysEnabled;
 
         /// <summary>
-        /// Enables and disables the buttons.
-        /// </summary>
-        /// <remarks>Unlike IsHotkeysEnabled this has not yet caused
-        /// any issues from new buttons being added.</remarks>
-        public bool IsEnabled {
-            set {
-                foreach (HotkeyButton b in buttons) {
-                    b.enabled = value;
-                }
-            }
-        }
-
-        /// <summary>
         /// Enables and disables the hotkeys.
         /// </summary>
         public bool IsHotKeysEnabled {

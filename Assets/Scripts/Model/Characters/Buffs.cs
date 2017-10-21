@@ -66,6 +66,20 @@ namespace Scripts.Model.Characters {
             AddBuff(buff);
         }
 
+        public void DispelBuffs() {
+            IEnumerable<Buff> dispellableBuffs = set.Where(buff => buff.IsDispellable);
+            foreach (Buff dispellableBuff in dispellableBuffs) {
+                RemoveBuff(RemovalType.DISPEL, dispellableBuff);
+            }
+        }
+
+        public void DispelBuffsOfType<T>() where T : Buff {
+            IEnumerable<Buff> buffsOfType = set.Where(buff => buff.IsDispellable && buff is T).ToArray();
+            foreach (Buff buffOfType in buffsOfType) {
+                RemoveBuff(RemovalType.DISPEL, buffOfType);
+            }
+        }
+
         /// <summary>
         /// No caster variant. Buff already has caster set.
         /// </summary>
@@ -79,6 +93,22 @@ namespace Scripts.Model.Characters {
                 AddSplat(new SplatDetails(statBonus.Key, statBonus.Value, "%"));
             }
             AddSplat(new SplatDetails(Color.green, string.Format("+"), buff.Sprite));
+        }
+
+        /// <summary>
+        /// Removes the equipment buff. By checking equality instead of identity.
+        /// </summary>
+        /// <param name="buff">The buff.</param>
+        public void RemoveEquipmentBuff(PermanentBuff buff) {
+            PermanentBuff[] permanantBuffs = set.Where(b => b is PermanentBuff).Cast<PermanentBuff>().ToArray();
+            bool isFoundBuff = false;
+            for (int i = 0; i < permanantBuffs.Length && !isFoundBuff; i++) {
+                PermanentBuff pb = permanantBuffs[i];
+                if (buff.Equals(pb)) {
+                    isFoundBuff = true;
+                    RemoveBuff(RemovalType.TIMED_OUT, pb);
+                }
+            }
         }
 
         /// <summary>

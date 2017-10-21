@@ -1,10 +1,9 @@
-﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Buffs;
+﻿using Scripts.Game.Defined.Serialized.Buffs;
 using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Model.Characters;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
-using Scripts.Presenter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +13,8 @@ namespace Scripts.Game.Serialized.Brains {
     public class Attacker : PriorityBrain {
         public static readonly Attack ATTACK = new Attack();
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
                 CastOnRandom(ATTACK)
             };
         }
@@ -25,9 +24,9 @@ namespace Scripts.Game.Serialized.Brains {
         public static readonly Attack ATTACK = new Attack();
         public static readonly EnemyHeal HEAL = new EnemyHeal();
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
-                    CastOnTargetMeetingCondition(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH) > 0)
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
+                    CastOnLeastTarget(HEAL, c => -c.Stats.GetMissingStatCount(StatType.HEALTH))
                 };
         }
     }
@@ -36,8 +35,8 @@ namespace Scripts.Game.Serialized.Brains {
         public static readonly Ignite IGNITE = new Ignite();
         public static readonly Attack ATTACK = new Attack();
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
                     CastOnRandom(IGNITE),
                     CastOnRandom(ATTACK)
                 };
@@ -48,8 +47,8 @@ namespace Scripts.Game.Serialized.Brains {
         public static readonly SetupCounter COUNTER = new SetupCounter();
         public static readonly Attack ATTACK = new Attack();
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
                     CastOnRandom(COUNTER),
                     CastOnRandom(ATTACK)
                 };
@@ -67,8 +66,8 @@ namespace Scripts.Game.Serialized.Brains {
         public static readonly Attack ATTACK = new Attack();
         public static readonly Blackout BLACKOUT = new Blackout();
 
-        protected override IList<Func<IPlayable>> SetupPriorityPlays() {
-            return new Func<IPlayable>[] {
+        protected override IList<Spell> GetPriorityPlays() {
+            return new Spell[] {
                     CastOnTargetMeetingCondition(BLACKOUT, c => !c.Buffs.HasBuff<BlackedOut>()),
                     CastOnRandom(ATTACK)
                 };
@@ -113,7 +112,7 @@ namespace Scripts.Game.Serialized.Brains {
             }
         }
 
-        protected override IPlayable GetPlay() {
+        protected override Spell GetSpell() {
             // Phase 1: Attacks only while healers are up
             if (IsAnyHealersAlive) {
                 return CastOnRandom(WAIT);
@@ -130,9 +129,9 @@ namespace Scripts.Game.Serialized.Brains {
             }
         }
 
-        public override string ReactToSpell(Spell spell) {
+        public override string ReactToSpell(SingleSpell spell) {
             int cloneCount = CloneCount;
-            if (cloneCount > 0 && spell.Book.SpellType == SpellType.OFFENSE && spell.Result.Type.IsSuccessfulType && brainOwner.Stats.State == State.ALIVE) {
+            if (cloneCount > 0 && spell.SpellBook.SpellType == SpellType.OFFENSE && spell.ResultType.IsSuccessfulType && brainOwner.Stats.State == State.ALIVE) {
                 return Util.PickRandom("YOUR NEXT ATTEMPT WILL NOT BE AS SUCCESSFUL./FOOL! YOU DELAY THE INEVITABLE!/MADNESS WILL CONSUME YOU!/DROWN IN INSANITY!");
             }
             return string.Empty;
@@ -163,12 +162,12 @@ namespace Scripts.Game.Serialized.Brains {
             }
         }
 
-        protected override IPlayable GetPlay() {
+        protected override Spell GetSpell() {
             return this.CastOnRandom(ATTACK);
         }
 
-        public override string ReactToSpell(Spell spell) {
-            if (spell.Book.SpellType == SpellType.OFFENSE && spell.Result.Type.IsSuccessfulType && spell.Result.IsDealDamage) {
+        public override string ReactToSpell(SingleSpell spell) {
+            if (spell.SpellBook.SpellType == SpellType.OFFENSE && spell.ResultType.IsSuccessfulType && spell.Result.IsDealDamage) {
                 return
                     Util.PickRandom(
                         "One step closer to death./Do you feel the end coming?/Madness does not die./You slay merely a simulacrum of myself./Merely a replication of my true self./Once again you've fallen for a clone./Maddening, is it not?");

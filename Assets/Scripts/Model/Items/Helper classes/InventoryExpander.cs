@@ -23,7 +23,7 @@ namespace Scripts.Model.Items {
         /// <param name="name">The name of the item.</param>
         public InventoryExpander(int capacityIncreaseAmount, int capacityIncreaseLimit, int basePrice, string name)
             : base(basePrice,
-                  TargetType.SINGLE_ALLY,
+                  TargetType.ONE_ALLY,
                   name,
                   string.Format("Increases inventory capacity by {0}. Cannot increase capacity past {1}.",
                       capacityIncreaseAmount,

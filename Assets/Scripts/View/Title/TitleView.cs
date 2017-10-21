@@ -61,8 +61,7 @@ namespace Scripts.View.Title {
             this.text.text = text;
             float timer = 0;
 
-            Util.SetCursorActive(false);
-            Main.Instance.ActionGrid.IsEnabled = false;
+            Main.Instance.IsInputEnabled = false;
 
             // Fade in
             while ((timer += Time.deltaTime) < fadeTime) {
@@ -82,8 +81,8 @@ namespace Scripts.View.Title {
             }
             alpha = 0;
             this.isDone = true;
-            Util.SetCursorActive(true);
-            Main.Instance.ActionGrid.IsEnabled = true;
+
+            Main.Instance.IsInputEnabled = true;
         }
     }
 }

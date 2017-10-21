@@ -33,11 +33,10 @@ namespace Scripts.Game.Pages {
             p.Icon = PageUtil.INVENTORY;
             p.OnEnter = () => {
                 p.AddText(string.Format("{0}/{1} spaces used.", inventory.TotalOccupiedSpace, inventory.Capacity));
-                p.Actions = PageUtil.GenerateItemsGrid(
-                        false,
+                p.Actions = PageUtil.GenerateGroupItemsGrid(
                         p,
                         previous,
-                        party.Default,
+                        party,
                         PageUtil.GetOutOfBattlePlayableHandler(p))
                         .List;
             };

@@ -133,8 +133,8 @@ namespace Scripts.Game.Defined.Characters {
                 new Player())
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.HERO)
                 .AddStats(new Experience())
-                .AddSpells(new Check())
-                .AddStats(new Mana());
+                .AddStats(new Mana())
+                .AddSpells(new InstaKill(), new HalfLife());
         }
 
         public static Character Partner(string name) {
@@ -150,7 +150,7 @@ namespace Scripts.Game.Defined.Characters {
                 .AddFlags(Model.Characters.Flag.PLAYER, Model.Characters.Flag.PERSISTS_AFTER_DEFEAT, Model.Characters.Flag.PARTNER)
                 .AddStats(new Experience())
                 .AddStats(new Skill())
-                .AddSpells(new CrushingBlow());
+                .AddSpells(new InstaKill(), new HalfLife());
         }
 
         public static Character TestEnemy() {
@@ -166,7 +166,7 @@ namespace Scripts.Game.Defined.Characters {
                 new Player())
                 .AddItems(new CharacterUtil.ItemCount(new Apple(), 7), new CharacterUtil.ItemCount(new PoisonArmor()), new CharacterUtil.ItemCount(new Money(), 100))
                 .AddFlags(Model.Characters.Flag.DROPS_ITEMS)
-                .AddSpells(new InflictPoison(), new SetupCounter())
+                .AddSpells(new InflictPoison(), new SetupDefend())
                 .AddStats(new Skill());
             return c;
         }

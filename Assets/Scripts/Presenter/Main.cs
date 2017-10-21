@@ -56,6 +56,9 @@ namespace Scripts.Presenter {
         [SerializeField]
         private InputView input;
 
+        [SerializeField]
+        private GraphicRaycaster raycaster;
+
         public static Main Instance { get { return instance; } }
 
         /// <summary>
@@ -121,6 +124,20 @@ namespace Scripts.Presenter {
         public ActionGridView ActionGrid {
             get {
                 return actionGrid;
+            }
+        }
+
+        public bool IsInputEnabled {
+            set {
+                IsCursorEnabled = value;
+                Main.Instance.ActionGrid.IsHotKeysEnabled = value;
+            }
+        }
+
+        public bool IsCursorEnabled {
+            set {
+                Cursor.visible = value;
+                raycaster.enabled = value;
             }
         }
 

@@ -3,6 +3,7 @@ using Scripts.Model.Pages;
 using Scripts.Model.Spells;
 
 namespace Scripts.Game.Pages {
+
     /// <summary>
     /// Pages for equipping items out of battle.
     /// </summary>
@@ -27,8 +28,7 @@ namespace Scripts.Game.Pages {
                     previous,
                     p,
                     party.Collection,
-                    PageUtil.GetOutOfBattlePlayableHandler(p),
-                    false
+                    PageUtil.GetOutOfBattlePlayableHandler(p)
                     ).List;
             };
         }

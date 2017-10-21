@@ -261,7 +261,7 @@ namespace Scripts.Game.Pages {
         /// <returns></returns>
         private Process GetDeleteProcess(Page previous, int index) {
             return new Process(
-                "<color=red>Delete</color>",
+                "Delete",
                 "Delete this save file.",
                 () => {
                     SaveLoad.DeleteSave(index);

@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Scripts.Model.Spells {
+
     /// <summary>
     /// Describes the result of a Spell
     /// </summary>
     public class Result {
+
         /// <summary>
         /// The type of result.
         /// </summary>
@@ -18,6 +20,7 @@ namespace Scripts.Model.Spells {
         /// The SFX
         /// </summary>
         private readonly List<IEnumerator> sfx;
+
         /// <summary>
         /// The effects
         /// </summary>
@@ -42,6 +45,7 @@ namespace Scripts.Model.Spells {
                 return sfx;
             }
         }
+
         /// <summary>
         /// Gets the effects.
         /// </summary>

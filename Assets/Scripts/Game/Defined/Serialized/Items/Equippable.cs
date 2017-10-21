@@ -13,7 +13,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.AGILITY, -1);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new Poison();
         }
     }
@@ -25,21 +25,8 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, 10);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new DamageResist();
-        }
-    }
-
-    public class FishHook : EquippableItem {
-
-        public FishHook() : base(EquipType.WEAPON, 50, "Fish Hook", "A used fish hook.") {
-            AddFlatStatBonus(StatType.STRENGTH, 5);
-            AddFlatStatBonus(StatType.AGILITY, 1);
-            AddFlatStatBonus(StatType.VITALITY, -1);
-        }
-
-        public override Buff CreateBuff() {
-            return new FishShook();
         }
     }
 }

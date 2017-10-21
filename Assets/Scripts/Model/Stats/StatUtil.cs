@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace Scripts.Model.Stats {
+
     public enum BoundType {
         RESOURCE,
         ASSIGNABLE,
@@ -20,6 +22,7 @@ namespace Scripts.Model.Stats {
     }
 
     public static class StatUtil {
+
         public static int GetDifference(StatType type, Characters.Stats a, Characters.Stats b) {
             return a.GetStatCount(Characters.Stats.Get.TOTAL, type) - b.GetStatCount(Characters.Stats.Get.TOTAL, type);
         }

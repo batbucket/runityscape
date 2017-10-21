@@ -76,6 +76,7 @@ namespace Scripts.Game.Pages {
                 new PlacePages(root, flags, party),
                 new WorldPages(root, flags, party),
                 new LevelUpPages(Root, party),
+                PageUtil.GenerateGroupSpellBooks(root, root, party.Collection),
                 new InventoryPages(root, party),
                 new EquipmentPages(root, party),
                 RestProcess(root),
@@ -114,9 +115,7 @@ namespace Scripts.Game.Pages {
                     : string.Format("Take a short break, advancing the time of day to {0}.\nSomewhat restores most stats.", times[newIndex].GetDescription()),
                 () => {
                     foreach (Character c in party) {
-                        foreach (StatType type in StatType.RESTORED) {
-                            c.Stats.RestoreResourcesByMissingPercentage(isLastTime ? 1 : MISSING_REST_RESTORE_PERCENTAGE);
-                        }
+                        c.Stats.RestoreResourcesByMissingPercentage(isLastTime ? 1 : MISSING_REST_RESTORE_PERCENTAGE);
                         if (isLastTime) {
                             c.Buffs.DispelAllBuffs();
                         }

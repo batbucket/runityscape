@@ -168,7 +168,6 @@ namespace Scripts.Presenter {
                 AddTextBox(new TextBox(page.Body));
             }
 
-            actionGrid.IsEnabled = true;
             actionGrid.IsHotKeysEnabled = !page.HasInputField;
             SetInputField(page.HasInputField);
 
@@ -231,7 +230,7 @@ namespace Scripts.Presenter {
                             b => new BuffHolderView.BuffContent(
                                 id: b.Id,
                                 color: Color.white,
-                                description: b.Description,
+                                description: b.DetailedDescription,
                                 duration: b.DurationText,
                                 name: b.Name,
                                 sprite: b.Sprite

@@ -19,10 +19,6 @@ public static class Util {
     public static readonly bool IS_DEBUG = true && Application.isEditor;
     private static char RANDOM_STRING_DELIMITER = '/';
 
-    public static void SetCursorActive(bool set) {
-        Cursor.visible = set;
-    }
-
     public static string PickRandom(string big) {
         string[] split = big.Split(RANDOM_STRING_DELIMITER);
         return split.ChooseRandom();
@@ -417,6 +413,20 @@ public static class Util {
 
     public static Color SetAlpha(this Color color, float alpha) {
         return new UnityEngine.Color(color.r, color.g, color.b, alpha);
+    }
+
+    public static float ConvertToPercent(this int integer) {
+        return (integer + 0.0f) / 100f;
+    }
+
+    // Modified to get keys from https://stackoverflow.com/questions/1028136/random-entry-from-dictionary
+    public static IEnumerable<TKey> RandomValues<TKey, TValue>(this IDictionary<TKey, TValue> dict) {
+        System.Random rand = new System.Random();
+        List<TKey> keys = Enumerable.ToList(dict.Keys);
+        int size = dict.Count;
+        while (true) {
+            yield return keys[rand.Next(size)];
+        }
     }
 }
 

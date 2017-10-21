@@ -26,7 +26,7 @@ namespace Scripts.Model.Spells {
         /// <param name="item">The item.</param>
         /// <param name="name">The item name.</param>
         /// <param name="verb">The verb. Caster [Verb] ItemName on Target!</param>
-        public ItemSpellBook(Item item, string name, string verb) : base(name, item.Icon, item.Target, SpellType.ITEM, 0, 0, verb) {
+        public ItemSpellBook(Item item, string name, string verb) : base(name, item.Icon, item.Target, SpellType.ITEM, PriorityType.ITEM, verb) {
             this.item = item;
             flags.Remove(Flag.CASTER_REQUIRES_SPELL);
         }

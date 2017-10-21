@@ -54,7 +54,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, -2);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new RegenerateMana();
         }
     }
@@ -64,7 +64,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
     public class Apple : ConsumableItem {
         private const int HEALING_AMOUNT = 10;
 
-        public Apple() : base(5, TargetType.SINGLE_ALLY, "Apple", string.Format("A juicy apple. Restores {0} {1}.", HEALING_AMOUNT, StatType.HEALTH.ColoredName)) {
+        public Apple() : base(5, TargetType.ONE_ALLY, "Apple", string.Format("A juicy apple. Restores {0} {1}.", HEALING_AMOUNT, StatType.HEALTH.ColoredName)) {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
@@ -79,7 +79,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
-            return new SpellEffect[] { new AddBuff(new Model.Buffs.BuffParams(caster.Stats, caster.Id), target.Buffs, new Checked()) };
+            return new SpellEffect[] { new AddBuff(new Model.Buffs.BuffParams(caster.Stats, caster.Id), target.Buffs, new BasicChecked()) };
         }
     }
 
@@ -88,30 +88,17 @@ namespace Scripts.Game.Defined.Serialized.Items {
 
         public RevivalSeed()
             : base(500,
-                  TargetType.SINGLE_ALLY,
+                  TargetType.ONE_ALLY,
                   "Revival Seed",
-                  string.Format("Use on a fallen ally to revive them to {0}% {1}.",
+                  string.Format("Use on an ally to restore them to {0}% {1}. Can be used on fallen allies.",
                       HEALTH_RECOVERY_PERCENTAGE,
                       StatType.HEALTH.ColoredName)) {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
-            int revivedHealth = (int)(target.Stats.GetMissingStatCount(StatType.HEALTH) * (HEALTH_RECOVERY_PERCENTAGE / 100f));
             return new SpellEffect[] {
-                new AddToModStat(target.Stats, StatType.HEALTH, revivedHealth)
+                new RestoreMissingStatPercent(target.Stats, StatType.HEALTH, HEALTH_RECOVERY_PERCENTAGE)
             };
-        }
-
-        /// <summary>
-        /// Can be used on the dead, and only the dead!
-        /// </summary>
-        /// <param name="caster">The caster.</param>
-        /// <param name="target">The target.</param>
-        /// <returns>
-        ///   <c>true</c> if caster can use the item on target; otherwise, <c>false</c>.
-        /// </returns>
-        protected override bool IsMeetOtherRequirements(Character caster, Character target) {
-            return target.Stats.State == State.DEAD;
         }
     }
 
@@ -152,7 +139,7 @@ namespace Scripts.Game.Defined.Serialized.Items {
             AddFlatStatBonus(StatType.VITALITY, 5);
         }
 
-        public override Buff CreateBuff() {
+        public override PermanentBuff CreateBuff() {
             return new RegenerateHealth();
         }
     }

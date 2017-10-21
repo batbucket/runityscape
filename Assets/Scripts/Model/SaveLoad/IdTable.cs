@@ -100,15 +100,13 @@ namespace Scripts.Model.SaveLoad {
             Add<Wait>("wait");
             Add<InflictPoison>("inflictpoison");
             Add<Check>("checkSpell");
-            Add<SetupCounter>("setupCounter");
-            Add<EnemyHeal>("heal");
-            Add<ReflectiveClone>("reflectiveClone");
-            Add<Blackout>("blackout");
-            Add<RevealTrueForm>("revealTrueForm");
-            Add<Ignite>("ignite");
             Add<CrushingBlow>("crushingBlow");
             Add<PlayerHeal>("playerHeal");
             Add<SetupDefend>("setupDefend");
+            Add<Purge>("purge");
+            Add<Revive>("revive");
+            Add<Inspire>("inspire");
+            Add<Arraystrike>("arraystrike");
         }
 
         private void Items() {
@@ -129,14 +127,16 @@ namespace Scripts.Model.SaveLoad {
             Add<CrushingBlowTome>("crushTome");
             Add<HealTome>("healTome");
             Add<DefendTome>("defendTome");
+            Add<Inventory1x6>("6pack");
+            Add<Cleansing>("cleansing");
+            Add<HalfLife>("hl3");
+            Add<InstaKill>("kill");
         }
 
         private void Buffs() {
             Add<Poison>("poison");
-            Add<Checked>("checkedDebuff");
+            Add<BasicChecked>("checkedDebuff");
             Add<Counter>("counterBuff");
-            Add<ReflectAttack>("reflectAttack");
-            Add<SpiritLink>("spiritLink");
             Add<StrengthScalingPoison>("strengthScalingPoison");
             Add<BlackedOut>("blackoutDebuff");
             Add<DamageResist>("damageResist");
@@ -147,6 +147,12 @@ namespace Scripts.Model.SaveLoad {
             Add<FishShook>("fishShook");
             Add<Defend>("defend");
             Add<RegenerateMana>("regenMana");
+            Add<StrengthSirenSong>("strengthSong");
+            Add<AgilitySirenSong>("agilitySong");
+            Add<VitalitySirenSong>("vitalitySong");
+            Add<IntellectSirenSong>("intellectSong");
+            Add<DelayedDeath>("delayedDeath");
+            Add<DelayedHyperDeath>("delayedHyperdeath");
         }
 
         private void Brains() {

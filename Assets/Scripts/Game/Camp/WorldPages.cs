@@ -26,6 +26,7 @@ namespace Scripts.Game.Pages {
         public WorldPages(Page previous, Flags flags, Party party) : base(new Page("Areas")) {
             Root.Body = "Which area would you like to go to?";
             Root.Icon = Util.GetSprite("journey");
+            Root.Condition = PageUtil.GetVisitProcessCondition(flags, party);
             IList<IButtonable> buttons = new List<IButtonable>();
             buttons.Add(PageUtil.GenerateBack(previous));
 

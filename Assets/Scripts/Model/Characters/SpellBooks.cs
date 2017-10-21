@@ -98,15 +98,38 @@ namespace Scripts.Model.Characters {
             return set.Contains(s);
         }
 
+        public bool HasResourcesToCast(Stats spellBooksOwner, SpellBook sb) {
+            // Can't use hasResources because Skill is = highest cost skill spell
+            // Since character without spell starts with 0 Skill, they won't be able to learn anything
+            return sb.Costs.Keys.All(statType => spellBooksOwner.HasStat(statType));
+        }
+
+        public bool CanLearnSpellBook(Stats spellBooksOwner, SpellBook sb) {
+            return !HasSpellBook(sb) && HasResourcesToCast(spellBooksOwner, sb);
+        }
+
         /// <summary>
-        /// Creates the spell.
+        /// Creates the spell. Single target version.
         /// </summary>
         /// <param name="spell">The spell.</param>
         /// <param name="caster">The caster.</param>
         /// <param name="target">The target.</param>
         /// <returns></returns>
         public Spell CreateSpell(Page page, SpellBook spell, Character caster, Character target) {
-            return spell.BuildSpell(page, caster, target);
+            Util.Assert(spell.TargetType.TargetCount == TargetCount.SINGLE_TARGET);
+            return spell.BuildSpell(page, caster, new Character[] { target });
+        }
+
+        /// <summary>
+        /// Creates the spell. Multi-target version.
+        /// </summary>
+        /// <param name="spell">The spell.</param>
+        /// <param name="caster">The caster.</param>
+        /// <param name="target">The target.</param>
+        /// <returns></returns>
+        public Spell CreateSpell(Page page, SpellBook spell, Character caster) {
+            Util.Assert(spell.TargetType.TargetCount == TargetCount.MULTIPLE_TARGETS);
+            return spell.BuildSpell(page, caster, spell.TargetType.GetTargets(caster, page));
         }
 
         /// <summary>

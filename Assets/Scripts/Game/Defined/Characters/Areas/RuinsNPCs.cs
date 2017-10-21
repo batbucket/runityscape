@@ -2,6 +2,7 @@
 using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
+using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Game.Serialized;
 using Scripts.Game.Serialized.Brains;
 using Scripts.Game.Shopkeeper;
@@ -29,13 +30,31 @@ namespace Scripts.Game.Defined.Characters {
                     new Apple(),
                     new IdentifyScroll(),
                     new RevivalSeed(),
-                    new CrushingBlowTome(),
-                    new HealTome(),
-                    new DefendTome(),
                     new RegenArmor()
-                    )
-                .AddBuys(new Buy(new Inventory1x6())
-                .AddPitch("The 6Pack series of backpack expanders can increase your inventory size up to 6! A perfect option for the packrat in your life."));
+                    );
+        }
+
+        public static Trainer RuinsTrainer(Page previous, Party party) {
+            return new Trainer(
+                previous,
+                party,
+                Villager(),
+                new PurchasedSpell(30, new SetupDefend()),
+                new PurchasedSpell(30, new QuickAttack()),
+                new PurchasedSpell(50, new PlayerHeal()),
+                new PurchasedSpell(50, new CalmMind())
+                );
+        }
+
+        public static InventoryMaster RuinsMaster(Page previous, Party party) {
+            return new InventoryMaster(
+                    previous,
+                    party,
+                    Villager(),
+                    Inventory.INITIAL_CAPACITY,
+                    6,
+                    100
+                );
         }
 
         public static Character Villager() {

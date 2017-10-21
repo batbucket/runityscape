@@ -7,6 +7,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Collections;
+using Scripts.Model.Tooltips;
+using Scripts.Model.TextBoxes;
+using Scripts.Model.Pages;
+using Scripts.Model.Characters;
 
 namespace Scripts.Model.Buffs {
 
@@ -34,6 +38,7 @@ namespace Scripts.Model.Buffs {
     /// stats are used.
     /// </summary>
     public abstract class Buff : IComparable<Buff>, ISaveable<BuffSave>, IIdNumberable, IEnumerable<KeyValuePair<StatType, int>> {
+        private const string BUFF_REACT_TEXT = "<color=yellow>{0}</color>'s <color=cyan>{1}</color> activates <color=yellow>{2}</color>'s <color=cyan>{3}</color>!";
 
         /// <summary>
         /// Buff description
@@ -130,6 +135,36 @@ namespace Scripts.Model.Buffs {
         public Characters.Stats BuffCaster {
             get {
                 return caster;
+            }
+        }
+
+        public TooltipBundle Tooltip {
+            get {
+                return new TooltipBundle(
+                    this.Sprite,
+                    this.Name,
+                    this.DetailedDescription);
+            }
+        }
+
+        public string DetailedDescription {
+            get {
+                return string.Format(
+                    "<color=yellow>{0}</color>{1}",
+                    IsDispellable ? "Dispellable\n" : string.Empty,
+                    Description
+                    );
+            }
+        }
+
+        public string StringTooltip {
+            get {
+                return string.Format(
+                    "<color=cyan>{0}</color>\n<color=yellow>{1}</color>{2}",
+                    this.Name,
+                    IsDispellable ? "Dispellable\n" : string.Empty,
+                    Description
+                    );
             }
         }
 
@@ -235,6 +270,20 @@ namespace Scripts.Model.Buffs {
             return statBonuses.GetEnumerator();
         }
 
+        public void ReactToSpell(Page page, SingleSpell spellToReactTo, Character buffHolder) {
+            if (this.IsReact(spellToReactTo, buffHolder.Stats)) {
+                page.AddText(new TextBox(
+                    string.Format(BUFF_REACT_TEXT,
+                        spellToReactTo.CasterName,
+                        spellToReactTo.SpellBook.Name,
+                        buffHolder.Look.DisplayName,
+                        this.Name
+                        ),
+                    this.Tooltip));
+                this.React(spellToReactTo, buffHolder.Stats);
+            }
+        }
+
         IEnumerator IEnumerable.GetEnumerator() {
             return statBonuses.GetEnumerator();
         }
@@ -269,9 +318,9 @@ namespace Scripts.Model.Buffs {
         /// The one who has the buff doesn't have to be targeted.
         /// </summary>
         /// <param name="incomingSpell">Spell cast on character</param>
-        /// <param name="statsOfTheCharacterTheBuffIsOn">Stats of the character who is the target of the spell</param>
-        /// <returns></returns>
-        public virtual bool IsReact(Spell incomingSpell, Characters.Stats statsOfTheCharacterTheBuffIsOn) {
+        /// <param name="ownerOfThisBuff">Stats of the character who is the target of the spell</param>
+        /// <returns>True if the buff will react.</returns>
+        public virtual bool IsReact(SingleSpell incomingSpell, Characters.Stats ownerOfThisBuff) {
             return false;
         }
 
@@ -286,9 +335,9 @@ namespace Scripts.Model.Buffs {
         /// <summary>
         /// Cast when the buff is dispelled.
         /// </summary>
-        /// <param name="statsOfTheCharacterTheBuffIsOn">Stats of the character who is the target of the spell</param>
-        public void OnDispell(Characters.Stats statsOfTheCharacterTheBuffIsOn) {
-            PerformSpellEffects(OnDispellHelper(statsOfTheCharacterTheBuffIsOn));
+        /// <param name="ownerOfThisBuff">Stats of the character who is the target of the spell</param>
+        public void OnDispell(Characters.Stats ownerOfThisBuff) {
+            PerformSpellEffects(OnDispellHelper(ownerOfThisBuff));
         }
 
         /// <summary>
@@ -308,18 +357,18 @@ namespace Scripts.Model.Buffs {
         /// <summary>
         /// Cast when the buff expires.
         /// </summary>
-        /// <param name="statsOfTheCharacterTheBuffIsOn">Stats of the character who is the target of the spell</param>
-        public void OnTimeOut(Characters.Stats statsOfTheCharacterTheBuffIsOn) {
-            PerformSpellEffects(OnTimeOutHelper(statsOfTheCharacterTheBuffIsOn));
+        /// <param name="ownerOfThisBuff">Stats of the character who is the target of the spell</param>
+        public void OnTimeOut(Characters.Stats ownerOfThisBuff) {
+            PerformSpellEffects(OnTimeOutHelper(ownerOfThisBuff));
         }
 
         /// <summary>
         /// Respond to a spell cast in battle.
         /// </summary>
         /// <param name="incomingSpell">Spell cast on character</param>
-        /// <param name="statsOfTheCharacterTheBuffIsOn">Stats of the character who is the target of the spell</param>
-        public void React(Spell incomingSpell, Characters.Stats statsOfTheCharacterTheBuffIsOn) {
-            ReactHelper(incomingSpell, statsOfTheCharacterTheBuffIsOn);
+        /// <param name="ownerOfThisBuff">Stats of the character who is the target of the spell</param>
+        private void React(SingleSpell incomingSpell, Characters.Stats ownerOfThisBuff) {
+            ReactHelper(incomingSpell, ownerOfThisBuff);
         }
 
         /// <summary>
@@ -337,27 +386,27 @@ namespace Scripts.Model.Buffs {
         }
 
         /// <see cref="OnApply(Characters.Stats)"/>
-        protected virtual IList<SpellEffect> OnApplyHelper(Characters.Stats owner) {
+        protected virtual IList<SpellEffect> OnApplyHelper(Characters.Stats ownerOfThisBuff) {
             return new SpellEffect[0];
         }
 
         /// <see cref="OnDispell(Characters.Stats)"/>
-        protected virtual IList<SpellEffect> OnDispellHelper(Characters.Stats owner) {
-            return OnTimeOutHelper(owner);
+        protected virtual IList<SpellEffect> OnDispellHelper(Characters.Stats ownerOfThisBuff) {
+            return OnTimeOutHelper(ownerOfThisBuff);
         }
 
         /// <see cref="OnEndOfTurn(Characters.Stats)"/>
-        protected virtual IList<SpellEffect> OnEndOfTurnHelper(Characters.Stats owner) {
+        protected virtual IList<SpellEffect> OnEndOfTurnHelper(Characters.Stats ownerOfThisBuff) {
             return new SpellEffect[0];
         }
 
         /// <see cref="OnTimeOut(Characters.Stats)"/>
-        protected virtual IList<SpellEffect> OnTimeOutHelper(Characters.Stats owner) {
+        protected virtual IList<SpellEffect> OnTimeOutHelper(Characters.Stats ownerOfThisBuff) {
             return new SpellEffect[0];
         }
 
         /// <see cref="React(Spell, Characters.Stats)"/>
-        protected virtual void ReactHelper(Spell s, Characters.Stats owner) {
+        protected virtual void ReactHelper(SingleSpell spellCast, Characters.Stats ownerOfThisBuff) {
         }
 
         /// <summary>

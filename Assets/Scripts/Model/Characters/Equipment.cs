@@ -30,22 +30,16 @@ namespace Scripts.Model.Characters {
             IEnumerable<EquippableItem>,
             IEnumerable<ISpellable>,
             IEnumerable<KeyValuePair<EquipType, EquippableItem>>,
-            IEnumerable<KeyValuePair<EquipType, Buff>>,
             IEnumerable<KeyValuePair<StatType, int>>,
             ISaveable<EquipmentSave> {
-        public Action<Buff> AddBuff;
-        public Action<Buff> RemoveBuff;
+        public Action<PermanentBuff> AddBuff;
+        public Action<PermanentBuff> RemoveBuff;
         public Action<SplatDetails> AddSplat;
 
         /// <summary>
         /// Equipment internal dictionary
         /// </summary>
         private readonly IDictionary<EquipType, EquippableItem> equipped;
-
-        /// <summary>
-        /// Buffs associated with equipment
-        /// </summary>
-        private readonly IDictionary<EquipType, Buff> itemBuffs;
 
         /// <summary>
         /// The stat bonuses from the equipment.
@@ -68,7 +62,6 @@ namespace Scripts.Model.Characters {
             foreach (StatType s in StatType.ASSIGNABLES) {
                 statBonuses.Add(s, 0);
             }
-            this.itemBuffs = new Dictionary<EquipType, Buff>();
             this.AddSplat = ((p) => { });
         }
 
@@ -84,10 +77,9 @@ namespace Scripts.Model.Characters {
                 RemoveEquip(inventory, equippableItem.Type);
             }
 
-            Buff buff = equippableItem.CreateBuff();
+            PermanentBuff buff = equippableItem.CreateBuff();
             if (buff != null) {
                 buff.Caster = caster;
-                itemBuffs.Add(equippableItem.Type, buff);
                 AddBuff(buff);
             }
 
@@ -108,10 +100,9 @@ namespace Scripts.Model.Characters {
             Util.Assert(equipped.ContainsKey(type), "No equipment in slot.");
             EquippableItem itemToRemove = equipped[type];
 
-            if (itemBuffs.ContainsKey(itemToRemove.Type)) {
-                Buff buffToRemove = itemBuffs[itemToRemove.Type];
-                itemBuffs.Remove(itemToRemove.Type);
-                RemoveBuff(buffToRemove);
+            PermanentBuff possibleBuff = itemToRemove.CreateBuff();
+            if (possibleBuff != null) {
+                RemoveBuff(possibleBuff);
             }
 
             inventory.Add(itemToRemove);
@@ -169,7 +160,6 @@ namespace Scripts.Model.Characters {
             }
 
             return Util.IsDictionariesEqual(this.equipped, item.equipped)
-                && Util.IsDictionariesEqual(this.itemBuffs, item.itemBuffs)
                 && Util.IsDictionariesEqual(this.statBonuses, item.statBonuses);
         }
 
@@ -209,18 +199,7 @@ namespace Scripts.Model.Characters {
             foreach (KeyValuePair<StatType, int> pair in statBonuses) {
                 bonuses.Add(new EquipmentSave.EquipBonus() { Stat = new StatTypeSave(pair.Key), Bonus = pair.Value });
             }
-
-            List<EquipmentSave.EquipBuff> buffs = new List<EquipmentSave.EquipBuff>();
-            foreach (KeyValuePair<EquipType, Buff> pair in itemBuffs) {
-                buffs.Add(new EquipmentSave.EquipBuff() {
-                    EquipType = new EquipTypeSave(pair.Key),
-                    Buff = new BuffSave(
-                        pair.Value.TurnsRemaining,
-                        pair.Value.BuffCaster.GetSaveObject(),
-                        pair.Value.CasterId, pair.Value.GetType())
-                });
-            }
-            return new EquipmentSave(equips, buffs, bonuses);
+            return new EquipmentSave(equips, bonuses);
         }
 
         /// <summary>
@@ -241,13 +220,6 @@ namespace Scripts.Model.Characters {
                 this.statBonuses.Add(type, count);
             }
 
-            foreach (EquipmentSave.EquipBuff eb in saveObject.Buffs) {
-                BuffSave bs = eb.Buff;
-                EquipType et = eb.EquipType.Restore();
-                Buff buff = CharacterBuffsSave.SetupBuffCasterFromSave(bs, partyMembers);
-                itemBuffs.Add(et, buff);
-            }
-
             partyMembers = null;
         }
 
@@ -263,10 +235,6 @@ namespace Scripts.Model.Characters {
 
         IEnumerator<KeyValuePair<EquipType, EquippableItem>> IEnumerable<KeyValuePair<EquipType, EquippableItem>>.GetEnumerator() {
             return equipped.GetEnumerator();
-        }
-
-        IEnumerator<KeyValuePair<EquipType, Buff>> IEnumerable<KeyValuePair<EquipType, Buff>>.GetEnumerator() {
-            return itemBuffs.GetEnumerator();
         }
 
         IEnumerator<KeyValuePair<StatType, int>> IEnumerable<KeyValuePair<StatType, int>>.GetEnumerator() {
