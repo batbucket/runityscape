@@ -1,5 +1,7 @@
 ﻿using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
+using Scripts.Game.Defined.Serialized.Statistics;
 using Scripts.Game.Defined.Unserialized.Buffs;
 using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Game.Serialized.Brains;
@@ -103,8 +105,107 @@ namespace Scripts.Game.Defined.Characters {
                     .AddSpells(new UnholyRevival());
             }
         }
-    }
 
-    public static class Ocean {
+        public static class Ocean {
+
+            public static Character Shark() {
+                return CharacterUtil.StandardEnemy(
+                    new Stats(5, 5, 6, 8, 60),
+                    new Look(
+                        "Razor Shark",
+                        "shark",
+                        "Shark who needs lotion.",
+                        Breed.FISH
+                        ),
+                    new Attacker())
+                    .AddBuff(new RougherSkin())
+                    .AddItem(new Money(), Util.RandomRange(50, 100));
+            }
+
+            public static Character Siren() {
+                return CharacterUtil.StandardEnemy(
+                        new Stats(6, 4, 10, 10, 40),
+                        new Look(
+                            "Enthraller",
+                            "siren",
+                            "Sings a mean tune.",
+                            Breed.FISH
+                        ),
+                        new Siren()
+                    ).AddSpells(Game.Serialized.Brains.Siren.DEBUFF_LIST);
+            }
+
+            public static Character Tentacle() {
+                return CharacterUtil.StandardEnemy(
+                        new Stats(7, 3, 25, 1, 20),
+                        new Look(
+                            "Lasher",
+                            "shark",
+                            "Tentacle belonging to a Kraken.",
+                            Breed.FISH
+                            ),
+                        new Attacker()
+                    )
+                    .AddBuff(new RoughestSkin());
+            }
+
+            public static Character Kraken() {
+                return CharacterUtil.StandardEnemy(
+                        new Stats(8, 10, 10, 20, 200),
+                        new Look(
+                            "Octavio",
+                            "shark",
+                            "Giant squid thing. Commonly mistaken for a DJ.",
+                            Breed.FISH
+                            ),
+                        new Kraken()
+                    )
+                    .AddSpells(new SpawnTentacles())
+                    .AddSpells(new CrushingBlow())
+                    .AddStats(new Skill());
+            }
+
+            public static Character Elemental() {
+                return CharacterUtil.StandardEnemy(
+                    new Stats(9, 5, 20, 15, 20),
+                    new Look(
+                        "Undine",
+                        "villager",
+                        "Sea elemental.",
+                        Breed.FISH
+                        ),
+                    new Elemental())
+                    .AddStats(new Mana())
+                    .AddSpells(new WaterboltSingle(), new WaterboltMulti())
+                    .AddBuff(new UnholyInsight());
+            }
+
+            public static Character DreadSinger() {
+                return CharacterUtil.StandardEnemy(
+                        new Stats(10, 5, 20, 20, 25),
+                        new Look(
+                            "Sea Witch",
+                            "siren",
+                            "Singer of the voices of eternal death.",
+                            Breed.FISH
+                            ),
+                        new DreadSinger())
+                        .AddSpells(new CastDelayedEternalDeath())
+                        .AddItem(new Cleansing(), 1);
+            }
+
+            public static Character Swarm() {
+                return CharacterUtil.StandardEnemy(
+                    new Stats(2, 1, 5, 2, 15),
+                    new Look(
+                        "Swarm",
+                        "angler-fish",
+                        "Questionable member of the sea that travels in schools.",
+                        Breed.FISH
+                        ),
+                    new Swarm())
+                    .AddItem(new Money(), Util.RandomRange(5, 10));
+            }
+        }
     }
 }

@@ -576,6 +576,12 @@ namespace Scripts.Game.Defined.Unserialized.Buffs {
         }
     }
 
+    public class RoughestSkin : Thorns {
+
+        public RoughestSkin() : base(10, "Roughest Skin") {
+        }
+    }
+
     public abstract class ManaRegen : Buff {
         private readonly int manaRecoveryPerTurn;
 

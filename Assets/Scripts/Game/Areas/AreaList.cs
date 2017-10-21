@@ -174,7 +174,24 @@ namespace Scripts.Game.Areas {
                             new Encounter(Music.BOSS, LabNPCs.Ruins.BigKnightA(), LabNPCs.Ruins.BigKnightB())
                         }),
                     new BattleStage(
-                        "Singularities",
+                        "Objective Sea I",
+                        () => new Encounter[] {
+                        }),
+                    new BattleStage(
+                        "Objective Sea II",
+                        () => new Encounter[] {
+                        }),
+                    new BattleStage(
+                        "Objective Sea III",
+                        () => new Encounter[] {
+                            new Encounter(Music.BOSS, LabNPCs.Ocean.Kraken())
+                        }),
+                    new BattleStage(
+                        "Calm before the storm",
+                        () => new Encounter[] {
+                        }),
+                    new BattleStage(
+                        "The Final Battle!",
                         () => new Encounter[] {
                         })
                 },
