@@ -140,10 +140,8 @@ namespace Scripts.Model.SaveLoad {
             Add<StrengthScalingPoison>("strengthScalingPoison");
             Add<BlackedOut>("blackoutDebuff");
             Add<DamageResist>("damageResist");
-            Add<Ignited>("ignitedDebuff");
-            Add<Insight>("insight");
+            Add<TempIgnited>("ignitedDebuff");
             Add<RegenerateHealth>("restore");
-            Add<StrengthBoost>("strengthBoost");
             Add<FishShook>("fishShook");
             Add<Defend>("defend");
             Add<RegenerateMana>("regenMana");

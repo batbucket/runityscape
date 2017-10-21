@@ -28,14 +28,16 @@ namespace Scripts.Game.Areas {
             = new ReadOnlyDictionary<AreaType, Func<Flags, Party, Page, Page, Area>>(
                 new Dictionary<AreaType, Func<Flags, Party, Page, Page, Area>>() {
                     { AreaType.RUINS, (flags, party, camp, dungeonPages) => CreateRuins(flags, party, camp, dungeonPages) },
-                    { AreaType.SEA_WORLD, (flags, party, camp, dungeonPages) => SeaWorld(flags, party, camp, dungeonPages) }
+                    { AreaType.SEA_WORLD, (flags, party, camp, dungeonPages) => SeaWorld(flags, party, camp, dungeonPages) },
+                    { AreaType.LAB, (flags, party, camp, dungeonPages) => EvilLabs(flags, party, camp, dungeonPages) }
         });
 
         public static readonly ReadOnlyDictionary<AreaType, Sprite> AREA_SPRITES
             = new ReadOnlyDictionary<AreaType, Sprite>(
                 new Dictionary<AreaType, Sprite>() {
                     { AreaType.RUINS, Util.GetSprite("skull-crack") },
-                    { AreaType.SEA_WORLD, Util.GetSprite("at-sea") }
+                    { AreaType.SEA_WORLD, Util.GetSprite("at-sea") },
+                    { AreaType.LAB, Util.GetSprite("potion-ball") }
                 });
 
         private static Area CreateRuins(Flags flags, Party party, Page camp, Page quests) {
@@ -159,19 +161,20 @@ namespace Scripts.Game.Areas {
             return new Area(AreaType.LAB,
                 new Stage[] {
                     new BattleStage(
-                        "Java Mausoleum",
+                        "Java Crypt I",
                         () => new Encounter[] {
                         }),
                     new BattleStage(
-                        "Objective Ocean",
+                        "Java Crypt II",
                         () => new Encounter[] {
+                        }),
+                    new BattleStage(
+                        "Java Crypt III",
+                        () => new Encounter[] {
+                            new Encounter(Music.BOSS, LabNPCs.Ruins.BigKnightA(), LabNPCs.Ruins.BigKnightB())
                         }),
                     new BattleStage(
                         "Singularities",
-                        () => new Encounter[] {
-                        }),
-                    new BattleStage(
-                        "Adventure's End",
                         () => new Encounter[] {
                         })
                 },

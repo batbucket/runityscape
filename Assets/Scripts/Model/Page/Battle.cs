@@ -211,6 +211,10 @@ namespace Scripts.Model.Pages {
             }
         }
 
+        public bool IsChargingSpell(Character character) {
+            return charactersChargingSpells.ContainsKey(character);
+        }
+
         private static void AddEquipmentToLoot(IDictionary<Item, int> loot, Equipment equipment) {
             List<EquippableItem> equipmentItems = ((IEnumerable<EquippableItem>)equipment).ToList();
             foreach (EquippableItem item in equipmentItems) {

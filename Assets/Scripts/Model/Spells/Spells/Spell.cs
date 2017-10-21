@@ -69,7 +69,7 @@ namespace Scripts.Model.Spells {
                     Caster.Look.DisplayName,
                     book.Name,
                     TargetName,
-                    turnsUntilCast > 1 ? string.Format("{0} turns until cast.", turnsUntilCast) : string.Empty);
+                    turnsUntilCast > 1 ? string.Format("\n{0} turns until cast.", turnsUntilCast) : string.Empty);
                 return new TextBox(
                     returnString,
                     book.TextboxTooltip
