@@ -161,37 +161,48 @@ namespace Scripts.Game.Areas {
             return new Area(AreaType.LAB,
                 new Stage[] {
                     new BattleStage(
-                        "Java Crypt I",
+                        "Disbelief",
                         () => new Encounter[] {
+                            new Encounter(LabNPCs.Ruins.Cultist(), LabNPCs.Ruins.Cultist(), LabNPCs.Ruins.Cultist()),
+                            new Encounter(LabNPCs.Ruins.Enforcer()),
+                            new Encounter(LabNPCs.Ruins.Enforcer(), LabNPCs.Ruins.Enforcer(), LabNPCs.Ruins.Enforcer()),
+                            new Encounter(LabNPCs.Ruins.BigKnightA())
                         }),
                     new BattleStage(
-                        "Java Crypt II",
+                        "Denial",
                         () => new Encounter[] {
+                            new Encounter(LabNPCs.Ruins.Cleric(), LabNPCs.Ruins.Enforcer()),
+                            new Encounter(LabNPCs.Ruins.Cleric(), LabNPCs.Ruins.Enforcer(), LabNPCs.Ruins.Cleric(), LabNPCs.Ruins.Enforcer()),
+                            new Encounter(LabNPCs.Ruins.Mage()),
+                            new Encounter(LabNPCs.Ruins.Darkener(), LabNPCs.Ruins.Darkener()),
+                            new Encounter(LabNPCs.Ruins.Cleric(), LabNPCs.Ruins.Mage(), LabNPCs.Ruins.Mage(), LabNPCs.Ruins.Cleric()),
+                            new Encounter(LabNPCs.Ruins.BigKnightB())
                         }),
                     new BattleStage(
-                        "Java Crypt III",
+                        "Bargaining",
                         () => new Encounter[] {
                             new Encounter(Music.BOSS, LabNPCs.Ruins.BigKnightA(), LabNPCs.Ruins.BigKnightB())
                         }),
                     new BattleStage(
-                        "Objective Sea I",
+                        "Guilt",
+                        () => new Encounter[] {
+                            new Encounter(LabNPCs.Ocean.Shark())
+                        }),
+                    new BattleStage(
+                        "Anger",
                         () => new Encounter[] {
                         }),
                     new BattleStage(
-                        "Objective Sea II",
-                        () => new Encounter[] {
-                        }),
-                    new BattleStage(
-                        "Objective Sea III",
+                        "Depression",
                         () => new Encounter[] {
                             new Encounter(Music.BOSS, LabNPCs.Ocean.Kraken())
                         }),
                     new BattleStage(
-                        "Calm before the storm",
+                        "Acceptance",
                         () => new Encounter[] {
                         }),
                     new BattleStage(
-                        "The Final Battle!",
+                        "Respite",
                         () => new Encounter[] {
                         })
                 },
