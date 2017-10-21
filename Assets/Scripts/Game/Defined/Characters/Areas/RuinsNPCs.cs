@@ -31,7 +31,11 @@ namespace Scripts.Game.Defined.Characters {
                     new Apple(),
                     new IdentifyScroll(),
                     new RevivalSeed(),
-                    new RegenArmor()
+                    new RegenArmor(),
+                    new MinorVitalityTrinket(),
+                    new MinorIntellectTrinket(),
+                    new MinorStrengthTrinket(),
+                    new MinorAgilityTrinket()
                     );
         }
 

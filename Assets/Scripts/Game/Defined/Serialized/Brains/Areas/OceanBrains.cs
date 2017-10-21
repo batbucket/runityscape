@@ -16,19 +16,18 @@ namespace Scripts.Game.Serialized.Brains {
 
         private static bool hasSaidIntroduction;
         private static bool hasSaidSwarmDeath;
+        private static bool hasSaidDamagedMessage;
 
         private int initialEnemiesPresent;
-        private bool hasSaidDamagedMessage = false;
-
-        public Swarm() {
-        }
 
         protected override IList<Spell> GetPriorityPlays() {
             return new Spell[] {
-                    CastOnTargetMeetingCondition(HEAL, c => c.Stats.GetMissingStatCount(StatType.HEALTH) > 0),
+                    CastOnTargetMeetingCondition(HEAL, c => c != this.brainOwner && c.Stats.GetMissingStatCount(StatType.HEALTH) > 0),
                     CastOnLeastTarget(ATTACK, SortByLowestHealth())
                 };
         }
+
+
 
         public override string StartOfRoundDialogue() {
             if (currentBattle.TurnCount == 0 && !hasSaidIntroduction) {

@@ -25,7 +25,11 @@ namespace Scripts.Game.Defined.Characters {
                 Shark())
                 .AddBuys(
                     new FishHook(),
-                    new Cleansing()
+                    new Cleansing(),
+                    new VitalityTrinket(),
+                    new IntellectTrinket(),
+                    new StrengthTrinket(),
+                    new AgilityTrinket()
                 );
         }
 
@@ -63,6 +67,7 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new Attacker())
                 .AddBuff(new RoughSkin())
+                .AddItem(new SharkFin(), Util.IsChance(.50f))
                 .AddItem(new Money(), Util.RandomRange(50, 100));
         }
 
@@ -77,6 +82,7 @@ namespace Scripts.Game.Defined.Characters {
                     ),
                 new SharkPirate())
                 .AddBuff(new RougherSkin())
+                .AddItem(new SharkFin(), Util.IsChance(.75f))
                 .AddSpells(new SummonSeaCreatures(), new OneShotKill(), new CastDelayedDeath(), new GiveOverwhelmingPower());
         }
 
@@ -169,7 +175,7 @@ namespace Scripts.Game.Defined.Characters {
 
         public static Character Swarm() {
             return CharacterUtil.StandardEnemy(
-                new Stats(2, 1, 5, 2, 15),
+                new Stats(5, 3, 10, 2, 15),
                 new Look(
                     "Swarm",
                     "angler-fish",
@@ -177,6 +183,7 @@ namespace Scripts.Game.Defined.Characters {
                     Breed.FISH
                     ),
                 new Swarm())
+                .AddSpells(new EnemyHeal())
                 .AddItem(new Money(), Util.RandomRange(5, 10));
         }
     }

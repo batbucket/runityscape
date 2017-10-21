@@ -129,7 +129,7 @@ namespace Scripts.Game.Areas {
                         new BattleStage(
                             "Heart of the Swarm",
                             () => new Encounter[] {
-                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
+                                new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm()),
                                 new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
                                 new Encounter(OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm(), OceanNPCs.Swarm()),
                             }),
