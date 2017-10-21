@@ -69,7 +69,8 @@ namespace Scripts.Game.Defined.Serialized.Items {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
-            return new SpellEffect[] { new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT) };
+            return new SpellEffect[] { new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT)};
+
         }
     }
 

@@ -11,6 +11,64 @@ using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Buffs {
 
+    public class AntiHeal : Buff {
+        public AntiHeal() : base(3, Util.GetSprite("skull-crossed-bones"), "Heal Buff", "Healing targeting this unit is doubled.", false) {
+        }
+
+        public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
+            return (GetHealingElement(spellToReactTo) != null) && spellToReactTo.Target.Stats == owner;
+        }
+
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
+            SpellEffect healthIncrease = GetHealingElement(spellToReactTo);
+            if (healthIncrease != null) {
+                healthIncrease.Value = 0;
+            }
+        }
+
+        private SpellEffect GetHealingElement(SingleSpell spellToReactTo) {
+            SpellEffect healthIncrease = null;
+            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthIncrease == null); i++) {
+                SpellEffect se = spellToReactTo.Result.Effects[i];
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value > 0) {
+                    healthIncrease = addToModStat;
+                }
+            }
+            return healthIncrease;
+        }
+    }
+
+    public class HealBoost : Buff {
+        private int HEAL_MULTIPLIER = 2;
+
+        public HealBoost() : base(3, Util.GetSprite("health-normal"), "Heal Buff", "Healing targeting this unit is doubled.", false) {
+        }
+
+        public override bool IsReact(SingleSpell spellToReactTo, Stats owner) {
+            return (GetHealingElement(spellToReactTo) != null) && spellToReactTo.Target.Stats == owner;
+        }
+
+        protected override void ReactHelper(SingleSpell spellToReactTo, Stats owner) {
+            SpellEffect healthIncrease = GetHealingElement(spellToReactTo);
+            if (healthIncrease != null) {
+                healthIncrease.Value = (int)(healthIncrease.Value * HEAL_MULTIPLIER);
+            }
+        }
+
+        private SpellEffect GetHealingElement(SingleSpell spellToReactTo) {
+            SpellEffect healthIncrease = null;
+            for (int i = 0; (i < spellToReactTo.Result.Effects.Count) && (healthIncrease == null); i++) {
+                SpellEffect se = spellToReactTo.Result.Effects[i];
+                AddToModStat addToModStat = se as AddToModStat;
+                if (addToModStat != null && addToModStat.AffectedStat == StatType.HEALTH && addToModStat.Value > 0) {
+                    healthIncrease = addToModStat;
+                }
+            }
+            return healthIncrease;
+        }
+    }
+
     public class FishShook : PermanentBuff {
         private const float FISHY_TARGET_MULTIPLIER = 2;
         private const float OTHER_TARGET_MULTIPLIER = 0.25f;
