@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 namespace Scripts.View.Effects {
 
+    /// <summary>
+    /// Creates the fade image effect.
+    /// </summary>
+    /// <seealso cref="Scripts.View.ObjectPool.PooledBehaviour" />
     public class FadeAnimation : PooledBehaviour {
 
         [SerializeField]

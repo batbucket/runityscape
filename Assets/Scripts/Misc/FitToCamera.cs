@@ -3,6 +3,7 @@ using System.Collections;
 
 /// <summary>
 /// Scales a recttransform to fit the camera dimensions.
+/// Allows this game to be played in any dimension.
 /// </summary>
 public class FitToCamera : MonoBehaviour {
 

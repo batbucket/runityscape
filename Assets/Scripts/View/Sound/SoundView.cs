@@ -10,7 +10,6 @@ namespace Scripts.View.Sounds {
     /// This class manages the sounds that play during the game.
     /// </summary>
     public class SoundView : MonoBehaviour {
-
         private const string MUSIC_PREFIX = "Music/";
         private const string SOUND_PREFIX = "Sounds/";
         private const float SOUND_VOLUME = 0.50f;
@@ -20,8 +19,10 @@ namespace Scripts.View.Sounds {
 
         [SerializeField]
         private OneShotHolderView oneShotHolder;
+
         [SerializeField]
         private LoopHolderView loopHolder;
+
         [SerializeField]
         private ClipView clipPrefab;
 
@@ -29,6 +30,10 @@ namespace Scripts.View.Sounds {
             ObjectPoolManager.Instance.Register(clipPrefab);
         }
 
+        /// <summary>
+        /// Loops the music.
+        /// </summary>
+        /// <param name="resourceLocation">The resource location.</param>
         public void LoopMusic(string resourceLocation) {
             if (string.IsNullOrEmpty(resourceLocation)) {
                 return;
@@ -39,12 +44,17 @@ namespace Scripts.View.Sounds {
                 Sound[resourceLocation] = Resources.Load<AudioClip>(loc);
             }
 
+            loopHolder.StopAllSounds();
             ClipView clip = ObjectPoolManager.Instance.Get<ClipView>(clipPrefab);
             clip.Clip = Sound[resourceLocation];
             clip.Volume = MUSIC_VOLUME;
             loopHolder.Add(clip);
         }
 
+        /// <summary>
+        /// Plays the sound.
+        /// </summary>
+        /// <param name="resourceLocation">The resource location.</param>
         public void PlaySound(string resourceLocation) {
             if (string.IsNullOrEmpty(resourceLocation)) {
                 return;
@@ -57,6 +67,9 @@ namespace Scripts.View.Sounds {
             StartCoroutine(PlayThenDestroy(resourceLocation));
         }
 
+        /// <summary>
+        /// Stops all sounds.
+        /// </summary>
         public void StopAllSounds() {
             oneShotHolder.StopAllSounds();
             loopHolder.StopAllSounds();
@@ -66,6 +79,11 @@ namespace Scripts.View.Sounds {
             this.Sound = new Dictionary<string, AudioClip>();
         }
 
+        /// <summary>
+        /// Plays the clip then destroys it.
+        /// </summary>
+        /// <param name="resourceLocation">The resource location.</param>
+        /// <returns></returns>
         private IEnumerator PlayThenDestroy(string resourceLocation) {
             ClipView clip = ObjectPoolManager.Instance.Get<ClipView>(clipPrefab);
             clip.Clip = Sound[resourceLocation];

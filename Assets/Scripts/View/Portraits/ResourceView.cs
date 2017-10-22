@@ -1,4 +1,5 @@
 ﻿using Scripts.Model.Stats;
+using Scripts.Model.Tooltips;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
 using System;
@@ -11,6 +12,8 @@ namespace Scripts.View.Portraits {
     /// This class represents a bar and its display
     /// on a CharacterView, representing their resources.
     /// </summary>
+    /// <seealso cref="Scripts.View.ObjectPool.PooledBehaviour" />
+    /// <seealso cref="System.IComparable{Scripts.View.Portraits.ResourceView}" />
     public class ResourceView : PooledBehaviour, IComparable<ResourceView> {
 
         /// <summary>
@@ -25,17 +28,35 @@ namespace Scripts.View.Portraits {
         [SerializeField]
         private Image fillBar;
 
+        /// <summary>
+        /// The resource icon
+        /// </summary>
         [SerializeField]
         private Image resourceIcon;
 
+        /// <summary>
+        /// The text
+        /// </summary>
         [SerializeField]
         private Text text;
 
+        /// <summary>
+        /// The tip
+        /// </summary>
         [SerializeField]
         private Tip tip;
 
+        /// <summary>
+        /// The order
+        /// </summary>
         private int order;
 
+        /// <summary>
+        /// Sets the bar scale.
+        /// </summary>
+        /// <value>
+        /// The bar scale.
+        /// </value>
         private float BarScale {
             set {
                 Vector3 v = fillBar.gameObject.GetComponent<RectTransform>().localScale;
@@ -44,6 +65,17 @@ namespace Scripts.View.Portraits {
             }
         }
 
+        /// <summary>
+        /// Setups the specified negative color.
+        /// </summary>
+        /// <param name="negativeColor">Color of the negative.</param>
+        /// <param name="fillColor">Color of the fill.</param>
+        /// <param name="sprite">The sprite.</param>
+        /// <param name="barText">The bar text.</param>
+        /// <param name="numerator">The numerator.</param>
+        /// <param name="denominator">The denominator.</param>
+        /// <param name="title">The title.</param>
+        /// <param name="typeDescription">The type description.</param>
         public void Setup(
             Color negativeColor,
             Color fillColor,
@@ -58,9 +90,12 @@ namespace Scripts.View.Portraits {
             resourceIcon.sprite = sprite;
             text.text = barText;
             SetBarScale(numerator, denominator);
-            tip.Setup(sprite, title, string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, typeDescription));
+            tip.Setup(new TooltipBundle(sprite, title, string.Format("Current: {0}\nMaximum: {1}\n\n{2}", numerator, denominator, typeDescription)));
         }
 
+        /// <summary>
+        /// Reset the state of this MonoBehavior.
+        /// </summary>
         public override void Reset() {
             Setup(
                 Color.white,
@@ -75,6 +110,11 @@ namespace Scripts.View.Portraits {
             text.color = Color.white;
         }
 
+        /// <summary>
+        /// Sets the bar scale.
+        /// </summary>
+        /// <param name="numerator">The numerator.</param>
+        /// <param name="denominator">The denominator.</param>
         private void SetBarScale(float numerator, float denominator) {
             if (denominator <= 0) {
                 BarScale = 0;
@@ -83,6 +123,11 @@ namespace Scripts.View.Portraits {
             }
         }
 
+        /// <summary>
+        /// Compares to.
+        /// </summary>
+        /// <param name="other">The other.</param>
+        /// <returns></returns>
         int IComparable<ResourceView>.CompareTo(ResourceView other) {
             return this.order.CompareTo(other.order);
         }

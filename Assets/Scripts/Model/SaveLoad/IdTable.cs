@@ -1,32 +1,47 @@
-﻿using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Characters;
-using Scripts.Game.Defined.Serialized.Items.Consumables;
-using Scripts.Game.Defined.Serialized.Items.Equipment;
-using Scripts.Game.Defined.Serialized.Items.Misc;
+﻿using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
-using Scripts.Game.Defined.Spells;
+using Scripts.Game.Serialized.Brains;
 using Scripts.Model.Initable;
 using Scripts.Model.Interfaces;
 using Scripts.Model.Items;
-using Scripts.Model.SaveLoad;
 using Scripts.Model.Stats;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
+using UnityEngine;
 
 namespace Scripts.Model.SaveLoad {
 
+    /// <summary>
+    /// Table holding various Ids
+    /// </summary>
     public static class IdTable {
+
+        /// <summary>
+        /// Mapping of types to unique strings
+        /// </summary>
         public static TypeMap Types = new TypeMap();
+
+        /// <summary>
+        /// Mapping of type safe enums
+        /// </summary>
         public static EnumMap<StatType> Stats = new EnumMap<StatType>(StatType.AllTypes);
+
+        /// <summary>
+        /// Mapping of type safe enums
+        /// </summary>
         public static EnumMap<EquipType> Equips = new EnumMap<EquipType>(EquipType.AllTypes);
 
         private static HashSet<IInitable> initables;
         private static bool isInited;
 
+        /// <summary>
+        /// Initializes this instance.
+        /// </summary>
         public static void Init() {
             if (!isInited) {
                 foreach (IInitable init in initables) {
@@ -49,7 +64,13 @@ namespace Scripts.Model.SaveLoad {
         }
     }
 
+    /// <summary>
+    /// TypeMap holds the mappings of type and a string,
+    /// used for saving and loading even if class names are refactored.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.SaveLoad.IdMap{System.Type}" />
     public class TypeMap : IdMap<Type> {
+
         protected override void InitHelper() {
             Stats();
             Spells();
@@ -71,6 +92,7 @@ namespace Scripts.Model.SaveLoad {
             Add<Health>("hp");
             Add<Skill>("sk");
             Add<Experience>("exp");
+            Add<Mana>("mana");
         }
 
         private void Spells() {
@@ -78,9 +100,13 @@ namespace Scripts.Model.SaveLoad {
             Add<Wait>("wait");
             Add<InflictPoison>("inflictpoison");
             Add<Check>("checkSpell");
-            Add<SetupCounter>("setupCounter");
-            Add<Heal>("heal");
-            Add<ReflectiveClone>("reflectiveClone");
+            Add<CrushingBlow>("crushingBlow");
+            Add<PlayerHeal>("playerHeal");
+            Add<SetupDefend>("setupDefend");
+            Add<Purge>("purge");
+            Add<Revive>("revive");
+            Add<Inspire>("inspire");
+            Add<Arraystrike>("arraystrike");
         }
 
         private void Items() {
@@ -89,23 +115,54 @@ namespace Scripts.Model.SaveLoad {
             Add<Money>("money");
             Add<GhostArmor>("ghostArmor");
             Add<BrokenSword>("ghostSword");
+            Add<Shield>("shield");
+            Add<RegenArmor>("regenArmor");
+            Add<FishHook>("fishHook");
+            Add<SilverBoot>("silverBoot");
+            Add<Wand>("wand");
+            Add<MadnessStaff>("madnessStaff");
+            Add<IdentifyScroll>("identifyScroll");
+            Add<RevivalSeed>("revivalSeed");
+            Add<CheckTome>("checkTome");
+            Add<CrushingBlowTome>("crushTome");
+            Add<HealTome>("healTome");
+            Add<DefendTome>("defendTome");
+            Add<Inventory1x6>("6pack");
+            Add<Cleansing>("cleansing");
+            Add<HalfLife>("hl3");
+            Add<InstaKill>("kill");
         }
 
         private void Buffs() {
             Add<Poison>("poison");
-            Add<Checked>("checkedDebuff");
+            Add<BasicChecked>("checkedDebuff");
             Add<Counter>("counterBuff");
-            Add<ReflectAttack>("reflectAttack");
-            Add<SpiritLink>("spiritLink");
+            Add<StrengthScalingPoison>("strengthScalingPoison");
+            Add<BlackedOut>("blackoutDebuff");
+            Add<DamageResist>("damageResist");
+            Add<TempIgnited>("ignitedDebuff");
+            Add<RegenerateHealth>("restore");
+            Add<FishShook>("fishShook");
+            Add<Defend>("defend");
+            Add<RegenerateMana>("regenMana");
+            Add<StrengthSirenSong>("strengthSong");
+            Add<AgilitySirenSong>("agilitySong");
+            Add<VitalitySirenSong>("vitalitySong");
+            Add<IntellectSirenSong>("intellectSong");
+            Add<DelayedDeath>("delayedDeath");
+            Add<DelayedHyperDeath>("delayedHyperdeath");
         }
 
         private void Brains() {
             Add<Player>("player");
             Add<DebugAI>("debugai");
-            Add<RuinsBrains.Villager>("villager");
-            Add<RuinsBrains.Knight>("knight");
-            Add<RuinsBrains.Healer>("healer");
-            Add<RuinsBrains.Kitsune>("kitsuneRuins");
+            Add<Attacker>("villager");
+            Add<Healer>("healer");
+            Add<Replicant>("replicant");
+            Add<ReplicantClone>("replicantClone");
+            Add<Illusionist>("illusionist");
+            Add<BigKnight>("bigKnight");
+            Add<BlackShuck>("blackShuck");
         }
 
         private void Add<Type>(string id) {
@@ -113,7 +170,7 @@ namespace Scripts.Model.SaveLoad {
         }
 
         private Type[] GetTypesInNamespace(Assembly assembly, string nameSpace) {
-            return assembly.GetTypes().Where(t => t.Namespace != null && !Regex.IsMatch(t.ToString(), "\\+|\\<|\\>|_") && t.Namespace.Contains(nameSpace)).ToArray();
+            return assembly.GetTypes().Where(t => t.Namespace != null && t.Namespace.Contains(nameSpace) && !t.ToString().Contains("c__AnonStorey0")).ToArray();
         }
 
         /// <summary>
@@ -124,7 +181,7 @@ namespace Scripts.Model.SaveLoad {
             bool isEverythingIncludedInMap = true;
             foreach (Type t in types) {
                 if (!map.Contains(t) && !t.IsAbstract) {
-                    Util.Log(string.Format("Unable to locate {0} in Map.", t.ToString()));
+                    Debug.Log(string.Format("Unable to locate {0} in Map.", t.ToString()));
                     isEverythingIncludedInMap = false;
                 }
             }
@@ -137,7 +194,7 @@ namespace Scripts.Model.SaveLoad {
                 Type type = pair.Key;
                 ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
                 if (constructor == null) {
-                    Util.Log(string.Format("Unable to locate default constructor for {0} in map.", type.ToString()));
+                    Debug.Log(string.Format("Unable to locate default constructor for {0} in map.", type.ToString()));
                     isAllDefault = false;
                 }
             }

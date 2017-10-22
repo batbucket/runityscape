@@ -15,8 +15,17 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private InputField inputField;
 
+        /// <summary>
+        /// Gets the input.
+        /// </summary>
+        /// <value>
+        /// The input.
+        /// </value>
         public string Input { get { return inputField.text; } }
 
+        /// <summary>
+        /// Reset the state of this MonoBehavior.
+        /// </summary>
         public override void Reset() {
             inputField.text = "";
         }

@@ -3,13 +3,26 @@ using UnityEngine;
 
 namespace Scripts.Model.Spells {
 
+    /// <summary>
+    ///SpellEffects are the raw material that composes a spell.
+    /// </summary>
     public abstract class SpellEffect {
-        public readonly int Value;
+        /// <summary>
+        /// The value
+        /// </summary>
+        public int Value;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpellEffect"/> class.
+        /// </summary>
+        /// <param name="value">The value.</param>
         public SpellEffect(int value) {
             this.Value = value;
         }
 
+        /// <summary>
+        /// Causes the effect.
+        /// </summary>
         public abstract void CauseEffect();
     }
 }

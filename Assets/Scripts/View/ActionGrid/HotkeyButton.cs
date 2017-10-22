@@ -46,6 +46,12 @@ namespace Scripts.View.ActionGrid {
 
         private bool isHotkeyEnabled;
 
+        /// <summary>
+        /// Sets this button's properties
+        /// </summary>
+        /// <value>
+        /// The buttonable.
+        /// </value>
         public IButtonable Buttonable {
             set {
                 text.text = value.ButtonText;
@@ -63,6 +69,12 @@ namespace Scripts.View.ActionGrid {
             }
         }
 
+        /// <summary>
+        /// Gets or sets the hotkey.
+        /// </summary>
+        /// <value>
+        /// The hotkey.
+        /// </value>
         public KeyCode Hotkey {
             get {
                 return hotkey;
@@ -83,37 +95,58 @@ namespace Scripts.View.ActionGrid {
             }
         } //The keyboard key that interacts with this button
 
+        /// <summary>
+        /// Sets a value indicating whether this button is visible.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is visible; otherwise, <c>false</c>.
+        /// </value>
         public bool IsVisible {
             set {
                 if (value) {
-                    InactiveAppearance();
+                    ShowInactiveAppearance();
                 } else {
-                    DisabledAppearance();
+                    ShowDisabledAppearance();
                 }
                 this.enabled = value;
                 button.enabled = value;
             }
         }
 
+        /// <summary>
+        /// Sets a value indicating whether this instance's hotkey is enabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance's hotkey is enabled; otherwise, <c>false</c>.
+        /// </value>
         public bool IsHotkeyEnabled {
             set {
                 this.isHotkeyEnabled = value;
             }
         }
 
+        /// <summary>
+        /// Reset the state of this MonoBehavior.
+        /// </summary>
         public override void Reset() {
             Hotkey = KeyCode.None;
             icon.sprite = null;
         }
 
-        private void ActiveAppearance() {
+        /// <summary>
+        /// Shows the active appearance.
+        /// </summary>
+        private void ShowActiveAppearance() {
             button.image.color = ACTIVE_COLOR;
             icon.color = ACTIVE_COLOR;
             text.color = INACTIVE_COLOR;
             hotkeyText.color = INACTIVE_COLOR;
         }
 
-        private void DisabledAppearance() {
+        /// <summary>
+        /// Shows the disabled appearance.
+        /// </summary>
+        private void ShowDisabledAppearance() {
             text.text = string.Empty;
             tip.enabled = false;
             icon.color = Color.clear;
@@ -121,7 +154,10 @@ namespace Scripts.View.ActionGrid {
             hotkeyText.color = Color.clear;
         }
 
-        private void InactiveAppearance() {
+        /// <summary>
+        /// Shows the inactive appearance.
+        /// </summary>
+        private void ShowInactiveAppearance() {
             button.image.color = INACTIVE_COLOR;
             tip.enabled = true;
             icon.color = ACTIVE_COLOR;

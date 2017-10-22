@@ -8,30 +8,58 @@ using UnityEngine.UI;
 
 namespace Script.View.Tooltip {
 
+    /// <summary>
+    /// Tooltip manager, shows and hides the tooltip
+    /// as needed.
+    /// </summary>
+    /// <seealso cref="UnityEngine.MonoBehaviour" />
     public class TooltipManager : MonoBehaviour {
+
+        /// <summary>
+        /// The box
+        /// </summary>
         [SerializeField]
         private TooltipBox box;
 
+        /// <summary>
+        /// The GRC
+        /// </summary>
         [SerializeField]
         private GraphicRaycaster grc;
 
+        /// <summary>
+        /// The distance multiplier
+        /// </summary>
         [SerializeField]
         private float distanceMultiplier;
 
+        /// <summary>
+        /// The is over tooltip content
+        /// </summary>
         private bool isOverTooltipContent;
+
+        /// <summary>
+        /// The content identifier
+        /// </summary>
         private int contentID;
 
+        /// <summary>
+        /// Updates this instance.
+        /// </summary>
         private void Update() {
             box.Pivot = CalculatePivot();
             box.Position = CalculatePosition();
             UpdateTooltip();
-            if (isOverTooltipContent) {
+            if (isOverTooltipContent && Cursor.visible) {
                 StartCoroutine(DisplayTooltip(contentID));
             } else {
                 SetRenderers(false);
             }
         }
 
+        /// <summary>
+        /// Updates the tooltip.
+        /// </summary>
         private void UpdateTooltip() {
             List<RaycastResult> results = new List<RaycastResult>();
             PointerEventData ped = new PointerEventData(null);
@@ -60,7 +88,6 @@ namespace Script.View.Tooltip {
         /// <summary>
         /// Disable renderers instead of disabling the tooltip box object so that the
         /// content size fitter has enough time to work with the new text.
-        ///
         /// If we disable the gameobject instead, the tooltip box will appear to jump, since it
         /// needs a moment to resize to accomodate the new text.
         /// </summary>
@@ -77,6 +104,7 @@ namespace Script.View.Tooltip {
         /// there is enough time for the tooltip box's contentsizefitters
         /// to resize itself for the new text.
         /// </summary>
+        /// <param name="instanceID">The instance identifier.</param>
         /// <returns></returns>
         private IEnumerator DisplayTooltip(int instanceID) {
             int id = instanceID;
@@ -84,6 +112,10 @@ namespace Script.View.Tooltip {
             SetRenderers(this.contentID == id && isOverTooltipContent); // dont show if instanceID does not match current hovered
         }
 
+        /// <summary>
+        /// Calculates the position.
+        /// </summary>
+        /// <returns></returns>
         private Vector2 CalculatePosition() {
             Vector2 position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
@@ -108,6 +140,10 @@ namespace Script.View.Tooltip {
             return new Vector2(position.x + x, position.y + y);
         }
 
+        /// <summary>
+        /// Calculates the pivot.
+        /// </summary>
+        /// <returns></returns>
         private Vector2 CalculatePivot() {
             float width = Screen.width;
             float height = Screen.height;

@@ -1,4 +1,4 @@
-﻿using Scripts.Game.Defined.Serialized.Characters;
+﻿using Scripts.Game.Defined.Serialized.Brains;
 using Scripts.Game.Defined.SFXs;
 using Scripts.Game.Defined.Unserialized.Spells;
 using Scripts.Model.Acts;
@@ -10,6 +10,7 @@ using Scripts.Model.Processes;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using Scripts.Model.TextBoxes;
+using Scripts.Model.Tooltips;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
 using System;
@@ -20,6 +21,9 @@ using UnityEngine;
 
 namespace Scripts.Model.Pages {
 
+    /// <summary>
+    /// This page represents a battle between two sides.
+    /// </summary>
     public class Battle : Page {
         private const int MINIMUM_EXP_PER_BATTLE = 1;
 
@@ -29,7 +33,7 @@ namespace Scripts.Model.Pages {
 
         private const string BUFF_AFFECT = "<color=yellow>{0}</color> is affected by <color=cyan>{1}</color>.";
 
-        private const string BUFF_FADE = "<color=yellow>{0}</color>'s {1} fades.";
+        private const string BUFF_FADE = "<color=yellow>{0}</color>'s <color=cyan>{1}</color> fades.";
 
         private const int CAPACITY_FLAGGED_ITEM_LOOT_AMOUNT = 1;
 
@@ -37,7 +41,7 @@ namespace Scripts.Model.Pages {
 
         private const string DEFEAT = "Defeat!";
 
-        private const string LOOT_MESSAGE = "{0}({1}) was added to the inventory.({2})";
+        private const string LOOT_MESSAGE = "{0}({1}) was added to the inventory.";
 
         private const string PLAYER_QUESTION = "What will <color=yellow>{0}</color> do?";
 
@@ -57,11 +61,26 @@ namespace Scripts.Model.Pages {
 
         private IDictionary<Item, int> loot;
 
+        private int experienceGiven;
+
         private bool wasExperienceGiven;
+
+        private bool isUseTransition;
 
         private IList<ISpellable> temporarySpells;
 
-        public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right) : base(location) {
+        private IDictionary<Character, Spell> charactersChargingSpells;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="defeat">Page to go to on defeat</param>
+        /// <param name="victory">Page to go to on victory</param>
+        /// <param name="music">Music to be played</param>
+        /// <param name="location">Location of the battle</param>
+        /// <param name="left">Characters on the left in battle</param>
+        /// <param name="right">Characters on the right in battle</param>
+        public Battle(Page defeat, Page victory, Music music, string location, IEnumerable<Character> left, IEnumerable<Character> right, bool isUseTransition = false) : base(location) {
             this.wasExperienceGiven = false;
             this.loot = new Dictionary<Item, int>();
             this.leftGraveyard = new HashSet<Character>(new IdentityEqualityComparer<Character>());
@@ -69,6 +88,7 @@ namespace Scripts.Model.Pages {
             this.defeat = defeat;
             this.victory = victory;
             this.Music = music.GetDescription();
+            this.isUseTransition = isUseTransition;
             turnCount = 0;
             temporarySpells = new List<ISpellable>();
             foreach (Character c in left) {
@@ -78,6 +98,7 @@ namespace Scripts.Model.Pages {
                 Right.Add(c);
             }
             SetupTempSpells();
+            this.charactersChargingSpells = new Dictionary<Character, Spell>(new IdNumberEqualityComparer<Character>());
             OnEnter += () => {
                 if (!IsResolved) {
                     Presenter.Main.Instance.StartCoroutine(startBattle());
@@ -87,12 +108,28 @@ namespace Scripts.Model.Pages {
             };
         }
 
+        /// <summary>
+        /// After resolution this will return the EXP given out.
+        /// </summary>
+        public int ExperienceGiven {
+            get {
+                return this.experienceGiven;
+            }
+        }
+
+        /// <summary>
+        /// Turns elapsed in this battle.
+        /// </summary>
         public int TurnCount {
             get {
                 return turnCount;
             }
         }
 
+        /// <summary>
+        /// Adds in the Flee spell, which requires
+        /// a page to be constructed.
+        /// </summary>
         private void SetupTempSpells() {
             AddTempSpell(new Flee(defeat, () => {
                 Main.Instance.StopAllCoroutines();
@@ -111,10 +148,16 @@ namespace Scripts.Model.Pages {
             DEAD,
             NOT_FOUND
         }
+
         private bool IsResolved {
             get {
                 return Left.All(c => c.Stats.State == State.DEAD) || Right.All(c => c.Stats.State == State.DEAD);
             }
+        }
+
+        public static void DoPageTransition(Page destination) {
+            Main.Instance.Title.Play(destination.Sprite, string.Format("{0}", destination.Location.Replace(" - ", "\n")), () => destination.Invoke());
+            Main.Instance.Sound.PlaySound("Steps_0");
         }
 
         private PlayerPartyStatus PlayerStatus {
@@ -167,6 +210,11 @@ namespace Scripts.Model.Pages {
                 }
             }
         }
+
+        public bool IsChargingSpell(Character character) {
+            return charactersChargingSpells.ContainsKey(character);
+        }
+
         private static void AddEquipmentToLoot(IDictionary<Item, int> loot, Equipment equipment) {
             List<EquippableItem> equipmentItems = ((IEnumerable<EquippableItem>)equipment).ToList();
             foreach (EquippableItem item in equipmentItems) {
@@ -247,41 +295,60 @@ namespace Scripts.Model.Pages {
             return lootAmount;
         }
 
-        private bool CharacterCanCast(SpellParams c) {
+        private bool CharacterCanCast(Character c) {
             return c.Stats.State == State.ALIVE;
         }
 
         private IEnumerator CheckForDeath() {
             foreach (Character c in GetAll()) {
-                if (c.Stats.State == State.DEAD) {
+                HashSet<Character> graveyard = null;
+
+                bool isLeftGrave = false;
+
+                if (Left.Contains(c)) {
+                    graveyard = leftGraveyard;
+                    isLeftGrave = true;
+                } else {
+                    graveyard = rightGraveyard;
+                    isLeftGrave = false;
+                }
+                bool characterIsInGraveyard = graveyard.Contains(c);
+
+                // Display death effect
+                if (c.Stats.State == State.DEAD && !characterIsInGraveyard) {
                     IList<Buff> dispellableOnDeath = c.Buffs.Where(b => b.IsDispellable).ToList();
                     foreach (Buff removableBuff in dispellableOnDeath) {
                         c.Buffs.RemoveBuff(RemovalType.DISPEL, removableBuff);
                     }
                     Main.Instance.Sound.PlaySound("synthetic_explosion_1");
-                    yield return SFX.Death(c.Presenter.PortraitView.gameObject, c.Presenter.PortraitView.EffectsHolder, 1f);
+                    yield return SFX.DoDeathEffect(c, 1f);
                     AddText(string.Format(CHARACTER_DEATH, c.Look.Name));
-                    HashSet<Character> graveyard = null;
-                    if (Left.Contains(c)) {
-                        graveyard = leftGraveyard;
-                    } else {
-                        graveyard = rightGraveyard;
-                    }
+
+                    graveyard.Add(c);
                     if (!c.HasFlag(Characters.Flag.PERSISTS_AFTER_DEFEAT)) {
-                        graveyard.Add(c);
                         Left.Remove(c);
                         Right.Remove(c);
+                    }
+                }
+
+                // Bring them back! (for revivals)
+                if (c.Stats.State == State.ALIVE && characterIsInGraveyard) {
+                    graveyard.Remove(c);
+                    if (isLeftGrave) {
+                        Left.Add(c);
+                    } else {
+                        Right.Add(c);
                     }
                 }
             }
         }
 
-        private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<IPlayable> plays, HashSet<Character> playerActionSet) {
+        private IEnumerator DetermineCharacterActions(IList<Character> chars, IList<Spell> plays, HashSet<Character> playerActionSet) {
             ICollection<PooledBehaviour> declarations = new List<PooledBehaviour>();
             for (int i = 0; i < chars.Count; i++) {
                 Character c = chars[i];
 
-                if (c.Stats.State == State.ALIVE) {
+                if (c.Stats.State == State.ALIVE && !charactersChargingSpells.ContainsKey(c)) {
                     PooledBehaviour textbox = null;
 
                     // Only show when player controlled is asked to make a move
@@ -312,26 +379,30 @@ namespace Scripts.Model.Pages {
                     }
 
                     if (brainIsPlayer) {
-                        Spell spell = plays.Last().MySpell;
-                        declarations.Add(AddText(spell.SpellDeclareText)); // "X will do Y" helper textbox
+                        Spell playerMadePlay = plays[plays.Count - 1];
+                        declarations.Add(AddText(
+                            playerMadePlay.DeclareText
+                            )); // "X will do Y" helper textbox
                     }
-
                 }
             }
-
             // Remove all "X will do Y" texts
             foreach (PooledBehaviour pb in declarations) {
                 ObjectPoolManager.Instance.Return(pb);
             }
         }
 
-        private void InBattlePlayHandler(HashSet<Character> playerActionSet, IList<IPlayable> plays, Character c, ref bool isActionTaken, IPlayable playToAdd) {
-            if (!playerActionSet.Contains(c)) {
-                plays.Add(playToAdd);
-                playerActionSet.Add(c);
+        private void InBattlePlayHandler(HashSet<Character> playerActionSet, IList<Spell> plays, Character characterAddingPlay, ref bool isActionTaken, Spell playToAdd) {
+            if (!playerActionSet.Contains(characterAddingPlay)) {
+                if (playToAdd.IsSpellCharged) {
+                    plays.Add(playToAdd);
+                } else {
+                    charactersChargingSpells.Add(characterAddingPlay, playToAdd);
+                }
+                playerActionSet.Add(characterAddingPlay);
                 isActionTaken = true;
             } else {
-                Util.Assert(false, string.Format("{0}'s brain adds more than one IPlayable objects in its DetermineAction().", c.Look.DisplayName));
+                Util.Assert(false, string.Format("{0}'s brain adds more than one Spell objects in its DetermineAction().", characterAddingPlay.Look.DisplayName));
             }
         }
 
@@ -364,9 +435,16 @@ namespace Scripts.Model.Pages {
                     Buff b = myB;
                     if (myB.HasEndOfTurn) {
                         yield return new WaitForSeconds(0.02f);
-                        AddText(string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name));
-                        b.OnEndOfTurn(c.Stats);
+                        AddText(new TextBox(
+                            string.Format(BUFF_AFFECT, c.Look.DisplayName, b.Name),
+                            new TooltipBundle(
+                                b.Sprite,
+                                b.Name,
+                                b.Description
+                                )
+                            ));
                     }
+                    b.OnEndOfTurn(c.Stats);
                     if (b.IsTimedOut) {
                         timedOut.Add(b);
                     }
@@ -374,54 +452,58 @@ namespace Scripts.Model.Pages {
                 foreach (Buff myB in timedOut) {
                     yield return new WaitForSeconds(0.02f);
                     Buff b = myB;
-                    AddText(string.Format(BUFF_FADE, c.Look.DisplayName, b.Name));
+                    AddText(new TextBox(
+                        string.Format(BUFF_FADE, c.Look.DisplayName, b.Name),
+                        new TooltipBundle(
+                            b.Sprite,
+                            b.Name,
+                            b.Description
+                            )
+                        ));
                     buffs.RemoveBuff(RemovalType.TIMED_OUT, b);
                 }
             }
         }
 
-        private void MakeEveryonesBuffsReactToSpell(Spell spell) {
-            foreach (Character combatant in GetAll()) {
-                foreach (Buff b in combatant.Buffs) {
-                    if (b.IsReact(spell, combatant.Stats)) {
-                        AddText(string.Format("<color=yellow>{0}</color>'s <color=cyan>{1}</color> activates <color=yellow>{2}</color>'s <color=cyan>{3}</color>!",
-                            spell.Caster.Look.DisplayName,
-                            spell.Book.Name,
-                            combatant.Look.DisplayName,
-                            b.Name
-                            ));
-                        b.React(spell, combatant.Stats);
-                    }
+        private IEnumerator UpdateChargingSpells(List<Spell> spellsToBeCast) {
+            // Remove dead characters from charging dict
+            foreach (Character battler in GetAll()) {
+                if (battler.Stats.State == State.DEAD) {
+                    charactersChargingSpells.Remove(battler);
                 }
+            }
+
+            // Get all spells that are finished charging
+            List<Spell> spellsThatFinishedCharging = new List<Spell>();
+            foreach (KeyValuePair<Character, Spell> pair in charactersChargingSpells) {
+                if (pair.Value.IsSpellCharged) {
+                    spellsThatFinishedCharging.Add(pair.Value);
+                } else {
+                    yield return AddText(pair.Value.ChargingText);
+                    pair.Value.DecrementTurnsToCharge();
+                }
+            }
+
+            // Remove finished spells from the dict and Add finished spells to spells to be cast
+            foreach (Spell spellThatFinishedCharging in spellsThatFinishedCharging) {
+                charactersChargingSpells.Remove(spellThatFinishedCharging.Caster);
+                spellsToBeCast.Add(spellThatFinishedCharging);
             }
         }
 
-        private IEnumerator PerformActions(List<IPlayable> plays) {
+        private IEnumerator PerformActions(List<Spell> spellsToBeCast) {
             // Shuffle first, then do a stable sort to make speed ties random
-            plays.Shuffle();
-            plays = plays.OrderBy(p => p).ToList();
-            for (int i = 0; i < plays.Count; i++) {
-                yield return new WaitForSeconds(0.10f);
-                IPlayable play = plays[i];
-                Spell spell = play.MySpell;
-
-                // Dead characters cannot unleash spells
-                if (CharacterCanCast(play.MySpell.Caster)) { // Death check
-                    string spellMessage = string.Empty;
-
-                    // Do a different message if the spell cannot be cast on the target
-                    if (play.IsPlayable) {
-                        spellMessage = play.Text;
-                        MakeEveryonesBuffsReactToSpell(spell);
-                    } else {
-                        spellMessage = Spell.GetCastMessage(spell.Caster, spell.Target, spell.Book, ResultType.FAILED);
-                    }
-                    AddText(play.Text);
-                    yield return play.Play();
-                    yield return CharacterDialogue(spell.Target.Character, spell.Target.Character.Brain.ReactToSpell(spell));
+            spellsToBeCast.Shuffle();
+            spellsToBeCast = spellsToBeCast.OrderBy(p => p).ToList();
+            for (int i = 0; i < spellsToBeCast.Count; i++) {
+                Spell spell = spellsToBeCast[i];
+                if (spell.Caster.Stats.State == State.ALIVE) {
+                    yield return new WaitForSeconds(0.10f);
+                    yield return spell.Play(this, true);
                 }
             }
         }
+
         private void PostBattle(PlayerPartyStatus status) {
             Grid postBattle = new Grid("Main");
             postBattle.OnEnter = () => {
@@ -434,28 +516,46 @@ namespace Scripts.Model.Pages {
                             GiveExperienceToVictors();
                         }
                     }
-                    Character anyoneFromVictorParty = VictoriousParty.FirstOrDefault();
-                    postBattle.List.Add(PageUtil.GenerateItemsGrid(this, postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
-                    postBattle.List.Add(PageUtil.GenerateEquipmentGrid(postBattle, new SpellParams(anyoneFromVictorParty, this), PageUtil.GetOutOfBattlePlayableHandler(this)));
-                    postBattle.List.Add(victory);
+                    Character anyoneLivingFromVictoriousParty = VictoriousParty
+                        .Where(c => c.Stats.State == State.ALIVE)
+                        .FirstOrDefault(); // Must be living for drop function to work!
+
+                    postBattle.List.Add(PageUtil.GenerateGroupSpellBooks(this, postBattle, VictoriousParty));
+                    postBattle.List.Add(PageUtil.GenerateGroupItemsGrid(this, postBattle, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(PageUtil.GenerateGroupEquipmentGrid(postBattle, this, VictoriousParty, PageUtil.GetOutOfBattlePlayableHandler(this)));
+                    postBattle.List.Add(new Process("Continue", () => GoToPage(victory)));
                 } else {
-                    postBattle.List.Add(defeat);
+                    postBattle.List.Add(new Process("Continue", () => GoToPage(defeat)));
                 }
                 Actions = postBattle.List;
             };
             postBattle.Invoke();
         }
 
+        /// <summary>
+        /// Goes to page.
+        /// </summary>
+        /// <param name="page">The page.</param>
+        private void GoToPage(Page page) {
+            if (isUseTransition) {
+                DoPageTransition(page);
+            } else {
+                page.Invoke();
+            }
+        }
+
         private void GiveExperienceToVictors() {
             foreach (Character victor in VictoriousParty) {
-                int totalExp = 0;
+                int rawExperience = 0;
                 foreach (Character defeated in AllDefeated) {
                     if (defeated.HasFlag(Characters.Flag.GIVES_EXPERIENCE)) {
-                        totalExp += CalculateExperience(victor.Stats, defeated.Stats);
+                        rawExperience += CalculateExperience(victor.Stats, defeated.Stats);
                     }
                 }
-                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(1, totalExp));
-                this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(totalExp.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
+                int calculatedExperience = Mathf.Max(MINIMUM_EXP_PER_BATTLE, rawExperience);
+                experienceGiven += calculatedExperience;
+                victor.Stats.AddToStat(StatType.EXPERIENCE, Characters.Stats.Set.MOD_UNBOUND, Mathf.Max(MINIMUM_EXP_PER_BATTLE, calculatedExperience));
+                this.AddText(string.Format(EXPERIENCE_GAIN, Util.ColorString(victor.Look.DisplayName, Color.yellow), Util.ColorString(calculatedExperience.ToString(), Color.yellow), StatType.EXPERIENCE.Name));
             }
         }
 
@@ -480,26 +580,25 @@ namespace Scripts.Model.Pages {
             PlayerPartyStatus result = PlayerStatus;
             if (result == PlayerPartyStatus.ALIVE) {
                 message = VICTORY;
-
             } else if (result == PlayerPartyStatus.DEAD) {
                 message = DEFEAT;
-
             } else { // Didn't find party
                 message = "...";
-
             }
 
             AddText(message);
             PostBattle(result);
         }
+
         private IEnumerator startRound() {
             AddText(string.Format(Util.ColorString(ROUND_START, Color.grey), turnCount));
-            List<IPlayable> plays = new List<IPlayable>();
+            List<Spell> plays = new List<Spell>();
             List<Character> allBattlers = GetAll();
             HashSet<Character> playerActionSet = new HashSet<Character>(new IdNumberEqualityComparer<Character>());
 
             yield return StartOfRound(allBattlers);
             yield return DetermineCharacterActions(allBattlers, plays, playerActionSet);
+            yield return UpdateChargingSpells(plays);
             yield return PerformActions(plays);
             yield return GoThroughBuffs(allBattlers);
             yield return CheckForDeath();
@@ -508,14 +607,14 @@ namespace Scripts.Model.Pages {
 
         private IEnumerator StartOfRound(IEnumerable<Character> battlers) {
             foreach (Character c in battlers) {
-                c.Brain.StartOfRoundSetup(this, new SpellParams(c, this));
-                yield return CharacterDialogue(c, c.Brain.StartOfRoundDialogue());
+                c.Brain.StartOfRoundSetup(this, c);
+                yield return CharacterDialogue(this, c, c.Brain.StartOfRoundDialogue());
             }
         }
 
-        private IEnumerator CharacterDialogue(Character speaker, string content) {
+        public static IEnumerator CharacterDialogue(Page current, Character speaker, string content) {
             if (!string.IsNullOrEmpty(content)) {
-                yield return ActUtil.SetupSceneRoutine(this, new Act[] { new TextAct(new AvatarBox(GetSide(speaker), speaker.Look.Sprite, speaker.Look.TextColor, content)) });
+                yield return ActUtil.SetupSceneRoutine(new Act[] { new TextAct(new AvatarBox(current.GetSide(speaker), speaker.Look.Sprite, speaker.Look.TextColor, content)) });
             }
             yield break;
         }

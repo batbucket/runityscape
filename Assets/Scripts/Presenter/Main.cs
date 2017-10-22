@@ -1,9 +1,4 @@
-﻿using Script.View.Tooltip;
-using Scripts.Model.Acts;
-using Scripts.Model.World.Serialization;
-using Scripts.Model.Interfaces;
-using Scripts.Model.Pages;
-using Scripts.Model.Processes;
+﻿using Scripts.Model.Pages;
 using Scripts.View.ActionGrid;
 using Scripts.View.Effects;
 using Scripts.View.Other;
@@ -11,17 +6,19 @@ using Scripts.View.Portraits;
 using Scripts.View.Sounds;
 using Scripts.View.TextBoxes;
 using Scripts.View.Title;
-using System.Collections;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using Scripts.Model.World;
 using Scripts.Game.Pages;
 using Scripts.Model.SaveLoad;
+using Scripts.View.TextInput;
 
 namespace Scripts.Presenter {
 
+    /// <summary>
+    /// Main, totally not god-like class that holds
+    /// the various views and ties everything together.
+    /// </summary>
+    /// <seealso cref="UnityEngine.MonoBehaviour" />
     public class Main : MonoBehaviour {
         public static int VERSION = 2;
 
@@ -56,29 +53,91 @@ namespace Scripts.Presenter {
         [SerializeField]
         private TitleView title;
 
+        [SerializeField]
+        private InputView input;
+
+        [SerializeField]
+        private GraphicRaycaster raycaster;
+
         public static Main Instance { get { return instance; } }
 
+        /// <summary>
+        /// Gets the input.
+        /// </summary>
+        /// <value>
+        /// The input.
+        /// </value>
+        public InputView Input {
+            get {
+                return input;
+            }
+        }
+
+        /// <summary>
+        /// Gets the sound.
+        /// </summary>
+        /// <value>
+        /// The sound.
+        /// </value>
         public SoundView Sound {
             get {
                 return sound;
             }
         }
 
+        /// <summary>
+        /// Gets the text boxes.
+        /// </summary>
+        /// <value>
+        /// The text boxes.
+        /// </value>
         public TextBoxHolderView TextBoxes {
             get {
                 return textBoxHolder;
             }
         }
 
+        /// <summary>
+        /// Gets the title.
+        /// </summary>
+        /// <value>
+        /// The title.
+        /// </value>
         public TitleView Title {
             get {
                 return title;
             }
         }
 
+        /// <summary>
+        /// Gets the page presenter.
+        /// </summary>
+        /// <value>
+        /// The page presenter.
+        /// </value>
         public PagePresenter PagePresenter {
             get {
                 return pagePresenter;
+            }
+        }
+
+        public ActionGridView ActionGrid {
+            get {
+                return actionGrid;
+            }
+        }
+
+        public bool IsInputEnabled {
+            set {
+                IsCursorEnabled = value;
+                Main.Instance.ActionGrid.IsHotKeysEnabled = value;
+            }
+        }
+
+        public bool IsCursorEnabled {
+            set {
+                Cursor.visible = value;
+                raycaster.enabled = value;
             }
         }
 
@@ -94,7 +153,7 @@ namespace Scripts.Presenter {
         }
 
         private void Update() {
-            if (pagePresenter != null && pagePresenter.Page != null) {
+            if (pagePresenter != null) {
                 pagePresenter.Tick();
             }
         }

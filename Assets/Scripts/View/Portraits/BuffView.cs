@@ -1,8 +1,10 @@
-﻿using Scripts.Presenter;
+﻿using System;
+using Scripts.Presenter;
 using Scripts.View.ObjectPool;
 using Scripts.View.Tooltip;
 using UnityEngine;
 using UnityEngine.UI;
+using Scripts.Model.Tooltips;
 
 namespace Scripts.View.Portraits {
 
@@ -39,6 +41,14 @@ namespace Scripts.View.Portraits {
         [SerializeField]
         private Tip Tip;
 
+        /// <summary>
+        /// Setup the buff view from these fields.
+        /// </summary>
+        /// <param name="name">Name of the buff</param>
+        /// <param name="duration">Duration of the buff</param>
+        /// <param name="icon">Icon of the buff</param>
+        /// <param name="color">Color of the text</param>
+        /// <param name="body">Tooltip description of the buff</param>
         public void Setup(
             string name,
             string duration,
@@ -51,13 +61,12 @@ namespace Scripts.View.Portraits {
             image.sprite = icon;
             nameText.color = color;
 
-            Tip.Setup(
-                icon,
-                name,
-                body
-                );
+            Tip.Setup(new TooltipBundle(icon, name, body));
         }
 
+        /// <summary>
+        /// Reset all fields.
+        /// </summary>
         public override void Reset() {
             Setup(
                 string.Empty,

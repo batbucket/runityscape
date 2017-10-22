@@ -12,9 +12,9 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.UI;
 
-/**
- * This class holds various helper methods that don't fit anywhere else
- */
+/// <summary>
+/// This class holds various helper methods that don't fit anywhere else
+/// </summary>
 public static class Util {
     public static readonly bool IS_DEBUG = true && Application.isEditor;
     private static char RANDOM_STRING_DELIMITER = '/';
@@ -189,7 +189,7 @@ public static class Util {
     }
 
     public static bool IsChance(double probability) {
-        return UnityEngine.Random.Range(0f, 1f) < probability;
+        return UnityEngine.Random.value < probability;
     }
 
     public static int Range(double min, double max) {
@@ -389,6 +389,7 @@ public static class Util {
     public static TKey GetKey<TKey>(this Dictionary<TKey, string> dictionary, string value) {
         return dictionary.FirstOrDefault(x => x.Value.Equals(value)).Key;
     }
+
     public static string GetDescription(this Enum value) {
         FieldInfo field = value.GetType().GetField(value.ToString());
         object[] attribs = field.GetCustomAttributes(typeof(DescriptionAttribute), true);
@@ -397,6 +398,7 @@ public static class Util {
         }
         return string.Empty;
     }
+
     public static bool EqualsIgnoreCase(this char a, char b) {
         return char.ToLower(a) == char.ToLower(b);
     }
@@ -412,8 +414,24 @@ public static class Util {
     public static Color SetAlpha(this Color color, float alpha) {
         return new UnityEngine.Color(color.r, color.g, color.b, alpha);
     }
+
+    public static float ConvertToPercent(this int integer) {
+        return (integer + 0.0f) / 100f;
+    }
+
+    // Modified to get keys from https://stackoverflow.com/questions/1028136/random-entry-from-dictionary
+    public static IEnumerable<TKey> RandomValues<TKey, TValue>(this IDictionary<TKey, TValue> dict) {
+        System.Random rand = new System.Random();
+        List<TKey> keys = Enumerable.ToList(dict.Keys);
+        int size = dict.Count;
+        while (true) {
+            yield return keys[rand.Next(size)];
+        }
+    }
 }
+
 public static class IListExtensions {
+
     /// <summary>
     /// Shuffles the element order of the specified list.
     /// </summary>

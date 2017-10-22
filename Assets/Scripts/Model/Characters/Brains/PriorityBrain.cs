@@ -8,50 +8,36 @@ using System.Linq;
 using Scripts.Game.Defined.Serialized.Spells;
 
 namespace Scripts.Model.Characters {
+
+    /// <summary>
+    /// A priority brain bases its decisions on a fallthrough list, stopping
+    /// at the first condition that evaluates to true.
+    /// </summary>
+    /// <seealso cref="Scripts.Model.Characters.BasicBrain" />
     public abstract class PriorityBrain : BasicBrain {
         private static readonly SpellBook DEFAULT_ACTION = new Wait();
 
-        private IList<Func<IPlayable>> priorityActionList;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PriorityBrain"/> class.
+        /// </summary>
+        public PriorityBrain() : base() { }
 
-        public PriorityBrain() : base() {
-            this.priorityActionList = SetupPriorityPlays();
-        }
-
-        protected sealed override IPlayable GetPlay() {
-            IPlayable chosenPlay = null;
-            for (int i = 0; i < priorityActionList.Count; i++) {
-                chosenPlay = priorityActionList[i]();
-                if (chosenPlay != null) {
+        protected sealed override Spell GetSpell() {
+            Spell chosenPlay = null;
+            foreach (Spell spell in GetPriorityPlays()) {
+                chosenPlay = spell;
+                if (!(chosenPlay.SpellBook).Equals(DEFAULT_ACTION)) {
                     return chosenPlay;
                 }
             }
             // Unable to find anything, perform a wait so the battle doesn't get stuck
-            return owner.Character.Spells.CreateSpell(DEFAULT_ACTION, owner, owner);
+            return brainOwner.Spells.CreateSpell(currentBattle, DEFAULT_ACTION, brainOwner, brainOwner);
         }
 
-        protected new Func<IPlayable> CastOnRandom(SpellBook sb) {
-            return CastOnTargetMeetingCondition(sb, c => true);
-        }
-
-        // Doesn't cast wait if sb is uncastable (since we then go down the prioritylist)
-        protected new Func<IPlayable> CastOnTargetMeetingCondition(SpellBook sb, Func<Character, bool> requirement) {
-            return () => {
-                Character specificTarget =
-                    sb
-                    .TargetType
-                    .GetTargets(owner.Character, currentBattle)
-                    .Where(
-                        c => sb.IsCastable(owner, new SpellParams(c, currentBattle)) && requirement(c))
-                    .ChooseRandom();
-
-                if (specificTarget != null) {
-                    return owner.Spells.CreateSpell(sb, owner, new SpellParams(specificTarget, currentBattle));
-                }
-                return null;
-            };
-        }
-
-        protected abstract IList<Func<IPlayable>> SetupPriorityPlays();
-
+        /// <summary>
+        /// Setups the priority plays.
+        /// </summary>
+        /// <returns></returns>
+        protected abstract IList<Spell> GetPriorityPlays();
     }
 }

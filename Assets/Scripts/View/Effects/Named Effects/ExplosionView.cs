@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace Scripts.View.Effects {
 
+    /// <summary>
+    /// Creates the explosion effect.
+    /// </summary>
+    /// <seealso cref="Scripts.View.ObjectPool.PooledBehaviour" />
     public class ExplosionView : PooledBehaviour {
 
         [SerializeField]
@@ -13,6 +17,13 @@ namespace Scripts.View.Effects {
                 //var x = ps.shape;
                 //x.box = value;
                 //x.radius = value.x / 2;
+            }
+        }
+
+        public Color Color {
+            set {
+                ParticleSystem.MainModule settings = ps.main;
+                settings.startColor = new ParticleSystem.MinMaxGradient(value);
             }
         }
 
@@ -28,6 +39,7 @@ namespace Scripts.View.Effects {
 
         public override void Reset() {
             ps.time = 0;
+            ps.startColor = Color.white;
         }
     }
 }

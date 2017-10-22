@@ -1,12 +1,10 @@
 ﻿using NUnit.Framework;
 using Scripts.Game.Defined.Characters;
-using Scripts.Game.Defined.Serialized.Characters;
-using Scripts.Game.Defined.Serialized.Items.Consumables;
-using Scripts.Game.Defined.Serialized.Items.Equipment;
+using Scripts.Game.Defined.Serialized.Brains;
+using Scripts.Game.Defined.Serialized.Buffs;
+using Scripts.Game.Defined.Serialized.Items;
 using Scripts.Game.Defined.Serialized.Spells;
 using Scripts.Game.Defined.Serialized.Statistics;
-using Scripts.Game.Defined.StartingStats;
-using Scripts.Model.Acts;
 using Scripts.Model.Buffs;
 using Scripts.Model.Characters;
 using Scripts.Model.Items;
@@ -15,8 +13,6 @@ using Scripts.Model.SaveLoad;
 using Scripts.Model.SaveLoad.SaveObjects;
 using Scripts.Model.Spells;
 using Scripts.Model.Stats;
-using Scripts.Model.TextBoxes;
-using Scripts.Model.World.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,8 +21,13 @@ using UnityEngine;
 [TestFixture]
 public class BasicTests {
 
+    /// <summary>
+    /// Tests whether all serializable content has been added
+    /// to the IDTable.
+    /// </summary>
     [TestFixture]
     public class IDTableTests {
+
         [OneTimeSetUp]
         public void Setup() {
             IdTable.Init();
@@ -52,8 +53,12 @@ public class BasicTests {
         }
     }
 
+    /// <summary>
+    /// Tests to see if saving and loading is working.
+    /// </summary>
     [TestFixture]
     public class SerializationTests {
+
         [OneTimeSetUp]
         public void Setup() {
             IdTable.Init();
@@ -61,7 +66,7 @@ public class BasicTests {
 
         public string ToJson(object o) {
             string json = JsonUtility.ToJson(o);
-            Util.Log("Serialized to:\n" + json);
+            Debug.Log("Serialized to:\n" + json);
             return json;
         }
 
@@ -255,7 +260,7 @@ public class BasicTests {
 
         [Test]
         public void LookIsSerializable() {
-            BasicSerializableHelper<Look, LookSave>(new Look("test", "fox-head", "test5", "testcheck", Breed.UNKNOWN));
+            BasicSerializableHelper<Look, LookSave>(new Look("test", "fox-head", "test5", Breed.UNKNOWN));
         }
 
         [Test]
@@ -271,7 +276,6 @@ public class BasicTests {
             equips.AddEquip(inv, new BuffParams(new Stats(1, 2, 3, 4, 5), 2), new PoisonArmor());
 
             EquipmentSave initialSaveObject = equips.GetSaveObject();
-            initialSaveObject.Buffs.ForEach(b => b.Buff.SetupAsCasterNotInParty());
             string json = ToJson(initialSaveObject);
             EquipmentSave newSaveObject = FromJson<EquipmentSave>(json);
             Equipment newObject = Util.TypeToObject<Equipment>(equips.GetType());
@@ -295,7 +299,7 @@ public class BasicTests {
         private void SavingCharactersInPartyThrowsNoErrors(int characterCount) {
             Party party = new Party();
             for (int i = 0; i < characterCount; i++) {
-                party.AddMember(CharacterList.NotKitsune());
+                party.AddMember(CharacterList.TestEnemy());
             }
             ToJson(party.GetSaveObject());
         }
@@ -315,7 +319,7 @@ public class BasicTests {
         private void LoadingCharactersInPartyThrowsNoErrors(int characterCount) {
             Party party = new Party();
             for (int i = 0; i < characterCount; i++) {
-                party.AddMember(CharacterList.NotKitsune());
+                party.AddMember(CharacterList.TestEnemy());
             }
             string json = ToJson(party.GetSaveObject());
             PartySave partySave = JsonUtility.FromJson<PartySave>(json);
@@ -325,7 +329,7 @@ public class BasicTests {
 
         [Test]
         public void SettingCasterForBuffSetsEverythingCorrectly() {
-            Character caster = CharacterList.NotKitsune();
+            Character caster = CharacterList.TestEnemy();
             Buff poison = new Poison();
             poison.Caster = new BuffParams(caster.Stats, caster.Id);
             Assert.AreEqual(caster.Id, poison.CasterId);
@@ -334,7 +338,7 @@ public class BasicTests {
 
         [Test]
         public void EquippedItemsAreSaved() {
-            Character dummy = CharacterList.NotKitsune();
+            Character dummy = CharacterList.TestEnemy();
             dummy.Inventory.ForceAdd(new BrokenSword());
             dummy.Equipment.AddEquip(dummy.Inventory, new BuffParams(dummy.Stats, dummy.Id), new BrokenSword());
             Party party = new Party();
@@ -349,12 +353,12 @@ public class BasicTests {
         [Test, Timeout(2000)]
         public void SaveLoadMaintainsReferencesForPartyMemberCastedBuffs() {
             Party party = new Party();
-            Character dummy = CharacterList.NotKitsune();
-            Character buffCaster = CharacterList.NotKitsune();
-            Character buffRecipient = CharacterList.NotKitsune();
+            Character dummy = CharacterList.TestEnemy();
+            Character buffCaster = CharacterList.TestEnemy();
+            Character buffRecipient = CharacterList.TestEnemy();
 
             Poison poison = new Poison();
-            Util.Log("BuffcasterID: " + buffCaster.Id);
+            Debug.Log("BuffcasterID: " + buffCaster.Id);
             poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
 
             buffRecipient.Buffs.AddBuff(poison);
@@ -381,18 +385,18 @@ public class BasicTests {
         [Test, Timeout(2000)]
         public void SaveLoadDoesNotMaintainsReferencesForNonPartyMemberCastedBuffs() {
             Party party = new Party();
-            Character dummy = CharacterList.NotKitsune();
-            Character buffCaster = CharacterList.NotKitsune();
-            Character buffRecipient = CharacterList.NotKitsune();
+            Character dummy = CharacterList.TestEnemy();
+            Character buffCaster = CharacterList.TestEnemy();
+            Character buffRecipient = CharacterList.TestEnemy();
 
             Poison poison = new Poison();
-            Util.Log("BuffcasterID: " + buffCaster.Id);
+            Debug.Log("BuffcasterID: " + buffCaster.Id);
             poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
 
             buffRecipient.Buffs.AddBuff(poison);
 
             party.AddMember(dummy);
-            party.AddMember(CharacterList.NotKitsune());
+            party.AddMember(CharacterList.TestEnemy());
             party.AddMember(buffRecipient);
 
             PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
@@ -410,36 +414,109 @@ public class BasicTests {
             Assert.AreEqual(party, party2);
             Assert.AreNotSame(party.Collection.ToList()[1].Stats, party.Collection.ToList()[2].Buffs.ToList()[0].BuffCaster);
         }
+
+        [Test]
+        public void SaveLoadMaintainsBonusesFromEquipmentAndBuffsForNonPartyMemberCastedBuffs() {
+            Party party = new Party();
+            Character dummy = CharacterList.TestEnemy();
+            Character buffCaster = CharacterList.TestEnemy();
+
+            buffCaster.Inventory.ForceAdd(new BrokenSword());
+            buffCaster.Equipment.AddEquip(buffCaster.Inventory, new BuffParams(buffCaster.Stats, buffCaster.Id), new BrokenSword());
+            buffCaster.AddBuff(new StrengthBoost());
+
+            Character buffRecipient = CharacterList.TestEnemy();
+
+            StrengthScalingPoison poison = new StrengthScalingPoison();
+            Debug.Log("BuffcasterID: " + buffCaster.Id);
+            poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
+            buffRecipient.Buffs.AddBuff(poison);
+
+            int initialStrength = buffCaster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH);
+            Assert.AreEqual(buffCaster.Stats.GetMultiplicativeBuffBonus(StatType.STRENGTH), StrengthBoost.STRENGTH_INCREASE_AMOUNT);
+            Assert.AreEqual(buffCaster.Stats.GetFlatEquipmentBonus(StatType.STRENGTH), new BrokenSword().StatBonuses[StatType.STRENGTH]);
+
+            party.AddMember(dummy);
+            party.AddMember(CharacterList.TestEnemy());
+            party.AddMember(buffRecipient);
+
+            PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
+
+            Party party2 = new Party();
+            party2.InitFromSaveObject(retrieved);
+
+            Stats spoofedCasterStats = party2.Collection.ToArray()[2].Buffs.ToArray()[0].BuffCaster;
+            int spoofedStrength = spoofedCasterStats.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH);
+            Assert.AreEqual(buffCaster.Stats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH), spoofedCasterStats.GetStatCount(Stats.Get.MOD, StatType.STRENGTH));
+            Assert.AreEqual(StrengthBoost.STRENGTH_INCREASE_AMOUNT, spoofedCasterStats.GetMultiplicativeBuffBonus(StatType.STRENGTH));
+            Assert.AreEqual(new BrokenSword().StatBonuses[StatType.STRENGTH], spoofedCasterStats.GetFlatEquipmentBonus(StatType.STRENGTH));
+            Assert.AreEqual(buffCaster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.STRENGTH), spoofedStrength);
+            Assert.AreEqual(buffCaster.Stats, spoofedCasterStats);
+        }
+
+        [Test]
+        public void SaveLoadMaintainsBonusesFromEquipmentAndBuffsForPartyMemberCastedBuffs() {
+            Party party = new Party();
+            Character dummy = CharacterList.TestEnemy();
+            Character buffCaster = CharacterList.TestEnemy();
+
+            buffCaster.Inventory.ForceAdd(new BrokenSword());
+            buffCaster.Equipment.AddEquip(buffCaster.Inventory, new BuffParams(buffCaster.Stats, buffCaster.Id), new BrokenSword());
+            buffCaster.AddBuff(new StrengthBoost());
+
+            Character buffRecipient = CharacterList.TestEnemy();
+
+            StrengthScalingPoison poison = new StrengthScalingPoison();
+            Debug.Log("BuffcasterID: " + buffCaster.Id);
+            poison.Caster = new BuffParams(buffCaster.Stats, buffCaster.Id);
+            buffRecipient.Buffs.AddBuff(poison);
+
+            party.AddMember(dummy);
+            party.AddMember(CharacterList.TestEnemy());
+            party.AddMember(buffRecipient);
+            party.AddMember(buffCaster);
+
+            PartySave retrieved = FromJson<PartySave>(ToJson(party.GetSaveObject()));
+
+            Party party2 = new Party();
+            party2.InitFromSaveObject(retrieved);
+
+            Assert.AreEqual(buffCaster.Stats, party2.Collection.ToArray()[3].Stats);
+            Assert.AreEqual(buffCaster.Buffs, party2.Collection.ToArray()[3].Buffs);
+        }
     }
 
+    /// <summary>
+    /// Tests advanced battle logic.
+    /// </summary>
     [TestFixture]
     public class BattleLogicTests {
+
         [Test]
         public void CharacterWithHigherAgilityIsLessThanSlowerCharacter() {
-            Character fast = CharacterList.NotKitsune();
+            Character fast = CharacterList.TestEnemy();
             fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
-            Character slow = CharacterList.NotKitsune();
+            Character slow = CharacterList.TestEnemy();
             int difference = fast.Stats.CompareTo(slow.Stats);
-            Util.Log("Difference is: " + difference);
+            Debug.Log("Difference is: " + difference);
             Assert.IsTrue(difference < 0);
         }
 
         [Test]
         public void SpellsAreSortedCorrectly() {
-            Character fast = CharacterList.NotKitsune();
+            Character fast = CharacterList.TestEnemy();
             fast.Stats.AddToStat(StatType.AGILITY, Stats.Set.MOD_UNBOUND, 100);
-            Character slow = CharacterList.NotKitsune();
+            Character slow = CharacterList.TestEnemy();
             Battle dummy = new Battle(new Page("dummy"), new Page("dummy"), Music.NORMAL, "Dummy", new Character[] { fast }, new Character[] { slow });
 
-            IPlayable lowPriorityWithSlowCaster = new Spell(new ReflectiveClone(), new Result(), new SpellParams(slow, dummy), new SpellParams(fast, dummy));
-            IPlayable lowPriorityWithFastCaster = new Spell(new ReflectiveClone(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
-            IPlayable normalPriorityWithSlowCaster = new Spell(new Attack(), new Result(), new SpellParams(slow, dummy), new SpellParams(fast, dummy));
-            IPlayable normalPriorityWithFastCaster = new Spell(new Attack(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
-            IPlayable highPriorityWithSlowCaster = new Spell(new Heal(), new Result(), new SpellParams(slow, dummy), new SpellParams(slow, dummy));
-            IPlayable highPriorityWithFastCaster = new Spell(new Heal(), new Result(), new SpellParams(fast, dummy), new SpellParams(slow, dummy));
+            Spell lowPriorityWithSlowCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), slow, fast);
+            Spell lowPriorityWithFastCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.ReflectiveClone(), new Result(), fast, slow);
+            Spell normalPriorityWithSlowCaster = new SingleSpell(new Attack(), new Result(), slow, fast);
+            Spell normalPriorityWithFastCaster = new SingleSpell(new Attack(), new Result(), fast, slow);
+            Spell highPriorityWithSlowCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), slow, slow);
+            Spell highPriorityWithFastCaster = new SingleSpell(new Scripts.Game.Defined.Unserialized.Spells.EnemyHeal(), new Result(), fast, slow);
 
-
-            IPlayable[] expectedOrder = new IPlayable[] {
+            Spell[] expectedOrder = new Spell[] {
                 highPriorityWithFastCaster,
                 highPriorityWithSlowCaster,
                 normalPriorityWithFastCaster,
@@ -448,7 +525,7 @@ public class BasicTests {
                 lowPriorityWithSlowCaster
             };
 
-            List<IPlayable> actualOrder = new List<IPlayable>();
+            List<Spell> actualOrder = new List<Spell>();
             actualOrder.Add(normalPriorityWithSlowCaster);
             actualOrder.Add(normalPriorityWithFastCaster);
             actualOrder.Add(highPriorityWithSlowCaster);
@@ -458,19 +535,22 @@ public class BasicTests {
             actualOrder.Sort();
 
             for (int i = 0; i < expectedOrder.Length; i++) {
-                Util.Log(string.Format("Index {0}\nExpected: {1}\nActual: {2}\n",
+                Spell expected = expectedOrder[i];
+                Spell actual = actualOrder[i];
+
+                Debug.Log(string.Format("Index {0}\nExpected: {1}\nActual: {2}\n",
                     i,
-                    GetSpellDetails(expectedOrder[i].MySpell),
-                    GetSpellDetails(actualOrder[i].MySpell)));
-                Assert.AreSame(expectedOrder[i], actualOrder[i]);
+                    expected,
+                    actual));
+                Assert.AreSame(expected, actual);
             }
         }
 
         private string GetSpellDetails(Spell spell) {
             return string.Format(
                 "Caster agility: {0}/Spell priority: {1}",
-                spell.MySpell.Caster.Stats.GetStatCount(Stats.Get.MOD_AND_EQUIP, StatType.AGILITY),
-                spell.MySpell.Book.Priority
+                spell.Caster.Stats.GetStatCount(Stats.Get.TOTAL, StatType.AGILITY),
+                spell.SpellBook.Priority
                 );
         }
     }

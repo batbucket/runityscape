@@ -12,7 +12,7 @@ using System;
 namespace Scripts.Game.Pages {
     public class SavePages : PageGroup {
 
-        public SavePages(Page previous, Party party, Flags flags) : base(new Page("Save Game")) {
+        public SavePages(Page previous, Party party, Flags flags) : base(new Page("Save")) {
             Setup(previous, party, flags);
         }
 
@@ -62,7 +62,7 @@ namespace Scripts.Game.Pages {
             world.InitFromSaveObject(currentSaveInTheSlot);
             Party party = world.Party;
             Flags flags = world.Flags;
-            string saveName = SaveLoad.SaveFileDisplay(party.Default.Look.Name, party.Default.Stats.Level);
+            string saveName = SaveLoad.GetSaveFileDisplay(world.Flags.LastClearedArea.GetDescription(), world.Flags.LastClearedStage);
 
             Page page = PageUtil.GetConfirmationPage(
                 previous,

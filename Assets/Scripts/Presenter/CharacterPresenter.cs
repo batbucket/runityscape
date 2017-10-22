@@ -9,41 +9,68 @@ using UnityEngine;
 
 namespace Scripts.Presenter {
 
-    public struct SplatDetails {
-        public readonly Sprite Sprite;
-        public readonly Color Color;
-        public readonly string Text;
-
-        public SplatDetails(Color color, string text, Sprite sprite = null) {
-            this.Color = color;
-            this.Text = text;
-            this.Sprite = sprite;
-        }
-    }
-
+    /// <summary>
+    /// Updates the portraitview from the character.
+    /// </summary>
     public class CharacterPresenter {
-        public Character Character { get; private set; }
-        public PortraitView PortraitView { get; private set; }
+        private Character character;
+        private PortraitView portrait;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CharacterPresenter"/> class.
+        /// </summary>
+        /// <param name="character">The character associated with the portrait.</param>
+        /// <param name="portraitView">The portrait associated with the character.</param>
         public CharacterPresenter(Character character, PortraitView portraitView) {
-            this.Character = character;
-            this.PortraitView = portraitView;
+            this.character = character;
+            this.portrait = portraitView;
+
+            while (this.character.Effects.Count > 0) {
+                ParentToEffects(character.Effects.Dequeue());
+            }
         }
 
+        /// <summary>
+        /// Ticks this instance.
+        /// </summary>
         public void Tick() {
             SetupFuncs();
         }
 
-        private void SetupFuncs() {
-            Character.Stats.AddSplat = (sd => AddHitsplat(sd));
-            Character.Buffs.AddSplat = (sd => AddHitsplat(sd));
-            Character.Inventory.AddSplat = (sd => AddHitsplat(sd));
-            Character.Equipment.AddSplat = (sd => AddHitsplat(sd));
+        private RectTransform IconRect {
+            get {
+                if (portrait == null) {
+                    return null;
+                }
+                return portrait.Image.rectTransform;
+            }
         }
 
-        private void AddHitsplat(SplatDetails sd) {
-            if (PortraitView != null && PortraitView.isActiveAndEnabled) {
-                PortraitView.StartCoroutine(SFX.HitSplat(PortraitView.EffectsHolder, sd));
+        private void ParentToEffects(GameObject go) {
+            if (portrait != null) {
+                Util.Parent(go, portrait.EffectsHolder);
+            }
+        }
+
+        /// <summary>
+        /// Setups functions in character.
+        /// </summary>
+        private void SetupFuncs() {
+            character.GetIconRectFunc = () => IconRect;
+            character.ParentToEffectsFunc = (go) => ParentToEffects(go);
+
+            character.Stats.AddSplat = (sd => AddHitsplat(sd));
+            character.Buffs.AddSplat = (sd => AddHitsplat(sd));
+            character.Equipment.AddSplat = (sd => AddHitsplat(sd));
+        }
+
+        /// <summary>
+        /// Function that adds a hitsplat to the portrait
+        /// </summary>
+        /// <param name="details">The details needed to customize the splat.</param>
+        private void AddHitsplat(SplatDetails details) {
+            if (portrait != null && portrait.isActiveAndEnabled) {
+                portrait.StartCoroutine(SFX.DoHitSplat(character, details));
             }
         }
     }

@@ -13,8 +13,8 @@ namespace Scripts.Model.Stats {
     /// Type-safe enum representing the various stat types in the game.
     /// </summary>
     public sealed class StatType : IComparable<StatType>, INameable, ISaveable<StatTypeSave> {
-
         private static readonly HashSet<StatType> allTypes = new HashSet<StatType>(new IdentityEqualityComparer<StatType>());
+
         private static readonly IDictionary<BoundType, Bounds> attributeBounds = new Dictionary<BoundType, Bounds>() {
             { BoundType.RESOURCE, new Bounds(0, int.MaxValue) },
             { BoundType.ASSIGNABLE, new Bounds(0, 100) },
@@ -33,16 +33,16 @@ namespace Scripts.Model.Stats {
                                                                            "Intellect",
                                                                            "light-bulb",
                                                                            "Increases spell effects.",
-                                                                           Color.blue);
+                                                                           Color.cyan);
 
-        public static readonly StatType AGILITY = new StatType(STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT,
+        public static readonly StatType AGILITY = new StatType(BOOSTED_INCREASE_FROM_STAT_POINT_AMOUNT,
                                                                 BoundType.ASSIGNABLE,
                                                                          "Agility",
                                                                          "power-lightning",
                                                                          "Increases critical hit rate and accuracy.",
                                                                          Color.green);
 
-        public static readonly StatType VITALITY = new StatType(VITALITY_INCREASE_FROM_STAT_POINT_AMOUNT,
+        public static readonly StatType VITALITY = new StatType(BOOSTED_INCREASE_FROM_STAT_POINT_AMOUNT,
                                                                 BoundType.ASSIGNABLE,
                                                                           "Vitality",
                                                                           "health-normal",
@@ -66,9 +66,9 @@ namespace Scripts.Model.Stats {
 
         public static readonly StatType MANA = new StatType(BoundType.RESOURCE,
                                                                     "Mana",
-                                                                    "fox-head",
+                                                                    "water-drop",
                                                                     "Magical resources.",
-                                                                    Color.blue);
+                                                                    Color.cyan);
 
         public static readonly StatType CHARGE = new StatType(BoundType.RESOURCE,
                                                                       "Charge",
@@ -88,12 +88,6 @@ namespace Scripts.Model.Stats {
                                                                     "Needed to level up.",
                                                                     Color.white);
 
-        public static readonly StatType DEATH_EXP = new StatType(BoundType.RESOURCE,
-                                                                    "Death experience",
-                                                                    "fox-head",
-                                                                    "Needed to level up.",
-                                                                    Color.white);
-
         public static readonly HashSet<StatType> RESOURCES = new HashSet<StatType>() { HEALTH, SKILL, MANA, CHARGE, CORRUPTION, EXPERIENCE };
         public static readonly HashSet<StatType> RESTORED = new HashSet<StatType>() { HEALTH, MANA, STRENGTH, AGILITY, INTELLECT, VITALITY };
 
@@ -108,7 +102,7 @@ namespace Scripts.Model.Stats {
         private readonly int order;
 
         private const int STANDARD_INCREASE_FROM_STAT_POINT_AMOUNT = 1;
-        private const int VITALITY_INCREASE_FROM_STAT_POINT_AMOUNT = 2;
+        private const int BOOSTED_INCREASE_FROM_STAT_POINT_AMOUNT = 2;
         private static int orderCounter;
 
         private StatType(
@@ -179,6 +173,10 @@ namespace Scripts.Model.Stats {
             return order;
         }
 
+        public override string ToString() {
+            return this.ColoredName;
+        }
+
         public Color DetermineColor(float value) {
             Color c = Color.grey;
             if (value < 0) {
@@ -193,6 +191,10 @@ namespace Scripts.Model.Stats {
 
         public int CompareTo(StatType other) {
             return this.order.CompareTo(other.order);
+        }
+
+        public int Clamp(int amountToBeClamped) {
+            return Mathf.Clamp(amountToBeClamped, Bounds.Low, Bounds.High);
         }
 
         public StatTypeSave GetSaveObject() {

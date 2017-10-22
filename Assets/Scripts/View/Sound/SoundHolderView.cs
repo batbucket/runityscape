@@ -22,7 +22,7 @@ namespace Scripts.View.Sounds {
 
         public void Add(ClipView clip) {
             Util.Parent(clip.gameObject, this.gameObject);
-            ClipModifier(clip);
+            ModifyClip(clip);
             clip.Play();
             clips.Add(clip.gameObject.GetInstanceID(), clip);
         }
@@ -34,6 +34,6 @@ namespace Scripts.View.Sounds {
             }
         }
 
-        protected abstract void ClipModifier(ClipView clip);
+        protected abstract void ModifyClip(ClipView clip);
     }
 }

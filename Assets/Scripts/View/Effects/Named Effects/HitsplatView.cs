@@ -1,12 +1,16 @@
 ﻿using Scripts.View.ObjectPool;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Scripts.View.Effects {
 
+    /// <summary>
+    /// View object representing a hitsplat on a portrait.
+    /// </summary>
+    /// <seealso cref="Scripts.View.ObjectPool.PooledBehaviour" />
     public class HitsplatView : PooledBehaviour {
-
         private const float ACCEL_RATE = 3.0f;
 
         private const float TIME_BEFORE_DECAY = .75f;
@@ -25,36 +29,52 @@ namespace Scripts.View.Effects {
         [SerializeField]
         private Image image;
 
-        public IEnumerator Animation(GameObject parent, string s, Color c, Sprite sprite) {
-            Util.Parent(this.gameObject, parent);
-            this.image.sprite = sprite;
-            image.gameObject.SetActive(sprite != null);
-            text.color = c;
-            text.text = s;
-            image.color = c;
+        /// <summary>
+        /// The hitsplat animation coroutine.
+        /// </summary>
+        /// <param name="parent">The parent object the view is a child of</param>
+        /// <param name="splatText">The text on the splat.</param>
+        /// <param name="splatColor">The color of the splat.</param>
+        /// <param name="splatSprite">The sprite of the splat.</param>
+        /// <returns>Coroutine</returns>
+        public IEnumerator Animation(Action<GameObject> parentFunc, string splatText, Color splatColor, Sprite splatSprite) {
+            this.image.sprite = splatSprite;
+            image.gameObject.SetActive(splatSprite != null);
+            this.text.color = splatColor;
+            this.text.text = splatText;
+            image.color = splatColor;
 
             float timer = 0;
             float accel = 0;
 
+            parentFunc(this.gameObject);
+
+            // Shrink
             while ((timer += Time.deltaTime * accel) < TIME_UPSIZED) {
                 Vector2 scale = Vector2.Lerp(INITIAL_SIZE, FINAL_SIZE, timer / TIME_UPSIZED);
-                text.transform.localScale = scale;
+                this.text.transform.localScale = scale;
                 image.transform.localScale = scale;
                 accel += ACCEL_RATE;
                 yield return null;
             }
-            text.transform.localScale = FINAL_SIZE;
+
+            // Set to final size
+            this.text.transform.localScale = FINAL_SIZE;
             image.transform.localScale = FINAL_SIZE;
 
             float timer2 = 0;
+
+            // Wait until decay
             while ((timer2 += Time.deltaTime) < TIME_BEFORE_DECAY) {
                 yield return null;
             }
 
             float timer3 = 0;
+
+            // Fade out
             while ((timer3 += Time.deltaTime) < FADE_OUT_TIME) {
                 float alpha = Mathf.Lerp(1, 0, timer3 / FADE_OUT_TIME);
-                Util.SetTextAlpha(text, alpha);
+                Util.SetTextAlpha(this.text, alpha);
                 Util.SetImageAlpha(image, alpha);
                 yield return null;
             }
@@ -62,12 +82,21 @@ namespace Scripts.View.Effects {
             yield break;
         }
 
+        /// <summary>
+        /// Gets the total duration for the animation to occur.
+        /// </summary>
+        /// <value>
+        /// The total duration.
+        /// </value>
         public static float TOTAL_DURATION {
             get {
                 return TIME_UPSIZED + TIME_BEFORE_DECAY + FADE_OUT_TIME;
             }
         }
 
+        /// <summary>
+        /// Reset the state of this MonoBehavior.
+        /// </summary>
         public override void Reset() {
             text.text = string.Empty;
             text.transform.localScale = INITIAL_SIZE;

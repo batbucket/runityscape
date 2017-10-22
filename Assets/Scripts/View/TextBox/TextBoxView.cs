@@ -1,6 +1,7 @@
 ﻿using Scripts.Model.TextBoxes;
 using Scripts.Presenter;
 using Scripts.View.ObjectPool;
+using Scripts.View.Tooltip;
 using System;
 using System.Collections;
 using System.Text.RegularExpressions;
@@ -36,6 +37,9 @@ namespace Scripts.View.TextBoxes {
         [SerializeField]
         private Text text;
 
+        [SerializeField]
+        private Tip tip;
+
         private float BackgroundAlpha {
             set {
                 Util.SetImageAlpha(background, value);
@@ -58,6 +62,10 @@ namespace Scripts.View.TextBoxes {
             background.color = Color.black;
             outline.effectColor = Color.white;
             isSkip = false;
+
+            if (tip != null) {
+                tip.Reset();
+            }
         }
 
         /// <summary>
@@ -67,6 +75,7 @@ namespace Scripts.View.TextBoxes {
         /// <param name="callBack">Action to be called after textbox finishes typing</param>
         public virtual void WriteText(TextBox textBox) {
             StartCoroutine(TypeWriter(text, textBox));
+            this.tip.Setup(textBox.Tooltip);
         }
 
         private IEnumerator TypeWriter(Text text, TextBox textBox) {
@@ -100,8 +109,12 @@ namespace Scripts.View.TextBoxes {
             }
         }
 
+        /// <summary>
+        /// Types out a textbox's contents. one by one.
+        /// </summary>
+        /// <param name="textBox">The text box.</param>
+        /// <returns></returns>
         private IEnumerator TypeWriter(TextBox textBox) {
-
             string[] currentTextArray = new string[textBox.TextArray.Length];
             bool[] taggedText = new bool[currentTextArray.Length];
 
@@ -120,7 +133,6 @@ namespace Scripts.View.TextBoxes {
 
             bool hasSkipOccurred = false;
             while (index < textBox.TextArray.Length && !hasSkipOccurred) {
-
                 // Type out letters every time we reach the timePerLetter time.
                 if ((timer += Time.deltaTime) >= textBox.TimePerLetter) {
                     if (!taggedText[index]) {

@@ -1,5 +1,6 @@
-﻿using Scripts.View.TextBoxes;
-using System;
+﻿using Scripts.Model.Interfaces;
+using Scripts.Model.Tooltips;
+using Scripts.View.TextBoxes;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
@@ -17,11 +18,37 @@ namespace Scripts.Model.TextBoxes {
         private string soundLoc;
         private string[] textArray;
         private float timePerLetter;
+        private TooltipBundle tooltip;
+        private bool isSkip;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextBox"/> class.
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <param name="tooltip">The tooltip.</param>
+        public TextBox(string text, TooltipBundle tooltip) : this(text) {
+            this.tooltip = tooltip;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextBox"/> class.
+        /// </summary>
+        /// <param name="text">The text.</param>
         public TextBox(string text) : this(text, Color.white, TextEffect.FADE_IN, "Blip_0", 0) {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TextBox"/> class.
+        /// </summary>
+        /// <param name="c">The c.</param>
+        /// <param name="text">The text.</param>
         public TextBox(Color c, string text) : this(text, c, TextEffect.FADE_IN, "Blip_0", 0) {
+        }
+
+        public TooltipBundle Tooltip {
+            get {
+                return tooltip;
+            }
         }
 
         protected TextBox(string text, Color color, TextEffect effect, string soundLocation, float timePerLetter) {
@@ -31,6 +58,7 @@ namespace Scripts.Model.TextBoxes {
             this.timePerLetter = timePerLetter;
             this.soundLoc = soundLocation;
             this.effect = effect;
+            this.tooltip = new TooltipBundle();
         }
 
         public Color Color { get { return color; } set { color = value; } }
@@ -45,10 +73,10 @@ namespace Scripts.Model.TextBoxes {
         public void SetupPrefab(GameObject textBoxPrefab) {
             this.view = textBoxPrefab.GetComponent<TextBoxView>();
             SetupHelper(textBoxPrefab);
+            view.IsSkip = isSkip;
         }
 
         protected virtual void SetupHelper(GameObject textBoxPrefab) {
-
         }
 
         public void Write() {
@@ -56,7 +84,10 @@ namespace Scripts.Model.TextBoxes {
         }
 
         public void Skip() {
-            view.IsSkip = true;
+            this.isSkip = true;
+            if (view != null) {
+                view.IsSkip = true;
+            }
         }
     }
 }

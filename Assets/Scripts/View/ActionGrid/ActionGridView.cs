@@ -11,6 +11,9 @@ namespace Scripts.View.ActionGrid {
     /// </summary>
     public sealed class ActionGridView : MonoBehaviour {
 
+        /// <summary>
+        /// Hotkeys in use. If there's more buttons it should default to no hotkey.
+        /// </summary>
         public static readonly KeyCode[] HOTKEYS = new KeyCode[] {
             KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4,
             KeyCode.Q, KeyCode.W, KeyCode.E, KeyCode.R,
@@ -27,24 +30,25 @@ namespace Scripts.View.ActionGrid {
         private List<HotkeyButton> buttons;
 
         /// <summary>
-        /// Enables and disables the buttons
+        /// Buttons may end up getting added.
         /// </summary>
-        public bool IsEnabled {
-            set {
-                foreach (HotkeyButton b in buttons) {
-                    b.IsVisible = value;
-                }
-            }
-        }
+        private bool isHotkeysEnabled;
 
+        /// <summary>
+        /// Enables and disables the hotkeys.
+        /// </summary>
         public bool IsHotKeysEnabled {
             set {
                 foreach (HotkeyButton b in buttons) {
                     b.IsHotkeyEnabled = value;
                 }
+                this.isHotkeysEnabled = value;
             }
         }
 
+        /// <summary>
+        /// Removes all buttons from grid.
+        /// </summary>
         public void ClearAll() {
             for (int i = 0; i < buttons.Count; i++) {
                 ObjectPoolManager.Instance.Return(buttons[i]);
@@ -52,28 +56,36 @@ namespace Scripts.View.ActionGrid {
             buttons.Clear();
         }
 
+        /// <summary>
+        /// Sets the entire grid to match buttonables.
+        /// </summary>
+        /// <param name="buttonables">List of buttonable objects that will become the new buttons.</param>
         public void SetButtonAttributes(IList<IButtonable> buttonables) {
             for (int i = 0; i < buttonables.Count; i++) {
                 HotkeyButton hb;
 
+                // Reuse a button that's already there
                 if (i < buttons.Count) {
                     hb = buttons[i];
-                } else {
+                } else { // Grab one from the object pool
                     hb = ObjectPoolManager.Instance.Get(actionButtonPrefab);
+                    hb.IsHotkeyEnabled = isHotkeysEnabled;
                     Util.Parent(hb.gameObject, gameObject);
                     buttons.Add(hb);
                 }
 
+                // Set if not null
                 if (buttonables[i] != null) {
                     hb.Buttonable = buttonables[i];
                     hb.IsVisible = buttonables[i].IsInvokable || buttonables[i].IsVisibleOnDisable;
-                } else {
+                } else { // Disable otherwise
                     hb.IsVisible = false;
                 }
 
+                // Hotkey if within hotkey range.
                 if (i < HOTKEYS.Length) {
                     hb.Hotkey = HOTKEYS[i];
-                } else {
+                } else { // No hotkey if too many buttons
                     hb.Hotkey = KeyCode.None;
                 }
             }

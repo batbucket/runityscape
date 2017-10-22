@@ -8,58 +8,90 @@ using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Game.Defined.Serialized.Statistics {
-    public class Strength : Stat {
-        public Strength(int mod, int max) : base(mod, max, StatType.STRENGTH) { }
 
-        public Strength() : base(0, 0, StatType.STRENGTH) { }
+    public class Strength : Stat {
+
+        public Strength(int mod, int max) : base(mod, max, StatType.STRENGTH) {
+        }
+
+        public Strength() : base(0, 0, StatType.STRENGTH) {
+        }
     }
 
     public class Agility : Stat {
-        public Agility(int mod, int max) : base(mod, max, StatType.AGILITY) { }
 
-        public Agility() : base(0, 0, StatType.AGILITY) { }
+        public Agility(int mod, int max) : base(mod, max, StatType.AGILITY) {
+        }
+
+        public Agility() : base(0, 0, StatType.AGILITY) {
+        }
     }
 
     public class Intellect : Stat {
-        public Intellect(int mod, int max) : base(mod, max, StatType.INTELLECT) { }
 
-        public Intellect() : base(0, 0, StatType.INTELLECT) { }
+        public Intellect(int mod, int max) : base(mod, max, StatType.INTELLECT) {
+        }
+
+        public Intellect() : base(0, 0, StatType.INTELLECT) {
+        }
     }
 
     public class Vitality : Stat {
-        public Vitality(int mod, int max) : base(mod, max, StatType.VITALITY) { }
 
-        public Vitality() : base(0, 0, StatType.VITALITY) { }
+        public Vitality(int mod, int max) : base(mod, max, StatType.VITALITY) {
+        }
+
+        public Vitality() : base(0, 0, StatType.VITALITY) {
+        }
     }
 
     public class Health : Stat {
         private const int VIT_TO_HEALTH = 1;
 
-        public Health(int mod, int max) : base(mod, max, StatType.HEALTH) { }
+        public Health(int mod, int max) : base(mod, max, StatType.HEALTH) {
+        }
 
-        public Health() : base(0, 0, StatType.HEALTH) { }
+        public Health() : base(0, 0, StatType.HEALTH) {
+        }
 
         public override void Update(Character holderOfThisAttribute) {
-            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.MOD, StatType.VITALITY) * VIT_TO_HEALTH;
+            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.TOTAL, StatType.VITALITY) * VIT_TO_HEALTH;
         }
     }
 
     public class Skill : Stat {
-        public Skill(int mod, int max) : base(mod, max, StatType.SKILL) { }
 
-        public Skill() : base(0, 0, StatType.SKILL) { }
+        public Skill(int mod, int max) : base(mod, max, StatType.SKILL) {
+        }
+
+        public Skill() : base(0, 0, StatType.SKILL) {
+        }
 
         public override void Update(Character c) {
             this.Max = c.Spells.HighestSkillCost;
         }
     }
 
+    public class Mana : Stat {
+        private const int INT_TO_MANA = 5;
+
+        public Mana() : base(0, 0, StatType.MANA) {
+        }
+
+        public override void Update(Character holderOfThisAttribute) {
+            this.Max = holderOfThisAttribute.Stats.GetStatCount(Stats.Get.TOTAL, StatType.INTELLECT) * INT_TO_MANA;
+        }
+    }
+
     public class Experience : Stat {
         private const int MAX_LEVEL_FOR_CALCULATION = 30; // Stop int overflow
 
-        public Experience(int mod) : base(mod, 0, StatType.EXPERIENCE) { }
+        public Experience(int mod) : base(mod, 0, StatType.EXPERIENCE) {
+        }
 
-        public Experience() : base(0, 0, StatType.EXPERIENCE) { }
+        public Experience() : base(0, 0, StatType.EXPERIENCE) {
+        }
+
         public override void Update(Character c) {
             Max = GetExpForLevel(c.Stats.Level);
             if (c.Stats.CanLevelUp) {
@@ -69,7 +101,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
                     RemoveExperienceForLevelUp(c.Stats);
                 }
                 Stats stats = c.Stats;
-                stats.AddSplat(new Presenter.SplatDetails(Color.white, string.Format("LVL+{0}", timesLeveledUp)));
+                stats.AddSplat(new SplatDetails(Color.white, string.Format("LVL+{0}", timesLeveledUp)));
                 DoLevelUpStatBoost(stats, timesLeveledUp);
                 Page.TypeText(
                     new TextBox(
@@ -90,7 +122,7 @@ namespace Scripts.Game.Defined.Serialized.Statistics {
         private void RemoveExperienceForLevelUp(Stats stats) {
             SetMod(Mod - Max, false);
             stats.Level++;
-            stats.StatPoints++;
+            stats.UnassignedStatPoints++;
             Max = GetExpForLevel(stats.Level);
         }
 
