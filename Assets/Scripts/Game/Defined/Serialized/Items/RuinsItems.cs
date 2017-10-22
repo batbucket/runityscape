@@ -8,6 +8,7 @@ using Scripts.Model.Spells;
 using Scripts.Model.Stats;
 using System.Collections.Generic;
 using System;
+using Scripts.Game.Defined.Unserialized.Items;
 
 namespace Scripts.Game.Defined.Serialized.Items {
     // Random drops
@@ -68,7 +69,8 @@ namespace Scripts.Game.Defined.Serialized.Items {
         }
 
         public override IList<SpellEffect> GetEffects(Character caster, Character target) {
-            return new SpellEffect[] { new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT) };
+            return new SpellEffect[] { new AddToModStat(target.Stats, StatType.HEALTH, HEALING_AMOUNT)};
+
         }
     }
 
@@ -99,6 +101,26 @@ namespace Scripts.Game.Defined.Serialized.Items {
             return new SpellEffect[] {
                 new RestoreMissingStatPercent(target.Stats, StatType.HEALTH, HEALTH_RECOVERY_PERCENTAGE)
             };
+        }
+    }
+
+    public class MinorVitalityTrinket : SingleStatTrinket {
+        public MinorVitalityTrinket() : base(StatType.VITALITY, 1, "vitality", 5) {
+        }
+    }
+
+    public class MinorAgilityTrinket : SingleStatTrinket {
+        public MinorAgilityTrinket() : base(StatType.AGILITY, 1, "agility", 5) {
+        }
+    }
+
+    public class MinorIntellectTrinket : SingleStatTrinket {
+        public MinorIntellectTrinket() : base(StatType.INTELLECT, 1, "intellect", 5) {
+        }
+    }
+
+    public class MinorStrengthTrinket : SingleStatTrinket {
+        public MinorStrengthTrinket() : base(StatType.STRENGTH, 1, "strength", 5) {
         }
     }
 
